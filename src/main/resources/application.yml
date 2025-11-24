@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: WatchPeople
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        highlight_sql: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/watch_people?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: 95206326
+
+tmdb:
+  api:
+    key: 7a71b03109fd04667129147735ca6ff5
+    base-url: https://api.themoviedb.org/3
+  image-url: https://image.tmdb.org/t/p/w500
+
+url:
+    front:
+        local: http://localhost:5173
+#        vercel: https://watch-people-3rd-fe.vercel.app
+        domain: https://www.watchpeople.net
+    backend:
+        local: http://localhost:8080
+        domain: https://api.watchpeople.net
