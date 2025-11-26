@@ -1,9 +1,9 @@
-package net.watchpeople.domain.search.dto;
+package net.watchpeople.global.dev;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.watchpeople.global.dto.tmdb.TmdbContentInfoDto;
+import net.watchpeople.domain.tmdb.dto.TmdbContentInfoDto;
 
 import java.util.List;
 

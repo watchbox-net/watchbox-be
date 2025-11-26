@@ -16,6 +16,11 @@ spring:
     username: root
     password: 95206326
 
+  web:
+    resources:
+      add-mappings: false # 정적 리소스 자동 매핑 비활성화하여 예외(NoHandlerFoundException) 발생시키기 위함
+
+
 tmdb:
   api:
     key: 7a71b03109fd04667129147735ca6ff5

@@ -1,12 +1,16 @@
-package net.watchpeople.global.dto.tmdb;
+package net.watchpeople.domain.tmdb.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 // TMDB API 원본 응답 DTO
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TmdbSearchResponseDto {
     private int page;
 
@@ -16,5 +20,5 @@ public class TmdbSearchResponseDto {
     @JsonProperty("total_pages")
     private int totalPages;
 
-    private List<TmdbResultDto> results;
+    private List<TmdbContentResultDto> results;
 }

@@ -1,25 +1,33 @@
-package net.watchpeople.global.dto.tmdb;
+package net.watchpeople.domain.tmdb.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
 // TMDB API 원본 결과 DTO
 @Data
-public class TmdbResultDto {
+public class TmdbContentResultDto {
     private Long id;
     private String title;
-    private String name; // TV 프로그램 | 배우 일때
+    private String name; // TV | 인물
 
     @JsonProperty("original_title")
-    private String originalTitle;
+    private String originalTitle; // TV | 인물
 
     @JsonProperty("original_name")
-    private String originalName; // TV 프로그램 | 배우 일때
+    private String originalName; // TV | 인물
 
     private String overview;
 
+    @JsonProperty("genre_ids")
+    private List<Integer> genreIds;
+
     @JsonProperty("poster_path")
     private String posterPath;
+
+    @JsonProperty("profile_path")
+    private String profilePath; // 인물
 
     @JsonProperty("backdrop_path")
     private String backdropPath;
@@ -28,7 +36,7 @@ public class TmdbResultDto {
     private String releaseDate;
 
     @JsonProperty("first_air_date")
-    private String firstAirDate; // TV 프로그램 | 배우 일때
+    private String firstAirDate; // TV
 
     @JsonProperty("vote_average")
     private Double voteAverage;

@@ -1,12 +1,11 @@
-package net.watchpeople.domain.search;
+package net.watchpeople.global.dev;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchpeople.global.dto.tmdb.TmdbContentInfoDto;
-import net.watchpeople.domain.search.dto.MultiSearchRequest;
-import net.watchpeople.domain.search.dto.MultiSearchDevResponseDto;
-import net.watchpeople.global.dto.tmdb.TmdbResultDto;
-import net.watchpeople.global.dto.tmdb.TmdbSearchResponseDto;
+import net.watchpeople.domain.search.dto.response.list.MultiSearchResponse;
+import net.watchpeople.domain.tmdb.dto.TmdbContentInfoDto;
+import net.watchpeople.domain.tmdb.dto.TmdbContentResultDto;
+import net.watchpeople.domain.tmdb.dto.TmdbSearchResponseDto;
 import net.watchpeople.global.properties.TmdbProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,14 +18,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SearchService {
+public class SearchDevService {
     private final WebClient.Builder webClientBuilder;
     private final TmdbProperties tmdbProperties;
 
     /**
      * 통합 검색 (영화 + TV + 배우)
      */
-    public Mono<MultiSearchDevResponseDto> searchAll(MultiSearchRequest request) {
+    public Mono<MultiSearchDevResponseDto> searchAll(MultiSearchDevRequest request) {
         String searchType = request.getType() != null ? request.getType() : "multi";
 
         switch (searchType.toLowerCase()) {
@@ -43,7 +42,7 @@ public class SearchService {
     /**
      * 영화 검색
      */
-    private Mono<MultiSearchDevResponseDto> searchMovies(MultiSearchRequest request) {
+    private Mono<MultiSearchDevResponseDto> searchMovies(MultiSearchDevRequest request) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient.get()
@@ -65,7 +64,7 @@ public class SearchService {
     /**
      * TV 프로그램 검색
      */
-    private Mono<MultiSearchDevResponseDto> searchTvShows(MultiSearchRequest request) {
+    private Mono<MultiSearchDevResponseDto> searchTvShows(MultiSearchDevRequest request) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient.get()
@@ -87,7 +86,7 @@ public class SearchService {
     /**
      * 멀티 검색 (영화 + TV + 배우 통합)
      */
-    private Mono<MultiSearchDevResponseDto> searchMulti(MultiSearchRequest request) {
+    private Mono<MultiSearchDevResponseDto> searchMulti(MultiSearchDevRequest request) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient.get()
@@ -171,7 +170,7 @@ public class SearchService {
     /**
      * TMDB 결과를 MediaInfo로 변환
      */
-    private TmdbContentInfoDto convertToMovieInfo(TmdbResultDto result) {
+    private TmdbContentInfoDto convertToMovieInfo(TmdbContentResultDto result) {
         String title = result.getTitle() != null ? result.getTitle() : result.getName();
         String originalTitle = result.getOriginalTitle() != null ?
                 result.getOriginalTitle() : result.getOriginalName();
@@ -185,6 +184,7 @@ public class SearchService {
                 title,
                 originalTitle,
                 result.getOverview(),
+                result.getGenreIds(),
                 buildImageUrl(result.getPosterPath()),
                 buildImageUrl(result.getBackdropPath()),
                 releaseDate,
@@ -208,5 +208,9 @@ public class SearchService {
      */
     private MultiSearchDevResponseDto createEmptyResponse() {
         return new MultiSearchDevResponseDto(1, 0, 0, Collections.emptyList());
+    }
+
+    public List<MultiSearchResponse> multiSearch(String query) {
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package net.watchpeople.global.dto.response;
 
 import lombok.*;
+import net.watchpeople.global.dto.response.exception.ErrorDetail;
 
 @Builder
 @Getter
@@ -8,16 +9,6 @@ public class ApiResponse<T> {
     private boolean success;
     private T data;
     private ErrorDetail error;
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class ErrorDetail {
-        private String code;        // 에러 코드
-        private String detail;      // 상세 설명
-//        private String field;       // 에러 발생 필드
-    }
 
     // ===== 성공 응답 생성 메서드 =====
     public static <T> ApiResponse<T> success(T data) {

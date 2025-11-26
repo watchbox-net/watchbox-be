@@ -23,11 +23,8 @@ public class Person extends TmdbContent {
     private List<KnownFor> knownFor;
 
     private String profilePath;
-
-    // gender: 0 = not set, 1 = female, 2 = male, 3 = non-binary
-    private Integer gender;
-
+    private Integer gender; // gender: 0 = not set, 1 = female, 2 = male, 3 = non-binary
     private String knownForDepartment;
     private Double popularity;
-    private Boolean adult;
+
 }

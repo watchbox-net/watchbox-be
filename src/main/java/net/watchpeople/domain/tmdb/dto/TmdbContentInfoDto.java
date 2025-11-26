@@ -1,8 +1,10 @@
-package net.watchpeople.global.dto.tmdb;
+package net.watchpeople.domain.tmdb.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +14,7 @@ public class TmdbContentInfoDto {
     private String title;
     private String originalTitle;
     private String overview;
+    private List<Integer> genreIds;
     private String posterUrl;
     private String backdropUrl;
     private String releaseDate;

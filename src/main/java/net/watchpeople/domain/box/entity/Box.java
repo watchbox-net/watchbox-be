@@ -25,4 +25,6 @@ public class Box {
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 
+    @Enumerated(EnumType.STRING)
+    private BoxType boxType;
 }

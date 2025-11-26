@@ -12,7 +12,7 @@ import net.watchpeople.domain.content.MediaType;
 @Getter
 @Embeddable
 public class KnownFor {
-    private Long tmdbId;
+    private Long knownForId; // TMDB ID
 
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
