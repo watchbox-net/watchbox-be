@@ -1,4 +1,4 @@
-package net.watchpeople.domain.member;
+package net.watchpeople.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -2,7 +2,7 @@ package net.watchpeople.domain.box.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchpeople.domain.member.Member;
+import net.watchpeople.domain.member.entity.Member;
 
 import java.util.List;
 
