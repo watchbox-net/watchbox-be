@@ -1,4 +1,4 @@
-package net.watchpeople.domain.box.entity;
+package net.watchpeople.domain.box.enums;
 
 public enum BoxMemberRole {
     OWNER,

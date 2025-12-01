@@ -1,0 +1,45 @@
+package net.watchpeople.global.validation.annotation;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import net.watchpeople.global.validation.validatator.ValidNickname;
+
+import java.util.regex.Pattern;
+
+public class NicknameValidator implements ConstraintValidator<ValidNickname, String> {
+    private static final Pattern NICKNAME_PATTERN =
+            Pattern.compile("^[가-힣a-zA-Z0-9]{2,20}$");
+
+    // 금지어 목록 (실제로는 DB나 설정 파일에서 관리)
+    private static final String[] FORBIDDEN_WORDS = {
+            "관리자", "admin", "운영자", "시스템", "TMDB", "WatchPeople",
+            "운영", "관리", "test", "마스터",
+            "Master", "Owner", "Root", "CEO", "CTO", "CFO"
+    };
+
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true; // @NotNull과 함께 사용
+        }
+
+        // 1. 패턴 검증
+        if (!NICKNAME_PATTERN.matcher(value).matches()) {
+            return false;
+        }
+
+        // 2. 금지어 검증
+        String lowerValue = value.toLowerCase();
+        for (String forbidden : FORBIDDEN_WORDS) {
+            if (lowerValue.contains(forbidden.toLowerCase())) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(
+                        "사용할 수 없는 닉네임입니다"
+                ).addConstraintViolation();
+                return false;
+            }
+        }
+
+        return true;
+    }
+}

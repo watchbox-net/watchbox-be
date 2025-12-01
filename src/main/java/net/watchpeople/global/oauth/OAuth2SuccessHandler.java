@@ -60,7 +60,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if(optionalMember.isEmpty()) {
             member = Member.builder()
                     .email(oauthAccount.getEmail())
-                    .name(oauthAccount.getName())
+                    .nickname(oauthAccount.getName())
                     .oauthAccount(oauthAccount)
                     .build();
             memberRepository.save(member);

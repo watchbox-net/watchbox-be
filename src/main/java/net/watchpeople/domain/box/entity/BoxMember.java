@@ -2,7 +2,9 @@ package net.watchpeople.domain.box.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.watchpeople.domain.box.enums.BoxMemberRole;
 import net.watchpeople.domain.member.entity.Member;
+import net.watchpeople.global.entity.BaseTime;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
 @Builder
 @Getter
 @Entity
-public class BoxMember {
+public class BoxMember extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boxMemberId;
@@ -24,7 +26,7 @@ public class BoxMember {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "boxMember")
+    @OneToMany(mappedBy = "addedBy")
     private List<BoxContent> boxContents;
 
     @Enumerated(EnumType.STRING)

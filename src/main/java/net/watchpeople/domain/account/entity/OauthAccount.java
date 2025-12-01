@@ -15,8 +15,8 @@ public class OauthAccount extends BaseTime {
     //사용자의 인증 정보와 권한 정보를 저장하는 메서드 제공
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "oauth_account_id", updatable = false)
-    private Long oauthAccountId;
+    @Column(name = "account_id", updatable = false)
+    private Long accountId;
 
     @OneToOne(mappedBy = "oauthAccount", cascade = CascadeType.ALL, orphanRemoval = true)
     private Member member;

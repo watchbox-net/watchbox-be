@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> response = ApiResponse.error(
                 ErrorDetail.builder()
                         .code(e.getCode())
-                        .detail(e.getMessage())
+                        .message(e.getMessage())
                         .build()
         );
         return ResponseEntity.status(e.getHttpStatus()).body(response);
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> response = ApiResponse.error(
                 ErrorDetail.builder()
                         .code("API-404")
-                        .detail("존재하지 않는 API 경로입니다.")
+                        .message("존재하지 않는 API 경로입니다.")
                         .build()
         );
         return ResponseEntity.status(404).body(response);
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> response = ApiResponse.error(
                 ErrorDetail.builder()
                         .code("SERVER-500")
-                        .detail("서버 내부 오류가 발생했습니다.")
+                        .message("서버 내부 오류가 발생했습니다.")
                         .build()
         );
         return ResponseEntity.status(500).body(response);

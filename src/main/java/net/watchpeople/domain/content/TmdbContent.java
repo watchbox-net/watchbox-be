@@ -10,7 +10,7 @@ import net.watchpeople.global.entity.BaseTime;
 public abstract class TmdbContent extends BaseTime {
     @Id
     @Column(name = "tmdb_id")
-    private Long tmdbId;  // TMDB ID 그대로 사용
+    private Long tmdbId;  // TMDB ID 그대로 사용, shared key
 
     @Enumerated(EnumType.STRING)
     @Column(name = "media_type", insertable = false, updatable = false)

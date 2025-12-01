@@ -61,7 +61,6 @@ spring:
             authorization-grant-type: authorization_code
             redirect-uri: http://localhost:8080/login/oauth2/code/naver
 
-
 tmdb:
   api:
     key: 7a71b03109fd04667129147735ca6ff5
@@ -80,6 +79,6 @@ url:
 jwt:
     issuer: chyun0029@gmail.com
     secret_key: watch-people-secret-key
-    refresh_token_expiry: 7d # 7일
-    access_token_expiry: 1h # 1시간
+    refresh_token_expiry: 7d
+    access_token_expiry: 1h
 

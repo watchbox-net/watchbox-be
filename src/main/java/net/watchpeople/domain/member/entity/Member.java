@@ -3,7 +3,9 @@ package net.watchpeople.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchpeople.domain.account.entity.OauthAccount;
+import net.watchpeople.domain.box.entity.Box;
 import net.watchpeople.domain.box.entity.BoxMember;
+import net.watchpeople.domain.box.entity.BoxShareRequest;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,16 +31,25 @@ public class Member implements UserDetails {
     @JoinColumn(name = "oauth_account_id", nullable = false)
     private OauthAccount oauthAccount;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoxMember> boxMembers;
-
     private String email;
-    private String name;
+    private String nickname;
 
     private String password;
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoxMember> boxMembers;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoxShareRequest> senders;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoxShareRequest> receivers;
+
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Box box;
 
     /* ================= implements from UserDetails ================= */
     @Override // 권한 반환

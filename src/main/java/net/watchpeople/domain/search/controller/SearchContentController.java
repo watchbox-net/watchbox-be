@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.watchpeople.domain.search.dto.request.SearchType;
 import net.watchpeople.domain.search.dto.response.list.SearchListResponse;
 import net.watchpeople.domain.search.facade.SearchFacade;
-import net.watchpeople.domain.tmdb.service.TmdbSearchService;
 import net.watchpeople.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/search")
-public class SearchController {
+@RequestMapping("/api/search/contents")
+public class SearchContentController {
     private final SearchFacade searchFacade;
-    private final TmdbSearchService tmdbSearchService;
 
     /**
      * 1. 통합 검색

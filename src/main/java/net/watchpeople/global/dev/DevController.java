@@ -35,6 +35,6 @@ public class DevController {
     public String getMember(
             @AuthenticationPrincipal Member member
     ) {
-        return "ID: " + member.getMemberId() + "\nName: " + member.getName();
+        return "ID: " + member.getMemberId() + "\nName: " + member.getNickname();
     }
 }
