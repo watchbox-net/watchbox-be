@@ -2,7 +2,6 @@ package net.watchpeople.domain.box.facade;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.watchpeople.domain.box.dto.response.BoxShareRequestResponse;
 import net.watchpeople.domain.box.service.SharedBoxRequestService;
 import net.watchpeople.domain.member.entity.Member;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SharedBoxFacade {

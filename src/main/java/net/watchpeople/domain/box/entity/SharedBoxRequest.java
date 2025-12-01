@@ -11,7 +11,7 @@ import net.watchpeople.global.entity.BaseTime;
 @Builder
 @Getter
 @Entity
-public class BoxShareRequest extends BaseTime {
+public class SharedBoxRequest extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
