@@ -2,7 +2,7 @@ package net.watchpeople.domain.content.tv.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchpeople.domain.content.TmdbContent;
+import net.watchpeople.domain.content.common.Content;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,10 +14,12 @@ import java.util.List;
 @Entity
 @Table(name = "tv")
 @DiscriminatorValue("TV")
-public class Tv extends TmdbContent {
+public class Tv extends Content {
     /*tv 테이블의 PK도 tmdb_id*/
-    private String name;
-    private String originalName;
+
+    private String nameKo;
+    private String nameEn;
+    private String nameOriginal;
 
     @Column(columnDefinition = "TEXT")
     private String overview;
@@ -28,7 +30,7 @@ public class Tv extends TmdbContent {
     private List<Integer> genreIds;
 
     @ElementCollection
-    @CollectionTable(name = "tv_origin_country", joinColumns = @JoinColumn(name = "tv_id"))
+    @CollectionTable(name = "tv_origin_country", joinColumns = @JoinColumn(name = "tmdb_id"))
     @Column(name = "country_code")
     private List<String> originCountry; // TMDB API 응답이 단수형
 

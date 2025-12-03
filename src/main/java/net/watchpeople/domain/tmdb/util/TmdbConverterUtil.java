@@ -1,8 +1,8 @@
 package net.watchpeople.domain.tmdb.util;
 
-import net.watchpeople.domain.content.MediaType;
+import net.watchpeople.domain.content.common.MediaType;
 import net.watchpeople.domain.search.dto.response.list.*;
-import net.watchpeople.domain.tmdb.dto.TmdbContentResultDto;
+import net.watchpeople.domain.tmdb.dto.search.TmdbContentResultDto;
 
 import static net.watchpeople.domain.tmdb.util.TmdbUtils.buildImageFullUrl;
 import static net.watchpeople.global.util.ConvertUtils.parseReleaseDate;

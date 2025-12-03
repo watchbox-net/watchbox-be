@@ -1,4 +1,4 @@
-package net.watchpeople.domain.tmdb.dto;
+package net.watchpeople.domain.tmdb.dto.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

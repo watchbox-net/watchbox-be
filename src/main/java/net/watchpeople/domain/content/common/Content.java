@@ -1,4 +1,4 @@
-package net.watchpeople.domain.content;
+package net.watchpeople.domain.content.common;
 
 import jakarta.persistence.*;
 import net.watchpeople.global.entity.BaseTime;
@@ -6,8 +6,8 @@ import net.watchpeople.global.entity.BaseTime;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "media_type")
-@Table(name = "tmdb_content")
-public abstract class TmdbContent extends BaseTime {
+@Table(name = "content")
+public abstract class Content extends BaseTime {
     @Id
     @Column(name = "tmdb_id")
     private Long tmdbId;  // TMDB ID 그대로 사용, shared key

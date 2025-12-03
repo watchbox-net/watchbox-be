@@ -1,4 +1,4 @@
-package net.watchpeople.domain.content;
+package net.watchpeople.domain.content.common;
 
 public enum MediaType {
     MOVIE,

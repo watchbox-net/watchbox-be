@@ -2,7 +2,7 @@ package net.watchpeople.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchpeople.domain.content.TmdbContent;
+import net.watchpeople.domain.content.common.Content;
 import net.watchpeople.global.entity.BaseTime;
 
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ public class MemberContent extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tmdb_id", nullable = false)
-    private TmdbContent tmdbContent;
+    private Content content;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,4 +34,8 @@ public class MemberContent extends BaseTime {
     private Double rating; // 평점
 
     private LocalDate watchedDate; // 시청 완료일
+
+//    private MediaType mediaType; // 콘텐츠 유형 (MOVIE, TV_SHOW)
+    //✅ MediaType으로 자주 필터링하는 경우 (예: "내가 본 영화만", "내가 찜한 TV만")
+    //✅ 성능이 중요한 경우
 }

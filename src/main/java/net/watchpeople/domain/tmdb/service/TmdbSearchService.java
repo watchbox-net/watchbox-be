@@ -2,7 +2,7 @@ package net.watchpeople.domain.tmdb.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchpeople.domain.tmdb.dto.TmdbSearchResponseDto;
+import net.watchpeople.domain.tmdb.dto.search.TmdbSearchResponseDto;
 import net.watchpeople.global.dto.response.exception.CustomException;
 import net.watchpeople.global.dto.response.exception.ErrorCode;
 import net.watchpeople.global.properties.TmdbProperties;

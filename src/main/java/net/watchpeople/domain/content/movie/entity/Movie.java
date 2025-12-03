@@ -2,7 +2,7 @@ package net.watchpeople.domain.content.movie.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchpeople.domain.content.TmdbContent;
+import net.watchpeople.domain.content.common.Content;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,10 +14,12 @@ import java.util.List;
 @Entity
 @Table(name = "movie")
 @DiscriminatorValue("MOVIE")
-public class Movie extends TmdbContent {
+public class Movie extends Content {
     /*movie 테이블의 PK도 tmdb_id (media 테이블의 PK와 동일)*/
-    private String title;
-    private String originalTitle;
+
+    private String titleKo;
+    private String titleEn;
+    private String titleOriginal;
 
     @Column(columnDefinition = "TEXT")
     private String overview;

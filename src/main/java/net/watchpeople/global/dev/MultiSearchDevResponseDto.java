@@ -3,7 +3,7 @@ package net.watchpeople.global.dev;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.watchpeople.domain.tmdb.dto.TmdbContentInfoDto;
+import net.watchpeople.domain.tmdb.dto.search.TmdbContentInfoDto;
 
 import java.util.List;
 

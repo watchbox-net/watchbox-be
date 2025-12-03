@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchpeople.domain.search.dto.request.SearchType;
 import net.watchpeople.domain.search.dto.response.list.MultiSearchResponse;
 import net.watchpeople.domain.search.dto.response.list.SearchListResponse;
-import net.watchpeople.domain.tmdb.dto.TmdbContentResultDto;
-import net.watchpeople.domain.tmdb.dto.TmdbSearchResponseDto;
+import net.watchpeople.domain.tmdb.dto.search.TmdbContentResultDto;
+import net.watchpeople.domain.tmdb.dto.search.TmdbSearchResponseDto;
 import net.watchpeople.domain.tmdb.service.TmdbSearchService;
 import net.watchpeople.domain.tmdb.util.TmdbConverterUtil;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class SearchContentService {
      * ├─ 영화/TV/인물 중 하나의 단일 검색 결과
      * └─ 공통 필드 + 타입별 고유 필드
      *
-     * MultiSearchResponse (응답 DTO - 부모 클래스)
+     * MultiSearchResponse (부모 클래스 응답 DTO)
      * ├─ MovieSearchResponse: 영화 검색 결과
      * ├─ TvSearchResponse: TV 검색 결과
      * └─ PersonSearchResponse: 인물 검색 결과

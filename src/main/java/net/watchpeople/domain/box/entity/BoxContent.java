@@ -2,8 +2,8 @@ package net.watchpeople.domain.box.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchpeople.domain.content.MediaType;
-import net.watchpeople.domain.content.TmdbContent;
+import net.watchpeople.domain.content.common.MediaType;
+import net.watchpeople.domain.content.common.Content;
 import net.watchpeople.global.entity.BaseTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,7 +25,7 @@ public class BoxContent extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tmdb_id", nullable = false)
-    private TmdbContent tmdbContent;
+    private Content content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "added_by_id", nullable = false)
