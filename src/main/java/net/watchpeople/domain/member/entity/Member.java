@@ -3,9 +3,9 @@ package net.watchpeople.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchpeople.domain.account.entity.OauthAccount;
-import net.watchpeople.domain.box.entity.Box;
 import net.watchpeople.domain.box.entity.BoxMember;
-import net.watchpeople.domain.box.entity.SharedBoxRequest;
+import net.watchpeople.domain.box.entity.request.CreateBoxRequest;
+import net.watchpeople.domain.box.entity.content.MyBoxContent;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,6 +31,16 @@ public class Member implements UserDetails {
     @JoinColumn(name = "oauth_account_id", nullable = false)
     private OauthAccount oauthAccount;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WatchHistory> watchHistories;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MyBoxContent> myBoxContents;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CreateBoxRequest> createdBoxRequests;
+
+
     private String email;
     private String nickname;
 
@@ -43,13 +53,10 @@ public class Member implements UserDetails {
     private List<BoxMember> boxMembers;
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SharedBoxRequest> senders;
+    private List<CreateBoxRequest> senders;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SharedBoxRequest> receivers;
-
-    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Box box;
+    private List<CreateBoxRequest> receivers;
 
     /* ================= implements from UserDetails ================= */
     @Override // 권한 반환

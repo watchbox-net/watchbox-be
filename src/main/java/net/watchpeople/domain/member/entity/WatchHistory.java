@@ -3,6 +3,7 @@ package net.watchpeople.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchpeople.domain.content.common.Content;
+import net.watchpeople.domain.content.common.MediaType;
 import net.watchpeople.global.entity.BaseTime;
 
 import java.time.LocalDate;
@@ -12,10 +13,10 @@ import java.time.LocalDate;
 @Builder
 @Getter
 @Entity
-public class MemberContent extends BaseTime {
+public class WatchHistory extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long statusId;
+    private Long watchHistoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -29,13 +30,12 @@ public class MemberContent extends BaseTime {
     @Column(nullable = false)
     private WatchStatus watchStatus;
 
-    private Boolean isLiked; // 좋아요 여부
-
-    private Double rating; // 평점
-
     private LocalDate watchedDate; // 시청 완료일
 
-//    private MediaType mediaType; // 콘텐츠 유형 (MOVIE, TV_SHOW)
-    //✅ MediaType으로 자주 필터링하는 경우 (예: "내가 본 영화만", "내가 찜한 TV만")
-    //✅ 성능이 중요한 경우
+    private MediaType mediaType;
+
+//    private Boolean isLiked; // 좋아요 여부
+
+//    private Double rating; // 평점
+
 }

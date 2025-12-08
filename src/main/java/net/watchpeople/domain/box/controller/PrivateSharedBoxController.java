@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
-public class SharedBoxController {
+public class PrivateSharedBoxController {
     private final SharedBoxFacade sharedBoxFacade;
 
     // 공유 박스 신청하기

@@ -4,11 +4,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchpeople.domain.box.dto.response.BoxShareRequestResponse;
-import net.watchpeople.domain.box.entity.Box;
+import net.watchpeople.domain.box.entity.SharedBox;
 import net.watchpeople.domain.box.entity.BoxMember;
-import net.watchpeople.domain.box.entity.SharedBoxRequest;
+import net.watchpeople.domain.box.entity.request.CreateBoxRequest;
 import net.watchpeople.domain.box.enums.BoxMemberRole;
-import net.watchpeople.domain.box.enums.BoxType;
+import net.watchpeople.domain.box.enums.ShareType;
 import net.watchpeople.domain.box.enums.RequestStatus;
 import net.watchpeople.domain.box.repository.BoxMemberRepository;
 import net.watchpeople.domain.box.repository.BoxRepository;
@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SharedBoxRequestService {
+public class CreateBoxRequestService {
     private final BoxRepository boxRepository;
     private final BoxMemberRepository boxMemberRepository;
     private final SharedBoxRequestRepository sharedBoxRequestRepository;
@@ -31,7 +31,7 @@ public class SharedBoxRequestService {
     // 공유 박스 신청 (PENDING)
     @Transactional
     public void requestSharedBox(Member sender, Member receiver) {
-        sharedBoxRequestRepository.save(SharedBoxRequest.builder()
+        sharedBoxRequestRepository.save(CreateBoxRequest.builder()
                 .sender(sender)
                 .receiver(receiver)
                 .status(RequestStatus.PENDING)
@@ -50,34 +50,34 @@ public class SharedBoxRequestService {
     // 공유 박스 수락 (ACCEPTED)
     @Transactional
     public void acceptSharedBoxRequest(Long requestId) {
-        SharedBoxRequest request = sharedBoxRequestRepository.findById(requestId)
+        CreateBoxRequest request = sharedBoxRequestRepository.findById(requestId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SHARED_BOX_NOT_FOUND, requestId));
         request.updateStatus(RequestStatus.ACCEPTED);
         sharedBoxRequestRepository.save(request);
 
         // 공유 박스 생성
-        Box box = boxRepository.save(Box.builder()
-                .boxType(BoxType.SHARED)
+        SharedBox sharedBox = boxRepository.save(SharedBox.builder()
+                .shareType(ShareType.PRIVATE)
                 .build());
         BoxMember boxMemberA = boxMemberRepository.save(BoxMember.builder()
-                .box(box)
+                .sharedBox(sharedBox)
                 .member(request.getReceiver())
                 .role(BoxMemberRole.OWNER)
                 .build());
         BoxMember boxMemberB = boxMemberRepository.save(BoxMember.builder()
-                .box(box)
+                .sharedBox(sharedBox)
                 .member(request.getSender())
                 .role(BoxMemberRole.OWNER)
                 .build());
 
         log.info("Shared box created with BoxID: {}, Member IDs: {} and {}"
-                , box.getBoxId(), boxMemberA.getMember().getMemberId(), boxMemberB.getMember().getMemberId());
+                , sharedBox.getBoxId(), boxMemberA.getMember().getMemberId(), boxMemberB.getMember().getMemberId());
     }
 
     // 공유 박스 거절 (REJECTED)
     @Transactional
     public void rejectSharedBoxRequest(Long requestId) {
-        SharedBoxRequest request = sharedBoxRequestRepository.findById(requestId)
+        CreateBoxRequest request = sharedBoxRequestRepository.findById(requestId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SHARED_BOX_NOT_FOUND, requestId));
         request.updateStatus(RequestStatus.REJECTED);
     }

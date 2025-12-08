@@ -18,12 +18,12 @@ public class OauthAccount extends BaseTime {
     @Column(name = "account_id", updatable = false)
     private Long accountId;
 
-    @OneToOne(mappedBy = "oauthAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Member member;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "oauth_provider", nullable = false, updatable = false)
     private OauthProvider oauthProvider;
+
+    @OneToOne(mappedBy = "oauthAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Member member;
 
     @Column(name = "oauthId", nullable = false, updatable = false, unique = true)
     private String oauthId; // 소셜로그인 ID

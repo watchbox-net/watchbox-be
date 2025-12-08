@@ -2,6 +2,7 @@ package net.watchpeople.domain.box.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.watchpeople.domain.box.entity.content.SharedBoxContent;
 import net.watchpeople.domain.box.enums.BoxMemberRole;
 import net.watchpeople.domain.member.entity.Member;
 import net.watchpeople.global.entity.BaseTime;
@@ -20,14 +21,14 @@ public class BoxMember extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", nullable = false)
-    private Box box;
+    private SharedBox sharedBox;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @OneToMany(mappedBy = "addedBy")
-    private List<BoxContent> boxContents;
+    private List<SharedBoxContent> sharedBoxContents;
 
     @Enumerated(EnumType.STRING)
     private BoxMemberRole role;

@@ -1,7 +1,8 @@
-package net.watchpeople.domain.box.entity;
+package net.watchpeople.domain.box.entity.request;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.watchpeople.domain.box.entity.SharedBox;
 import net.watchpeople.domain.box.enums.RequestStatus;
 import net.watchpeople.domain.member.entity.Member;
 import net.watchpeople.global.entity.BaseTime;
@@ -11,7 +12,7 @@ import net.watchpeople.global.entity.BaseTime;
 @Builder
 @Getter
 @Entity
-public class SharedBoxRequest extends BaseTime {
+public class JoinBoxRequest extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
@@ -23,8 +24,8 @@ public class SharedBoxRequest extends BaseTime {
     private Member sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private Member receiver;
+    @JoinColumn(name = "box_id", nullable = false)
+    private SharedBox sharedBox;
 
     public void updateStatus(RequestStatus status) {
         this.status = status;
