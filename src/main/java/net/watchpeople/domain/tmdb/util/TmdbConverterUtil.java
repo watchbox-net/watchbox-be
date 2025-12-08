@@ -1,6 +1,6 @@
 package net.watchpeople.domain.tmdb.util;
 
-import net.watchpeople.domain.content.common.MediaType;
+import net.watchpeople.domain.content.common.entity.MediaType;
 import net.watchpeople.domain.search.dto.response.list.*;
 import net.watchpeople.domain.tmdb.dto.search.TmdbContentResultDto;
 

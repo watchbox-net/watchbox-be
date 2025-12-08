@@ -2,7 +2,7 @@ package net.watchpeople.domain.content.tv.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchpeople.domain.content.common.Content;
+import net.watchpeople.domain.content.common.entity.Content;
 
 import java.util.List;
 

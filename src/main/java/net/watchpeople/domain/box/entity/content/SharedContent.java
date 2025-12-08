@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.watchpeople.domain.box.entity.SharedBox;
 import net.watchpeople.domain.box.entity.BoxMember;
-import net.watchpeople.domain.content.common.MediaType;
-import net.watchpeople.domain.content.common.Content;
+import net.watchpeople.domain.content.common.entity.MediaType;
+import net.watchpeople.domain.content.common.entity.Content;
 import net.watchpeople.global.entity.BaseTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

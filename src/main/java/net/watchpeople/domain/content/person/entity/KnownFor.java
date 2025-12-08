@@ -4,7 +4,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
-import net.watchpeople.domain.content.common.MediaType;
+import net.watchpeople.domain.content.common.entity.MediaType;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface BoxMemberRepository extends JpaRepository<BoxMember, Long> {
-    Optional<BoxMember> findByMemberAndBox_BoxType(Member member, ShareType shareType);
+
 }

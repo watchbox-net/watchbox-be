@@ -22,12 +22,12 @@ public class SharedBox extends BaseTime {
     @Enumerated(EnumType.STRING)
     private ShareType shareType;
 
-    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoxMember> boxMembers;
 
-    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedContent> sharedContents;
 
-    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JoinBoxRequest> joinBoxRequests;
 }
