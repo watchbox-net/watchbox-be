@@ -2,7 +2,7 @@ package net.watchpeople.domain.box.facade;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import net.watchpeople.domain.box.dto.response.BoxShareRequestResponse;
+import net.watchpeople.domain.box.dto.response.CreateBoxRequestResponse;
 import net.watchpeople.domain.box.service.CreateBoxRequestService;
 import net.watchpeople.domain.member.entity.Member;
 import net.watchpeople.domain.member.service.MemberService;
@@ -22,7 +22,7 @@ public class SharedBoxFacade {
         createBoxRequestService.requestSharedBox(sender, receiver);
     }
 
-    public List<BoxShareRequestResponse> getSharedBoxRequests(Member member) {
+    public List<CreateBoxRequestResponse> getSharedBoxRequests(Member member) {
         return createBoxRequestService.getSharedBoxRequests(member);
     }
 

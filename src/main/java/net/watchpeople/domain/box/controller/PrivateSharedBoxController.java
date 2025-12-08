@@ -1,7 +1,7 @@
 package net.watchpeople.domain.box.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.watchpeople.domain.box.dto.response.BoxShareRequestResponse;
+import net.watchpeople.domain.box.dto.response.CreateBoxRequestResponse;
 import net.watchpeople.domain.box.facade.SharedBoxFacade;
 import net.watchpeople.domain.member.entity.Member;
 import net.watchpeople.global.dto.response.ApiResponse;
@@ -29,7 +29,7 @@ public class PrivateSharedBoxController {
 
     // 공유 박스 신청 리스트 조회
     @GetMapping("/requests")
-    public ResponseEntity<ApiResponse<List<BoxShareRequestResponse>>> getBoxShareRequests(
+    public ResponseEntity<ApiResponse<List<CreateBoxRequestResponse>>> getBoxShareRequests(
             @AuthenticationPrincipal Member member
     ) {
         return ResponseEntity.ok(ApiResponse.success(sharedBoxFacade.getSharedBoxRequests(member)));

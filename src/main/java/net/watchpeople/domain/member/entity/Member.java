@@ -5,7 +5,7 @@ import lombok.*;
 import net.watchpeople.domain.account.entity.OauthAccount;
 import net.watchpeople.domain.box.entity.BoxMember;
 import net.watchpeople.domain.box.entity.request.CreateBoxRequest;
-import net.watchpeople.domain.box.entity.content.MyBoxContent;
+import net.watchpeople.domain.box.entity.content.MyContent;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,7 +35,7 @@ public class Member implements UserDetails {
     private List<WatchHistory> watchHistories;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MyBoxContent> myBoxContents;
+    private List<MyContent> myContents;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CreateBoxRequest> createdBoxRequests;

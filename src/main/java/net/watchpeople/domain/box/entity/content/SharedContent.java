@@ -13,10 +13,10 @@ import net.watchpeople.global.entity.BaseTime;
 @Builder
 @Getter
 @Entity
-public class SharedBoxContent extends BaseTime {
+public class SharedContent extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boxContentId;
+    private Long sharedContentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", nullable = false)

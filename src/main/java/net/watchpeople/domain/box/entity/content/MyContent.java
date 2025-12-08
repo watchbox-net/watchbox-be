@@ -11,7 +11,7 @@ import net.watchpeople.domain.member.entity.Member;
 @Builder
 @Getter
 @Entity
-public class MyBoxContent {
+public class MyContent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long myContentId;
