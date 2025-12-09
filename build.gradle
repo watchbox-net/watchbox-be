@@ -4,9 +4,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'net.watchpeople'
+group = 'net.watchbox'
 version = '0.0.1-SNAPSHOT'
-description = 'watch-people'
+description = 'watch-box'
 
 java {
     toolchain {
