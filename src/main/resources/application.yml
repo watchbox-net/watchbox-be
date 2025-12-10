@@ -12,7 +12,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/watch_people?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
     username: root
     password: 95206326
 
@@ -71,10 +71,10 @@ url:
     front:
         local: http://localhost:5173
 #        vercel: https://watch-people-3rd-fe.vercel.app
-        domain: https://www.watchpeople.net
+        domain: https://www.watch-box.net
     backend:
         local: http://localhost:8080
-        domain: https://api.watchpeople.net
+        domain: https://api.watch-box.net
 
 jwt:
     issuer: chyun0029@gmail.com

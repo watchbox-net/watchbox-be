@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.search.dto.request.SearchType;
 import net.watchbox.domain.search.dto.response.list.MultiSearchResponse;
 import net.watchbox.domain.search.dto.response.list.SearchListResponse;
-import net.watchbox.domain.tmdb.dto.search.TmdbContentResultDto;
-import net.watchbox.domain.tmdb.dto.search.TmdbSearchResponseDto;
+import net.watchbox.domain.tmdb.response.search.TmdbSearchResultItem;
+import net.watchbox.domain.tmdb.response.search.TmdbSearchResponse;
 import net.watchbox.domain.tmdb.service.TmdbSearchService;
 import net.watchbox.domain.tmdb.util.TmdbConverterUtil;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class SearchContentService {
      * └─ PersonSearchResponse: 인물 검색 결과
      */
     public SearchListResponse searchContentList(SearchType searchType, String query, Integer page) {
-        TmdbSearchResponseDto tmdbResponseDto = getSearchResponse(searchType, query, page);
+        TmdbSearchResponse tmdbResponseDto = getSearchResponse(searchType, query, page);
         List<MultiSearchResponse> contentList = convertToResponseList(searchType, tmdbResponseDto.getResults());
 
         return SearchListResponse.builder()
@@ -51,7 +51,7 @@ public class SearchContentService {
                 .build();
     }
 
-    private TmdbSearchResponseDto getSearchResponse(SearchType searchType, String query, Integer page) {
+    private TmdbSearchResponse getSearchResponse(SearchType searchType, String query, Integer page) {
         return switch (searchType) {
             case MULTI -> tmdbSearchService.searchMulti(query, page);
             case MOVIE -> tmdbSearchService.searchMovie(query, page);
@@ -60,7 +60,7 @@ public class SearchContentService {
         };
     }
 
-    private List<MultiSearchResponse> convertToResponseList(SearchType searchType, List<TmdbContentResultDto> results) {
+    private List<MultiSearchResponse> convertToResponseList(SearchType searchType, List<TmdbSearchResultItem> results) {
         return switch (searchType) {
             case MULTI -> results.stream()
                     .map(this::convertByMediaType)
@@ -77,7 +77,7 @@ public class SearchContentService {
         };
     }
 
-    private MultiSearchResponse convertByMediaType(TmdbContentResultDto result) {
+    private MultiSearchResponse convertByMediaType(TmdbSearchResultItem result) {
         return switch (result.getMediaType()) {
             case "movie" -> TmdbConverterUtil.convertToMovieSearchResponse(result);
             case "tv" -> TmdbConverterUtil.convertToTvSearchResponse(result);

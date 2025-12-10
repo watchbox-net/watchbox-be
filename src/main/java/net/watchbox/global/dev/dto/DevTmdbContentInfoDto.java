@@ -1,4 +1,4 @@
-package net.watchbox.domain.tmdb.dto.search;
+package net.watchbox.global.dev.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbContentInfoDto {
+public class DevTmdbContentInfoDto {
     private Long id;
     private String title;
     private String originalTitle;

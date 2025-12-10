@@ -18,10 +18,11 @@ public class SearchContentController {
     private final SearchFacade searchFacade;
 
     /**
-     * 1. 통합 검색
-     * 2. 영화 검색
+     * 리스트 검색 ~ SEARCH API 요청
+     * 1. Multi 검색
+     * 2. Movie 검색
      * 3. TV 검색
-     * 4. 인물 검색
+     * 4. Person 검색
      */
     @GetMapping("/multi")
     public ResponseEntity<ApiResponse<SearchListResponse>> searchMultiList(
@@ -67,18 +68,12 @@ public class SearchContentController {
         );
     }
 
-    // 통합 검색
-//    @GetMapping("/multi")
-//    public ResponseEntity<ApiResponse<List<SearchResponse>>> searchMulti(
-//            @RequestParam String query
-//    ) {
-//        return ResponseEntity.ok(
-//                ApiResponse.success(searchService.searchMulti(
-//                        MultiSearchRequest.builder()
-//                                .query(query)
-//                                .type("multi")
-//                                .build()
-//                ))
-//        );
-//    }
+    /**
+     * 상세 검색 ~ MOVIES / TV SERIES / PEOPLE Details API 요청
+     * @RequestParam meadiaType : MOVIE, TV, PERSON
+     * @RequestParam tmdbId
+     */
+//    @GetMapping("/detail")
+
+
 }

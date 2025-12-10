@@ -1,18 +1,25 @@
 package net.watchbox.domain.box.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.repository.content.MyContentRepository;
+import net.watchbox.domain.box.entity.content.MyBoxContent;
+import net.watchbox.domain.box.repository.content.MyBoxContentRepository;
+import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MyBoxContentService {
-    private final MyContentRepository myContentRepository;
+    private final MyBoxContentRepository myBoxContentRepository;
 
     // 내 박스에 콘텐츠 추가
-    public void addContentToMyBox(Member member, Long tmdbId) {
-
+    @Transactional
+    public void addContentToMyBox(Content content, Member member) {
+        myBoxContentRepository.save(MyBoxContent.builder()
+                .content(content)
+                .member(member)
+                .build());
     }
 
 

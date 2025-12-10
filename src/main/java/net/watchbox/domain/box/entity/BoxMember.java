@@ -2,7 +2,7 @@ package net.watchbox.domain.box.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.box.entity.content.SharedContent;
+import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.enums.BoxMemberRole;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
@@ -28,7 +28,7 @@ public class BoxMember extends BaseTime {
     private Member member;
 
     @OneToMany(mappedBy = "addedBy")
-    private List<SharedContent> sharedContents;
+    private List<SharedBoxContent> sharedBoxContents;
 
     @Enumerated(EnumType.STRING)
     private BoxMemberRole role;

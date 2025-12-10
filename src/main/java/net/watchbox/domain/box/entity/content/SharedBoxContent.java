@@ -13,7 +13,7 @@ import net.watchbox.global.entity.BaseTime;
 @Builder
 @Getter
 @Entity
-public class SharedContent extends BaseTime {
+public class SharedBoxContent extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sharedContentId;

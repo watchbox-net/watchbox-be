@@ -1,4 +1,4 @@
-package net.watchbox.domain.tmdb.dto.search;
+package net.watchbox.domain.tmdb.response.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.util.List;
 
 // TMDB API 원본 결과 DTO
 @Data
-public class TmdbContentResultDto {
+public class TmdbSearchResultItem {
     private Long id;
     private String title;
     private String name; // TV | 인물

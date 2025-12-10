@@ -2,7 +2,7 @@ package net.watchbox.domain.tmdb.util;
 
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.search.dto.response.list.*;
-import net.watchbox.domain.tmdb.dto.search.TmdbContentResultDto;
+import net.watchbox.domain.tmdb.response.search.TmdbSearchResultItem;
 
 import static net.watchbox.domain.tmdb.util.TmdbUtils.buildImageFullUrl;
 import static net.watchbox.global.util.ConvertUtils.parseReleaseDate;
@@ -27,7 +27,7 @@ public final class TmdbConverterUtil {
     /**
      * TmdbResultDto → MovieSearchResponse 변환
      */
-    public static MovieSearchResponse convertToMovieSearchResponse(TmdbContentResultDto result) {
+    public static MovieSearchResponse convertToMovieSearchResponse(TmdbSearchResultItem result) {
         return MovieSearchResponse.builder()
                 .id(result.getId())             // 부모 필드
                 .mediaType(MediaType.MOVIE)     // 부모 필드
@@ -43,7 +43,7 @@ public final class TmdbConverterUtil {
     /**
      * TmdbResultDto → TvSearchResponse 변환
      */
-    public static TvSearchResponse convertToTvSearchResponse(TmdbContentResultDto result) {
+    public static TvSearchResponse convertToTvSearchResponse(TmdbSearchResultItem result) {
         return TvSearchResponse.builder()
                 .id(result.getId())             // 부모 필드
                 .mediaType(MediaType.TV)        // 부모 필드
@@ -59,7 +59,7 @@ public final class TmdbConverterUtil {
     /**
      * TmdbResultDto → PersonSearchResponse 변환
      */
-    public static PersonSearchResponse convertToPersonSearchResponse(TmdbContentResultDto result) {
+    public static PersonSearchResponse convertToPersonSearchResponse(TmdbSearchResultItem result) {
         return PersonSearchResponse.builder()
                 .id(result.getId())             // 부모 필드
                 .mediaType(MediaType.PERSON)    // 부모 필드

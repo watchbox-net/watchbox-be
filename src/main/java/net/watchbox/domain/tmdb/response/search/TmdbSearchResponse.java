@@ -1,4 +1,4 @@
-package net.watchbox.domain.tmdb.dto.search;
+package net.watchbox.domain.tmdb.response.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbSearchResponseDto {
+public class TmdbSearchResponse {
     private int page;
 
     @JsonProperty("total_results")
@@ -20,5 +20,5 @@ public class TmdbSearchResponseDto {
     @JsonProperty("total_pages")
     private int totalPages;
 
-    private List<TmdbContentResultDto> results;
+    private List<TmdbSearchResultItem> results;
 }

@@ -2,7 +2,7 @@ package net.watchbox.domain.box.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.box.entity.content.SharedContent;
+import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.entity.request.JoinBoxRequest;
 import net.watchbox.domain.box.enums.ShareType;
 import net.watchbox.global.entity.BaseTime;
@@ -26,7 +26,7 @@ public class SharedBox extends BaseTime {
     private List<BoxMember> boxMembers;
 
     @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SharedContent> sharedContents;
+    private List<SharedBoxContent> sharedBoxContents;
 
     @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JoinBoxRequest> joinBoxRequests;

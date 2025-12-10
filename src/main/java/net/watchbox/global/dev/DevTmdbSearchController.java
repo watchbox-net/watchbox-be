@@ -3,6 +3,9 @@ package net.watchbox.global.dev;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.global.dev.dto.DevMultiSearchRequest;
+import net.watchbox.global.dev.dto.DevMultiSearchResponseDto;
+import net.watchbox.global.dev.service.DevSearchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -10,14 +13,14 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/dev/search")
+@RequestMapping("/dev/tmdb/search")
 @Slf4j
-public class SearchDevController {
-    private final SearchDevService searchService;
+public class DevTmdbSearchController {
+    private final DevSearchService searchService;
 
     /**
-     * 영화/TV 검색 API
-     * POST /api/movies/search
+     * SEARCH Movie/TV/People 검색 API
+     * TMDB POST /api/movies/search
      *
      * Request Body:
      * {
@@ -28,8 +31,8 @@ public class SearchDevController {
      * }
      */
     @PostMapping
-    public Mono<ResponseEntity<MultiSearchDevResponseDto>> searchAll(
-            @Valid @RequestBody MultiSearchDevRequest request) {
+    public Mono<ResponseEntity<DevMultiSearchResponseDto>> searchAll(
+            @Valid @RequestBody DevMultiSearchRequest request) {
 
         log.info("영화 검색 요청: query={}, type={}, page={}",
                 request.getQuery(), request.getType(), request.getPage());
@@ -47,13 +50,13 @@ public class SearchDevController {
      * GET /api/movies/search?query=어벤저스&type=movie&language=ko-KR&page=1
      */
     @GetMapping
-    public Mono<ResponseEntity<MultiSearchDevResponseDto>> searchAllGet(
+    public Mono<ResponseEntity<DevMultiSearchResponseDto>> searchAllGet(
             @RequestParam String query,
             @RequestParam(required = false, defaultValue = "multi") String type,
             @RequestParam(required = false, defaultValue = "ko-KR") String language,
             @RequestParam(required = false, defaultValue = "1") int page) {
 
-        MultiSearchDevRequest request = new MultiSearchDevRequest(query, language, page, true, type);
+        DevMultiSearchRequest request = new DevMultiSearchRequest(query, language, page, true, type);
 
         log.info("영화 검색 요청(GET): query={}, type={}, page={}", query, type, page);
 
@@ -67,7 +70,7 @@ public class SearchDevController {
      * GET /api/movies/popular?language=ko-KR&page=1
      */
     @GetMapping("/popular")
-    public Mono<ResponseEntity<MultiSearchDevResponseDto>> getPopularMovies(
+    public Mono<ResponseEntity<DevMultiSearchResponseDto>> getPopularMovies(
             @RequestParam(required = false, defaultValue = "ko-KR") String language,
             @RequestParam(required = false, defaultValue = "1") int page) {
 
@@ -83,7 +86,7 @@ public class SearchDevController {
      * GET /api/movies/now-playing?language=ko-KR&page=1
      */
     @GetMapping("/now-playing")
-    public Mono<ResponseEntity<MultiSearchDevResponseDto>> getNowPlayingMovies(
+    public Mono<ResponseEntity<DevMultiSearchResponseDto>> getNowPlayingMovies(
             @RequestParam(required = false, defaultValue = "ko-KR") String language,
             @RequestParam(required = false, defaultValue = "1") int page) {
 
@@ -99,8 +102,8 @@ public class SearchDevController {
      * POST /api/movies/search/movie
      */
     @PostMapping("/search/movie")
-    public Mono<ResponseEntity<MultiSearchDevResponseDto>> searchOnlyMovies(
-            @Valid @RequestBody MultiSearchDevRequest request) {
+    public Mono<ResponseEntity<DevMultiSearchResponseDto>> searchOnlyMovies(
+            @Valid @RequestBody DevMultiSearchRequest request) {
 
         request.setType("movie");
 
@@ -116,8 +119,8 @@ public class SearchDevController {
      * POST /api/movies/search/tv
      */
     @PostMapping("/search/tv")
-    public Mono<ResponseEntity<MultiSearchDevResponseDto>> searchOnlyTv(
-            @Valid @RequestBody MultiSearchDevRequest request) {
+    public Mono<ResponseEntity<DevMultiSearchResponseDto>> searchOnlyTv(
+            @Valid @RequestBody DevMultiSearchRequest request) {
 
         request.setType("tv");
 

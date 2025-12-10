@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.account.repository.OauthAccountRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
+import net.watchbox.global.dev.dto.DevTokenResponse;
 import net.watchbox.global.jwt.service.TokenService;
 import net.watchbox.global.properties.JwtProperties;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,19 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/dev")
 @Slf4j
-public class DevController {
+public class DevAccountController {
     private final JwtProperties jwtProperties;
     private final TokenService tokenService;
     private final OauthAccountRepository oauthAccountRepository;
     private final MemberRepository memberRepository;
 
     @GetMapping("/login")
-    public TokenResponse login() {
+    public DevTokenResponse login() {
         Member member = memberRepository.findById(0L).orElseThrow();
         String refreshToken = tokenService.createNewRefreshToken(member);
         String accessToken = tokenService.createNewAccessToken(member, refreshToken);
 
-        return new TokenResponse(accessToken, refreshToken, member.getMemberId());
+        return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
     }
 
     @GetMapping("/member")
