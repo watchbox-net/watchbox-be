@@ -34,4 +34,7 @@ public class Person extends BaseTime {
     @CollectionTable(name = "known_for", joinColumns = @JoinColumn(name = "tmdb_id"))
     private List<KnownFor> knownFor;
 
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PersonDetail personDetail;
+
 }

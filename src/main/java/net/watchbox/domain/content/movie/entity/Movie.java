@@ -36,4 +36,7 @@ public class Movie extends BaseTime {
     @CollectionTable(name = "movie_genre_ids", joinColumns = @JoinColumn(name = "tmdb_id"))
     @Column(name = "genre_id")
     private List<Integer> genreIds;
+
+    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private MovieDetail movieDetail;
 }

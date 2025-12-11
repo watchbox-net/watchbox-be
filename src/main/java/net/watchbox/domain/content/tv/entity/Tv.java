@@ -45,10 +45,6 @@ public class Tv extends BaseTime {
     @Column(name = "country_code")
     private List<String> originCountry; // TMDB API 응답이 단수형
 
-    private String backdropPath;
-
-    private String originalLanguage;
-
-    private Boolean adult;
-
+    @OneToOne(mappedBy = "tv", cascade = CascadeType.ALL, orphanRemoval = true)
+    private TvDetail tvDetail;
 }

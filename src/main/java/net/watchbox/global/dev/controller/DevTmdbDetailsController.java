@@ -28,10 +28,6 @@ public class DevTmdbDetailsController {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;
     private final TmdbPeopleService tmdbPeopleService;
-    private final ContentCommandService contentCommandService;
-    private final ContentQueryService contentQueryService;
-
-    private final MovieRepository movieRepository;
 
     /**
      * MOVIES Details Get 요청
@@ -68,31 +64,5 @@ public class DevTmdbDetailsController {
 
     //
 
-    /**
-     * MOVIES Details Get 및 저장, 리스트 응답으로 반환
-     * 49797
-     */
-    @GetMapping("/movies/details/{tmdbId}/save")
-    public ResponseEntity<MovieResponse> fetchAndSaveTmdbMovieDetails(
-            @PathVariable Long tmdbId
-    ) {
-        Optional<Content> foundContent = contentQueryService.findContentById(tmdbId);
-//        Content content = foundContent.orElseGet(() -> contentCommandService.createContentByTmdbId(tmdbId));
-        Content content;
-        TmdbMovieDetailsResponse response = tmdbMoviesService.getMovieDetails(tmdbId);
-        if (foundContent.isPresent()) {
-            content = foundContent.get();
-            System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
-        } else {
-            // 1) Content 정보 저장 - SQL Insert
-            content = contentCommandService.createContent(tmdbId, MediaType.MOVIE);
-            // 2) Content의 하위 엔티티 저장
-            // TMDB API 상세 검색으로 TmdbMovieDetailsResponse 호출
-            // TmdbMovieDetailsResponse 가공하여 Movie 저장
-            contentCommandService.saveMovieContent(content, response);
-        }
-//        movieRepository.flush();
-        Movie movie = contentQueryService.getMovieByIdOrThrow(tmdbId);
-        return ResponseEntity.ok(MovieResponse.from(movie));
-    }
+
 }

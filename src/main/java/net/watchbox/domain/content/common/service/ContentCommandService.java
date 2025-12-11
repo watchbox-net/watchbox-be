@@ -2,6 +2,7 @@ package net.watchbox.domain.content.common.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.content.common.repository.ContentRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ContentCommandService {
 
     private final ContentRepository contentRepository;
@@ -116,5 +118,10 @@ public class ContentCommandService {
         movieRepository.save(movie);
         movieDetailRepository.save(movieDetail);
         content.markAsSaved();
+    }
+
+    public void deleteContentCascade(Long tmdbId) {
+        contentRepository.deleteById(tmdbId);
+        log.info("Deleted Content and all associated sub-entities for TMDB ID: {}", tmdbId);
     }
 }

@@ -30,13 +30,13 @@ public class Content extends BaseTime {
         this.isSaved = true;
     }
 
-    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, optional = true)
+    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
     private Movie movie;
 
-    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, optional = true)
+    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
     private Tv tv;
 
-    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, optional = true)
+    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
     private Person person;
 
 }
