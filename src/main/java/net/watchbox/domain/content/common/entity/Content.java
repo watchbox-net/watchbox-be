@@ -1,16 +1,42 @@
 package net.watchbox.domain.content.common.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import net.watchbox.domain.content.movie.entity.Movie;
+import net.watchbox.domain.content.person.entity.Person;
+import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.global.entity.BaseTime;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "media_type")
+@Getter
+//@Inheritance(strategy = InheritanceType.JOINED)
+//@DiscriminatorColumn(name = "media_type")
 @Table(name = "content")
-public abstract class Content extends BaseTime {
+public class Content extends BaseTime {
     @Id
     @Column(name = "tmdb_id")
     private Long tmdbId;  // TMDB ID 그대로 사용, shared key
 
-    private boolean isSaved; // 하위 엔티티가 모두 저장되었는지 여부
+    @Column(name = "media_type")
+    @Enumerated(EnumType.STRING)
+    private MediaType mediaType;
+
+    private boolean isSaved; // 하위 엔티티가 저장되었는지 여부
+
+    public void markAsSaved() {
+        this.isSaved = true;
+    }
+
+    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, optional = true)
+    private Movie movie;
+
+    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, optional = true)
+    private Tv tv;
+
+    @OneToOne(mappedBy = "content", cascade = CascadeType.ALL, optional = true)
+    private Person person;
+
 }

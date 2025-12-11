@@ -13,9 +13,6 @@ public class TmdbPeopleDetailsResponse {
 
     private boolean adult;
 
-    @JsonProperty("also_known_as")
-    private List<String> alsoKnownAs;
-
     private String biography;
 
     private String birthday;
@@ -43,4 +40,9 @@ public class TmdbPeopleDetailsResponse {
 
     @JsonProperty("profile_path")
     private String profilePath;
+
+    //
+
+    @JsonProperty("also_known_as")
+    private List<String> alsoKnownAs;
 }

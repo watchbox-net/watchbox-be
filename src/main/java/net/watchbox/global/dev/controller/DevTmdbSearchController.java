@@ -1,4 +1,4 @@
-package net.watchbox.global.dev;
+package net.watchbox.global.dev.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

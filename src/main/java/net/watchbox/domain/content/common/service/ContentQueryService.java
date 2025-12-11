@@ -3,6 +3,7 @@ package net.watchbox.domain.content.common.service;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.repository.ContentRepository;
+import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.movie.repository.MovieRepository;
 import net.watchbox.domain.content.person.repository.PersonRepository;
 import net.watchbox.domain.content.tv.repository.TvRepository;
@@ -29,4 +30,10 @@ public class ContentQueryService {
         return contentRepository.findById(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
     }
+
+    public Movie getMovieByIdOrThrow(Long tmdbId) {
+        return movieRepository.findById(tmdbId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+    }
+
 }

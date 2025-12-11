@@ -34,9 +34,6 @@ public class TmdbMovieDetailsResponse {
     @JsonProperty("imdb_id")
     private String imdbId;
 
-    @JsonProperty("origin_country")
-    private List<String> originCountry;
-
     @JsonProperty("original_language")
     private String originalLanguage;
 
@@ -50,21 +47,12 @@ public class TmdbMovieDetailsResponse {
     @JsonProperty("poster_path")
     private String posterPath;
 
-    @JsonProperty("production_companies")
-    private List<TmdbProductionCompanyItem> productionCompanies;
-
-    @JsonProperty("production_countries")
-    private List<TmdbProductionCountryItem> productionCountries;
-
     @JsonProperty("release_date")
     private String releaseDate;
 
     private Long revenue;
 
     private Long runtime;
-
-    @JsonProperty("spoken_languages")
-    private List<TmdbSpokenLanguageItem> spokenLanguages;
 
     private String status;
 
@@ -79,4 +67,18 @@ public class TmdbMovieDetailsResponse {
 
     @JsonProperty("vote_count")
     private Long voteCount;
+
+    //
+
+    @JsonProperty("origin_country")
+    private List<String> originCountry;
+
+    @JsonProperty("production_companies")
+    private List<TmdbProductionCompanyItem> productionCompanies;
+
+    @JsonProperty("production_countries")
+    private List<TmdbProductionCountryItem> productionCountries;
+
+    @JsonProperty("spoken_languages")
+    private List<TmdbSpokenLanguageItem> spokenLanguages;
 }

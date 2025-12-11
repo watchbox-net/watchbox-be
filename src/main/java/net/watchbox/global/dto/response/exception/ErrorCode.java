@@ -10,6 +10,9 @@ public enum ErrorCode {
     // Content 오류
     CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CONTENT-404", "Content를 찾을 수 없습니다."),
 
+    // Movie 오류
+    MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "MOVIE-404", "Movie를 찾을 수 없습니다."),
+
     // TMDB 검색 오류
     TMDB_SEARCH_BAD_REQUEST(HttpStatus.BAD_REQUEST, "TMDB-SEARCH-400", "TMDB 검색 잘못된 요청"),
     TMDB_SEARCH_BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "TMDB-SEARCH-502", "TMDB 검색 응답 오류"),

@@ -13,7 +13,8 @@ public class MovieSearchResponse extends MultiSearchResponse {
     private String title;
     private String originalTitle;
     private String overview;
-    private List<Integer> genreIds; // ToDo: 변환
+    private List<Integer> genreIds;
     private String posterPath;
+    private Integer year;
     private LocalDate releaseDate;
 }

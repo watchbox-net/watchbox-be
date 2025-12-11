@@ -23,12 +23,6 @@ public class TmdbTvSeriesDetailsResponse {
     @JsonProperty("backdrop_path")
     private String backdropPath;
 
-    @JsonProperty("created_by")
-    private List<TmdbCreatedByItem> createdBy;
-
-    @JsonProperty("episode_run_time")
-    private List<Integer> episodeRunTime;
-
     @JsonProperty("first_air_date")
     private String firstAirDate;
 
@@ -41,29 +35,16 @@ public class TmdbTvSeriesDetailsResponse {
     @JsonProperty("in_production")
     private boolean inProduction;
 
-    private List<String> languages;
-
     @JsonProperty("last_air_date")
     private String lastAirDate;
 
-//    @JsonProperty("last_episode_to_air")
-//    private Object lastEpisodeToAir;
-
     private String name;
-
-//    @JsonProperty("next_episode_to_air")
-//    private Object nextEpisodeToAir;
-
-    private List<TmdbNetworkItem> networks;
 
     @JsonProperty("number_of_episodes")
     private Integer numberOfEpisodes;
 
     @JsonProperty("number_of_seasons")
     private Integer numberOfSeasons;
-
-    @JsonProperty("origin_country")
-    private List<String> originCountry;
 
     @JsonProperty("original_language")
     private String originalLanguage;
@@ -78,17 +59,6 @@ public class TmdbTvSeriesDetailsResponse {
     @JsonProperty("poster_path")
     private String posterPath;
 
-    @JsonProperty("production_companies")
-    private List<TmdbProductionCompanyItem> productionCompanies;
-
-    @JsonProperty("production_countries")
-    private List<TmdbProductionCountryItem> productionCountries;
-
-    private List<TmdbSeasonItem> seasons;
-
-    @JsonProperty("spoken_languages")
-    private List<TmdbSpokenLanguageItem> spokenLanguages;
-
     private String status;
 
     private String tagline;
@@ -100,4 +70,36 @@ public class TmdbTvSeriesDetailsResponse {
 
     @JsonProperty("vote_count")
     private Long voteCount;
+
+    //
+
+    @JsonProperty("episode_run_time")
+    private List<Integer> episodeRunTime;
+
+    private List<String> languages;
+
+    @JsonProperty("origin_country")
+    private List<String> originCountry;
+
+    @JsonProperty("created_by")
+    private List<TmdbCreatedByItem> createdBy;
+
+//    @JsonProperty("last_episode_to_air")
+//    private Object lastEpisodeToAir;
+
+//    @JsonProperty("next_episode_to_air")
+//    private Object nextEpisodeToAir;
+
+    private List<TmdbNetworkItem> networks;
+
+    @JsonProperty("production_companies")
+    private List<TmdbProductionCompanyItem> productionCompanies;
+
+    @JsonProperty("production_countries")
+    private List<TmdbProductionCountryItem> productionCountries;
+
+    private List<TmdbSeasonItem> seasons;
+
+    @JsonProperty("spoken_languages")
+    private List<TmdbSpokenLanguageItem> spokenLanguages;
 }

@@ -3,6 +3,7 @@ package net.watchbox.domain.content.tv.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.global.entity.BaseTime;
 
 import java.util.List;
 
@@ -12,9 +13,15 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "tv")
-@DiscriminatorValue("TV")
-public class Tv extends Content {
-    // tv 테이블의 PK도 tmdb_id
+//@DiscriminatorValue("TV")
+public class Tv extends BaseTime {
+    @Id
+    private Long tmdbId;
+
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tmdb_id", nullable = false, unique = true)
+    private Content content;
 
     private String nameKo;
     private String nameEn;
@@ -22,7 +29,7 @@ public class Tv extends Content {
     private String posterPath;
     private Double popularity;
     private Double voteAverage;
-    private Integer voteCount;
+    private Long voteCount;
     private String year; // 처음 방영 연도
 
     @ElementCollection

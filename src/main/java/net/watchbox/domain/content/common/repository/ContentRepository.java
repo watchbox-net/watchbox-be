@@ -12,7 +12,7 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
     @Modifying
     @Transactional
     @Query(
-            value = "insert into content (tmdb_id, media_type) values (:tmdbId, :mediaType) ",
+            value = "insert into content (tmdb_id, media_type, is_saved) values (:tmdbId, :mediaType, false) ",
             nativeQuery = true
     )
     void insertContent(Long tmdbId, String mediaType);
