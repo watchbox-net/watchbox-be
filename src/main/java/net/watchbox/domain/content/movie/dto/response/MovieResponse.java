@@ -1,15 +1,15 @@
 package net.watchbox.domain.content.movie.dto.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import net.watchbox.domain.content.movie.entity.Movie;
 
 import java.util.List;
 
 @Getter
 @ToString
-@SuperBuilder
+@Builder
 public class MovieResponse {
     private Long id; // tmdbId
     private String title;
