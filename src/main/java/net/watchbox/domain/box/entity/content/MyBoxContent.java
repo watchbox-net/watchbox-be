@@ -5,13 +5,14 @@ import lombok.*;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.entity.BaseTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
 @Entity
-public class MyBoxContent {
+public class MyBoxContent extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long myContentId;

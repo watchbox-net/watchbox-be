@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.service;
+package net.watchbox.domain.box.service.shared;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -55,7 +55,7 @@ public class DevContentController {
             // 2) Content의 하위 엔티티 저장
             // TMDB API 상세 검색으로 TmdbMovieDetailsResponse 호출
             // TmdbMovieDetailsResponse 가공하여 Movie 저장
-            contentCommandService.saveMovieContent(content, response);
+            contentCommandService.createMovieContent(content, response);
         }
 //        movieRepository.flush();
         Movie movie = contentQueryService.getMovieByIdOrThrow(tmdbId);
@@ -77,12 +77,10 @@ public class DevContentController {
             content = foundContent.get();
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         }else{
-            // 1) Content 정보 저장 - SQL Insert
+            // 1) Content 정보 저장
             content = contentCommandService.createContent(tmdbId, MediaType.TV);
             // 2) Content의 하위 엔티티 저장
-            // TMDB API 상세 검색으로 TmdbTvDetailsResponse 호출
-            // TmdbTvDetailsResponse 가공하여 Tv 저장
-            contentCommandService.saveTvContent(content, response);
+            contentCommandService.createTvContent(content, response);
         }
 
         Tv tv = contentQueryService.getTvByIdOrThrow(tmdbId);
@@ -105,12 +103,10 @@ public class DevContentController {
             content = foundContent.get();
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         }else{
-            // 1) Content 정보 저장 - SQL Insert
+            // 1) Content 정보 저장
             content = contentCommandService.createContent(tmdbId, MediaType.PERSON);
             // 2) Content의 하위 엔티티 저장
-            // TMDB API 상세 검색으로 TmdbPersonDetailsResponse 호출
-            // TmdbPersonDetailsResponse 가공하여 Person 저장
-            contentCommandService.savePersonContent(content, response);
+            contentCommandService.createPersonContent(content, response);
         }
 
         Person person = contentQueryService.getPersonByIdOrThrow(tmdbId);
@@ -122,7 +118,7 @@ public class DevContentController {
      * Content 및 관련 하위 엔티티들 전부 삭제
      */
     @DeleteMapping("/{tmdbId}")
-    public ResponseEntity<Void> deleteContentMovieMovieDetail(
+    public ResponseEntity<Void> deleteContentCascade(
             @PathVariable Long tmdbId
     ) {
         contentCommandService.deleteContentCascade(tmdbId);

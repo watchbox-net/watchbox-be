@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.service;
+package net.watchbox.domain.box.service.shared;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import net.watchbox.domain.box.entity.SharedBox;
 import net.watchbox.domain.box.entity.BoxMember;
 import net.watchbox.domain.box.entity.request.CreateBoxRequest;
 import net.watchbox.domain.box.enums.BoxMemberRole;
-import net.watchbox.domain.box.enums.ShareType;
+import net.watchbox.domain.box.enums.BoxType;
 import net.watchbox.domain.box.enums.RequestStatus;
 import net.watchbox.domain.box.repository.BoxMemberRepository;
 import net.watchbox.domain.box.repository.SharedBoxRepository;
@@ -57,7 +57,7 @@ public class CreateBoxRequestService {
 
         // 공유 박스 생성
         SharedBox sharedBox = sharedBoxRepository.save(SharedBox.builder()
-                .shareType(ShareType.PRIVATE)
+                .boxType(BoxType.SHARED)
                 .build());
         BoxMember boxMemberA = boxMemberRepository.save(BoxMember.builder()
                 .sharedBox(sharedBox)

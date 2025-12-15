@@ -9,11 +9,11 @@ import java.util.List;
 @Data
 public class TmdbSearchResultItem {
     private Long id;
-    private String title;
+    private String title; // 영화
     private String name; // TV | 인물
 
     @JsonProperty("original_title")
-    private String originalTitle; // TV | 인물
+    private String originalTitle; // 영화
 
     @JsonProperty("original_name")
     private String originalName; // TV | 인물
@@ -24,7 +24,7 @@ public class TmdbSearchResultItem {
     private List<Integer> genreIds;
 
     @JsonProperty("poster_path")
-    private String posterPath;
+    private String posterPath; // 영화 | TV
 
     @JsonProperty("profile_path")
     private String profilePath; // 인물

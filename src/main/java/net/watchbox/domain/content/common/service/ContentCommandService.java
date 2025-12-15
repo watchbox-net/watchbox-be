@@ -21,6 +21,9 @@ import net.watchbox.domain.content.tv.repository.TvRepository;
 import net.watchbox.domain.tmdb.response.movies.TmdbMovieDetailsResponse;
 import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
 import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
+import net.watchbox.domain.tmdb.service.TmdbMoviesService;
+import net.watchbox.domain.tmdb.service.TmdbPeopleService;
+import net.watchbox.domain.tmdb.service.TmdbTvSeriesService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,8 +41,10 @@ public class ContentCommandService {
     private final PersonRepository personRepository;
     private final PersonDetailRepository personDetailRepository;
 
+    private final TmdbMoviesService tmdbMoviesService;
+    private final TmdbTvSeriesService tmdbTvSeriesService;
+    private final TmdbPeopleService tmdbPeopleService;
 
-    private final ContentQueryService contentQueryService;
 
     // ToDo: (위변조 방지) 일단 만들어놓고 나중에 tmdb api 검색에서 없으면 위변조로 간주하고 DB에서 삭제할 것
     public Content createContent(Long tmdbId, MediaType mediaType) {
@@ -55,23 +60,26 @@ public class ContentCommandService {
         return content;
     }
 
-    public void createSubContent(Content content) {
-        // 타입 나누고 해당 상세 정보 요청 받아와서 저장
+    public void createSubContents(Content content) {
+        // 타입별로 해당 상세 정보 요청 받아와서 저장
         switch (content.getMediaType()) {
             case MOVIE -> {
-                break;
+                TmdbMovieDetailsResponse response = tmdbMoviesService.getMovieDetails(content.getTmdbId());
+                createMovieContent(content, response);
             }
             case TV -> {
-                break;
+                TmdbTvSeriesDetailsResponse response = tmdbTvSeriesService.getTvSeriesDetails(content.getTmdbId());
+                createTvContent(content, response);
             }
             case PERSON -> {
-                break;
+                TmdbPeopleDetailsResponse response = tmdbPeopleService.getPeopleDetails(content.getTmdbId());
+                createPersonContent(content, response);
             }
         }
     }
 
     // TmdbMovieDetailsResponse -> Movie, MovieDetail 저장
-    public void saveMovieContent(Content content, TmdbMovieDetailsResponse tmdbMovieDetail) {
+    public void createMovieContent(Content content, TmdbMovieDetailsResponse tmdbMovieDetail) {
         Movie movie = Movie.builder()
                 .content(content)
                 .titleKo(tmdbMovieDetail.getTitle())
@@ -129,7 +137,7 @@ public class ContentCommandService {
     }
 
     // TmdbTvSeriesDetailsResponse -> Tv, TvDetail 저장
-    public void saveTvContent(Content content, TmdbTvSeriesDetailsResponse tmdbTvSeriesDetail) {
+    public void createTvContent(Content content, TmdbTvSeriesDetailsResponse tmdbTvSeriesDetail) {
         Tv tv = Tv.builder()
                 .content(content)
                 .nameKo(tmdbTvSeriesDetail.getName())
@@ -179,7 +187,7 @@ public class ContentCommandService {
     }
 
     // TmdbPeopleDetailsResponse -> Person, PersonDetail 저장
-    public void savePersonContent(Content content, TmdbPeopleDetailsResponse tmdbPersonDetail) {
+    public void createPersonContent(Content content, TmdbPeopleDetailsResponse tmdbPersonDetail) {
         Person person = Person.builder()
                 .content(content)
                 .nameKo(tmdbPersonDetail.getName())

@@ -26,6 +26,8 @@ public class DevAccountController {
     @GetMapping("/login")
     public DevTokenResponse login() {
         Member member = memberRepository.findById(0L).orElseThrow();
+
+
         String refreshToken = tokenService.createNewRefreshToken(member);
         String accessToken = tokenService.createNewAccessToken(member, refreshToken);
 
