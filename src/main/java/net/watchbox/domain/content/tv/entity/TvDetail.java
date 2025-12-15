@@ -47,7 +47,7 @@ public class TvDetail {
     private String languages;  // "['en', 'ko']"
 
     @Column(name = "origin_country", columnDefinition = "json")
-    private String originCountry;  // "['US', 'KR']"
+    private String originCountries;  // "['US', 'KR']"
 
     @Column(name = "created_by", columnDefinition = "json")
     private String createdBy;  // JSON 배열

@@ -9,9 +9,15 @@ import net.watchbox.domain.content.common.service.ContentQueryService;
 import net.watchbox.domain.content.movie.dto.response.MovieResponse;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.person.dto.response.PersonResponse;
+import net.watchbox.domain.content.person.entity.Person;
 import net.watchbox.domain.content.tv.dto.response.TvResponse;
+import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.domain.tmdb.response.movies.TmdbMovieDetailsResponse;
+import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
+import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.domain.tmdb.service.TmdbMoviesService;
+import net.watchbox.domain.tmdb.service.TmdbPeopleService;
+import net.watchbox.domain.tmdb.service.TmdbTvSeriesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +31,8 @@ public class DevContentController {
     private final ContentCommandService contentCommandService;
     private final ContentQueryService contentQueryService;
     private final TmdbMoviesService tmdbMoviesService;
+    private final TmdbTvSeriesService tmdbTvSeriesService;
+    private final TmdbPeopleService tmdbPeopleService;
 
     /**
      * MOVIES Details Get 및 저장, 메인 응답으로 반환
@@ -54,37 +62,59 @@ public class DevContentController {
         return ResponseEntity.ok(MovieResponse.from(movie));
     }
 
-    /** ToDo
+    /**
      * TV SERIES Details Get 및 저장, 메인 응답으로 반환
+     * 93405
      */
     @PostMapping("/tv/detail/{tmdbId}")
     public ResponseEntity<TvResponse> fetchAndSaveTmdbTvDetails(
             @PathVariable Long tmdbId
     ) {
-        // 1) Content 정보 저장 - SQL Insert
-        // 2) Content의 하위 엔티티 저장
-        // TMDB API 상세 검색으로 TmdbTvDetailsResponse 호출
-        // TmdbTvDetailsResponse 가공하여 Tv 저장
+        Optional<Content> foundContent = contentQueryService.findContentById(tmdbId);
+        Content content;
+        TmdbTvSeriesDetailsResponse response = tmdbTvSeriesService.getTvSeriesDetails(tmdbId);
+        if (foundContent.isPresent()) {
+            content = foundContent.get();
+            System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
+        }else{
+            // 1) Content 정보 저장 - SQL Insert
+            content = contentCommandService.createContent(tmdbId, MediaType.TV);
+            // 2) Content의 하위 엔티티 저장
+            // TMDB API 상세 검색으로 TmdbTvDetailsResponse 호출
+            // TmdbTvDetailsResponse 가공하여 Tv 저장
+            contentCommandService.saveTvContent(content, response);
+        }
 
-        // 최종 반환은 TvResponse 형태로 반환
-        return ResponseEntity.ok().build();
+        Tv tv = contentQueryService.getTvByIdOrThrow(tmdbId);
+        return ResponseEntity.ok(TvResponse.from(tv));
     }
 
 
-    /** ToDo
+    /**
      * PEOPLE Details Get 및 저장, 메인 응답으로 반환
+     *
      */
     @PostMapping("/person/detail/{tmdbId}")
     public ResponseEntity<PersonResponse> fetchAndSaveTmdbPersonDetails(
             @PathVariable Long tmdbId
     ) {
-        // 1) Content 정보 저장 - SQL Insert
-        // 2) Content의 하위 엔티티 저장
-        // TMDB API 상세 검색으로 TmdbPersonDetailsResponse 호출
-        // TmdbPersonDetailsResponse 가공하여 Person 저장
+        Optional<Content> foundContent = contentQueryService.findContentById(tmdbId);
+        Content content;
+        TmdbPeopleDetailsResponse response = tmdbPeopleService.getPeopleDetails(tmdbId);
+        if (foundContent.isPresent()) {
+            content = foundContent.get();
+            System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
+        }else{
+            // 1) Content 정보 저장 - SQL Insert
+            content = contentCommandService.createContent(tmdbId, MediaType.PERSON);
+            // 2) Content의 하위 엔티티 저장
+            // TMDB API 상세 검색으로 TmdbPersonDetailsResponse 호출
+            // TmdbPersonDetailsResponse 가공하여 Person 저장
+            contentCommandService.savePersonContent(content, response);
+        }
 
-        // 최종 반환은 PersonResponse 형태로 반환
-        return ResponseEntity.ok().build();
+        Person person = contentQueryService.getPersonByIdOrThrow(tmdbId);
+        return ResponseEntity.ok(PersonResponse.from(person));
     }
 
     

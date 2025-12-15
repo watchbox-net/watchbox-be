@@ -33,7 +33,7 @@ public class TmdbTvSeriesDetailsResponse {
     private Long id;
 
     @JsonProperty("in_production")
-    private boolean inProduction;
+    private boolean inProduction; // ??
 
     @JsonProperty("last_air_date")
     private String lastAirDate;

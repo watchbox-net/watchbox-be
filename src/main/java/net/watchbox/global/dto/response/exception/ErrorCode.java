@@ -13,6 +13,12 @@ public enum ErrorCode {
     // Movie 오류
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "MOVIE-404", "Movie를 찾을 수 없습니다."),
 
+    // TV 오류
+    TV_NOT_FOUND(HttpStatus.NOT_FOUND, "TV-404", "TV를 찾을 수 없습니다."),
+
+    // Person 오류
+    PERSON_NOT_FOUND(HttpStatus.NOT_FOUND, "PERSON-404", "Person을 찾을 수 없습니다."),
+
     // TMDB 검색 오류
     TMDB_SEARCH_BAD_REQUEST(HttpStatus.BAD_REQUEST, "TMDB-SEARCH-400", "TMDB 검색 잘못된 요청"),
     TMDB_SEARCH_BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "TMDB-SEARCH-502", "TMDB 검색 응답 오류"),
@@ -25,8 +31,8 @@ public enum ErrorCode {
     BOX_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-MEMBER-404", "BoxMember를 찾을 수 없습니다."),
 
     // Shared Box 오류
-    SHARED_BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "SHARED-BOX-404", "요청한 공유 박스를 찾을 수 없습니다.")
-    ;
+    SHARED_BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "SHARED-BOX-404", "요청한 공유 박스를 찾을 수 없습니다.");
+
 
 
     private final HttpStatus httpStatus;

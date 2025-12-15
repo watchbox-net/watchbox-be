@@ -30,7 +30,7 @@ public class Tv extends BaseTime {
     private Double popularity;
     private Double voteAverage;
     private Long voteCount;
-    private String year; // 처음 방영 연도
+    private Integer year; // 처음 방영 연도
 
     @ElementCollection
     @CollectionTable(name = "tv_genre_ids", joinColumns = @JoinColumn(name = "tmdb_id"))

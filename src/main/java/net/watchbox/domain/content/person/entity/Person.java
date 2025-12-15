@@ -25,7 +25,7 @@ public class Person extends BaseTime {
 
     private String nameKo;
     private String nameEn;
-    private String nameOriginal;
+    private String nameOriginal; // 이건 사실상 정확히 가져오기는 불가능, 영문이름으로만 표기해야할듯
     private String profilePath;
     private String knownForDepartment;
     private Double popularity;

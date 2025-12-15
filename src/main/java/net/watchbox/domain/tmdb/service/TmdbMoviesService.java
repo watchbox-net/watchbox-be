@@ -24,9 +24,11 @@ public class TmdbMoviesService {
                 .uri(uriBuilder -> uriBuilder
                         .path("/movie/{movieId}")
                         .queryParam("api_key", tmdbProperties.getApi().getKey())
+                        .queryParam("language", "ko-KR")
                         .build(movieId))
                 .retrieve()
                 .bodyToMono(TmdbMovieDetailsResponse.class)
                 .block();
     }
+
 }

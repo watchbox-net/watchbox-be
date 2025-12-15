@@ -5,7 +5,9 @@ import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.repository.ContentRepository;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.movie.repository.MovieRepository;
+import net.watchbox.domain.content.person.entity.Person;
 import net.watchbox.domain.content.person.repository.PersonRepository;
+import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.domain.content.tv.repository.TvRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
@@ -36,4 +38,13 @@ public class ContentQueryService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
     }
 
+    public Tv getTvByIdOrThrow(Long tmdbId) {
+        return tvRepository.findById(tmdbId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TV_NOT_FOUND));
+    }
+
+    public Person getPersonByIdOrThrow(Long tmdbId) {
+        return personRepository.findById(tmdbId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
+    }
 }

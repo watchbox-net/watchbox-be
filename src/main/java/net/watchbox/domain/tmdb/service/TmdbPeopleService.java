@@ -2,7 +2,6 @@ package net.watchbox.domain.tmdb.service;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
-import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.properties.TmdbProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -26,6 +25,7 @@ public class TmdbPeopleService {
                 .uri(uriBuilder -> uriBuilder
                         .path("/person/{personId}")
                         .queryParam("api_key", tmdbProperties.getApi().getKey())
+                        .queryParam("language", "ko-KR")
                         .build(personId))
                 .retrieve()
                 .bodyToMono(TmdbPeopleDetailsResponse.class)

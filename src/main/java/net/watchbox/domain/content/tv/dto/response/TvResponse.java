@@ -19,7 +19,7 @@ public class TvResponse {
     private Double popularity;
     private Double voteAverage;
     private Long voteCount;
-    private String year; // 처음 방영 연도
+    private Integer year; // 처음 방영 연도
     private List<Integer> genreIds;
     private String overview;
     private List<String> originCountry; // TMDB API 응답이 단수형
