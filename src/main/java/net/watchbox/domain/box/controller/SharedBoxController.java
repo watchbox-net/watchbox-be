@@ -1,15 +1,8 @@
 package net.watchbox.domain.box.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.response.CreateBoxRequestResponse;
 import net.watchbox.domain.box.facade.SharedBoxFacade;
-import net.watchbox.domain.member.entity.Member;
-import net.watchbox.global.dto.response.ApiResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,39 +10,33 @@ import java.util.List;
 public class SharedBoxController {
     private final SharedBoxFacade sharedBoxFacade;
 
-    // 공유 박스 신청하기
-    @PostMapping("/request/{receiverId}")
-    public ResponseEntity<ApiResponse<Void>> requestSharedBox(
-            @AuthenticationPrincipal Member member,
-            Long receiverId
-    ) {
-        sharedBoxFacade.requestSharedBox(member, receiverId);
-        return ResponseEntity.ok(ApiResponse.success());
-    }
+//    // 공유 박스에 컨텐츠 리스트 추가
+//    @PostMapping("/{boxId}/contents/batch")
+//    public ApiResponse<Void> addSharedBoxContentList(
+//            @PathVariable Long boxId,
+//            @RequestBody List<Long> contentIds,
+//            @AuthenticationPrincipal Member member
+//    ) {
+//        sharedBoxFacade.addSharedBoxContentList(boxId, contentIds, member);
+//        return ApiResponse.success();
+//    }
+//
+//    // 공유 박스에 컨텐츠 추가
+//    @PostMapping("/{boxId}/contents")
+//    public ApiResponse<Void> addSharedBoxContent(
+//            @PathVariable Long boxId,
+//            @PathVariable Long contentId,
+//            @AuthenticationPrincipal Member member
+//    ) {
+//        sharedBoxFacade.addSharedBoxContent(boxId, contentIds, member);
+//        return ApiResponse.success();
+//    }
 
-    // 공유 박스 신청 리스트 조회
-    @GetMapping("/requests")
-    public ResponseEntity<ApiResponse<List<CreateBoxRequestResponse>>> getBoxShareRequests(
-            @AuthenticationPrincipal Member member
-    ) {
-        return ResponseEntity.ok(ApiResponse.success(sharedBoxFacade.getSharedBoxRequests(member)));
-    }
+    // 공유 박스에 마이 박스 컨텐츠 리스트 추가
 
-    // 공유 박스 신청 수락하기
-    @PatchMapping("/accept/{requestId}")
-    public ResponseEntity<ApiResponse<Void>> acceptSharedBoxRequest(
-            Long requestId
-    ) {
-        sharedBoxFacade.acceptSharedBoxRequest(requestId);
-        return ResponseEntity.ok(ApiResponse.success());
-    }
+    // 공유 박스의 컨텐츠 조회 ToDo: Selector 별로 필터링
+//    @GetMapping("/{boxId}")
 
-    // 공유 박스 신청 거절하기
-    @PatchMapping("/reject/{requestId}")
-    public ResponseEntity<ApiResponse<Void>> rejectSharedBoxRequest(
-            Long requestId
-    ) {
-        sharedBoxFacade.rejectSharedBoxRequest(requestId);
-        return ResponseEntity.ok(ApiResponse.success());
-    }
+    // 공유 박스의 컨텐츠 삭제
+//    @DeleteMapping("/{boxId}/{contentId}")
 }

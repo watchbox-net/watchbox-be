@@ -1,9 +1,9 @@
-package net.watchbox.domain.box.entity;
+package net.watchbox.domain.box.entity.member;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.watchbox.domain.box.entity.SharedBox;
 import net.watchbox.domain.box.entity.content.SharedBoxContent;
-import net.watchbox.domain.box.enums.BoxMemberRole;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 

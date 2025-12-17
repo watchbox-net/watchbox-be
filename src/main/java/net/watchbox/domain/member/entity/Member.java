@@ -3,8 +3,8 @@ package net.watchbox.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.account.entity.OauthAccount;
-import net.watchbox.domain.box.entity.BoxMember;
-import net.watchbox.domain.box.entity.request.CreateBoxRequest;
+import net.watchbox.domain.box.entity.member.BoxMember;
+import net.watchbox.domain.box.entity.request.InviteBoxRequest;
 import net.watchbox.domain.box.entity.content.MyBoxContent;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,8 +38,7 @@ public class Member implements UserDetails {
     private List<MyBoxContent> myBoxContents;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CreateBoxRequest> createdBoxRequests;
-
+    private List<InviteBoxRequest> inviteBoxRequests;
 
     private String email;
     private String nickname;
@@ -53,10 +52,10 @@ public class Member implements UserDetails {
     private List<BoxMember> boxMembers;
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CreateBoxRequest> senders;
+    private List<InviteBoxRequest> senders;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CreateBoxRequest> receivers;
+    private List<InviteBoxRequest> receivers;
 
     /* ================= implements from UserDetails ================= */
     @Override // 권한 반환

@@ -1,6 +1,6 @@
 package net.watchbox.domain.box.repository;
 
-import net.watchbox.domain.box.entity.BoxMember;
+import net.watchbox.domain.box.entity.member.BoxMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

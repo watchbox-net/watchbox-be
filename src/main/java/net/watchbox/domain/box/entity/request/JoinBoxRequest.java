@@ -3,7 +3,6 @@ package net.watchbox.domain.box.entity.request;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.box.entity.SharedBox;
-import net.watchbox.domain.box.enums.RequestStatus;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 

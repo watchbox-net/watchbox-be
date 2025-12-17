@@ -2,7 +2,6 @@ package net.watchbox.domain.box.entity.request;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.box.enums.RequestStatus;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
@@ -11,7 +10,7 @@ import net.watchbox.global.entity.BaseTime;
 @Builder
 @Getter
 @Entity
-public class CreateBoxRequest extends BaseTime {
+public class InviteBoxRequest extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
