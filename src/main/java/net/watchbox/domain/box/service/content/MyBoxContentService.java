@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.service.my;
+package net.watchbox.domain.box.service.content;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,6 @@ public class MyBoxContentService {
     // 내 박스에 콘텐츠 추가
     @Transactional
     public void addContentToMyBox(Member member, Content content) {
-        validateNotInMyBox(member, content); // 중복 체크
         myBoxContentRepository.save(MyBoxContent.builder()
                 .member(member)
                 .content(content)
@@ -65,8 +64,8 @@ public class MyBoxContentService {
         log.info("My Box에서 콘텐츠 삭제 완료. memberId = {}, tmdbId = {}", member.getMemberId(), tmdbId);
     }
 
-    // 중복 체크
-    private void validateNotInMyBox(Member member, Content content) {
+    // 중복 검사 (단일 추가할 때만 검증)
+    public void validateNotInMyBox(Member member, Content content) {
         if(myBoxContentRepository.existsByMemberAndContent(member, content)) {
             throw new CustomException(ErrorCode.CONTENT_ALREADY_IN_MY_BOX);
         }

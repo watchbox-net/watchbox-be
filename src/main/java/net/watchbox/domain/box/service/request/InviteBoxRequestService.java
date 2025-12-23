@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.service.shared;
+package net.watchbox.domain.box.service.request;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +56,7 @@ public class InviteBoxRequestService {
         inviteBoxRequestRepository.save(request);
 
         // 공유 박스 생성
+        // ToDo: 각각의 서비스에서 수행하기
         SharedBox sharedBox = sharedBoxRepository.save(SharedBox.builder()
                 .build());
         BoxMember boxMemberA = boxMemberRepository.save(BoxMember.builder()

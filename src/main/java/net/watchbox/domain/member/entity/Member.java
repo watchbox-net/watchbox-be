@@ -3,6 +3,7 @@ package net.watchbox.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.account.entity.OauthAccount;
+import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.request.InviteBoxRequest;
 import net.watchbox.domain.box.entity.content.MyBoxContent;
@@ -39,6 +40,9 @@ public class Member implements UserDetails {
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InviteBoxRequest> inviteBoxRequests;
+
+    @OneToMany(mappedBy = "addedBy")
+    private List<SharedBoxContent> sharedBoxContents;
 
     private String email;
     private String nickname;

@@ -22,4 +22,11 @@ public class CustomException extends RuntimeException {
         this.message = errorCode.getMessage() + " - ID: " + targetId;
         this.httpStatus = errorCode.getHttpStatus();
     }
+
+    public CustomException(ErrorCode errorCode, Long targetId, String target) {
+        super(errorCode.getMessage());
+        this.code = errorCode.getCode();
+        this.message = errorCode.getMessage() + " - " + target + " ID: " + targetId;
+        this.httpStatus = errorCode.getHttpStatus();
+    }
 }

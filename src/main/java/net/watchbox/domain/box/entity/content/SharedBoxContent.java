@@ -3,9 +3,9 @@ package net.watchbox.domain.box.entity.content;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.box.entity.SharedBox;
-import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,7 +28,7 @@ public class SharedBoxContent extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "added_by_id", nullable = false)
-    private BoxMember addedBy;
+    private Member addedBy;
 
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;

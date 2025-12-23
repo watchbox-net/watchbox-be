@@ -3,7 +3,7 @@ package net.watchbox.domain.box.controller;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.box.dto.response.MyBoxContentResponse;
-import net.watchbox.domain.box.facade.MyBoxFacade;
+import net.watchbox.domain.box.facade.MyBoxContentFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/my")
-public class MyBoxController {
-    private final MyBoxFacade myBoxFacade;
+public class MyBoxContentController {
+    private final MyBoxContentFacade myBoxContentFacade;
 
     // Todo: 다중 추가, 다중 삭제
 
@@ -23,10 +23,10 @@ public class MyBoxController {
             @AuthenticationPrincipal Member member,
 //            @RequestParam Long contentId,
 //            @RequestParam MediaType mediaType
-            @RequestBody BoxContentRequest request
+            @RequestBody BoxContentRequest boxContentRequest
             ) {
 
-        myBoxFacade.addMyBoxContent(member, request.getContentId(), request.getMediaType());
+        myBoxContentFacade.addMyBoxContent(member, boxContentRequest);
         return ApiResponse.success();
     }
 
@@ -36,7 +36,7 @@ public class MyBoxController {
             @AuthenticationPrincipal Member member
     ) {
         return ApiResponse.success(
-                myBoxFacade.getMyBoxContents(member)
+                myBoxContentFacade.getMyBoxContents(member)
         );
     }
 
@@ -46,7 +46,7 @@ public class MyBoxController {
             @AuthenticationPrincipal Member member,
             @RequestParam Long contentId
     ) {
-        myBoxFacade.removeMyBoxContent(member, contentId);
+        myBoxContentFacade.removeMyBoxContent(member, contentId);
         return ApiResponse.success();
     }
 }

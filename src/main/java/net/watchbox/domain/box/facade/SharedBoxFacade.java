@@ -3,7 +3,7 @@ package net.watchbox.domain.box.facade;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.response.InviteBoxRequestResponse;
-import net.watchbox.domain.box.service.shared.InviteBoxRequestService;
+import net.watchbox.domain.box.service.request.InviteBoxRequestService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
 import org.springframework.stereotype.Component;

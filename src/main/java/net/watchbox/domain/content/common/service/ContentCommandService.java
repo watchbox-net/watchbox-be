@@ -3,6 +3,7 @@ package net.watchbox.domain.content.common.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.content.common.repository.ContentRepository;
@@ -45,6 +46,25 @@ public class ContentCommandService {
     private final TmdbTvSeriesService tmdbTvSeriesService;
     private final TmdbPeopleService tmdbPeopleService;
 
+    /**
+     * Content 데이터 존재 여부 확인 및 저장 후 반환
+     * - 존재하면 패스
+     * - 존재하지 않으면
+     *    1) Content 정보 저장
+     *    2) SubContents 저장 or ToDo) 요청 이벤트 발행 요청 이벤트 발행
+     */
+    public Content getOrSaveContentCascade(BoxContentRequest boxContentRequests) {
+        Long tmdbId = boxContentRequests.getContentId();
+        MediaType mediaType = boxContentRequests.getMediaType();
+
+        return contentRepository.findById(tmdbId).orElseGet(() -> {
+            // 1) Content 정보 저장
+            Content content = createContent(tmdbId, mediaType);
+            // 2) Content의 하위 엔티티 저장
+            createSubContents(content);
+            return content;
+        });
+    }
 
     // ToDo: (위변조 방지) 일단 만들어놓고 나중에 tmdb api 검색에서 없으면 위변조로 간주하고 DB에서 삭제할 것
     public Content createContent(Long tmdbId, MediaType mediaType) {

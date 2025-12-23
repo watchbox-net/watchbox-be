@@ -1,8 +1,15 @@
 package net.watchbox.domain.box.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.box.dto.response.InviteBoxRequestResponse;
 import net.watchbox.domain.box.facade.SharedBoxFacade;
+import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.dto.response.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -10,33 +17,46 @@ import org.springframework.web.bind.annotation.*;
 public class SharedBoxController {
     private final SharedBoxFacade sharedBoxFacade;
 
-//    // 공유 박스에 컨텐츠 리스트 추가
-//    @PostMapping("/{boxId}/contents/batch")
-//    public ApiResponse<Void> addSharedBoxContentList(
-//            @PathVariable Long boxId,
-//            @RequestBody List<Long> contentIds,
-//            @AuthenticationPrincipal Member member
-//    ) {
-//        sharedBoxFacade.addSharedBoxContentList(boxId, contentIds, member);
-//        return ApiResponse.success();
-//    }
-//
-//    // 공유 박스에 컨텐츠 추가
-//    @PostMapping("/{boxId}/contents")
-//    public ApiResponse<Void> addSharedBoxContent(
-//            @PathVariable Long boxId,
-//            @PathVariable Long contentId,
-//            @AuthenticationPrincipal Member member
-//    ) {
-//        sharedBoxFacade.addSharedBoxContent(boxId, contentIds, member);
-//        return ApiResponse.success();
-//    }
+    // 공유 박스 생성하기
 
-    // 공유 박스에 마이 박스 컨텐츠 리스트 추가
 
-    // 공유 박스의 컨텐츠 조회 ToDo: Selector 별로 필터링
-//    @GetMapping("/{boxId}")
+    // 공유 박스에 초대하기
+    @PostMapping("/invite/{inviteeId}")
+    public ResponseEntity<ApiResponse<Void>> requestSharedBox(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long inviteeId
+    ) {
+        sharedBoxFacade.requestSharedBox(member, inviteeId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
 
-    // 공유 박스의 컨텐츠 삭제
-//    @DeleteMapping("/{boxId}/{contentId}")
+    // 공유 박스 생성 신청 리스트 조회
+    @GetMapping("/invite")
+    public ResponseEntity<ApiResponse<List<InviteBoxRequestResponse>>> getBoxShareRequests(
+            @AuthenticationPrincipal Member member
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(sharedBoxFacade.getSharedBoxRequests(member)));
+    }
+
+    // 공유 박스 생성 신청 수락하기
+    @PatchMapping("/accept/{requestId}")
+    public ResponseEntity<ApiResponse<Void>> acceptSharedBoxRequest(
+            @AuthenticationPrincipal Member member,
+            Long requestId
+    ) {
+        sharedBoxFacade.acceptSharedBoxRequest(member, requestId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
+    // 공유 박스 생성 신청 거절하기
+    @PatchMapping("/reject/{requestId}")
+    public ResponseEntity<ApiResponse<Void>> rejectSharedBoxRequest(
+            @AuthenticationPrincipal Member member,
+            Long requestId
+    ) {
+        sharedBoxFacade.rejectSharedBoxRequest(member, requestId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
+
 }
