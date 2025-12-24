@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class SharedBoxFacade {
+public class InviteBoxRequestFacade {
     private final MemberService memberService;
     private final InviteBoxRequestService inviteBoxRequestService;
 

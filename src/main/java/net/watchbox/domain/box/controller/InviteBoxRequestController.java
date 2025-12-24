@@ -2,7 +2,7 @@ package net.watchbox.domain.box.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.response.InviteBoxRequestResponse;
-import net.watchbox.domain.box.facade.SharedBoxFacade;
+import net.watchbox.domain.box.facade.InviteBoxRequestFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
-public class SharedBoxController {
-    private final SharedBoxFacade sharedBoxFacade;
+public class InviteBoxRequestController {
+    private final InviteBoxRequestFacade inviteBoxRequestFacade;
 
     // 공유 박스 생성하기
 
@@ -26,7 +26,7 @@ public class SharedBoxController {
             @AuthenticationPrincipal Member member,
             @PathVariable Long inviteeId
     ) {
-        sharedBoxFacade.requestSharedBox(member, inviteeId);
+        inviteBoxRequestFacade.requestSharedBox(member, inviteeId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -35,7 +35,7 @@ public class SharedBoxController {
     public ResponseEntity<ApiResponse<List<InviteBoxRequestResponse>>> getBoxShareRequests(
             @AuthenticationPrincipal Member member
     ) {
-        return ResponseEntity.ok(ApiResponse.success(sharedBoxFacade.getSharedBoxRequests(member)));
+        return ResponseEntity.ok(ApiResponse.success(inviteBoxRequestFacade.getSharedBoxRequests(member)));
     }
 
     // 공유 박스 생성 신청 수락하기
@@ -44,7 +44,7 @@ public class SharedBoxController {
             @AuthenticationPrincipal Member member,
             Long requestId
     ) {
-        sharedBoxFacade.acceptSharedBoxRequest(member, requestId);
+        inviteBoxRequestFacade.acceptSharedBoxRequest(member, requestId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -54,7 +54,7 @@ public class SharedBoxController {
             @AuthenticationPrincipal Member member,
             Long requestId
     ) {
-        sharedBoxFacade.rejectSharedBoxRequest(member, requestId);
+        inviteBoxRequestFacade.rejectSharedBoxRequest(member, requestId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 

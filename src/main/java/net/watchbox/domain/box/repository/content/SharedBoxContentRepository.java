@@ -6,7 +6,10 @@ import net.watchbox.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface SharedBoxContentRepository extends JpaRepository<SharedBoxContent, Long> {
     boolean existsByAddedByAndContent(Member member, Content content);
+
 }

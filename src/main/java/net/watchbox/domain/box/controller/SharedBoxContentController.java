@@ -37,27 +37,21 @@ public class SharedBoxContentController {
             @AuthenticationPrincipal Member member
     ) {
         // 빈 배열 검증
-        if (boxContentRequests.isEmpty()) {
-            throw new CustomException(ErrorCode.EMPTY_CHECKED_LIST);
-        }
+//        if (boxContentRequests.isEmpty()) {
+//            throw new CustomException(ErrorCode.EMPTY_CHECKED_LIST);
+//        }
 
         sharedBoxContentFacade.addSharedBoxContentList(member, boxId, boxContentRequests);
         return ApiResponse.success();
     }
 
-
-    // 공유 박스에 마이 박스 컨텐츠 리스트 추가
+    // 공유 박스에 마이 박스 컨텐츠 리스트 추가 (단일 포함)
     @PostMapping("/{boxId}/contents/mine")
     public ApiResponse<Void> addSharedBoxContentListFromMine(
             @PathVariable Long boxId,
-            @RequestBody List<Long> contentIds, // 내 박스에 추가된 컨텐츠들은 이미 DB에 저장되어 있으므로 contentId 리스트만 받음
+            @RequestBody List<Long> contentIds,
             @AuthenticationPrincipal Member member
     ) {
-        // 빈 배열 검증
-        if (contentIds.isEmpty()) {
-            throw new CustomException(ErrorCode.EMPTY_CHECKED_LIST);
-        }
-
         sharedBoxContentFacade.addSharedBoxContentListFromMine(member, boxId, contentIds);
         return ApiResponse.success();
     }
@@ -66,5 +60,24 @@ public class SharedBoxContentController {
 //    @GetMapping("/{boxId}")
 
     // 공유 박스의 내 컨텐츠 삭제
-//    @DeleteMapping("/{boxId}/{contentId}")
+    @DeleteMapping("/{boxId}/contents")
+    public ApiResponse<Void> removeSharedBoxContent(
+            @PathVariable Long boxId,
+            @RequestBody Long sbcId,
+            @AuthenticationPrincipal Member member
+    ) {
+        sharedBoxContentFacade.removeSharedBoxContent(member, boxId, sbcId);
+        return ApiResponse.success();
+    }
+
+    // 공유 박스의 내 컨텐츠 리스트 삭제
+    @DeleteMapping("/{boxId}/contents/batch")
+    public ApiResponse<Void> removeSharedBoxContentList(
+            @PathVariable Long boxId,
+            @RequestBody List<Long> sbcIds,
+            @AuthenticationPrincipal Member member
+    ) {
+        sharedBoxContentFacade.removeSharedBoxContentList(member, boxId, sbcIds);
+        return ApiResponse.success();
+    }
 }

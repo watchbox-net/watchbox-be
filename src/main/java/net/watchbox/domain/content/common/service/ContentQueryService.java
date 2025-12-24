@@ -13,6 +13,7 @@ import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,10 @@ public class ContentQueryService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
     }
 
+    public List<Content> getContentsByTmdbIds(List<Long> tmdbIds) {
+        return contentRepository.findAllById(tmdbIds);
+    }
+
     public Movie getMovieByIdOrThrow(Long tmdbId) {
         return movieRepository.findById(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
@@ -47,4 +52,6 @@ public class ContentQueryService {
         return personRepository.findById(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
     }
+
+
 }
