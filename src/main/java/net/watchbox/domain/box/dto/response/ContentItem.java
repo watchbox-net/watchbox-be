@@ -11,7 +11,7 @@ import net.watchbox.domain.content.tv.entity.Tv;
 @Getter
 @ToString
 @Builder
-public class BoxContentItem { // 하나의 응답 클래스에 모든 변수 포함 (Union Type 방식)
+public class ContentItem { // 하나의 응답 클래스에 모든 변수 포함 (Union Type 방식)
     private Long contentId;
     private MediaType mediaType;  // MOVIE, TV, PERSON
     private Double popularity;
@@ -33,8 +33,8 @@ public class BoxContentItem { // 하나의 응답 클래스에 모든 변수 포
 
     // genre는 변환해야함
 
-    public static BoxContentItem fromMovie(Movie movie) {
-        return BoxContentItem.builder()
+    public static ContentItem fromMovie(Movie movie) {
+        return ContentItem.builder()
                 .contentId(movie.getTmdbId())
                 .mediaType(MediaType.MOVIE)
                 .popularity(movie.getPopularity())
@@ -45,8 +45,8 @@ public class BoxContentItem { // 하나의 응답 클래스에 모든 변수 포
                 .build();
     }
 
-    public static BoxContentItem fromTv(Tv tv) {
-        return BoxContentItem.builder()
+    public static ContentItem fromTv(Tv tv) {
+        return ContentItem.builder()
                 .contentId(tv.getTmdbId())
                 .mediaType(MediaType.TV)
                 .popularity(tv.getPopularity())
@@ -57,8 +57,8 @@ public class BoxContentItem { // 하나의 응답 클래스에 모든 변수 포
                 .build();
     }
 
-    public static BoxContentItem fromPerson(Person person) {
-        return BoxContentItem.builder()
+    public static ContentItem fromPerson(Person person) {
+        return ContentItem.builder()
                 .contentId(person.getTmdbId())
                 .mediaType(MediaType.PERSON)
                 .popularity(person.getPopularity())

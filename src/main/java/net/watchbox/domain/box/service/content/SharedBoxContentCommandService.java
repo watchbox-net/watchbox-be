@@ -11,8 +11,6 @@ import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -52,8 +50,5 @@ public class SharedBoxContentCommandService {
             throw new CustomException(ErrorCode.CONTENT_ALREADY_IN_SHARED_BOX, member.getMemberId());
         }
     }
-
-
-
 
 }

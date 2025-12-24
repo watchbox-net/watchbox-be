@@ -2,11 +2,11 @@ package net.watchbox.domain.box.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
+import net.watchbox.domain.box.dto.response.SharedBoxContentResponse;
 import net.watchbox.domain.box.facade.SharedBoxContentFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
-import net.watchbox.global.dto.response.exception.CustomException;
-import net.watchbox.global.dto.response.exception.ErrorCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,18 +20,18 @@ public class SharedBoxContentController {
 
     // 공유 박스에 컨텐츠 추가
     @PostMapping("/{boxId}/contents")
-    public ApiResponse<Void> addSharedBoxContent(
+    public ResponseEntity<ApiResponse<Void>> addSharedBoxContent(
             @PathVariable Long boxId,
             @RequestBody BoxContentRequest boxContentRequests,
             @AuthenticationPrincipal Member member
     ) {
         sharedBoxContentFacade.addSharedBoxContent(member, boxId, boxContentRequests);
-        return ApiResponse.success();
+        return ResponseEntity.status(201).body(ApiResponse.success());
     }
 
     // 공유 박스에 컨텐츠 리스트 추가
     @PostMapping("/{boxId}/contents/batch")
-    public ApiResponse<Void> addSharedBoxContentList(
+    public ResponseEntity<ApiResponse<Void>> addSharedBoxContentList(
             @PathVariable Long boxId,
             @RequestBody List<BoxContentRequest> boxContentRequests,
             @AuthenticationPrincipal Member member
@@ -42,42 +42,49 @@ public class SharedBoxContentController {
 //        }
 
         sharedBoxContentFacade.addSharedBoxContentList(member, boxId, boxContentRequests);
-        return ApiResponse.success();
+        return ResponseEntity.status(201).body(ApiResponse.success());
     }
 
     // 공유 박스에 마이 박스 컨텐츠 리스트 추가 (단일 포함)
     @PostMapping("/{boxId}/contents/mine")
-    public ApiResponse<Void> addSharedBoxContentListFromMine(
+    public ResponseEntity<ApiResponse<Void>> addSharedBoxContentListFromMine(
             @PathVariable Long boxId,
             @RequestBody List<Long> contentIds,
             @AuthenticationPrincipal Member member
     ) {
         sharedBoxContentFacade.addSharedBoxContentListFromMine(member, boxId, contentIds);
-        return ApiResponse.success();
+        return ResponseEntity.status(201).body(ApiResponse.success());
     }
 
-    // 공유 박스의 컨텐츠 전체 조회 ToDo: Selector 별로 필터링
-//    @GetMapping("/{boxId}")
+    // (임시)  공유 박스의 컨텐츠 전체 조회 ToDo: Selector 별로 필터링
+    @GetMapping("/{boxId}/contents")
+    public ResponseEntity<ApiResponse<SharedBoxContentResponse>> getSharedBoxContents(
+            @PathVariable Long boxId,
+            @AuthenticationPrincipal Member member
+    ) {
+        SharedBoxContentResponse response = sharedBoxContentFacade.getSharedBoxContents(member, boxId);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 
     // 공유 박스의 내 컨텐츠 삭제
     @DeleteMapping("/{boxId}/contents")
-    public ApiResponse<Void> removeSharedBoxContent(
+    public ResponseEntity<ApiResponse<Void>> removeSharedBoxContent(
             @PathVariable Long boxId,
             @RequestBody Long sbcId,
             @AuthenticationPrincipal Member member
     ) {
         sharedBoxContentFacade.removeSharedBoxContent(member, boxId, sbcId);
-        return ApiResponse.success();
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
     // 공유 박스의 내 컨텐츠 리스트 삭제
     @DeleteMapping("/{boxId}/contents/batch")
-    public ApiResponse<Void> removeSharedBoxContentList(
+    public ResponseEntity<ApiResponse<Void>> removeSharedBoxContentList(
             @PathVariable Long boxId,
             @RequestBody List<Long> sbcIds,
             @AuthenticationPrincipal Member member
     ) {
         sharedBoxContentFacade.removeSharedBoxContentList(member, boxId, sbcIds);
-        return ApiResponse.success();
+        return ResponseEntity.ok(ApiResponse.success());
     }
 }

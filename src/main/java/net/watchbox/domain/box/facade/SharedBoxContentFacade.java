@@ -3,6 +3,7 @@ package net.watchbox.domain.box.facade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
+import net.watchbox.domain.box.dto.response.SharedBoxContentResponse;
 import net.watchbox.domain.box.entity.SharedBox;
 import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.service.BoxMemberService;
@@ -82,6 +83,12 @@ public class SharedBoxContentFacade {
         }
     }
 
+    // ToDo
+    public SharedBoxContentResponse getSharedBoxContents(Member member, Long boxId) {
+        SharedBox sharedBox = sharedBoxService.findById(boxId);
+        return sharedBoxContentQueryService.getSharedBoxContentsAll(sharedBox, member);
+    }
+
     public void removeSharedBoxContent(Member member, Long boxId, Long sbcId) {
         SharedBox sharedBox = sharedBoxService.findById(boxId);
         SharedBoxContent sharedBoxContent = sharedBoxContentQueryService.getSharedBoxContentById(sbcId);
@@ -106,7 +113,7 @@ public class SharedBoxContentFacade {
             // 공유 박스 컨텐츠 삭제
             sharedBoxContentCommandService.deleteContentFromSharedBox(member, sharedBoxContent);
 
-            log.info("Member ID {} deleted SharedBoxContent ID {} from SharedBox ID {}", member.getMemberId(), sharedBoxContent.getSharedContentId(), boxId);
+            log.info("Member ID {} deleted SharedBoxContent ID {} from SharedBox ID {}", member.getMemberId(), sharedBoxContent.getSharedBoxContentId(), boxId);
         }
 
     }

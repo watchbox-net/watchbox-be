@@ -2,14 +2,12 @@ package net.watchbox.domain.box.facade;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
-import net.watchbox.domain.box.dto.response.MyBoxContentResponse;
+import net.watchbox.domain.box.dto.response.my.MyBoxContentResponse;
 import net.watchbox.domain.box.service.content.MyBoxContentService;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

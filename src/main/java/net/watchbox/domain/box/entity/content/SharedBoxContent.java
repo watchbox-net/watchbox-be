@@ -16,7 +16,7 @@ import net.watchbox.global.entity.BaseTime;
 public class SharedBoxContent extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sharedContentId;
+    private Long sharedBoxContentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", nullable = false)

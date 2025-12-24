@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.dto.response;
+package net.watchbox.domain.box.dto.response.my;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class MyBoxContentResponse {
     private Long totalCount;
-    private List<BoxContentItem> items;
+    private List<MyBoxContentItem> items;
 }

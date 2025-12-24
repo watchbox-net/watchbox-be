@@ -46,6 +46,7 @@ public class Member implements UserDetails {
 
     private String email;
     private String nickname;
+    private String profileImage;
 
     private String password;
 

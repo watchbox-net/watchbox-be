@@ -17,8 +17,23 @@ import java.util.List;
 public class InviteBoxRequestController {
     private final InviteBoxRequestFacade inviteBoxRequestFacade;
 
-    // 공유 박스 생성하기
+    /**
+     * 공유 박스 생성 및 초대 로직 시퀀스로 확실하게 정리하고 코드 수정
+     */
 
+    // 공유 박스 생성하기
+    @PostMapping
+    public ResponseEntity<ApiResponse<Void>> createSharedBox(
+            @AuthenticationPrincipal Member member
+    ) {
+        inviteBoxRequestFacade.createSharedBox(member);
+        return ResponseEntity.status(201).body(ApiResponse.success());
+    }
+
+    // 공유 박스 삭제하기
+
+
+    // ------------------------------------------------------------------------------------------------------
 
     // 공유 박스에 초대하기
     @PostMapping("/invite/{inviteeId}")
@@ -27,7 +42,7 @@ public class InviteBoxRequestController {
             @PathVariable Long inviteeId
     ) {
         inviteBoxRequestFacade.requestSharedBox(member, inviteeId);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.status(201).body(ApiResponse.success());
     }
 
     // 공유 박스 생성 신청 리스트 조회
@@ -35,7 +50,9 @@ public class InviteBoxRequestController {
     public ResponseEntity<ApiResponse<List<InviteBoxRequestResponse>>> getBoxShareRequests(
             @AuthenticationPrincipal Member member
     ) {
-        return ResponseEntity.ok(ApiResponse.success(inviteBoxRequestFacade.getSharedBoxRequests(member)));
+        return ResponseEntity.ok(
+                ApiResponse.success(inviteBoxRequestFacade.getSharedBoxRequests(member))
+        );
     }
 
     // 공유 박스 생성 신청 수락하기

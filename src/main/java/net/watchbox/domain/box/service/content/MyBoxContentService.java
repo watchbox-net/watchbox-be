@@ -3,8 +3,9 @@ package net.watchbox.domain.box.service.content;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.response.BoxContentItem;
-import net.watchbox.domain.box.dto.response.MyBoxContentResponse;
+import net.watchbox.domain.box.dto.response.ContentItem;
+import net.watchbox.domain.box.dto.response.my.MyBoxContentItem;
+import net.watchbox.domain.box.dto.response.my.MyBoxContentResponse;
 import net.watchbox.domain.box.entity.content.MyBoxContent;
 import net.watchbox.domain.box.repository.content.MyBoxContentRepository;
 import net.watchbox.domain.content.common.entity.Content;
@@ -34,26 +35,26 @@ public class MyBoxContentService {
     public MyBoxContentResponse getMyBoxContentsAll(Member member) {
         Long totalCount = myBoxContentRepository.countByMember(member);
         List<MyBoxContent> myBoxContents = myBoxContentRepository.findByMemberOrderByCreatedAtDesc(member);
-        List<BoxContentItem> contentItems = myBoxContents.stream()
+        List<MyBoxContentItem> myBoxContentItems = myBoxContents.stream()
                 .map(myBoxContent -> {
 //                    Content content = contentQueryService.findContentById(myBoxContent.getContent().getTmdbId())
 //                            .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
                     Content content = myBoxContent.getContent();
                     switch (content.getMediaType()) {
                         case MOVIE -> {
-                            return BoxContentItem.fromMovie(content.getMovie());
+                            return new MyBoxContentItem(ContentItem.fromMovie(content.getMovie()), myBoxContent.getMyBoxContentId());
                         }
                         case TV -> {
-                            return BoxContentItem.fromTv(content.getTv());
+                            return new MyBoxContentItem(ContentItem.fromTv(content.getTv()), myBoxContent.getMyBoxContentId());
                         }
                         case PERSON -> {
-                            return BoxContentItem.fromPerson(content.getPerson());
+                            return new MyBoxContentItem(ContentItem.fromPerson(content.getPerson()), myBoxContent.getMyBoxContentId());
                         }
                         default -> throw new CustomException(ErrorCode.UNSUPPORTED_MEDIA_TYPE);
                     }
                 })
                 .toList();
-        return new MyBoxContentResponse(totalCount, contentItems);
+        return new MyBoxContentResponse(totalCount, myBoxContentItems);
     }
 
     @Transactional

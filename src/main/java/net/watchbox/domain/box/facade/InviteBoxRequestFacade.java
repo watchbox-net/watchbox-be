@@ -17,6 +17,11 @@ public class InviteBoxRequestFacade {
     private final InviteBoxRequestService inviteBoxRequestService;
 
     @Transactional
+    public void createSharedBox(Member member) {
+
+    }
+
+    @Transactional
     public void requestSharedBox(Member inviter, Long inviteeId) {
         Member receiver = memberService.findById(inviteeId);
         inviteBoxRequestService.requestSharedBox(inviter, receiver);
@@ -35,6 +40,4 @@ public class InviteBoxRequestFacade {
     public void rejectSharedBoxRequest(Member member, Long requestId) {
         inviteBoxRequestService.rejectSharedBoxRequest(member, requestId);
     }
-
-
 }
