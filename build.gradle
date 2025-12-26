@@ -6,7 +6,7 @@ plugins {
 
 group = 'net.watchbox'
 version = '0.0.1-SNAPSHOT'
-description = 'watch-box'
+description = 'watchbox backend server'
 
 java {
     toolchain {
