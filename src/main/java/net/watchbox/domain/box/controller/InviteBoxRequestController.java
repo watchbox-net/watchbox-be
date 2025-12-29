@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.response.InviteBoxRequestResponse;
 import net.watchbox.domain.box.facade.InviteBoxRequestFacade;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
+@Tag(name = "InviteBoxRequest", description = "InviteBoxRequest API")
 public class InviteBoxRequestController {
     private final InviteBoxRequestFacade inviteBoxRequestFacade;
 
@@ -30,7 +32,6 @@ public class InviteBoxRequestController {
      * └── 받은초대 리스트
      *
      */
-
 
     // 공유 박스에 초대하기
     @PostMapping("/{boxId}/invite/{inviteeId}")

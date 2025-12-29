@@ -1,5 +1,6 @@
 package net.watchbox.global.dev.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.content.common.entity.Content;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/dev/tmdb")
 @Slf4j
+@Tag(name = "DevTmdbDetails")
 public class DevTmdbDetailsController {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;

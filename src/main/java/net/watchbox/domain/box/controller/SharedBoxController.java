@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.facade.SharedBoxFacade;
 import net.watchbox.domain.member.entity.Member;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
+@Tag(name = "SharedBox", description = "SharedBox API")
 public class SharedBoxController {
     private final SharedBoxFacade sharedBoxFacade;
     /**

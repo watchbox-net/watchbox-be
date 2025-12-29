@@ -1,5 +1,6 @@
 package net.watchbox.global.health;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,11 @@ import java.time.ZonedDateTime;
 @RestController
 @RequestMapping("/health")
 @Slf4j
+@Tag(name = "HealthCheck")
 public class HealthCheck {
     @GetMapping
     public String healthCheck() {
-        return "WatchPeople Server Success Health Check!";
+        return "WatchBox Server Success Health Check!";
     }
 
     @GetMapping("/info")

@@ -1,5 +1,6 @@
 package net.watchbox.global.dev.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.content.common.entity.Content;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/dev/contents")
 @Slf4j
+@Tag(name = "DevContent")
 public class DevContentController {
     private final ContentCommandService contentCommandService;
     private final ContentQueryService contentQueryService;

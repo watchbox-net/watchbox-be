@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.box.dto.response.SharedBoxContentResponse;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
+@Tag(name = "SharedBoxContent", description = "SharedBoxContent API")
 public class SharedBoxContentController {
     private final SharedBoxContentFacade sharedBoxContentFacade;
 

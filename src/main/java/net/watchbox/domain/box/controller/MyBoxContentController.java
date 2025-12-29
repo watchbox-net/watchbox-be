@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.box.dto.response.my.MyBoxContentResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/my")
+@Tag(name = "MyBoxContent", description = "MyBoxContent API")
 public class MyBoxContentController {
     private final MyBoxContentFacade myBoxContentFacade;
 

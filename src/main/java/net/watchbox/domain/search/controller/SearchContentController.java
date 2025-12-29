@@ -1,5 +1,6 @@
 package net.watchbox.domain.search.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.search.dto.request.SearchType;
 import net.watchbox.domain.search.dto.response.list.SearchListResponse;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/search/contents")
+@Tag(name = "SearchContent", description = "SearchContent API")
 public class SearchContentController {
     private final SearchFacade searchFacade;
 

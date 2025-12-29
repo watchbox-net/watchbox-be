@@ -1,5 +1,6 @@
 package net.watchbox.global.jwt.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/token")
-public class TokenController {
+@Tag(name = "TokenProvider", description = "TokenProvider API")
+public class TokenProviderController {
     private final TokenService tokenService;
     private final TokenProvider tokenProvider;
     private final MemberService memberService;

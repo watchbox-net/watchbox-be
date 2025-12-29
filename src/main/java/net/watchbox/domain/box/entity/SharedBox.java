@@ -33,6 +33,8 @@ public class SharedBox extends BaseTime {
     private List<JoinBoxRequest> joinBoxRequests;
 
     private String title;
+
+    @Enumerated(EnumType.STRING)
     private BoxType boxType;
 
     public void updateTitle(String title){

@@ -39,15 +39,10 @@ public class WebSecurityConfig {
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/login",
-//                                "/oauth2/**",
-//                                "/api/token/**"
-//                                "/api/search/**",
-                                "/dev/**",
-                                "/api/**"
-                        ).permitAll()
-                        .anyRequest().authenticated())
+//                        .requestMatchers(
+//                        ).permitAll()
+//                        .anyRequest().authenticated())
+                        .anyRequest().permitAll()) // 일단 전체 오픈
                 .oauth2Login(oauth2 -> oauth2
                                 // Authorization 요청과 관련된 상태 저장 | (url 기본값: /oauth2/authorization/{registrationId})
                                 .authorizationEndpoint(authorizationEndpoint

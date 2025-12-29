@@ -32,6 +32,8 @@ public class WatchHistory extends BaseTime {
 
     private LocalDate watchedDate; // 시청 완료일
 
+    @Column(name = "media_type")
+    @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 
 //    private Boolean isLiked; // 좋아요 여부

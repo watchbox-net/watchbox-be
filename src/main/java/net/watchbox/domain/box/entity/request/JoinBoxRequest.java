@@ -16,6 +16,7 @@ public class JoinBoxRequest extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
 
+    @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
