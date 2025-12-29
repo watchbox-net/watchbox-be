@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.entity.SharedBox;
@@ -7,20 +8,51 @@ import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.repository.BoxMemberRepository;
-import net.watchbox.domain.box.repository.SharedBoxRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class BoxMemberService {
     private final BoxMemberRepository boxMemberRepository;
-    private final SharedBoxRepository sharedBoxRepository;
 
-    public void validateSharedBoxAdder(SharedBox sharedBox, Member member) {
+    public List<BoxMember> findAllBySharedBox(SharedBox sharedBox) {
+        return boxMemberRepository.findAllBySharedBox(sharedBox);
+    }
+
+    @Transactional
+    public void addOwnerToBox(Member member, SharedBox sharedBox) {
+        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+                .sharedBox(sharedBox)
+                .member(member)
+                .role(BoxMemberRole.OWNER)
+                .build()));
+    }
+
+    @Transactional
+    public void addEditorToBox(Member member, SharedBox sharedBox) {
+        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+                .sharedBox(sharedBox)
+                .member(member)
+                .role(BoxMemberRole.EDITOR)
+                .build()));
+    }
+
+    @Transactional
+    public void addViewerToBox(Member member, SharedBox sharedBox) {
+        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+                .sharedBox(sharedBox)
+                .member(member)
+                .role(BoxMemberRole.VIEWER)
+                .build()));
+    }
+
+    public void validateSharedBoxContentAdder(SharedBox sharedBox, Member member) {
         // BoxMember 인지
         BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "member"));
@@ -30,9 +62,9 @@ public class BoxMemberService {
         }
     }
 
-    public void validateSharedBoxRemover(SharedBox sharedBox, Member member, SharedBoxContent sharedBoxContent) {
-        // 추가한 회원인지
-        if(!sharedBoxContent.getAddedBy().equals(member)) {
+    public void validateSharedBoxContentRemover(SharedBox sharedBox, Member member, SharedBoxContent sharedBoxContent) {
+        // BoxContent 추가한 회원인지
+        if(!sharedBoxContent.getAddedBy().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId());
         }
         // BoxMember 인지
@@ -43,4 +75,16 @@ public class BoxMemberService {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "member");
         }
     }
+
+    public void validateSharedBoxOwner(SharedBox sharedBox, Member member) {
+        // BoxMember 인지
+        BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "member"));
+        // Role이 OWNER인지
+        if (boxMember.getRole() != BoxMemberRole.OWNER) {
+            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "member");
+        }
+    }
+
+
 }

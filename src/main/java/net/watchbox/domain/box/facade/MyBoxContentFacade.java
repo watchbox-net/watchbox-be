@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.facade;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.box.dto.response.my.MyBoxContentResponse;
@@ -16,6 +17,7 @@ public class MyBoxContentFacade {
     private final MyBoxContentService myBoxContentService;
 
     // 마이 박스에 컨텐츠 추가
+    @Transactional
     public void addMyBoxContent(Member member, BoxContentRequest boxContentRequests) {
         // 1. Content 데이터 존재 여부 확인 및 저장 후 반환
         Content content = contentCommandService.getOrSaveContentCascade(boxContentRequests);
