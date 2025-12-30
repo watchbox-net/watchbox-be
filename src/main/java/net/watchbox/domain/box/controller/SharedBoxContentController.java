@@ -15,15 +15,15 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/boxes/shared")
+@RequestMapping("/api/boxes/shared/{boxId}/contents")
 @Tag(name = "SharedBoxContent", description = "SharedBoxContent API")
 public class SharedBoxContentController {
     private final SharedBoxContentFacade sharedBoxContentFacade;
 
     // 공유 박스에 컨텐츠 추가
-    @PostMapping("/{boxId}/contents")
+    @PostMapping
     public ResponseEntity<ApiResponse<Void>> addSharedBoxContent(
-            @PathVariable Long boxId,
+            @PathVariable("boxId") Long boxId,
             @RequestBody BoxContentRequest boxContentRequests,
             @AuthenticationPrincipal Member member
     ) {
@@ -32,9 +32,9 @@ public class SharedBoxContentController {
     }
 
     // 공유 박스에 컨텐츠 리스트 추가
-    @PostMapping("/{boxId}/contents/batch")
+    @PostMapping("/batch")
     public ResponseEntity<ApiResponse<Void>> addSharedBoxContentList(
-            @PathVariable Long boxId,
+            @PathVariable("boxId") Long boxId,
             @RequestBody List<BoxContentRequest> boxContentRequests,
             @AuthenticationPrincipal Member member
     ) {
@@ -48,9 +48,9 @@ public class SharedBoxContentController {
     }
 
     // 공유 박스에 마이 박스 컨텐츠 리스트 추가 (단일 포함)
-    @PostMapping("/{boxId}/contents/mine")
+    @PostMapping("/mine")
     public ResponseEntity<ApiResponse<Void>> addSharedBoxContentListFromMine(
-            @PathVariable Long boxId,
+            @PathVariable("boxId") Long boxId,
             @RequestBody List<Long> contentIds,
             @AuthenticationPrincipal Member member
     ) {
@@ -59,9 +59,9 @@ public class SharedBoxContentController {
     }
 
     // (임시)  공유 박스의 컨텐츠 전체 조회 ToDo: Selector 별로 필터링
-    @GetMapping("/{boxId}/contents")
+    @GetMapping
     public ResponseEntity<ApiResponse<SharedBoxContentResponse>> getSharedBoxContents(
-            @PathVariable Long boxId,
+            @PathVariable("boxId") Long boxId,
             @AuthenticationPrincipal Member member
     ) {
         SharedBoxContentResponse response = sharedBoxContentFacade.getSharedBoxContents(member, boxId);
@@ -69,9 +69,9 @@ public class SharedBoxContentController {
     }
 
     // 공유 박스의 내 컨텐츠 삭제
-    @DeleteMapping("/{boxId}/contents")
+    @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> removeSharedBoxContent(
-            @PathVariable Long boxId,
+            @PathVariable("boxId") Long boxId,
             @RequestBody Long sbcId,
             @AuthenticationPrincipal Member member
     ) {
@@ -80,9 +80,9 @@ public class SharedBoxContentController {
     }
 
     // 공유 박스의 내 컨텐츠 리스트 삭제
-    @DeleteMapping("/{boxId}/contents/batch")
+    @DeleteMapping("/batch")
     public ResponseEntity<ApiResponse<Void>> removeSharedBoxContentList(
-            @PathVariable Long boxId,
+            @PathVariable("boxId") Long boxId,
             @RequestBody List<Long> sbcIds,
             @AuthenticationPrincipal Member member
     ) {

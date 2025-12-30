@@ -25,7 +25,7 @@ public class TokenProviderController {
     private final MemberService memberService;
 
     // 리프레시 토큰으로 새로운 액세스 토큰을 발급
-    @PostMapping("/access-token")
+    @PostMapping("/accessToken")
     public ResponseEntity<AccessTokenCreateResponse> createNewAccessToken(@RequestBody AccessTokenCreateRequest request){
         Long tokenMemberId = tokenProvider.getMemberId(request.getRefreshToken());
         Member member = memberService.findById(tokenMemberId);
