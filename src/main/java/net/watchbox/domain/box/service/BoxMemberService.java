@@ -90,4 +90,10 @@ public class BoxMemberService {
         }
     }
 
+    // 공유 박스의 기존 멤버인지 검증
+    public void validateExistingBoxMember(SharedBox sharedBox, Member member) {
+        if(boxMemberRepository.existsBySharedBoxAndMember(sharedBox, member)) {
+            throw new CustomException(ErrorCode.ALREADY_BOX_MEMBER, member.getMemberId(), "Member");
+        }
+    }
 }

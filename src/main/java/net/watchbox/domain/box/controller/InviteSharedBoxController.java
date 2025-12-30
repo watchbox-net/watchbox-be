@@ -35,7 +35,6 @@ public class InviteSharedBoxController {
      */
 
     // 공유 박스에 초대하기
-    // ToDo: 이미 합류된 멤버이면 초대 못하도록 검증 추가
     @PostMapping("/{boxId}/{inviteeId}")
     public ResponseEntity<ApiResponse<Void>> inviteToBox(
             @AuthenticationPrincipal Member member,
@@ -47,7 +46,6 @@ public class InviteSharedBoxController {
     }
 
     // 공유 박스 받은초대 수락하기
-    // ToDo: 대기중 상태일때만 변경 가능하도록
     @PatchMapping("/accept/{requestId}")
     public ResponseEntity<ApiResponse<Void>> acceptBoxInvitation(
             @AuthenticationPrincipal Member member,
@@ -58,7 +56,6 @@ public class InviteSharedBoxController {
     }
 
     // 공유 박스 받은초대 요청 거절하기
-    // ToDo: 대기중 상태일때만 변경 가능하도록
     @PatchMapping("/reject/{requestId}")
     public ResponseEntity<ApiResponse<Void>> rejectBoxInvitation(
             @AuthenticationPrincipal Member member,

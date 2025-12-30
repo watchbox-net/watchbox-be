@@ -74,5 +74,17 @@ public class InviteBoxRequestService {
         }
     }
 
+    // 중복 초대 요청 검증
+    public void validateDuplicateInviteRequest(SharedBox sharedBox, Member receiver) {
+        if (inviteBoxRequestRepository.existsBySharedBoxAndReceiverAndStatus(sharedBox, receiver, RequestStatus.PENDING)) {
+            throw new CustomException(ErrorCode.DUPLICATE_INVITE_REQUEST, receiver.getMemberId(), "Member");
+        }
+    }
 
+    // 이미 처리된 요청인지지 검증 (대기중인 요청 상태인지 검증)
+    public void validatePendingInviteRequest(InviteBoxRequest inviteBoxRequest) {
+        if (inviteBoxRequest.getStatus() != RequestStatus.PENDING) {
+            throw new CustomException(ErrorCode.INVITATION_ALREADY_RESPONDED, inviteBoxRequest.getRequestId());
+        }
+    }
 }

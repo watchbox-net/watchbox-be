@@ -37,6 +37,7 @@ public enum ErrorCode {
     // BoxMember 오류
     BOX_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-MEMBER-404", "BoxMember를 찾을 수 없습니다."),
     NOT_BOX_MEMBER(HttpStatus.FORBIDDEN, "BOX-MEMBER-403", "해당 박스의 멤버가 아닙니다."),
+    ALREADY_BOX_MEMBER(HttpStatus.CONFLICT, "BOX-MEMBER-409", "이미 박스 멤버로 존재합니다."),
     FORBIDDEN_BOX_ACCESS(HttpStatus.FORBIDDEN, "BOX-MEMBER-403", "박스에 접근 권한이 없습니다."),
 
     // SharedBoxContent 오류
@@ -59,7 +60,11 @@ public enum ErrorCode {
     REQUEST_UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "MEMBER-401", "요청 권한이 없는 사용자입니다."),
 
     // 체크 리스트 전달 관련 오류
-    EMPTY_CHECKED_LIST(HttpStatus.BAD_REQUEST, "CHECKED-LIST-400", "빈 배열은 허용되지 않습니다.");
+    EMPTY_CHECKED_LIST(HttpStatus.BAD_REQUEST, "CHECKED-LIST-400", "빈 배열은 허용되지 않습니다."),
+
+    // InviteBoxRequest 오류
+    DUPLICATE_INVITE_REQUEST(HttpStatus.CONFLICT, "INVITE-409", "이미 진행중인 초대 요청입니다."),
+    INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "INVITE-409", "이미 처리된 초대 요청입니다.");
 
 
 

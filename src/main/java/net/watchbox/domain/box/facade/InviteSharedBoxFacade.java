@@ -26,10 +26,16 @@ public class InviteSharedBoxFacade {
     private final BoxMemberService boxMemberService;
     private final SharedBoxService sharedBoxService;
 
-    public void inviteToBox(Member inviter, Long boxId, Long inviteeId) {
-        Member receiver = memberService.findById(inviteeId);
+    public void inviteToBox(Member sender, Long boxId, Long receiverId) {
+        Member receiver = memberService.findById(receiverId);
         SharedBox sharedBox = sharedBoxService.findById(boxId);
-        inviteBoxRequestService.inviteToBox(inviter, sharedBox, receiver);
+
+        // 기존 박스 멤버인지 검증
+        boxMemberService.validateExistingBoxMember(sharedBox, receiver);
+        // 초대 요청 중복 검증
+        inviteBoxRequestService.validateDuplicateInviteRequest(sharedBox, receiver);
+        // 초대 요청 생성
+        inviteBoxRequestService.inviteToBox(sender, sharedBox, receiver);
     }
 
     public List<InvitationSentResponse> getBoxInvitationsSent(Member member) {
@@ -44,20 +50,26 @@ public class InviteSharedBoxFacade {
     public void acceptBoxInvitation(Member member, Long requestId) {
         InviteBoxRequest inviteBoxRequest = inviteBoxRequestService.findById(requestId);
         SharedBox sharedBox = inviteBoxRequest.getSharedBox();
+
+        // 이미 처리된 요청인지지 검증
+        inviteBoxRequestService.validatePendingInviteRequest(inviteBoxRequest);
+        // 수락 처리
         inviteBoxRequestService.acceptBoxInvitation(member, inviteBoxRequest);
+        // 박스 멤버(EDITOR 권한)로 추가
         boxMemberService.addEditorToBox(member, sharedBox);
-        log.info("BoxMember added for member: " + member.getNickname());
 
         List<BoxMember> boxMembers = boxMemberService.findAllBySharedBox(sharedBox);
         List<String> memberNames = boxMembers.stream()
                 .map(boxMember -> boxMember.getMember().getNickname())
                 .toList();
         sharedBox.updateAutoTitle(memberNames);
-        log.info("SharedBox {} updated title to: {}", sharedBox.getBoxId(), sharedBox.getTitle());
     }
 
     public void rejectBoxInvitation(Member member, Long requestId) {
         InviteBoxRequest inviteBoxRequest = inviteBoxRequestService.findById(requestId);
+        // 이미 처리된 요청인지지 검증
+        inviteBoxRequestService.validatePendingInviteRequest(inviteBoxRequest);
+        // 거절 처리
         inviteBoxRequestService.rejectBoxInvitation(member, inviteBoxRequest);
     }
 
