@@ -64,11 +64,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     .oauthAccount(oauthAccount)
                     .build();
             memberRepository.save(member);
-
-            // ToDo: MyBox 생성
-//            boxRepository.save(Box.builder()
-//                    .member(member)
-//                    .build());
         } else {
             member = optionalMember.get();
         }

@@ -87,7 +87,6 @@ public class SharedBoxContentFacade {
         }
     }
 
-    // ToDo
     public SharedBoxContentResponse getSharedBoxContents(Member member, Long boxId) {
         SharedBox sharedBox = sharedBoxService.findById(boxId);
         return sharedBoxContentQueryService.getSharedBoxContentsAll(sharedBox, member);
