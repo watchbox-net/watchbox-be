@@ -57,9 +57,9 @@ public class BoxMemberService {
     }
 
     public void validateSharedBoxContentAdder(SharedBox sharedBox, Member member) {
-        // BoxMember 인지
+        // 해당 BoxMember 인지
         BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
@@ -69,11 +69,11 @@ public class BoxMemberService {
     public void validateSharedBoxContentRemover(SharedBox sharedBox, Member member, SharedBoxContent sharedBoxContent) {
         // BoxContent 추가한 회원인지
         if(!sharedBoxContent.getAddedBy().getMemberId().equals(member.getMemberId())) {
-            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId());
+            throw new CustomException(ErrorCode.FORBIDDEN_CONTENT_REMOVAL, member.getMemberId(), "Member");
         }
-        // BoxMember 인지
+        // 해당 BoxMember 인지
         BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
@@ -81,9 +81,9 @@ public class BoxMemberService {
     }
 
     public void validateSharedBoxOwner(SharedBox sharedBox, Member member) {
-        // BoxMember 인지
+        // 해당 BoxMember 인지
         BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member"));
         // Role이 OWNER인지
         if (boxMember.getRole() != BoxMemberRole.OWNER) {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");

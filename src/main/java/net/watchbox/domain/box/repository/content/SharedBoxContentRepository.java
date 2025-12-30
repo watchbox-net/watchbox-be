@@ -17,4 +17,5 @@ public interface SharedBoxContentRepository extends JpaRepository<SharedBoxConte
 
     List<SharedBoxContent> findAllBySharedBox(SharedBox sharedBox);
 
+    boolean existsByAddedByAndSharedBoxAndContent(Member member, SharedBox sharedBox, Content content);
 }

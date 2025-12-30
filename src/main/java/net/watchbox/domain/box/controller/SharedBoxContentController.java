@@ -58,7 +58,7 @@ public class SharedBoxContentController {
         return ResponseEntity.status(201).body(ApiResponse.success());
     }
 
-    // (임시)  공유 박스의 컨텐츠 전체 조회 ToDo: Selector 별로 필터링
+    // (임시) 공유 박스의 컨텐츠 전체 조회 ToDo: Selector 별로 필터링
     @GetMapping
     public ResponseEntity<ApiResponse<SharedBoxContentResponse>> getSharedBoxContents(
             @PathVariable("boxId") Long boxId,

@@ -41,7 +41,7 @@ public class SharedBoxContentFacade {
         Content content = contentCommandService.getOrSaveContentCascade(boxContentRequests);
 
         // 공유 박스에 이미 존재하는지 검증
-        sharedBoxContentCommandService.existsInSharedBox(member, content);
+        sharedBoxContentCommandService.validateNotInSharedBox(member, sharedBox, content);
 
         // 3. 공유 박스에 컨텐츠 추가
         sharedBoxContentCommandService.addContentToSharedBox(member, sharedBox, content);
@@ -61,7 +61,7 @@ public class SharedBoxContentFacade {
             Content content = contentCommandService.getOrSaveContentCascade(boxContentRequest);
 
             // 공유 박스에 이미 존재하면 패스
-            if(sharedBoxContentCommandService.existsInSharedBox(member, content)) continue;
+            if(sharedBoxContentCommandService.existsInSharedBox(member, sharedBox, content)) continue;
 
             // 공유 박스에 컨텐츠 추가
             sharedBoxContentCommandService.addContentToSharedBox(member, sharedBox, content);
@@ -80,7 +80,7 @@ public class SharedBoxContentFacade {
 
         for(Content content : contents) {
             // 공유 박스에 이미 존재하면 패스
-            if(sharedBoxContentCommandService.existsInSharedBox(member, content)) continue;
+            if(sharedBoxContentCommandService.existsInSharedBox(member, sharedBox, content)) continue;
 
             // 공유 박스에 컨텐츠 추가
             sharedBoxContentCommandService.addContentToSharedBox(member, sharedBox, content);
