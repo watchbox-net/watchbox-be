@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
-import net.watchbox.domain.box.dto.response.SharedBoxContentResponse;
+import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
 import net.watchbox.domain.box.entity.SharedBox;
 import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.service.BoxMemberService;

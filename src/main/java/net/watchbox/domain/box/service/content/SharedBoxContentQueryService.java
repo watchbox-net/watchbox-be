@@ -1,10 +1,10 @@
 package net.watchbox.domain.box.service.content;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.response.AdderItem;
-import net.watchbox.domain.box.dto.response.ContentItem;
-import net.watchbox.domain.box.dto.response.SharedBoxContentItem;
-import net.watchbox.domain.box.dto.response.SharedBoxContentResponse;
+import net.watchbox.domain.box.dto.response.content.AdderItem;
+import net.watchbox.domain.box.dto.response.content.ContentItem;
+import net.watchbox.domain.box.dto.response.content.SharedBoxContentItem;
+import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
 import net.watchbox.domain.box.entity.SharedBox;
 import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.repository.content.SharedBoxContentRepository;

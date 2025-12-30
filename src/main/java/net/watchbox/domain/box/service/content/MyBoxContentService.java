@@ -3,7 +3,7 @@ package net.watchbox.domain.box.service.content;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.response.ContentItem;
+import net.watchbox.domain.box.dto.response.content.ContentItem;
 import net.watchbox.domain.box.dto.response.my.MyBoxContentItem;
 import net.watchbox.domain.box.dto.response.my.MyBoxContentResponse;
 import net.watchbox.domain.box.entity.content.MyBoxContent;

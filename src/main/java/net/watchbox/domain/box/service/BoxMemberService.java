@@ -25,6 +25,10 @@ public class BoxMemberService {
         return boxMemberRepository.findAllBySharedBox(sharedBox);
     }
 
+    public List<BoxMember> findAllByMember(Member member) {
+        return boxMemberRepository.findAllByMember(member);
+    }
+
     @Transactional
     public void addOwnerToBox(Member member, SharedBox sharedBox) {
         boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
@@ -55,10 +59,10 @@ public class BoxMemberService {
     public void validateSharedBoxContentAdder(SharedBox sharedBox, Member member) {
         // BoxMember 인지
         BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
-            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "member");
+            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
         }
     }
 
@@ -69,22 +73,21 @@ public class BoxMemberService {
         }
         // BoxMember 인지
         BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
-            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "member");
+            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
         }
     }
 
     public void validateSharedBoxOwner(SharedBox sharedBox, Member member) {
         // BoxMember 인지
         BoxMember boxMember = boxMemberRepository.findBySharedBoxAndMember(sharedBox, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
         // Role이 OWNER인지
         if (boxMember.getRole() != BoxMemberRole.OWNER) {
-            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "member");
+            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
         }
     }
-
 
 }

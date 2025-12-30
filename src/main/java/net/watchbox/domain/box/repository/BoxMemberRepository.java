@@ -15,4 +15,6 @@ public interface BoxMemberRepository extends JpaRepository<BoxMember, Long> {
     Optional<BoxMember> findBySharedBoxAndMember(SharedBox sharedBox, Member member);
 
     List<BoxMember> findAllBySharedBox(SharedBox sharedBox);
+
+    List<BoxMember> findAllByMember(Member member);
 }

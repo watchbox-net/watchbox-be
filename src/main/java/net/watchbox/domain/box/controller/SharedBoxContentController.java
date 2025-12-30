@@ -3,7 +3,7 @@ package net.watchbox.domain.box.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
-import net.watchbox.domain.box.dto.response.SharedBoxContentResponse;
+import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
 import net.watchbox.domain.box.facade.SharedBoxContentFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;

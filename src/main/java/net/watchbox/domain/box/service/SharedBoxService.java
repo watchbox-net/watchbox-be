@@ -22,6 +22,7 @@ public class SharedBoxService {
                 .orElseThrow(() -> new CustomException(ErrorCode.SHARED_BOX_NOT_FOUND, boxId));
     }
 
+
     @Transactional
     public SharedBox createSharedBox(Member member) {
         return sharedBoxRepository.save(SharedBox.builder()
@@ -34,4 +35,5 @@ public class SharedBoxService {
     public void deleteSharedBox(SharedBox sharedBox) {
         sharedBoxRepository.delete(sharedBox);
     }
+
 }

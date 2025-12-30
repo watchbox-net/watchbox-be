@@ -2,12 +2,15 @@ package net.watchbox.domain.box.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.box.dto.response.SharedBoxResponse;
 import net.watchbox.domain.box.facade.SharedBoxFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ public class SharedBoxController {
     private final SharedBoxFacade sharedBoxFacade;
     /**
      * 공유 박스 생성하기
+     * 공유 박스 리스트 조회하기
      * 공유 박스 삭제하기
      *
      * [보류]
@@ -34,11 +38,22 @@ public class SharedBoxController {
 
     // 공유 박스 생성하기
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> createSharedBox(
+    public ResponseEntity<ApiResponse<SharedBoxResponse>> createSharedBox(
             @AuthenticationPrincipal Member member
     ) {
-        sharedBoxFacade.createSharedBox(member);
-        return ResponseEntity.status(201).body(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success(
+                sharedBoxFacade.createSharedBox(member)
+        ));
+    }
+
+    // 공유 박스 리스트 조회하기
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<SharedBoxResponse>>> getSharedBoxes(
+            @AuthenticationPrincipal Member member
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                sharedBoxFacade.getSharedBoxes(member)
+        ));
     }
 
     // 공유 박스 삭제하기

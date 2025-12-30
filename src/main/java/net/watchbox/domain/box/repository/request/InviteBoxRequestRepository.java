@@ -10,6 +10,10 @@ import java.util.List;
 
 @Repository
 public interface InviteBoxRequestRepository extends JpaRepository<InviteBoxRequest, Long> {
+    List<InviteBoxRequest> findAllBySender(Member member);
+    List<InviteBoxRequest> findAllByReceiver(Member member);
 
-    List<InviteBoxRequest> findByReceiverAndStatus(Member member, RequestStatus requestStatus);
+    List<InviteBoxRequest> findAllBySenderAndStatus(Member member, RequestStatus requestStatus);
+    List<InviteBoxRequest> findAllByReceiverAndStatus(Member member, RequestStatus requestStatus);
+
 }

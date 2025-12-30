@@ -3,7 +3,8 @@ package net.watchbox.domain.box.facade;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.response.InviteBoxRequestResponse;
+import net.watchbox.domain.box.dto.response.Invitation.InvitationReceivedResponse;
+import net.watchbox.domain.box.dto.response.Invitation.InvitationSentResponse;
 import net.watchbox.domain.box.entity.SharedBox;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.request.InviteBoxRequest;
@@ -19,27 +20,31 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class InviteBoxRequestFacade {
+public class InviteSharedBoxFacade {
     private final MemberService memberService;
     private final InviteBoxRequestService inviteBoxRequestService;
     private final BoxMemberService boxMemberService;
     private final SharedBoxService sharedBoxService;
 
-    public void requestSharedBox(Member inviter, Long boxId, Long inviteeId) {
+    public void inviteToBox(Member inviter, Long boxId, Long inviteeId) {
         Member receiver = memberService.findById(inviteeId);
         SharedBox sharedBox = sharedBoxService.findById(boxId);
-        inviteBoxRequestService.requestSharedBox(inviter, sharedBox, receiver);
+        inviteBoxRequestService.inviteToBox(inviter, sharedBox, receiver);
     }
 
-    public List<InviteBoxRequestResponse> getInviteBoxRequestsSent(Member member) {
-        return inviteBoxRequestService.getInviteBoxRequestsSent(member);
+    public List<InvitationSentResponse> getBoxInvitationsSent(Member member) {
+        return inviteBoxRequestService.getBoxInvitationsSent(member);
+    }
+
+    public List<InvitationReceivedResponse> getBoxInvitationsReceived(Member member) {
+        return inviteBoxRequestService.getBoxInvitationsReceived(member);
     }
 
     @Transactional
-    public void acceptBoxInviteRequest(Member member, Long requestId) {
+    public void acceptBoxInvitation(Member member, Long requestId) {
         InviteBoxRequest inviteBoxRequest = inviteBoxRequestService.findById(requestId);
         SharedBox sharedBox = inviteBoxRequest.getSharedBox();
-        inviteBoxRequestService.acceptBoxInviteRequest(member, inviteBoxRequest);
+        inviteBoxRequestService.acceptBoxInvitation(member, inviteBoxRequest);
         boxMemberService.addEditorToBox(member, sharedBox);
         log.info("BoxMember added for member: " + member.getNickname());
 
@@ -51,9 +56,9 @@ public class InviteBoxRequestFacade {
         log.info("SharedBox {} updated title to: {}", sharedBox.getBoxId(), sharedBox.getTitle());
     }
 
-    public void rejectBoxInviteRequest(Member member, Long requestId) {
+    public void rejectBoxInvitation(Member member, Long requestId) {
         InviteBoxRequest inviteBoxRequest = inviteBoxRequestService.findById(requestId);
-        inviteBoxRequestService.rejectBoxInviteRequest(member, inviteBoxRequest);
+        inviteBoxRequestService.rejectBoxInvitation(member, inviteBoxRequest);
     }
 
 }

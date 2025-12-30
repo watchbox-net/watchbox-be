@@ -2,8 +2,9 @@ package net.watchbox.domain.box.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.response.InviteBoxRequestResponse;
-import net.watchbox.domain.box.facade.InviteBoxRequestFacade;
+import net.watchbox.domain.box.dto.response.Invitation.InvitationReceivedResponse;
+import net.watchbox.domain.box.dto.response.Invitation.InvitationSentResponse;
+import net.watchbox.domain.box.facade.InviteSharedBoxFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,10 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/boxes/shared")
-@Tag(name = "InviteBoxRequest", description = "InviteBoxRequest API")
-public class InviteBoxRequestController {
-    private final InviteBoxRequestFacade inviteBoxRequestFacade;
+@RequestMapping("/api/boxes/shared/invitations")
+@Tag(name = "InviteSharedBox", description = "InviteSharedBox API")
+public class InviteSharedBoxController {
+    private final InviteSharedBoxFacade inviteSharedBoxFacade;
 
     /**
      * 공유 박스에 초대하기
@@ -34,49 +35,59 @@ public class InviteBoxRequestController {
      */
 
     // 공유 박스에 초대하기
-    @PostMapping("/{boxId}/invite/{inviteeId}")
-    public ResponseEntity<ApiResponse<Void>> requestSharedBox(
+    // ToDo: 이미 합류된 멤버이면 초대 못하도록 검증 추가
+    @PostMapping("/{boxId}/{inviteeId}")
+    public ResponseEntity<ApiResponse<Void>> inviteToBox(
             @AuthenticationPrincipal Member member,
             @PathVariable Long boxId,
             @PathVariable Long inviteeId
     ) {
-        inviteBoxRequestFacade.requestSharedBox(member, boxId, inviteeId);
+        inviteSharedBoxFacade.inviteToBox(member, boxId, inviteeId);
         return ResponseEntity.status(201).body(ApiResponse.success());
     }
 
     // 공유 박스 받은초대 수락하기
+    // ToDo: 대기중 상태일때만 변경 가능하도록
     @PatchMapping("/accept/{requestId}")
-    public ResponseEntity<ApiResponse<Void>> acceptSharedBoxRequest(
+    public ResponseEntity<ApiResponse<Void>> acceptBoxInvitation(
             @AuthenticationPrincipal Member member,
             @PathVariable Long requestId
     ) {
-        inviteBoxRequestFacade.acceptBoxInviteRequest(member, requestId);
+        inviteSharedBoxFacade.acceptBoxInvitation(member, requestId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
     // 공유 박스 받은초대 요청 거절하기
+    // ToDo: 대기중 상태일때만 변경 가능하도록
     @PatchMapping("/reject/{requestId}")
-    public ResponseEntity<ApiResponse<Void>> rejectSharedBoxRequest(
+    public ResponseEntity<ApiResponse<Void>> rejectBoxInvitation(
             @AuthenticationPrincipal Member member,
             @PathVariable Long requestId
     ) {
-        inviteBoxRequestFacade.rejectBoxInviteRequest(member, requestId);
+        inviteSharedBoxFacade.rejectBoxInvitation(member, requestId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
     // 공유 박스 보낸초대 리스트 조회
-    @GetMapping("/invitations/sent")
-    public ResponseEntity<ApiResponse<List<InviteBoxRequestResponse>>> getInviteBoxRequestsSent(
+    // 일단 모든 요청상태 조회
+    @GetMapping("/sent")
+    public ResponseEntity<ApiResponse<List<InvitationSentResponse>>> getBoxInvitationsSent(
             @AuthenticationPrincipal Member member
+//            @RequestParam (required = true) RequestStatus status
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success(inviteBoxRequestFacade.getInviteBoxRequestsSent(member))
+                ApiResponse.success(inviteSharedBoxFacade.getBoxInvitationsSent(member))
         );
     }
 
     // 공유 박스 받은초대 리스트 조회
-//    @GetMapping("/invitations/received")
-//    public ResponseEntity<ApiResponse<List<InviteBoxRequestResponse>>> getInviteBoxRequestsReceived(
-//            @AuthenticationPrincipal Member member
-//    )
+    // 일단 모든 요청상태 조회
+    @GetMapping("/received")
+    public ResponseEntity<ApiResponse<List<InvitationReceivedResponse>>> getBoxInvitationsReceived(
+            @AuthenticationPrincipal Member member
+    ){
+        return ResponseEntity.ok(
+                ApiResponse.success(inviteSharedBoxFacade.getBoxInvitationsReceived(member))
+        );
+    }
 }
