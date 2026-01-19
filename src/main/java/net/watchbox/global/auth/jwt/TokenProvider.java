@@ -1,4 +1,4 @@
-package net.watchbox.global.jwt.service;
+package net.watchbox.global.auth.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;

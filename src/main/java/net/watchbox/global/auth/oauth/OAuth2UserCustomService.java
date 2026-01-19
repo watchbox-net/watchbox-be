@@ -1,4 +1,4 @@
-package net.watchbox.global.oauth;
+package net.watchbox.global.auth.oauth;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -2,12 +2,12 @@ package net.watchbox.global.config;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.member.repository.MemberRepository;
-import net.watchbox.global.jwt.TokenAuthenticationFilter;
+import net.watchbox.global.auth.jwt.TokenAuthenticationFilter;
 import net.watchbox.domain.member.repository.MemberRefreshTokenRepository;
-import net.watchbox.global.jwt.service.TokenProvider;
-import net.watchbox.global.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import net.watchbox.global.oauth.OAuth2SuccessHandler;
-import net.watchbox.global.oauth.OAuth2UserCustomService;
+import net.watchbox.global.auth.jwt.TokenProvider;
+import net.watchbox.global.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
+import net.watchbox.global.auth.oauth.OAuth2UserCustomService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

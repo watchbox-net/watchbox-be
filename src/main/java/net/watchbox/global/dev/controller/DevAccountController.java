@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.account.repository.OauthAccountRepository;
+import net.watchbox.domain.auth.service.AuthService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.dev.dto.DevTokenResponse;
-import net.watchbox.global.jwt.service.TokenService;
 import net.watchbox.global.properties.JwtProperties;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "DevAccount")
 public class DevAccountController {
     private final JwtProperties jwtProperties;
-    private final TokenService tokenService;
+    private final AuthService authService;
     private final OauthAccountRepository oauthAccountRepository;
     private final MemberRepository memberRepository;
 
@@ -32,8 +32,8 @@ public class DevAccountController {
     ) {
         Member member = memberRepository.findById(accountId).orElseThrow();
 
-        String refreshToken = tokenService.createNewRefreshToken(member);
-        String accessToken = tokenService.createNewAccessToken(member, refreshToken);
+        String refreshToken = authService.createNewRefreshToken(member);
+        String accessToken = authService.createNewAccessToken(member, refreshToken);
 
         return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
     }

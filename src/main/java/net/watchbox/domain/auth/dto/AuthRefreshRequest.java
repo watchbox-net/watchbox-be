@@ -1,10 +1,10 @@
-package net.watchbox.global.jwt.dto;
+package net.watchbox.domain.auth.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AccessTokenCreateRequest {
+public class AuthRefreshRequest {
     private String refreshToken;
 }

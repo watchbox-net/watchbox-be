@@ -1,14 +1,14 @@
-package net.watchbox.global.jwt.service;
+package net.watchbox.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.properties.JwtProperties;
 import org.springframework.stereotype.Service;
 
-
 @RequiredArgsConstructor
 @Service
-public class TokenService {
+public class AuthService {
     private final TokenProvider tokenProvider;
     private final JwtProperties jwtProperties;
 

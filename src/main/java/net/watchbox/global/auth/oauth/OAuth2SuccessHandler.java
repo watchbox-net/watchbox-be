@@ -1,4 +1,4 @@
-package net.watchbox.global.oauth;
+package net.watchbox.global.auth.oauth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +9,7 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.entity.MemberRefreshToken;
 import net.watchbox.domain.member.repository.MemberRefreshTokenRepository;
 import net.watchbox.domain.member.repository.MemberRepository;
-import net.watchbox.global.jwt.service.TokenProvider;
+import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.util.CookieUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
