@@ -2,7 +2,7 @@ package net.watchbox.global.auth.oauth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.watchbox.domain.account.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OauthAccount;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

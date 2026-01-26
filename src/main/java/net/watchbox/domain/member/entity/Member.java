@@ -2,11 +2,12 @@ package net.watchbox.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.account.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.request.InviteBoxRequest;
 import net.watchbox.domain.box.entity.content.MyBoxContent;
+import net.watchbox.domain.record.entity.WatchRecord;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,7 +34,7 @@ public class Member implements UserDetails {
     private OauthAccount oauthAccount;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WatchHistory> watchHistories;
+    private List<WatchRecord> watchHistories;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MyBoxContent> myBoxContents;

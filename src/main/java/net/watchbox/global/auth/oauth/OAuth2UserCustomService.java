@@ -2,8 +2,8 @@ package net.watchbox.global.auth.oauth;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.account.entity.OauthAccount;
-import net.watchbox.domain.account.service.OauthAccountService;
+import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.service.OauthAccountService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

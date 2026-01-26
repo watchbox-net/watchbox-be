@@ -1,4 +1,4 @@
-package net.watchbox.domain.account.entity;
+package net.watchbox.domain.auth.entity;
 
 public enum OauthProvider {
     GOOGLE,

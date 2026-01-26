@@ -1,4 +1,4 @@
-package net.watchbox.domain.account.entity;
+package net.watchbox.domain.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package net.watchbox.domain.member.entity;
+package net.watchbox.domain.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @Getter
 @Entity
-public class MemberRefreshToken {
+public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "refresh_token_id", updatable = false)
@@ -20,7 +20,7 @@ public class MemberRefreshToken {
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
 
-    public MemberRefreshToken update(String newRefreshToken){
+    public RefreshToken update(String newRefreshToken){
         this.refreshToken = newRefreshToken;
         return this;
     }

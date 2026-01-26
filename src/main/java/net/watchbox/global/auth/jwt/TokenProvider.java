@@ -5,7 +5,7 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.account.repository.OauthAccountRepository;
+import net.watchbox.domain.auth.repository.OauthAccountRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.properties.JwtProperties;

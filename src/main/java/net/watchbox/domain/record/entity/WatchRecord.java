@@ -1,9 +1,10 @@
-package net.watchbox.domain.member.entity;
+package net.watchbox.domain.record.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.entity.MediaType;
+import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @Getter
 @Entity
-public class WatchHistory extends BaseTime {
+public class WatchRecord extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long watchHistoryId;

@@ -1,10 +1,10 @@
-package net.watchbox.domain.account.service;
+package net.watchbox.domain.auth.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.account.entity.OauthAccount;
-import net.watchbox.domain.account.entity.OauthProvider;
-import net.watchbox.domain.account.repository.OauthAccountRepository;
+import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OauthProvider;
+import net.watchbox.domain.auth.repository.OauthAccountRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 

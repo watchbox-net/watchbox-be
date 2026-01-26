@@ -1,4 +1,4 @@
-package net.watchbox.domain.member.entity;
+package net.watchbox.domain.record.entity;
 
 public enum WatchStatus {
 //    PLAN_TO_WATCH,  // 볼 예정, 찜하기

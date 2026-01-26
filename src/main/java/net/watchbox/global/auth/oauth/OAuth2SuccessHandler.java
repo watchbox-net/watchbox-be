@@ -4,10 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.account.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.entity.MemberRefreshToken;
-import net.watchbox.domain.member.repository.MemberRefreshTokenRepository;
+import net.watchbox.domain.auth.entity.RefreshToken;
+import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.util.CookieUtil;
@@ -31,7 +31,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
 
     private final TokenProvider tokenProvider;
-    private final MemberRefreshTokenRepository memberRefreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
     private final MemberRepository memberRepository;
@@ -86,13 +86,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     // 생성된 리프레시 토큰을 전달받아 유저 아이디와 데이터베이스에 저장
     private void saveRefreshToken(Long memberId, String newRefreshToken) {
-        MemberRefreshToken memberRefreshToken = memberRefreshTokenRepository.findByMemberId(memberId)
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
                 .map(entity -> entity.update(newRefreshToken))
-                .orElse(MemberRefreshToken.builder()
+                .orElse(RefreshToken.builder()
                         .memberId(memberId)
                         .refreshToken(newRefreshToken)
                         .build());
-        memberRefreshTokenRepository.save(memberRefreshToken);
+        refreshTokenRepository.save(refreshToken);
     }
 
     // 액세스 토큰을 패스에 추가

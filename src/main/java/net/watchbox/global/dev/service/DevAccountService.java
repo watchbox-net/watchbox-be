@@ -1,9 +1,9 @@
 package net.watchbox.global.dev.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.account.entity.OauthAccount;
-import net.watchbox.domain.account.entity.OauthProvider;
-import net.watchbox.domain.account.repository.OauthAccountRepository;
+import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OauthProvider;
+import net.watchbox.domain.auth.repository.OauthAccountRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;

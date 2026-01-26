@@ -1,6 +1,6 @@
-package net.watchbox.domain.account.repository;
+package net.watchbox.domain.auth.repository;
 
-import net.watchbox.domain.account.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OauthAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

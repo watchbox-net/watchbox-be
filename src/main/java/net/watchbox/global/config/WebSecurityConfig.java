@@ -3,7 +3,7 @@ package net.watchbox.global.config;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.auth.jwt.TokenAuthenticationFilter;
-import net.watchbox.domain.member.repository.MemberRefreshTokenRepository;
+import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
@@ -26,7 +26,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfig {
     private final TokenProvider tokenProvider;
     private final OAuth2UserCustomService oAuth2UserCustomService;
-    private final MemberRefreshTokenRepository memberRefreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
 
     @Bean
@@ -79,7 +79,7 @@ public class WebSecurityConfig {
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
         return new OAuth2SuccessHandler(
                 tokenProvider,
-                memberRefreshTokenRepository,
+                refreshTokenRepository,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
                 memberRepository
         );

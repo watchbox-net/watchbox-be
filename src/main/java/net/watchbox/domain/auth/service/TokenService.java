@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class AuthService {
+public class TokenService {
     private final TokenProvider tokenProvider;
     private final JwtProperties jwtProperties;
 
