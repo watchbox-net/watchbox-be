@@ -3,6 +3,7 @@ package net.watchbox.global.dev.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.search.dto.response.list.MultiSearchResponse;
+import net.watchbox.domain.tmdb.client.TmdbClient;
 import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.dev.dto.DevMultiSearchRequest;
@@ -21,8 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class DevSearchService {
-    private final WebClient.Builder webClientBuilder;
-    private final TmdbProperties tmdbProperties;
+    private final TmdbClient tmdbClient;
 
     /**
      * 통합 검색 (영화 + TV + 배우)
@@ -45,14 +45,12 @@ public class DevSearchService {
      * 영화 검색
      */
     private Mono<DevMultiSearchResponseDto> searchMovies(DevMultiSearchRequest request) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/search/movie")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
                         .queryParam("query", request.getQuery())
-                        .queryParam("language", request.getLanguage())
                         .queryParam("page", request.getPage())
                         .queryParam("include_adult", false)
                         .build())
@@ -67,14 +65,11 @@ public class DevSearchService {
      * TV 프로그램 검색
      */
     private Mono<DevMultiSearchResponseDto> searchTvShows(DevMultiSearchRequest request) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
-
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/search/tv")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
                         .queryParam("query", request.getQuery())
-                        .queryParam("language", request.getLanguage())
                         .queryParam("page", request.getPage())
                         .queryParam("include_adult", false)
                         .build())
@@ -89,14 +84,11 @@ public class DevSearchService {
      * 멀티 검색 (영화 + TV + 배우 통합)
      */
     private Mono<DevMultiSearchResponseDto> searchMulti(DevMultiSearchRequest request) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
-
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/search/multi")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
                         .queryParam("query", request.getQuery())
-                        .queryParam("language", request.getLanguage())
                         .queryParam("page", request.getPage())
                         .queryParam("include_adult", false)
                         .build())
@@ -113,13 +105,11 @@ public class DevSearchService {
      * 인기 영화 목록
      */
     public Mono<DevMultiSearchResponseDto> getPopularMovies(String language, int page) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/popular")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
-                        .queryParam("language", language)
                         .queryParam("page", page)
                         .build())
                 .retrieve()
@@ -133,13 +123,10 @@ public class DevSearchService {
      * 현재 상영중인 영화
      */
     public Mono<DevMultiSearchResponseDto> getNowPlayingMovies(String language, int page) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
-
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/now_playing")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
-                        .queryParam("language", language)
                         .queryParam("page", page)
                         .queryParam("region", "KR")
                         .build())
@@ -187,8 +174,8 @@ public class DevSearchService {
                 originalTitle,
                 result.getOverview(),
                 result.getGenreIds(),
-                buildImageUrl(result.getPosterPath()),
-                buildImageUrl(result.getBackdropPath()),
+                tmdbClient.buildImageUrl(result.getPosterPath()),
+                tmdbClient.buildImageUrl(result.getBackdropPath()),
                 releaseDate,
                 result.getVoteAverage(),
                 result.getVoteCount(),
@@ -196,13 +183,6 @@ public class DevSearchService {
                 mediaType,
                 result.getOriginalLanguage()
         );
-    }
-
-    /**
-     * 이미지 전체 URL 생성
-     */
-    private String buildImageUrl(String path) {
-        return path != null ? tmdbProperties.getImageUrl() + path : null;
     }
 
     /**

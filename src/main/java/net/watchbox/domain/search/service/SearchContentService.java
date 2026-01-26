@@ -24,13 +24,13 @@ public class SearchContentService {
     /**
      * 검색 유형에 따른 콘텐츠 검색
      *
-     * TmdbSearchResponseDto
+     * TmdbSearchCommonResponse
      * ├─ page: 현재 페이지 번호
      * ├─ totalResults: 전체 검색 결과 수
      * ├─ totalPages: 전체 페이지 수
-     * └─ results: List<TmdbContentResultDto>
+     * └─ results: List<TmdbSearchCommonResponse>
      *
-     * TmdbContentResultDto
+     * TmdbSearchResultItem
      * ├─ 영화/TV/인물 중 하나의 단일 검색 결과
      * └─ 공통 필드 + 타입별 고유 필드
      *

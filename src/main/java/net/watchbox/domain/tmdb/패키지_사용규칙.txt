@@ -6,12 +6,14 @@ tmdb 패키지는 TMDB API에 요청하여 데이터를 응답 받고 가공하�
 1) service 패키지
 Tmdb{$CATEGORY}Service.class
 $CATEGORY - TMDB API Reference 페이지 좌측 메뉴에 표기된 카테고리명 (ex: MOVIES, MOVIE LISTS, ACCOUNT..)
+한 카테고리의 여러 메뉴 요청이 클래스에 들어 있다
 
 2) response 패키지
-Tmdb{$CATEGORY}{$MENU}Response.class
+../{$CATEGORY}/Tmdb{$CATEGORY}{$MENU}Response.class
 카테고리명 + 메뉴명
 $MENU - TMDB API Reference 페이지 좌측 메뉴에 표기된 메뉴명 (ex: Details, TV Details, Person Details..)
 'Common' - 여러 항목에 공통으로 사용되는 경우 $MENU 대신 사용
+해당 패키지의 클래스는 TMDB API 응답을 그대로(1차로) 매핑하는 용도로 사용된다.
 
 3) inner 패키지
 Tmdb{$KEY}Item.class

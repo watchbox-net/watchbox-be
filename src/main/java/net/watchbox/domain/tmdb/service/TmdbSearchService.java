@@ -2,19 +2,17 @@ package net.watchbox.domain.tmdb.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.tmdb.client.TmdbClient;
 import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
-import net.watchbox.global.properties.TmdbProperties;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TmdbSearchService {
-    private final WebClient.Builder webClientBuilder;
-    private final TmdbProperties tmdbProperties;
+    private final TmdbClient tmdbClient;
 
     /**
      * Multi Get 요청
@@ -24,14 +22,11 @@ public class TmdbSearchService {
      * @page 페이지 번호
      */
     public TmdbSearchCommonResponse searchMulti(String query, Integer page) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
-
-        return webClient.get() // GET 요청 시작
-                .uri(uriBuilder -> uriBuilder // URL 구성
+        return tmdbClient.baseWebClient()
+                .get() // GET 요청 시작
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/search/multi")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
                         .queryParam("query",query)
-                        .queryParam("language", "ko-KR")
                         .queryParam("page", page)
                         .queryParam("include_adult", true)
                         .build())
@@ -52,14 +47,12 @@ public class TmdbSearchService {
      * @year 검색 년도
      */
     public TmdbSearchCommonResponse searchMovie(String query, Integer page) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/search/movie")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
                         .queryParam("query",query)
-                        .queryParam("language", "ko-KR")
                         .queryParam("page", page)
                         .queryParam("include_adult", true)
                         // primary_release_year, region, year 등 추가 가능
@@ -81,14 +74,11 @@ public class TmdbSearchService {
      * @year 검색 년도
      */
     public TmdbSearchCommonResponse searchTv(String query, Integer page) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
-
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/search/tv")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
                         .queryParam("query", query)
-                        .queryParam("language", "ko-KR")
                         .queryParam("page", page)
                         .queryParam("include_adult", true)
                         // first_air_date_year, year 등 추가 가능
@@ -107,14 +97,11 @@ public class TmdbSearchService {
      * @page 페이지 번호
      */
     public TmdbSearchCommonResponse searchPerson(String query, Integer page) {
-        WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
-
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/search/person")
-                        .queryParam("api_key", tmdbProperties.getApi().getKey())
                         .queryParam("query", query)
-                        .queryParam("language", "ko-KR")
                         .queryParam("page", page)
                         .queryParam("include_adult", true)
                         .build())
@@ -123,6 +110,5 @@ public class TmdbSearchService {
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
                 .block(); // 블로킹 호출로 결과 반환
     }
-
 
 }
