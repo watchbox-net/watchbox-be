@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.search.dto.request.SearchType;
 import net.watchbox.domain.search.dto.response.list.MultiSearchResponse;
 import net.watchbox.domain.search.dto.response.list.SearchListResponse;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchResultItem;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchResponse;
+import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
+import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.domain.tmdb.service.TmdbSearchService;
-import net.watchbox.domain.tmdb.util.TmdbConverterUtil;
+import net.watchbox.domain.tmdb.util.TmdbResponseConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class SearchContentService {
      * └─ PersonSearchResponse: 인물 검색 결과
      */
     public SearchListResponse searchContentList(SearchType searchType, String query, Integer page) {
-        TmdbSearchResponse tmdbResponseDto = getSearchResponse(searchType, query, page);
+        TmdbSearchCommonResponse tmdbResponseDto = getSearchResponse(searchType, query, page);
         List<MultiSearchResponse> contentList = convertToResponseList(searchType, tmdbResponseDto.getResults());
 
         return SearchListResponse.builder()
@@ -51,7 +51,7 @@ public class SearchContentService {
                 .build();
     }
 
-    private TmdbSearchResponse getSearchResponse(SearchType searchType, String query, Integer page) {
+    private TmdbSearchCommonResponse getSearchResponse(SearchType searchType, String query, Integer page) {
         return switch (searchType) {
             case MULTI -> tmdbSearchService.searchMulti(query, page);
             case MOVIE -> tmdbSearchService.searchMovie(query, page);
@@ -66,22 +66,22 @@ public class SearchContentService {
                     .map(this::convertByMediaType)
                     .collect(Collectors.toList());
             case MOVIE -> results.stream()
-                    .map(TmdbConverterUtil::convertToMovieSearchResponse)
+                    .map(TmdbResponseConverter::convertToMovieSearchResponse)
                     .collect(Collectors.toList());
             case TV -> results.stream()
-                    .map(TmdbConverterUtil::convertToTvSearchResponse)
+                    .map(TmdbResponseConverter::convertToTvSearchResponse)
                     .collect(Collectors.toList());
             case PERSON -> results.stream()
-                    .map(TmdbConverterUtil::convertToPersonSearchResponse)
+                    .map(TmdbResponseConverter::convertToPersonSearchResponse)
                     .collect(Collectors.toList());
         };
     }
 
     private MultiSearchResponse convertByMediaType(TmdbSearchResultItem result) {
         return switch (result.getMediaType()) {
-            case "movie" -> TmdbConverterUtil.convertToMovieSearchResponse(result);
-            case "tv" -> TmdbConverterUtil.convertToTvSearchResponse(result);
-            case "person" -> TmdbConverterUtil.convertToPersonSearchResponse(result);
+            case "movie" -> TmdbResponseConverter.convertToMovieSearchResponse(result);
+            case "tv" -> TmdbResponseConverter.convertToTvSearchResponse(result);
+            case "person" -> TmdbResponseConverter.convertToPersonSearchResponse(result);
             default -> {
                 log.info("ID: {}, Unknown media type: {}", result.getId(), result.getMediaType());
                 yield null;

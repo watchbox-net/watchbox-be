@@ -2,12 +2,12 @@ package net.watchbox.domain.tmdb.util;
 
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.search.dto.response.list.*;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchResultItem;
+import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
 
 import static net.watchbox.domain.tmdb.util.TmdbUtils.buildImageFullUrl;
 import static net.watchbox.global.util.ConvertUtils.parseReleaseDate;
 
-public final class TmdbConverterUtil {
+public final class TmdbResponseConverter {
 //    /**
 //     * TMDB 응답을 SearchListResponse로 변환
 //     */

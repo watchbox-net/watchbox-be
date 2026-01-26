@@ -3,8 +3,8 @@ package net.watchbox.global.dev.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.search.dto.response.list.MultiSearchResponse;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchResultItem;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchResponse;
+import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
+import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.dev.dto.DevMultiSearchRequest;
 import net.watchbox.global.dev.dto.DevMultiSearchResponseDto;
 import net.watchbox.global.dev.dto.DevTmdbContentInfoDto;
@@ -57,7 +57,7 @@ public class DevSearchService {
                         .queryParam("include_adult", false)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
                 .map(response -> convertToMovieSearchResponse(response, "movie"))
                 .doOnError(error -> log.error("영화 검색 실패: {}", error.getMessage()))
                 .onErrorReturn(createEmptyResponse());
@@ -79,7 +79,7 @@ public class DevSearchService {
                         .queryParam("include_adult", false)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
                 .map(response -> convertToMovieSearchResponse(response, "tv"))
                 .doOnError(error -> log.error("TV 프로그램 검색 실패: {}", error.getMessage()))
                 .onErrorReturn(createEmptyResponse());
@@ -101,7 +101,7 @@ public class DevSearchService {
                         .queryParam("include_adult", false)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
                 .map(response -> convertToMovieSearchResponse(response, null))
                 .doOnError(error -> log.error("통합 검색 실패: {}", error.getMessage()))
                 .onErrorReturn(createEmptyResponse());
@@ -123,7 +123,7 @@ public class DevSearchService {
                         .queryParam("page", page)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
                 .map(response -> convertToMovieSearchResponse(response, "movie"))
                 .doOnError(error -> log.error("인기 영화 조회 실패: {}", error.getMessage()))
                 .onErrorReturn(createEmptyResponse());
@@ -144,7 +144,7 @@ public class DevSearchService {
                         .queryParam("region", "KR")
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
                 .map(response -> convertToMovieSearchResponse(response, "movie"))
                 .doOnError(error -> log.error("현재 상영 영화 조회 실패: {}", error.getMessage()))
                 .onErrorReturn(createEmptyResponse());
@@ -153,7 +153,7 @@ public class DevSearchService {
     /**
      * TMDB 응답을 프론트용 DTO로 변환
      */
-    private DevMultiSearchResponseDto convertToMovieSearchResponse(TmdbSearchResponse tmdbResponse, String mediaType) {
+    private DevMultiSearchResponseDto convertToMovieSearchResponse(TmdbSearchCommonResponse tmdbResponse, String mediaType) {
         List<DevTmdbContentInfoDto> devTmdbContentInfoDtoList = tmdbResponse.getResults().stream()
                 .filter(result -> mediaType == null ||
                         mediaType.equals(result.getMediaType()) ||

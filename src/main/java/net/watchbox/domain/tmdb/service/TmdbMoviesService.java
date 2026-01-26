@@ -1,7 +1,7 @@
 package net.watchbox.domain.tmdb.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.tmdb.response.movies.TmdbMovieDetailsResponse;
+import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.properties.TmdbProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,7 +16,7 @@ public class TmdbMoviesService {
      * Details Get 요청
      * @movie_Id
      */
-    public TmdbMovieDetailsResponse getMovieDetails(Long movieId) {
+    public TmdbMoviesDetailsResponse getMovieDetails(Long movieId) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient
@@ -27,7 +27,7 @@ public class TmdbMoviesService {
                         .queryParam("language", "ko-KR")
                         .build(movieId))
                 .retrieve()
-                .bodyToMono(TmdbMovieDetailsResponse.class)
+                .bodyToMono(TmdbMoviesDetailsResponse.class)
                 .block();
     }
 

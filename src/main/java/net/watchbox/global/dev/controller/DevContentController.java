@@ -13,7 +13,7 @@ import net.watchbox.domain.content.person.dto.response.PersonResponse;
 import net.watchbox.domain.content.person.entity.Person;
 import net.watchbox.domain.content.tv.dto.response.TvResponse;
 import net.watchbox.domain.content.tv.entity.Tv;
-import net.watchbox.domain.tmdb.response.movies.TmdbMovieDetailsResponse;
+import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
 import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.domain.tmdb.service.TmdbMoviesService;
@@ -47,7 +47,7 @@ public class DevContentController {
         Optional<Content> foundContent = contentQueryService.findContentById(tmdbId);
 //        Content content = foundContent.orElseGet(() -> contentCommandService.createContentByTmdbId(tmdbId));
         Content content;
-        TmdbMovieDetailsResponse response = tmdbMoviesService.getMovieDetails(tmdbId);
+        TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetails(tmdbId);
         if (foundContent.isPresent()) {
             content = foundContent.get();
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);

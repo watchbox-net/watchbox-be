@@ -2,7 +2,7 @@ package net.watchbox.domain.tmdb.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchResponse;
+import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import net.watchbox.global.properties.TmdbProperties;
@@ -23,7 +23,7 @@ public class TmdbSearchService {
      * @language 언어
      * @page 페이지 번호
      */
-    public TmdbSearchResponse searchMulti(String query, Integer page) {
+    public TmdbSearchCommonResponse searchMulti(String query, Integer page) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient.get() // GET 요청 시작
@@ -36,7 +36,7 @@ public class TmdbSearchService {
                         .queryParam("include_adult", true)
                         .build())
                 .retrieve() // 응답 받기
-                .bodyToMono(TmdbSearchResponse.class) // 응답을 Mono로 변환
+                .bodyToMono(TmdbSearchCommonResponse.class) // 응답을 Mono로 변환
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
                 .block(); // 블로킹 호출로 결과 반환
     }
@@ -51,7 +51,7 @@ public class TmdbSearchService {
      * @region 지역 코드
      * @year 검색 년도
      */
-    public TmdbSearchResponse searchMovie(String query, Integer page) {
+    public TmdbSearchCommonResponse searchMovie(String query, Integer page) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient.get()
@@ -65,7 +65,7 @@ public class TmdbSearchService {
                         // primary_release_year, region, year 등 추가 가능
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
 //                .map(this::convertToSearchListResponse)
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
                 .block(); // 블로킹 호출로 결과 반환
@@ -80,7 +80,7 @@ public class TmdbSearchService {
      * @page 페이지 번호
      * @year 검색 년도
      */
-    public TmdbSearchResponse searchTv(String query, Integer page) {
+    public TmdbSearchCommonResponse searchTv(String query, Integer page) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient.get()
@@ -94,7 +94,7 @@ public class TmdbSearchService {
                         // first_air_date_year, year 등 추가 가능
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
                 .block(); // 블로킹 호출로 결과 반환
     }
@@ -106,7 +106,7 @@ public class TmdbSearchService {
      * @language 언어
      * @page 페이지 번호
      */
-    public TmdbSearchResponse searchPerson(String query, Integer page) {
+    public TmdbSearchCommonResponse searchPerson(String query, Integer page) {
         WebClient webClient = webClientBuilder.baseUrl(tmdbProperties.getApi().getBaseUrl()).build();
 
         return webClient.get()
@@ -119,7 +119,7 @@ public class TmdbSearchService {
                         .queryParam("include_adult", true)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbSearchResponse.class)
+                .bodyToMono(TmdbSearchCommonResponse.class)
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
                 .block(); // 블로킹 호출로 결과 반환
     }

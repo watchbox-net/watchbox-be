@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbSearchResponse {
+public class TmdbSearchCommonResponse {
     private int page;
 
     @JsonProperty("total_results")

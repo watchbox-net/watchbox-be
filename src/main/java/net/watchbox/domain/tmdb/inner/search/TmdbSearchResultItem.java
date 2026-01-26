@@ -1,4 +1,4 @@
-package net.watchbox.domain.tmdb.response.search;
+package net.watchbox.domain.tmdb.inner.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

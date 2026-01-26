@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbMovieDetailsResponse {
+public class TmdbMoviesDetailsResponse {
     private boolean adult;
 
     @JsonProperty("backdrop_path")

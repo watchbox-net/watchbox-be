@@ -3,14 +3,7 @@ package net.watchbox.global.dev.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.entity.MediaType;
-import net.watchbox.domain.content.common.service.ContentCommandService;
-import net.watchbox.domain.content.common.service.ContentQueryService;
-import net.watchbox.domain.content.movie.dto.response.MovieResponse;
-import net.watchbox.domain.content.movie.entity.Movie;
-import net.watchbox.domain.content.movie.repository.MovieRepository;
-import net.watchbox.domain.tmdb.response.movies.TmdbMovieDetailsResponse;
+import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
 import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.domain.tmdb.service.TmdbMoviesService;
@@ -18,8 +11,6 @@ import net.watchbox.domain.tmdb.service.TmdbPeopleService;
 import net.watchbox.domain.tmdb.service.TmdbTvSeriesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +27,7 @@ public class DevTmdbDetailsController {
      * 49797
      */
     @GetMapping("/movies/details/{tmdbId}")
-    public ResponseEntity<TmdbMovieDetailsResponse> fetchTmdbMovieDetails(
+    public ResponseEntity<TmdbMoviesDetailsResponse> fetchTmdbMovieDetails(
             @PathVariable Long tmdbId
     ) {
         return ResponseEntity.ok(tmdbMoviesService.getMovieDetails(tmdbId));
