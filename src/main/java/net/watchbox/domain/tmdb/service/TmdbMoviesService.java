@@ -15,7 +15,6 @@ public class TmdbMoviesService {
      * @movie_Id
      */
     public TmdbMoviesDetailsResponse getMovieDetails(Long movieId) {
-
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)

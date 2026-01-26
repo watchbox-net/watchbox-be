@@ -1,4 +1,4 @@
-package net.watchbox.domain.tmdb.response.movielists;
+package net.watchbox.domain.tmdb.response.tvserieslists;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class TmdbMovieListItem {
+public class TmdbTvSeriesListsResultItem {
     private Boolean adult;
 
     @JsonProperty("backdrop_path")
@@ -19,11 +19,14 @@ public class TmdbMovieListItem {
 
     private Integer id;
 
+    @JsonProperty("origin_country")
+    private List<String> originCountry;
+
     @JsonProperty("original_language")
     private String originalLanguage;
 
-    @JsonProperty("original_title")
-    private String originalTitle;
+    @JsonProperty("original_name")
+    private String originalName;
 
     private String overview;
 
@@ -32,12 +35,10 @@ public class TmdbMovieListItem {
     @JsonProperty("poster_path")
     private String posterPath;
 
-    @JsonProperty("release_date")
-    private String releaseDate;
+    @JsonProperty("first_air_date")
+    private String firstAirDate;
 
-    private String title;
-
-    private Boolean video;
+    private String name;
 
     @JsonProperty("vote_average")
     private Double voteAverage;

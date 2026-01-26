@@ -1,4 +1,4 @@
-package net.watchbox.domain.tmdb.response.movielists;
+package net.watchbox.domain.tmdb.response.tvserieslists;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -8,10 +8,10 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class TmdbMovieListsResponse {
+public class TmdbTvSeriesListsResponse {
     private Integer page;
 
-    private List<TmdbMovieListsResultItem> results;
+    private List<TmdbTvSeriesListsResultItem> results;
 
     @JsonProperty("total_pages")
     private Integer totalPages;
