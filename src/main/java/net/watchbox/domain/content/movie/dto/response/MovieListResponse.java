@@ -14,10 +14,10 @@ public class MovieListResponse {
     private Integer page;
     private Integer totalPages;
     private Integer totalResults;
-    private List<MovieResponse> movies;
+    private List<MovieResponse> movieList;
 
     public static MovieListResponse from(TmdbMovieListsResponse response) {
-        List<MovieResponse> movies = response.getResults().stream()
+        List<MovieResponse> movieList = response.getResults().stream()
                 .map(MovieResponse::from)
                 .toList();
 
@@ -25,7 +25,7 @@ public class MovieListResponse {
                 .page(response.getPage())
                 .totalPages(response.getTotalPages())
                 .totalResults(response.getTotalResults())
-                .movies(movies)
+                .movieList(movieList)
                 .build();
     }
 }

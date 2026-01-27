@@ -14,10 +14,10 @@ public class TvListResponse {
     private Integer page;
     private Integer totalPages;
     private Integer totalResults;
-    private List<TvResponse> tvShows;
+    private List<TvResponse> tvList;
 
     public static TvListResponse from(TmdbTvSeriesListsResponse response) {
-        List<TvResponse> tvShows = response.getResults().stream()
+        List<TvResponse> tvList = response.getResults().stream()
                 .map(TvResponse::from)
                 .toList();
 
@@ -25,7 +25,7 @@ public class TvListResponse {
                 .page(response.getPage())
                 .totalPages(response.getTotalPages())
                 .totalResults(response.getTotalResults())
-                .tvShows(tvShows)
+                .tvList(tvList)
                 .build();
     }
 }
