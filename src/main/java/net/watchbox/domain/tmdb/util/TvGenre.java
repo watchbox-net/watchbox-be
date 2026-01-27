@@ -3,52 +3,52 @@ package net.watchbox.domain.tmdb.util;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Getter
 @AllArgsConstructor
 public enum TvGenre {
-    ACTION_ADVENTURE(10759, "Action & Adventure"),
-    ANIMATION(16, "Animation"),
-    COMEDY(35, "Komödie"),
-    CRIME(80, "Krimi"),
-    DOCUMENTARY(99, "Dokumentarfilm"),
-    DRAMA(18, "Drama"),
-    FAMILY(10751, "Familie"),
-    KIDS(10762, "Kids"),
-    MYSTERY(9648, "Mystery"),
-    NEWS(10763, "News"),
-    REALITY(10764, "Reality"),
-    SCI_FI_FANTASY(10765, "Sci-Fi & Fantasy"),
-    SOAP(10766, "Soap"),
-    TALK(10767, "Talk"),
-    WAR_POLITICS(10768, "War & Politics"),
-    WESTERN(37, "Western");
+    ACTION_ADVENTURE(10759, "Action & Adventure", "액션 & 어드벤처"),
+    ANIMATION(16, "Animation", "애니메이션"),
+    COMEDY(35, "Comedy", "코미디"),
+    CRIME(80, "Crime", "범죄"),
+    DOCUMENTARY(99, "Documentary", "다큐멘터리"),
+    DRAMA(18, "Drama", "드라마"),
+    FAMILY(10751, "Family", "가족"),
+    KIDS(10762, "Kids", "키즈"),
+    MYSTERY(9648, "Mystery", "미스터리"),
+    NEWS(10763, "News", "뉴스"),
+    REALITY(10764, "Reality", "리얼리티"),
+    SCI_FI_FANTASY(10765, "Sci-Fi & Fantasy", "SF & 판타지"),
+    SOAP(10766, "Soap", "소프 오페라"),
+    TALK(10767, "Talk", "토크쇼"),
+    WAR_POLITICS(10768, "War & Politics", "전쟁 & 정치"),
+    WESTERN(37, "Western", "서부");
 
     private final int id;
-    private final String name;
+    private final String englishName;
+    private final String koreanName;
 
-    // ID로 장르명 가져오기
-    public static String getNameById(int id) {
-        TvGenre genre = findById(id);
-        return genre != null ? genre.getName() : null;
-    }
+    private static final Map<Integer, TvGenre> ID_MAP =
+            Arrays.stream(values())
+                    .collect(Collectors.toMap(TvGenre::getId, g -> g));
 
     // ID로 Enum 찾기
     public static TvGenre findById(int id) {
-        for (TvGenre genre : TvGenre.values()) {
-            if (genre.id == id) {
-                return genre;
-            }
-        }
-        return null;
+        return ID_MAP.get(id);
     }
 
-    // 장르명으로 Enum 찾기
-    public static TvGenre findByName(String name) {
-        for (TvGenre genre : TvGenre.values()) {
-            if (genre.name.equals(name)) {
-                return genre;
-            }
-        }
-        return null;
+    // ID로 한글 장르명 가져오기
+    public static String getKoreanNameById(int id) {
+        TvGenre genre = findById(id);
+        return genre != null ? genre.getKoreanName() : null;
+    }
+
+    // ID로 영문 장르명 가져오기
+    public static String getEnglishNameById(int id) {
+        TvGenre genre = findById(id);
+        return genre != null ? genre.getEnglishName() : null;
     }
 }

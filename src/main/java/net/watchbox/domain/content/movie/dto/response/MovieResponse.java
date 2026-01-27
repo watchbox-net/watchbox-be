@@ -4,8 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import net.watchbox.domain.content.movie.entity.Movie;
+import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResultItem;
+import net.watchbox.domain.tmdb.util.MovieGenre;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @ToString
@@ -19,9 +22,14 @@ public class MovieResponse {
     private Double voteAverage;
     private Long voteCount;
     private Integer year;
-    private List<Integer> genreIds;
+    private List<String> genres;
 
     public static MovieResponse from(Movie movie){
+        List<String> genreNames = movie.getGenreIds().stream()
+                .map(MovieGenre::getKoreanNameById)
+                .filter(Objects::nonNull)
+                .toList();
+
         return MovieResponse.builder()
                 .id(movie.getTmdbId())
                 .title(movie.getTitleKo())
@@ -31,7 +39,31 @@ public class MovieResponse {
                 .voteAverage(movie.getVoteAverage())
                 .voteCount(movie.getVoteCount())
                 .year(movie.getYear())
-                .genreIds(movie.getGenreIds())
+                .genres(genreNames)
+                .build();
+    }
+
+    public static MovieResponse from(TmdbMovieListsResultItem item) {
+        List<String> genreNames = item.getGenreIds().stream()
+                .map(MovieGenre::getKoreanNameById)
+                .filter(Objects::nonNull)
+                .toList();
+
+        Integer year = null;
+        if (item.getReleaseDate() != null && item.getReleaseDate().length() >= 4) {
+            year = Integer.parseInt(item.getReleaseDate().substring(0, 4));
+        }
+
+        return MovieResponse.builder()
+                .id(item.getId().longValue())
+                .title(item.getTitle())
+                .titleOriginal(item.getOriginalTitle())
+                .posterPath(item.getPosterPath())
+                .popularity(item.getPopularity())
+                .voteAverage(item.getVoteAverage())
+                .voteCount(item.getVoteCount().longValue())
+                .year(year)
+                .genres(genreNames)
                 .build();
     }
 }
