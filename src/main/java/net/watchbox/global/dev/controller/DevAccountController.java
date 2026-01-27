@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Tag(name = "DevAccount")
 public class DevAccountController {
-    private final JwtProperties jwtProperties;
     private final TokenService tokenService;
-    private final OauthAccountRepository oauthAccountRepository;
     private final MemberRepository memberRepository;
 
     @GetMapping("/login/{accountId}")
