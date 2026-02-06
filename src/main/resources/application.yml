@@ -54,15 +54,6 @@ spring:
             scope:
               - profile_nickname
               - account_email
-          naver:
-            client-id: iWUBZraU2Mf9Hx6zv99X
-            client-secret: _8iqJyoPCt
-            scope:
-              - name
-              - email
-            client-name: Naver
-            authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
 
 tmdb:
   api:
@@ -77,8 +68,8 @@ url:
         domain: https://www.watch-box.net
 #        vercel: https://watch-people-3rd-fe.vercel.app
     backend:
-        local: http://localhost:8080
-        domain: https://api.watch-box.net
+        local: http://localhost:9000
+#        domain: https://api.watch-box.net
 
 jwt:
     issuer: chyun0029@gmail.com
@@ -89,4 +80,3 @@ jwt:
 springdoc:
   api-docs:
     path: /api-docs
-

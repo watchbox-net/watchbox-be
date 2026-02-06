@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.entity.BoxType;
-import net.watchbox.domain.box.entity.SharedBox;
-import net.watchbox.domain.box.repository.SharedBoxRepository;
+import net.watchbox.domain.box.entity.Box;
+import net.watchbox.domain.box.repository.BoxRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
@@ -15,25 +15,25 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class SharedBoxService {
-    private final SharedBoxRepository sharedBoxRepository;
+    private final BoxRepository boxRepository;
 
-    public SharedBox findById(Long boxId) {
-        return sharedBoxRepository.findById(boxId)
+    public Box findById(Long boxId) {
+        return boxRepository.findById(boxId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SHARED_BOX_NOT_FOUND, boxId));
     }
 
 
     @Transactional
-    public SharedBox createSharedBox(Member member) {
-        return sharedBoxRepository.save(SharedBox.builder()
+    public Box createSharedBox(Member member) {
+        return boxRepository.save(Box.builder()
                 .title(member.getNickname() + "의 공유 박스")
-                .boxType(BoxType.PRIVATE)
+                .boxType(BoxType.SHARED)
                 .build());
     }
 
     @Transactional
-    public void deleteSharedBox(SharedBox sharedBox) {
-        sharedBoxRepository.delete(sharedBox);
+    public void deleteSharedBox(Box box) {
+        boxRepository.delete(box);
     }
 
 }

@@ -2,7 +2,7 @@ package net.watchbox.domain.box.entity.request;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.box.entity.SharedBox;
+import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
@@ -25,7 +25,7 @@ public class JoinBoxRequest extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", nullable = false)
-    private SharedBox sharedBox;
+    private Box box;
 
     public void updateStatus(RequestStatus status) {
         this.status = status;

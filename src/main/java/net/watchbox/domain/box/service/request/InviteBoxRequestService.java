@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.response.Invitation.InvitationReceivedResponse;
 import net.watchbox.domain.box.dto.response.Invitation.InvitationSentResponse;
-import net.watchbox.domain.box.entity.SharedBox;
+import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.request.InviteBoxRequest;
 import net.watchbox.domain.box.entity.request.RequestStatus;
 import net.watchbox.domain.box.repository.request.InviteBoxRequestRepository;
@@ -29,10 +29,10 @@ public class InviteBoxRequestService {
 
     // 공유 박스 보낸초대 엔티티 생성 (PENDING)
     @Transactional
-    public void inviteToBox(Member sender, SharedBox sharedBox, Member receiver) {
+    public void inviteToBox(Member sender, Box box, Member receiver) {
         inviteBoxRequestRepository.save(InviteBoxRequest.builder()
                 .sender(sender)
-                .sharedBox(sharedBox)
+                .box(box)
                 .receiver(receiver)
                 .status(RequestStatus.PENDING)
                 .build());
@@ -75,8 +75,8 @@ public class InviteBoxRequestService {
     }
 
     // 중복 초대 요청 검증
-    public void validateDuplicateInviteRequest(SharedBox sharedBox, Member receiver) {
-        if (inviteBoxRequestRepository.existsBySharedBoxAndReceiverAndStatus(sharedBox, receiver, RequestStatus.PENDING)) {
+    public void validateDuplicateInviteRequest(Box box, Member receiver) {
+        if (inviteBoxRequestRepository.existsByBoxAndReceiverAndStatus(box, receiver, RequestStatus.PENDING)) {
             throw new CustomException(ErrorCode.DUPLICATE_INVITE_REQUEST, receiver.getMemberId(), "Member");
         }
     }

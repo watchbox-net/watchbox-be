@@ -1,6 +1,6 @@
 package net.watchbox.domain.box.repository.request;
 
-import net.watchbox.domain.box.entity.SharedBox;
+import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.request.InviteBoxRequest;
 import net.watchbox.domain.box.entity.request.RequestStatus;
 import net.watchbox.domain.member.entity.Member;
@@ -17,5 +17,5 @@ public interface InviteBoxRequestRepository extends JpaRepository<InviteBoxReque
     List<InviteBoxRequest> findAllBySenderAndStatus(Member member, RequestStatus requestStatus);
     List<InviteBoxRequest> findAllByReceiverAndStatus(Member member, RequestStatus requestStatus);
 
-    boolean existsBySharedBoxAndReceiverAndStatus(SharedBox sharedBox, Member receiver, RequestStatus requestStatus);
+    boolean existsByBoxAndReceiverAndStatus(Box box, Member receiver, RequestStatus requestStatus);
 }

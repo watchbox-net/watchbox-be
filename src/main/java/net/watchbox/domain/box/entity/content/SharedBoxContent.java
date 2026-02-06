@@ -2,7 +2,7 @@ package net.watchbox.domain.box.entity.content;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.box.entity.SharedBox;
+import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.member.entity.Member;
@@ -20,7 +20,7 @@ public class SharedBoxContent extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", nullable = false)
-    private SharedBox sharedBox;
+    private Box box;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tmdb_id", nullable = false, unique = false)

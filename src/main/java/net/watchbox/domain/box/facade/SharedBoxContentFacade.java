@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
-import net.watchbox.domain.box.entity.SharedBox;
+import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.service.BoxMemberService;
 import net.watchbox.domain.box.service.SharedBoxService;
@@ -32,73 +32,73 @@ public class SharedBoxContentFacade {
 
     @Transactional
     public void addSharedBoxContent(Member member, Long boxId, BoxContentRequest boxContentRequests) {
-        SharedBox sharedBox = sharedBoxService.findById(boxId);
+        Box box = sharedBoxService.findById(boxId);
 
         // 1. 추가 권한 검증
-        boxMemberService.validateSharedBoxContentAdder(sharedBox, member);
+        boxMemberService.validateSharedBoxContentAdder(box, member);
 
         // 2. Content 데이터 존재 여부 확인 및 저장 후 반환
         Content content = contentCommandService.getOrSaveContentCascade(boxContentRequests);
 
         // 공유 박스에 이미 존재하는지 검증
-        sharedBoxContentCommandService.validateNotInSharedBox(member, sharedBox, content);
+        sharedBoxContentCommandService.validateNotInSharedBox(member, box, content);
 
         // 3. 공유 박스에 컨텐츠 추가
-        sharedBoxContentCommandService.addContentToSharedBox(member, sharedBox, content);
+        sharedBoxContentCommandService.addContentToSharedBox(member, box, content);
 
         log.info("Member ID {} added SharedBoxContent ID {} to SharedBox ID {}", member.getMemberId(), content.getTmdbId(), boxId);
     }
 
     @Transactional
     public void addSharedBoxContentList(Member member, Long boxId, List<BoxContentRequest> boxContentRequests) {
-        SharedBox sharedBox = sharedBoxService.findById(boxId);
+        Box box = sharedBoxService.findById(boxId);
 
         // 추가 권한 검증
-        boxMemberService.validateSharedBoxContentAdder(sharedBox, member);
+        boxMemberService.validateSharedBoxContentAdder(box, member);
 
         for(BoxContentRequest boxContentRequest : boxContentRequests) {
             // Content 데이터 존재 여부 확인 및 저장 후 반환
             Content content = contentCommandService.getOrSaveContentCascade(boxContentRequest);
 
             // 공유 박스에 이미 존재하면 패스
-            if(sharedBoxContentCommandService.existsInSharedBox(member, sharedBox, content)) continue;
+            if(sharedBoxContentCommandService.existsInSharedBox(member, box, content)) continue;
 
             // 공유 박스에 컨텐츠 추가
-            sharedBoxContentCommandService.addContentToSharedBox(member, sharedBox, content);
+            sharedBoxContentCommandService.addContentToSharedBox(member, box, content);
         }
     }
 
     @Transactional
     public void addSharedBoxContentListFromMine(Member member, Long boxId, List<Long> tmdbIds) {
-        SharedBox sharedBox = sharedBoxService.findById(boxId);
+        Box box = sharedBoxService.findById(boxId);
 
         // 추가 권한 검증
-        boxMemberService.validateSharedBoxContentAdder(sharedBox, member);
+        boxMemberService.validateSharedBoxContentAdder(box, member);
 
         // TMDB ID로 Content 리스트 조회
         List<Content> contents = contentQueryService.getContentsByTmdbIds(tmdbIds);
 
         for(Content content : contents) {
             // 공유 박스에 이미 존재하면 패스
-            if(sharedBoxContentCommandService.existsInSharedBox(member, sharedBox, content)) continue;
+            if(sharedBoxContentCommandService.existsInSharedBox(member, box, content)) continue;
 
             // 공유 박스에 컨텐츠 추가
-            sharedBoxContentCommandService.addContentToSharedBox(member, sharedBox, content);
+            sharedBoxContentCommandService.addContentToSharedBox(member, box, content);
         }
     }
 
     public SharedBoxContentResponse getSharedBoxContents(Member member, Long boxId) {
-        SharedBox sharedBox = sharedBoxService.findById(boxId);
-        return sharedBoxContentQueryService.getSharedBoxContentsAll(sharedBox, member);
+        Box box = sharedBoxService.findById(boxId);
+        return sharedBoxContentQueryService.getSharedBoxContentsAll(box, member);
     }
 
     @Transactional
     public void removeSharedBoxContent(Member member, Long boxId, Long sbcId) {
-        SharedBox sharedBox = sharedBoxService.findById(boxId);
+        Box box = sharedBoxService.findById(boxId);
         SharedBoxContent sharedBoxContent = sharedBoxContentQueryService.getSharedBoxContentById(sbcId);
 
         // 삭제 권한 검증
-        boxMemberService.validateSharedBoxContentRemover(sharedBox, member, sharedBoxContent);
+        boxMemberService.validateSharedBoxContentRemover(box, member, sharedBoxContent);
 
         // 공유 박스 컨텐츠 삭제
         sharedBoxContentCommandService.deleteContentFromSharedBox(member, sharedBoxContent);
@@ -108,12 +108,12 @@ public class SharedBoxContentFacade {
 
     @Transactional
     public void removeSharedBoxContentList(Member member, Long boxId, List<Long> sbcIds) {
-        SharedBox sharedBox = sharedBoxService.findById(boxId);
+        Box box = sharedBoxService.findById(boxId);
         List<SharedBoxContent> sharedBoxContents = sharedBoxContentQueryService.getSharedBoxContentsByIds(sbcIds);
 
         for(SharedBoxContent sharedBoxContent : sharedBoxContents) {
             // 삭제 권한 검증
-            boxMemberService.validateSharedBoxContentRemover(sharedBox, member, sharedBoxContent);
+            boxMemberService.validateSharedBoxContentRemover(box, member, sharedBoxContent);
 
             // 공유 박스 컨텐츠 삭제
             sharedBoxContentCommandService.deleteContentFromSharedBox(member, sharedBoxContent);

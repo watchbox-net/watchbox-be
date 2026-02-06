@@ -17,7 +17,7 @@ public class InvitationSentResponse { // 보낸초대 정보
         response.setRequestId(inviteBoxRequest.getRequestId());
         response.setReceiverId(inviteBoxRequest.getReceiver().getMemberId());
         response.setReceiver(inviteBoxRequest.getReceiver().getNickname());
-        response.setSharedBoxTitle(inviteBoxRequest.getSharedBox().getTitle());
+        response.setSharedBoxTitle(inviteBoxRequest.getBox().getTitle());
         response.setStatus(inviteBoxRequest.getStatus());
         return response;
     }

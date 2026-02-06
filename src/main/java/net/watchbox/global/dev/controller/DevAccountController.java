@@ -3,17 +3,12 @@ package net.watchbox.global.dev.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.auth.repository.OauthAccountRepository;
 import net.watchbox.domain.auth.service.TokenService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.dev.dto.DevTokenResponse;
-import net.watchbox.global.properties.JwtProperties;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor

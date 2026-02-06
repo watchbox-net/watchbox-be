@@ -15,21 +15,21 @@ import java.util.List;
 @Builder
 @Getter
 @Entity
-public class SharedBox extends BaseTime {
+public class Box extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boxId;
 
-    @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoxMember> boxMembers;
 
-    @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedBoxContent> sharedBoxContents;
 
-    @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InviteBoxRequest> inviteBoxRequests;
 
-    @OneToMany(mappedBy = "sharedBox", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JoinBoxRequest> joinBoxRequests;
 
     private String title;

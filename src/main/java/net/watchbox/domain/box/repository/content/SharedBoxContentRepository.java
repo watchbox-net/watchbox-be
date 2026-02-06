@@ -1,6 +1,6 @@
 package net.watchbox.domain.box.repository.content;
 
-import net.watchbox.domain.box.entity.SharedBox;
+import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.member.entity.Member;
@@ -13,9 +13,9 @@ import java.util.List;
 public interface SharedBoxContentRepository extends JpaRepository<SharedBoxContent, Long> {
     boolean existsByAddedByAndContent(Member member, Content content);
 
-    Long countBySharedBox(SharedBox sharedBox);
+    Long countByBox(Box box);
 
-    List<SharedBoxContent> findAllBySharedBox(SharedBox sharedBox);
+    List<SharedBoxContent> findAllByBox(Box box);
 
-    boolean existsByAddedByAndSharedBoxAndContent(Member member, SharedBox sharedBox, Content content);
+    boolean existsByAddedByAndBoxAndContent(Member member, Box box, Content content);
 }
