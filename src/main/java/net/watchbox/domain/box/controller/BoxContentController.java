@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared/{boxId}/contents")
 @Tag(name = "SharedBoxContent", description = "SharedBoxContent API")
-public class SharedBoxContentController {
+public class BoxContentController {
     private final SharedBoxContentFacade sharedBoxContentFacade;
 
     // 공유 박스에 컨텐츠 추가

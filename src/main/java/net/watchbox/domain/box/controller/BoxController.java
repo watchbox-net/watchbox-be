@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
 @Tag(name = "SharedBox", description = "SharedBox API")
-public class SharedBoxController {
+public class BoxController {
     private final SharedBoxFacade sharedBoxFacade;
     /**
      * 공유 박스 생성하기

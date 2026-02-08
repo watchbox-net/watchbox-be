@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared/invitations")
 @Tag(name = "InviteSharedBox", description = "InviteSharedBox API")
-public class InviteSharedBoxController {
+public class InviteBoxController {
     private final InviteSharedBoxFacade inviteSharedBoxFacade;
 
     /**
