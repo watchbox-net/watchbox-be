@@ -26,6 +26,9 @@ public enum ErrorCode {
     /**
      * Box
      */
+    // Box 오류
+    BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-404", "요청한 박스를 찾을 수 없습니다."),
+
     // MyBox 오류
     CONTENT_NOT_IN_MY_BOX(HttpStatus.NOT_FOUND, "MY-BOX-404", "내 박스에 추가된 컨텐츠가 아닙니다."),
     CONTENT_ALREADY_IN_MY_BOX(HttpStatus.CONFLICT, "MY-BOX-409", "이미 내 박스에 추가된 컨텐츠입니다."),

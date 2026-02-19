@@ -47,7 +47,7 @@ public class ContentCommandService {
     private final TmdbPeopleService tmdbPeopleService;
 
     /**
-     * Content 데이터 존재 여부 확인 및 저장 후 반환
+     * Content DB 존재 여부 확인하여 조회 or 저장
      * - 존재하면 패스
      * - 존재하지 않으면
      *    1) Content 정보 저장

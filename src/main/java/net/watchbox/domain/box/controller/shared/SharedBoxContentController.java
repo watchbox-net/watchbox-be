@@ -1,10 +1,10 @@
-package net.watchbox.domain.box.controller;
+package net.watchbox.domain.box.controller.shared;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
-import net.watchbox.domain.box.facade.SharedBoxContentFacade;
+import net.watchbox.domain.box.facade.shared.SharedBoxContentFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared/{boxId}/contents")
-@Tag(name = "SharedBoxContent", description = "SharedBoxContent API")
-public class BoxContentController {
+@Tag(name = "SharedBoxContent")
+public class SharedBoxContentController {
     private final SharedBoxContentFacade sharedBoxContentFacade;
 
     // 공유 박스에 컨텐츠 추가

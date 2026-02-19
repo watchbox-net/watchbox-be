@@ -6,8 +6,8 @@ import net.watchbox.domain.box.dto.response.content.ContentItem;
 import net.watchbox.domain.box.dto.response.content.SharedBoxContentItem;
 import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
 import net.watchbox.domain.box.entity.Box;
-import net.watchbox.domain.box.entity.content.SharedBoxContent;
-import net.watchbox.domain.box.repository.content.SharedBoxContentRepository;
+import net.watchbox.domain.box.entity.content.BoxContent;
+import net.watchbox.domain.box.repository.content.BoxContentRepository;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
@@ -18,24 +18,24 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SharedBoxContentQueryService {
-    private final SharedBoxContentRepository sharedBoxContentRepository;
+public class BoxContentQueryService {
+    private final BoxContentRepository boxContentRepository;
 
-    public SharedBoxContent getSharedBoxContentById(Long sbcId) {
-        return sharedBoxContentRepository.findById(sbcId)
+    public BoxContent getSharedBoxContentById(Long sbcId) {
+        return boxContentRepository.findById(sbcId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SHARED_BOX_CONTENT_NOT_FOUND, sbcId));
     }
 
     // 여러개의 공유 박스 ID로 공유 박스 컨텐츠 조회
-    public List<SharedBoxContent> getSharedBoxContentsByIds(List<Long> sbcIds) {
-        return sharedBoxContentRepository.findAllById(sbcIds);
+    public List<BoxContent> getSharedBoxContentsByIds(List<Long> sbcIds) {
+        return boxContentRepository.findAllById(sbcIds);
     }
 
     public SharedBoxContentResponse getSharedBoxContentsAll(Box box, Member member) {
-        Long totalCount = sharedBoxContentRepository.countByBox(box);
-        List<SharedBoxContent> sharedBoxContents = sharedBoxContentRepository.findAllByBox(box);
+        Long totalCount = boxContentRepository.countByBox(box);
+        List<BoxContent> boxContents = boxContentRepository.findAllByBox(box);
 
-        List<SharedBoxContentItem> sharedBoxContentItems = sharedBoxContents.stream()
+        List<SharedBoxContentItem> sharedBoxContentItems = boxContents.stream()
                 .map(sbc -> {
                     Content content = sbc.getContent();
                     Member addedBy = sbc.getAddedBy();
@@ -47,17 +47,17 @@ public class SharedBoxContentQueryService {
                     switch(content.getMediaType()){
                         case MOVIE -> {
                             return new SharedBoxContentItem(
-                                    ContentItem.fromMovie(content.getMovie()), sbc.getSharedBoxContentId(), List.of(adderItem)
+                                    ContentItem.fromMovie(content.getMovie()), sbc.getBoxContentId(), List.of(adderItem)
                             );
                         }
                         case TV -> {
                             return new SharedBoxContentItem(
-                                    ContentItem.fromTv(content.getTv()), sbc.getSharedBoxContentId(), List.of(adderItem)
+                                    ContentItem.fromTv(content.getTv()), sbc.getBoxContentId(), List.of(adderItem)
                             );
                         }
                         case PERSON -> {
                             return new SharedBoxContentItem(
-                                    ContentItem.fromPerson(content.getPerson()), sbc.getSharedBoxContentId(), List.of(adderItem)
+                                    ContentItem.fromPerson(content.getPerson()), sbc.getBoxContentId(), List.of(adderItem)
                             );
                         }
                         default -> throw new CustomException(ErrorCode.UNSUPPORTED_MEDIA_TYPE);

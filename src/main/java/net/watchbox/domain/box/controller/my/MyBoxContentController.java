@@ -1,10 +1,10 @@
-package net.watchbox.domain.box.controller;
+package net.watchbox.domain.box.controller.my;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.request.BoxContentRequest;
 import net.watchbox.domain.box.dto.response.my.MyBoxContentResponse;
-import net.watchbox.domain.box.facade.MyBoxContentFacade;
+import net.watchbox.domain.box.facade.my.MyBoxContentFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;

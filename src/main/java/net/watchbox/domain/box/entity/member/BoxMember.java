@@ -16,7 +16,7 @@ public class BoxMember extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boxMemberId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) // 양방향
     @JoinColumn(name = "box_id", nullable = false)
     private Box box;
 

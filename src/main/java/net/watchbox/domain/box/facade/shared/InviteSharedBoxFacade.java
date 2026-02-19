@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.facade;
+package net.watchbox.domain.box.facade.shared;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,8 @@ import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.request.InviteBoxRequest;
 import net.watchbox.domain.box.service.BoxMemberService;
-import net.watchbox.domain.box.service.SharedBoxService;
+import net.watchbox.domain.box.service.BoxValidator;
+import net.watchbox.domain.box.service.BoxService;
 import net.watchbox.domain.box.service.request.InviteBoxRequestService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
@@ -24,14 +25,15 @@ public class InviteSharedBoxFacade {
     private final MemberService memberService;
     private final InviteBoxRequestService inviteBoxRequestService;
     private final BoxMemberService boxMemberService;
-    private final SharedBoxService sharedBoxService;
+    private final BoxService boxService;
+    private final BoxValidator boxValidator;
 
     public void inviteToBox(Member sender, Long boxId, Long receiverId) {
         Member receiver = memberService.findById(receiverId);
-        Box box = sharedBoxService.findById(boxId);
+        Box box = boxService.findById(boxId);
 
         // 기존 박스 멤버인지 검증
-        boxMemberService.validateExistingBoxMember(box, receiver);
+        boxValidator.validateExistingBoxMember(box, receiver);
         // 초대 요청 중복 검증
         inviteBoxRequestService.validateDuplicateInviteRequest(box, receiver);
         // 초대 요청 생성

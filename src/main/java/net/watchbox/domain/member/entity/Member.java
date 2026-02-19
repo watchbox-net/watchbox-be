@@ -3,10 +3,11 @@ package net.watchbox.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.auth.entity.OauthAccount;
-import net.watchbox.domain.box.entity.content.SharedBoxContent;
+import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.request.InviteBoxRequest;
 import net.watchbox.domain.box.entity.content.MyBoxContent;
+import net.watchbox.domain.box.entity.request.JoinBoxRequest;
 import net.watchbox.domain.record.entity.WatchRecord;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,22 +34,15 @@ public class Member implements UserDetails {
     @JoinColumn(name = "oauth_account_id", nullable = false)
     private OauthAccount oauthAccount;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WatchRecord> watchHistories;
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MyBoxContent> myBoxContents;
-
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<InviteBoxRequest> inviteBoxRequests;
 
-    @OneToMany(mappedBy = "addedBy")
-    private List<SharedBoxContent> sharedBoxContents;
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<JoinBoxRequest> joinBoxRequests;
 
     private String email;
     private String nickname;
     private String profileImage;
-
     private String password;
 
     @CreatedDate

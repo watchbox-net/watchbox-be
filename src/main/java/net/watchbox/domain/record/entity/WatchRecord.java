@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class WatchRecord extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long watchHistoryId;
+    private Long watchRecordId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
