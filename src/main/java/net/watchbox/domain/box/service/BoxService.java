@@ -24,8 +24,13 @@ public class BoxService {
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_NOT_FOUND, boxId));
     }
 
-    public List<Box> findAllByOwnerAndBoxType(Member owner, BoxType boxType) {
-        return boxRepository.findAllByOwnerAndBoxType(owner, boxType);
+    public List<Box> findAllMyBoxListByOwner(Member owner) {
+        return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);
+    }
+
+
+    public List<Box> findAllSharedBoxListByMember(Member member) {
+        return boxRepository.findAllByBoxMembers_MemberAndBoxType(member, BoxType.SHARED);
     }
 
     @Transactional

@@ -10,6 +10,6 @@ import java.util.List;
 @ToString
 @Builder
 public class MyBoxListResponse {
-    List<MyBoxResponse> boxList;
-    int boxCount;
+    private List<MyBoxResponse> boxList;
+    private int boxCount;
 }

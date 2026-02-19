@@ -36,9 +36,9 @@ public class BoxValidator {
     // ------------------- BoxMember 검증 -------------------
 
     public void validateBoxContentAdder(Box box, Member member) {
-        // 해당 BoxMember 인지
+        // BoxMember 조회
         BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
@@ -50,9 +50,9 @@ public class BoxValidator {
         if(!boxContent.getAddedBy().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.FORBIDDEN_CONTENT_REMOVAL, member.getMemberId(), "Member");
         }
-        // 해당 BoxMember 인지
+        // BoxMember 조회
         BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
@@ -60,16 +60,23 @@ public class BoxValidator {
     }
 
     public void validateBoxOwner(Box box, Member member) {
-        // 해당 BoxMember 인지
+        // BoxMember 조회
         BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member"));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
         // Role이 OWNER인지
         if (boxMember.getRole() != BoxMemberRole.OWNER) {
             throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
         }
     }
 
-    // 공유 박스의 기존 멤버인지 검증
+    // 해당 BoxMember인지 검증
+    public void validateBoxMember(Box box, Member member) {
+        if(!boxMemberRepository.existsByBoxAndMember(box, member)) {
+            throw new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member");
+        }
+    }
+
+    // 공유 박스의 기존 멤버로 이미 존재하는지 검증
     public void validateExistingBoxMember(Box box, Member member) {
         if(boxMemberRepository.existsByBoxAndMember(box, member)) {
             throw new CustomException(ErrorCode.ALREADY_BOX_MEMBER, member.getMemberId(), "Member");

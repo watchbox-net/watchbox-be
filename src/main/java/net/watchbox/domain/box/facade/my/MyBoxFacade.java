@@ -1,13 +1,11 @@
 package net.watchbox.domain.box.facade.my;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.BoxCreateRequest;
 import net.watchbox.domain.box.dto.BoxCreateResponse;
 import net.watchbox.domain.box.dto.MyBoxListResponse;
 import net.watchbox.domain.box.dto.MyBoxResponse;
 import net.watchbox.domain.box.entity.Box;
-import net.watchbox.domain.box.entity.BoxType;
 import net.watchbox.domain.box.service.BoxMemberService;
 import net.watchbox.domain.box.service.BoxService;
 import net.watchbox.domain.box.service.BoxValidator;
@@ -40,7 +38,7 @@ public class MyBoxFacade {
 
     @Transactional(readOnly = true)
     public MyBoxListResponse getMyBoxList(Member member) {
-        List<Box> myBoxList = boxService.findAllByOwnerAndBoxType(member, BoxType.MY);
+        List<Box> myBoxList = boxService.findAllMyBoxListByOwner(member);
         List<MyBoxResponse> myBoxResponseList = myBoxList.stream()
                 .map(MyBoxResponse::from)
                 .toList();

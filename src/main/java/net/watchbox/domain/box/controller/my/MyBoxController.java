@@ -15,12 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/my")
 @Tag(name = "MyBox CRUD")
+// ToDo: Swagger로 확인하기
 public class MyBoxController {
     private final MyBoxFacade myBoxFacade;
 
@@ -56,4 +55,6 @@ public class MyBoxController {
         ));
     }
 
+    // ToDo: 마이 박스 수정하기
+    // ToDo: 마이 박스 삭제하기
 }

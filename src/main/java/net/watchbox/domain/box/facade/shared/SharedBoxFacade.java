@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.BoxCreateRequest;
 import net.watchbox.domain.box.dto.BoxCreateResponse;
+import net.watchbox.domain.box.dto.SharedBoxListResponse;
 import net.watchbox.domain.box.dto.SharedBoxResponse;
 import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.service.BoxMemberService;
@@ -31,13 +32,21 @@ public class SharedBoxFacade {
     }
 
     @Transactional(readOnly = true)
-    public List<SharedBoxResponse> getSharedBoxes(Member member) {
-        return boxMemberService.findAllByMember(member).stream()
-                .map(boxMember -> {
-                    Box box = boxMember.getBox();
-                    return new SharedBoxResponse(box.getBoxId(), box.getName());
-                })
+    public SharedBoxResponse getSharedBox(Member member, Long boxId) {
+        Box box = boxService.findById(boxId);
+        boxValidator.validateBoxMember(box, member);
+        return SharedBoxResponse.from(box);
+    }
+
+    @Transactional(readOnly = true)
+    public SharedBoxListResponse getSharedBoxList(Member member) {
+        List<Box> sharedBoxList = boxService.findAllSharedBoxListByMember(member);
+        List<SharedBoxResponse> sharedBoxResponseList = sharedBoxList.stream()
+                .map(SharedBoxResponse::from)
                 .toList();
+        return SharedBoxListResponse.builder()
+                .sharedBoxList(sharedBoxResponseList)
+                .build();
     }
 
     @Transactional
@@ -47,4 +56,6 @@ public class SharedBoxFacade {
         boxService.deleteBox(box);
         log.info("SharedBox {} deleted for member: {} ", boxId, member.getNickname());
     }
+
+
 }
