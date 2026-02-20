@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: watchbox-local
-  profiles:
-    active: local
 
   jpa:
     show-sql: true
