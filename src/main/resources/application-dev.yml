@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: watchbox-dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://watchbox-db:3306/watchbox-dev?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: hyun
+    password: evans
