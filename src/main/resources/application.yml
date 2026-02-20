@@ -4,11 +4,13 @@ server:
 spring:
   application:
     name: WatchBox
+  profiles:
+    active: local
 
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         highlight_sql: true
