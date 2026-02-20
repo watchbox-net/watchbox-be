@@ -3,14 +3,14 @@ server:
 
 spring:
   application:
-    name: WatchBox
+    name: watchbox-local
   profiles:
     active: local
 
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         highlight_sql: true
@@ -74,8 +74,8 @@ url:
 #        domain: https://api.watch-box.net
 
 jwt:
-    issuer: chyun0029@gmail.com
-    secret_key: watch-people-secret-key
+    issuer: watchbox-net@gmail.com
+    secret_key: watchbox-net-secret-key
     refresh_token_expiry: 7d
     access_token_expiry: 1h
 
