@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.entity.request;
+package net.watchbox.domain.box.entity.invitation;
 
 import jakarta.persistence.*;
 import lombok.*;

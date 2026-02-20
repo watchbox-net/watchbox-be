@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class MyBoxController { // ToDo: Swagger로 확인하기
     private final MyBoxFacade myBoxFacade;
 
-    @PostMapping
     @Operation(summary = "마이 박스 생성")
+    @PostMapping
     public ResponseEntity<ApiResponse<BoxCreateResponse>> createMyBox(
             @AuthenticationPrincipal Member member,
             @RequestBody @Valid BoxCreateRequest request
@@ -30,8 +30,8 @@ public class MyBoxController { // ToDo: Swagger로 확인하기
         ));
     }
 
-    @GetMapping("/{boxId}")
     @Operation(summary = "마이 박스 단일 조회")
+    @GetMapping("/{boxId}")
     public ResponseEntity<ApiResponse<MyBoxResponse>> getMyBox(
             @AuthenticationPrincipal Member member,
             @PathVariable Long boxId
@@ -41,8 +41,8 @@ public class MyBoxController { // ToDo: Swagger로 확인하기
         ));
     }
 
-    @GetMapping
     @Operation(summary = "마이 박스 리스트 조회", description = "컨텐츠 리스트, 개수 응답")
+    @GetMapping
     public ResponseEntity<ApiResponse<MyBoxListResponse>> getMyBoxList(
             @AuthenticationPrincipal Member member
     ) {
@@ -51,8 +51,8 @@ public class MyBoxController { // ToDo: Swagger로 확인하기
         ));
     }
 
-    @PatchMapping("/{boxId}")
     @Operation(summary = "마이 박스 수정", description = "이름, 설명")
+    @PatchMapping("/{boxId}")
     public ResponseEntity<ApiResponse<BoxUpdateResponse>> updateMyBox(
         @AuthenticationPrincipal Member member,
         @PathVariable Long boxId,
@@ -65,9 +65,9 @@ public class MyBoxController { // ToDo: Swagger로 확인하기
 
     // ToDo: 마이 박스 -> 공유 박스 전환하기
 
-    @DeleteMapping("/{boxId}")
     @Operation(summary = "마이 박스 삭제", description = "BoxMember 본인과 BoxContent 모두 삭제 " +
             "\n로그 남김")
+    @DeleteMapping("/{boxId}")
     public ResponseEntity<ApiResponse<Void>> deleteMyBox(
             @AuthenticationPrincipal Member member,
             @PathVariable Long boxId

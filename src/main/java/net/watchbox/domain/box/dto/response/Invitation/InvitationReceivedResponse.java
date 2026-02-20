@@ -1,8 +1,8 @@
 package net.watchbox.domain.box.dto.response.Invitation;
 
 import lombok.Data;
-import net.watchbox.domain.box.entity.request.BoxInvitation;
-import net.watchbox.domain.box.entity.request.RequestStatus;
+import net.watchbox.domain.box.entity.invitation.BoxInvitation;
+import net.watchbox.domain.box.entity.invitation.RequestStatus;
 
 @Data
 public class InvitationReceivedResponse { // 받은초대 정보

@@ -1,8 +1,8 @@
 package net.watchbox.domain.box.repository.request;
 
 import net.watchbox.domain.box.entity.Box;
-import net.watchbox.domain.box.entity.request.BoxInvitation;
-import net.watchbox.domain.box.entity.request.RequestStatus;
+import net.watchbox.domain.box.entity.invitation.BoxInvitation;
+import net.watchbox.domain.box.entity.invitation.RequestStatus;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
