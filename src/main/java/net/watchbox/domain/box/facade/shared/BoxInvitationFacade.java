@@ -7,7 +7,7 @@ import net.watchbox.domain.box.dto.response.Invitation.InvitationReceivedRespons
 import net.watchbox.domain.box.dto.response.Invitation.InvitationSentResponse;
 import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.member.BoxMember;
-import net.watchbox.domain.box.entity.request.InviteBoxRequest;
+import net.watchbox.domain.box.entity.request.BoxInvitation;
 import net.watchbox.domain.box.service.BoxMemberService;
 import net.watchbox.domain.box.service.BoxValidator;
 import net.watchbox.domain.box.service.BoxService;
@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class InviteSharedBoxFacade {
+public class BoxInvitationFacade {
     private final MemberService memberService;
     private final InviteBoxRequestService inviteBoxRequestService;
     private final BoxMemberService boxMemberService;
@@ -50,13 +50,13 @@ public class InviteSharedBoxFacade {
 
     @Transactional
     public void acceptBoxInvitation(Member member, Long requestId) {
-        InviteBoxRequest inviteBoxRequest = inviteBoxRequestService.findById(requestId);
-        Box box = inviteBoxRequest.getBox();
+        BoxInvitation boxInvitation = inviteBoxRequestService.findById(requestId);
+        Box box = boxInvitation.getBox();
 
         // 이미 처리된 요청인지지 검증
-        inviteBoxRequestService.validatePendingInviteRequest(inviteBoxRequest);
+        inviteBoxRequestService.validatePendingInviteRequest(boxInvitation);
         // 수락 처리
-        inviteBoxRequestService.acceptBoxInvitation(member, inviteBoxRequest);
+        inviteBoxRequestService.acceptBoxInvitation(member, boxInvitation);
         // 박스 멤버(EDITOR 권한)로 추가
         boxMemberService.addEditorToBox(member, box);
 
@@ -68,11 +68,11 @@ public class InviteSharedBoxFacade {
     }
 
     public void rejectBoxInvitation(Member member, Long requestId) {
-        InviteBoxRequest inviteBoxRequest = inviteBoxRequestService.findById(requestId);
+        BoxInvitation boxInvitation = inviteBoxRequestService.findById(requestId);
         // 이미 처리된 요청인지지 검증
-        inviteBoxRequestService.validatePendingInviteRequest(inviteBoxRequest);
+        inviteBoxRequestService.validatePendingInviteRequest(boxInvitation);
         // 거절 처리
-        inviteBoxRequestService.rejectBoxInvitation(member, inviteBoxRequest);
+        inviteBoxRequestService.rejectBoxInvitation(member, boxInvitation);
     }
 
 }

@@ -11,7 +11,7 @@ import net.watchbox.global.entity.BaseTime;
 @Builder
 @Getter
 @Entity
-public class InviteBoxRequest extends BaseTime {
+public class BoxJoinRequest extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
@@ -22,10 +22,6 @@ public class InviteBoxRequest extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
     private Member sender;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private Member receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", nullable = false)

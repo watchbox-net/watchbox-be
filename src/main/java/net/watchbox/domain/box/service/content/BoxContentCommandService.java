@@ -7,8 +7,6 @@ import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.global.dto.response.exception.CustomException;
-import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,6 +30,10 @@ public class BoxContentCommandService {
     // 공유 박스 컨텐츠 삭제
     public void deleteContentFromSharedBox(Member member, BoxContent boxContent) {
         boxContentRepository.delete(boxContent);
+    }
+
+    public void deleteAllByBox(Box box) {
+        boxContentRepository.deleteAllByBox(box);
     }
 
 

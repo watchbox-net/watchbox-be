@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.response.Invitation.InvitationReceivedResponse;
 import net.watchbox.domain.box.dto.response.Invitation.InvitationSentResponse;
-import net.watchbox.domain.box.facade.shared.InviteSharedBoxFacade;
+import net.watchbox.domain.box.facade.shared.BoxInvitationFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared/invitations")
 @Tag(name = "InviteSharedBox", description = "InviteSharedBox API")
-public class InviteBoxController {
-    private final InviteSharedBoxFacade inviteSharedBoxFacade;
+public class BoxInvitationController {
+    private final BoxInvitationFacade boxInvitationFacade;
 
     /**
      * 공유 박스에 초대하기
@@ -41,7 +41,7 @@ public class InviteBoxController {
             @PathVariable Long boxId,
             @PathVariable Long inviteeId
     ) {
-        inviteSharedBoxFacade.inviteToBox(member, boxId, inviteeId);
+        boxInvitationFacade.inviteToBox(member, boxId, inviteeId);
         return ResponseEntity.status(201).body(ApiResponse.success());
     }
 
@@ -51,7 +51,7 @@ public class InviteBoxController {
             @AuthenticationPrincipal Member member,
             @PathVariable Long requestId
     ) {
-        inviteSharedBoxFacade.acceptBoxInvitation(member, requestId);
+        boxInvitationFacade.acceptBoxInvitation(member, requestId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -61,7 +61,7 @@ public class InviteBoxController {
             @AuthenticationPrincipal Member member,
             @PathVariable Long requestId
     ) {
-        inviteSharedBoxFacade.rejectBoxInvitation(member, requestId);
+        boxInvitationFacade.rejectBoxInvitation(member, requestId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -73,7 +73,7 @@ public class InviteBoxController {
 //            @RequestParam (required = true) RequestStatus status
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success(inviteSharedBoxFacade.getBoxInvitationsSent(member))
+                ApiResponse.success(boxInvitationFacade.getBoxInvitationsSent(member))
         );
     }
 
@@ -84,7 +84,7 @@ public class InviteBoxController {
             @AuthenticationPrincipal Member member
     ){
         return ResponseEntity.ok(
-                ApiResponse.success(inviteSharedBoxFacade.getBoxInvitationsReceived(member))
+                ApiResponse.success(boxInvitationFacade.getBoxInvitationsReceived(member))
         );
     }
 }

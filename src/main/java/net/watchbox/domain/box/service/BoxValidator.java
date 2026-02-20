@@ -19,7 +19,45 @@ public class BoxValidator {
     private final BoxContentRepository boxContentRepository;
     private final BoxMemberRepository boxMemberRepository;
 
-    // ------------------- BoxContent 검증 -------------------
+    // ------------------- Box CRUD 권한 검증 -------------------
+
+    // 해당 BoxMember인지 검증
+    public void validateBoxMember(Box box, Member member) {
+        if(!boxMemberRepository.existsByBoxAndMember(box, member)) {
+            throw new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member");
+        }
+    }
+
+    public void validateBoxOwner(Box box, Member member) {
+        // BoxMember 조회
+        BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
+        // Role이 OWNER 인지
+        if (boxMember.getRole() != BoxMemberRole.OWNER) {
+            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
+        }
+    }
+
+    public void validateBoxEditor(Box box, Member member) {
+        // BoxMember 조회
+        BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
+        // Role이 OWNER 또는 EDITOR 인지
+        if (boxMember.getRole() != BoxMemberRole.OWNER && boxMember.getRole() != BoxMemberRole.EDITOR) {
+            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
+        }
+    }
+
+    // ------------------- InviteBoxRequest 검증 -------------------
+
+    // 공유 박스의 기존 멤버로 이미 존재하는지 검증
+    public void validateExistingBoxMember(Box box, Member member) {
+        if(boxMemberRepository.existsByBoxAndMember(box, member)) {
+            throw new CustomException(ErrorCode.ALREADY_BOX_MEMBER, member.getMemberId(), "Member");
+        }
+    }
+
+    // ------------------- BoxContent 존재 검증 -------------------
 
     // 해당 멤버로 이미 추가된 컨텐츠인지 확인
     public boolean existsInSharedBox(Member member, Box box, Content content) {
@@ -33,7 +71,7 @@ public class BoxValidator {
         }
     }
 
-    // ------------------- BoxMember 검증 -------------------
+    // ------------------- BoxContent 추가/삭제 권한 검증 -------------------
 
     public void validateBoxContentAdder(Box box, Member member) {
         // BoxMember 조회
@@ -59,27 +97,4 @@ public class BoxValidator {
         }
     }
 
-    public void validateBoxOwner(Box box, Member member) {
-        // BoxMember 조회
-        BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
-        // Role이 OWNER인지
-        if (boxMember.getRole() != BoxMemberRole.OWNER) {
-            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
-        }
-    }
-
-    // 해당 BoxMember인지 검증
-    public void validateBoxMember(Box box, Member member) {
-        if(!boxMemberRepository.existsByBoxAndMember(box, member)) {
-            throw new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member");
-        }
-    }
-
-    // 공유 박스의 기존 멤버로 이미 존재하는지 검증
-    public void validateExistingBoxMember(Box box, Member member) {
-        if(boxMemberRepository.existsByBoxAndMember(box, member)) {
-            throw new CustomException(ErrorCode.ALREADY_BOX_MEMBER, member.getMemberId(), "Member");
-        }
-    }
 }

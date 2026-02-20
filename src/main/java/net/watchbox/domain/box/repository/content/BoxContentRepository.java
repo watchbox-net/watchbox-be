@@ -18,4 +18,6 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
     List<BoxContent> findAllByBox(Box box);
 
     boolean existsByAddedByAndBoxAndContent(Member member, Box box, Content content);
+
+    void deleteAllByBox(Box box);
 }

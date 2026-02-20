@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.BoxCreateRequest;
-import net.watchbox.domain.box.dto.BoxCreateResponse;
-import net.watchbox.domain.box.dto.MyBoxListResponse;
-import net.watchbox.domain.box.dto.MyBoxResponse;
+import net.watchbox.domain.box.dto.*;
 import net.watchbox.domain.box.facade.my.MyBoxFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
@@ -19,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/my")
 @Tag(name = "MyBox CRUD")
-// ToDo: Swagger로 확인하기
-public class MyBoxController {
+public class MyBoxController { // ToDo: Swagger로 확인하기
     private final MyBoxFacade myBoxFacade;
 
     @PostMapping
@@ -55,6 +51,29 @@ public class MyBoxController {
         ));
     }
 
-    // ToDo: 마이 박스 수정하기
-    // ToDo: 마이 박스 삭제하기
+    @PatchMapping("/{boxId}")
+    @Operation(summary = "마이 박스 수정", description = "이름, 설명")
+    public ResponseEntity<ApiResponse<BoxUpdateResponse>> updateMyBox(
+        @AuthenticationPrincipal Member member,
+        @PathVariable Long boxId,
+        @RequestBody @Valid BoxUpdateRequest request
+    ) {
+            return ResponseEntity.ok(ApiResponse.success(
+                    myBoxFacade.updateMyBox(member, boxId, request)
+            ));
+    }
+
+    // ToDo: 마이 박스 -> 공유 박스 전환하기
+
+    @DeleteMapping("/{boxId}")
+    @Operation(summary = "마이 박스 삭제", description = "BoxMember 본인과 BoxContent 모두 삭제 " +
+            "\n로그 남김")
+    public ResponseEntity<ApiResponse<Void>> deleteMyBox(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long boxId
+    ) {
+        myBoxFacade.deleteMyBox(member, boxId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
 }
