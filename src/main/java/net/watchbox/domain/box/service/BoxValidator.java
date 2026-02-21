@@ -58,15 +58,26 @@ public class BoxValidator {
     }
 
     // ------------------- BoxContent 존재 검증 -------------------
+    // 박스에 이미 추가된 컨텐츠인지 확인
+    public boolean contentExistsInBox(Box box, Content content) {
+        return boxContentRepository.existsByBoxAndContent(box, content);
+    }
+
+    // 박스에 이미 추가된 컨텐츠인지 검증
+    public void validateContentNotInBox(Box box, Content content) {
+        if(contentExistsInBox(box, content)) {
+            throw new CustomException(ErrorCode.BOX_CONTENT_ALREADY_IN_BOX);
+        }
+    }
 
     // 해당 멤버로 이미 추가된 컨텐츠인지 확인
-    public boolean existsInSharedBox(Member member, Box box, Content content) {
+    public boolean contentExistsInSharedBox(Member member, Box box, Content content) {
         return boxContentRepository.existsByAddedByAndBoxAndContent(member, box, content);
     }
 
     // 해당 멤버로 이미 추가된 컨텐츠인지 검증
-    public void validateNotInSharedBox(Member member, Box box, Content content) {
-        if(existsInSharedBox(member, box, content)) {
+    public void validateContentNotInSharedBox(Member member, Box box, Content content) {
+        if(contentExistsInSharedBox(member, box, content)) {
             throw new CustomException(ErrorCode.CONTENT_ALREADY_IN_SHARED_BOX, member.getMemberId());
         }
     }
@@ -79,21 +90,14 @@ public class BoxValidator {
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
-            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
+            throw new CustomException(ErrorCode.INSUFFICIENT_BOX_CONTENT_EDIT_PERMISSION, member.getMemberId(), "Member");
         }
     }
 
-    public void validateBoxContentRemover(Box box, Member member, BoxContent boxContent) {
+    public void validateBoxContentRemover(Member member, BoxContent boxContent) {
         // BoxContent 추가한 멤버인지
         if(!boxContent.getAddedBy().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.FORBIDDEN_CONTENT_REMOVAL, member.getMemberId(), "Member");
-        }
-        // BoxMember 조회
-        BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
-        // Role이 충분한지
-        if (boxMember.getRole() == BoxMemberRole.VIEWER) {
-            throw new CustomException(ErrorCode.FORBIDDEN_BOX_ACCESS, member.getMemberId(), "Member");
         }
     }
 

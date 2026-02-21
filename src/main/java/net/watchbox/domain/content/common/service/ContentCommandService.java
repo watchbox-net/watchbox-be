@@ -3,7 +3,7 @@ package net.watchbox.domain.content.common.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.request.BoxContentRequest;
+import net.watchbox.domain.box.dto.BoxContentAddRequest;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.content.common.repository.ContentRepository;
@@ -53,9 +53,9 @@ public class ContentCommandService {
      *    1) Content 정보 저장
      *    2) SubContents 저장 or ToDo) 요청 이벤트 발행 요청 이벤트 발행
      */
-    public Content getOrSaveContentCascade(BoxContentRequest boxContentRequests) {
-        Long tmdbId = boxContentRequests.getContentId();
-        MediaType mediaType = boxContentRequests.getMediaType();
+    public Content getOrSaveContentCascade(BoxContentAddRequest boxContentAddRequests) {
+        Long tmdbId = boxContentAddRequests.getContentId();
+        MediaType mediaType = boxContentAddRequests.getMediaType();
 
         return contentRepository.findById(tmdbId).orElseGet(() -> {
             // 1) Content 정보 저장

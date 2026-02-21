@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MyBoxContentResponse {
+public class MyBoxContentListResponse {
     private Long totalCount;
     private List<MyBoxContentItem> items;
 }

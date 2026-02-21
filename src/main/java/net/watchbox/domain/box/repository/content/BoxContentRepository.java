@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
@@ -17,7 +18,11 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
 
     List<BoxContent> findAllByBox(Box box);
 
+    boolean existsByBoxAndContent(Box box, Content content);
+
     boolean existsByAddedByAndBoxAndContent(Member member, Box box, Content content);
 
     void deleteAllByBox(Box box);
+
+    Optional<BoxContent> findByBoxAndContent(Box box, Content content);
 }

@@ -11,7 +11,7 @@ import net.watchbox.domain.content.tv.entity.Tv;
 @Getter
 @ToString
 @Builder
-public class ContentItem { // 하나의 응답 클래스에 모든 변수 포함 (Union Type 방식)
+public class ContentSummary { // 하나의 응답 클래스에 모든 변수 포함 (Union Type 방식)
     private Long contentId;
     private MediaType mediaType;  // MOVIE, TV, PERSON
     private Double popularity;
@@ -20,12 +20,13 @@ public class ContentItem { // 하나의 응답 클래스에 모든 변수 포함
     private String posterPath;
     private Double voteAverage;
     private Integer year;
+    // ToDo: 장르 리스트
 
     // 영화 전용
-    private String titleKo;
+    private String title;
 
     // TV 전용
-    private String nameKo;
+    private String name;
 
     // 인물 전용
     private String knownForDepartment;
@@ -33,36 +34,36 @@ public class ContentItem { // 하나의 응답 클래스에 모든 변수 포함
 
     // genre는 변환해야함
 
-    public static ContentItem fromMovie(Movie movie) {
-        return ContentItem.builder()
+    public static ContentSummary fromMovie(Movie movie) {
+        return ContentSummary.builder()
                 .contentId(movie.getTmdbId())
                 .mediaType(MediaType.MOVIE)
                 .popularity(movie.getPopularity())
                 .posterPath(movie.getPosterPath())
                 .voteAverage(movie.getVoteAverage())
                 .year(movie.getYear())
-                .titleKo(movie.getTitleKo())
+                .title(movie.getTitleKo())
                 .build();
     }
 
-    public static ContentItem fromTv(Tv tv) {
-        return ContentItem.builder()
+    public static ContentSummary fromTv(Tv tv) {
+        return ContentSummary.builder()
                 .contentId(tv.getTmdbId())
                 .mediaType(MediaType.TV)
                 .popularity(tv.getPopularity())
                 .posterPath(tv.getPosterPath())
                 .voteAverage(tv.getVoteAverage())
                 .year(tv.getYear())
-                .nameKo(tv.getNameKo())
+                .name(tv.getNameKo())
                 .build();
     }
 
-    public static ContentItem fromPerson(Person person) {
-        return ContentItem.builder()
+    public static ContentSummary fromPerson(Person person) {
+        return ContentSummary.builder()
                 .contentId(person.getTmdbId())
                 .mediaType(MediaType.PERSON)
                 .popularity(person.getPopularity())
-                .nameKo(person.getNameKo())
+                .name(person.getNameKo())
                 .knownForDepartment(person.getKnownForDepartment())
                 .profilePath(person.getProfilePath())
                 .build();

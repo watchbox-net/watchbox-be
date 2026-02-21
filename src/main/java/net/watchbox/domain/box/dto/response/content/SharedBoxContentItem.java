@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class SharedBoxContentItem {
-    ContentItem contentItem;
+    ContentSummary contentSummary;
     Long sbcId;
     List<AdderItem> adders;
 }

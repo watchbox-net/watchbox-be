@@ -1,10 +1,13 @@
-package net.watchbox.domain.box.dto.request;
+package net.watchbox.domain.box.dto;
 
 import lombok.Getter;
+import lombok.ToString;
 import net.watchbox.domain.content.common.entity.MediaType;
 
 @Getter
-public class BoxContentRequest {
+@ToString
+public class BoxContentAddRequest {
+    private Long boxId;
     private Long contentId;
     private MediaType mediaType;
 }

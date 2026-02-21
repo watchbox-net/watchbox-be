@@ -3,10 +3,11 @@ package net.watchbox.domain.box.service.content;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.response.content.ContentItem;
+import net.watchbox.domain.box.dto.response.content.ContentSummary;
 import net.watchbox.domain.box.dto.response.my.MyBoxContentItem;
-import net.watchbox.domain.box.dto.response.my.MyBoxContentResponse;
+import net.watchbox.domain.box.dto.response.my.MyBoxContentListResponse;
 import net.watchbox.domain.box.entity.content.MyBoxContent;
+import net.watchbox.domain.box.repository.content.BoxContentRepository;
 import net.watchbox.domain.box.repository.content.MyBoxContentRepository;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.member.entity.Member;
@@ -20,19 +21,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class MyBoxContentService {
+    private final BoxContentRepository boxContentRepository;
+
+
+
     private final MyBoxContentRepository myBoxContentRepository;
 
-    // 내 박스에 콘텐츠 추가
-    @Transactional
-    public void addContentToMyBox(Member member, Content content) {
-        myBoxContentRepository.save(MyBoxContent.builder()
-                .member(member)
-                .content(content)
-                .build());
-    }
 
-    // 내 박스 콘텐츠 전체 조회
-    public MyBoxContentResponse getMyBoxContentsAll(Member member) {
+    public MyBoxContentListResponse getMyBoxContentsAll(Member member) {
         Long totalCount = myBoxContentRepository.countByMember(member);
         List<MyBoxContent> myBoxContents = myBoxContentRepository.findByMemberOrderByCreatedAtDesc(member);
         List<MyBoxContentItem> myBoxContentItems = myBoxContents.stream()
@@ -42,19 +38,19 @@ public class MyBoxContentService {
                     Content content = myBoxContent.getContent();
                     switch (content.getMediaType()) {
                         case MOVIE -> {
-                            return new MyBoxContentItem(ContentItem.fromMovie(content.getMovie()), myBoxContent.getMyBoxContentId());
+                            return new MyBoxContentItem(ContentSummary.fromMovie(content.getMovie()), myBoxContent.getMyBoxContentId());
                         }
                         case TV -> {
-                            return new MyBoxContentItem(ContentItem.fromTv(content.getTv()), myBoxContent.getMyBoxContentId());
+                            return new MyBoxContentItem(ContentSummary.fromTv(content.getTv()), myBoxContent.getMyBoxContentId());
                         }
                         case PERSON -> {
-                            return new MyBoxContentItem(ContentItem.fromPerson(content.getPerson()), myBoxContent.getMyBoxContentId());
+                            return new MyBoxContentItem(ContentSummary.fromPerson(content.getPerson()), myBoxContent.getMyBoxContentId());
                         }
                         default -> throw new CustomException(ErrorCode.UNSUPPORTED_MEDIA_TYPE);
                     }
                 })
                 .toList();
-        return new MyBoxContentResponse(totalCount, myBoxContentItems);
+        return new MyBoxContentListResponse(totalCount, myBoxContentItems);
     }
 
     @Transactional

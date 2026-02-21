@@ -2,7 +2,7 @@ package net.watchbox.domain.box.service.content;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.response.content.AdderItem;
-import net.watchbox.domain.box.dto.response.content.ContentItem;
+import net.watchbox.domain.box.dto.response.content.ContentSummary;
 import net.watchbox.domain.box.dto.response.content.SharedBoxContentItem;
 import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
 import net.watchbox.domain.box.entity.Box;
@@ -18,8 +18,18 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BoxContentQueryService {
+public class BoxContentQueryService { // find로 전부바꾸기
     private final BoxContentRepository boxContentRepository;
+
+    public BoxContent findById(Long boxContentId) {
+        return boxContentRepository.findById(boxContentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_CONTENT_NOT_FOUND, boxContentId));
+    }
+
+    public BoxContent getMyBoxContentByBoxAndContent(Box box, Content content) {
+        return boxContentRepository.findByBoxAndContent(box, content)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOX_CONTENT_NOT_FOUND, content.getTmdbId()));
+    }
 
     public BoxContent getSharedBoxContentById(Long sbcId) {
         return boxContentRepository.findById(sbcId)
@@ -47,17 +57,17 @@ public class BoxContentQueryService {
                     switch(content.getMediaType()){
                         case MOVIE -> {
                             return new SharedBoxContentItem(
-                                    ContentItem.fromMovie(content.getMovie()), sbc.getBoxContentId(), List.of(adderItem)
+                                    ContentSummary.fromMovie(content.getMovie()), sbc.getBoxContentId(), List.of(adderItem)
                             );
                         }
                         case TV -> {
                             return new SharedBoxContentItem(
-                                    ContentItem.fromTv(content.getTv()), sbc.getBoxContentId(), List.of(adderItem)
+                                    ContentSummary.fromTv(content.getTv()), sbc.getBoxContentId(), List.of(adderItem)
                             );
                         }
                         case PERSON -> {
                             return new SharedBoxContentItem(
-                                    ContentItem.fromPerson(content.getPerson()), sbc.getBoxContentId(), List.of(adderItem)
+                                    ContentSummary.fromPerson(content.getPerson()), sbc.getBoxContentId(), List.of(adderItem)
                             );
                         }
                         default -> throw new CustomException(ErrorCode.UNSUPPORTED_MEDIA_TYPE);

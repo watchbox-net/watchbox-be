@@ -26,12 +26,15 @@ public enum ErrorCode {
     /**
      * Box
      */
-    // Box 오류
+    // Box 공통 오류
     BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-404", "요청한 박스를 찾을 수 없습니다."),
+    BOX_CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-CONTENT-404", "요청한 박스 컨텐츠를 찾을 수 없습니다."),
+    BOX_CONTENT_ALREADY_IN_BOX(HttpStatus.CONFLICT, "BOX-CONTENT-409", "이미 박스에 추가된 컨텐츠입니다."),
+    INSUFFICIENT_BOX_CONTENT_EDIT_PERMISSION(HttpStatus.FORBIDDEN, "BOX-CONTENT-403", "박스 컨텐츠 편집 권한이 없습니다."),
 
     // MyBox 오류
-    CONTENT_NOT_IN_MY_BOX(HttpStatus.NOT_FOUND, "MY-BOX-404", "내 박스에 추가된 컨텐츠가 아닙니다."),
-    CONTENT_ALREADY_IN_MY_BOX(HttpStatus.CONFLICT, "MY-BOX-409", "이미 내 박스에 추가된 컨텐츠입니다."),
+    CONTENT_NOT_IN_MY_BOX(HttpStatus.NOT_FOUND, "MY-BOX-404", "마이 박스에 추가된 컨텐츠가 아닙니다."),
+    CONTENT_ALREADY_IN_MY_BOX(HttpStatus.CONFLICT, "MY-BOX-409", "이미 마이 박스에 추가된 컨텐츠입니다."),
 
     // SharedBox 오류
     SHARED_BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "SHARED-BOX-404", "요청한 공유 박스를 찾을 수 없습니다."),
@@ -68,7 +71,6 @@ public enum ErrorCode {
     // InviteBoxRequest 오류
     DUPLICATE_INVITE_REQUEST(HttpStatus.CONFLICT, "INVITE-409", "이미 진행중인 초대 요청입니다."),
     INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "INVITE-409", "이미 처리된 초대 요청입니다.");
-
 
 
     private final HttpStatus httpStatus;
