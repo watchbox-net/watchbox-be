@@ -9,16 +9,16 @@ import java.util.List;
 @Builder
 public class ContentPageResponse {
     private List<ContentItem> contentItemList;
-    private Long totalCount;
-    private Long totalPages;
-    private Long currentPage;
+    private int totalCount;
+    private int totalPages;
+    private int currentPage;
 
     public static ContentPageResponse empty() {
         return ContentPageResponse.builder()
                 .contentItemList(List.of())
-                .totalCount(0L)
-                .totalPages(0L)
-                .currentPage(0L)
+                .totalCount(0)
+                .totalPages(0)
+                .currentPage(0)
                 .build();
     }
 }

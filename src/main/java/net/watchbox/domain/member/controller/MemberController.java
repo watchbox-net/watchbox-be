@@ -6,12 +6,12 @@ import net.watchbox.domain.member.dto.response.MemberSearchPageResponse;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
 @Tag(name = "Member", description = "회원 관련 API")
@@ -20,10 +20,10 @@ public class MemberController {
 
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<MemberSearchPageResponse>> searchMemberList(
-            @RequestParam String query
+            @RequestParam String keyword
     ){
         return ResponseEntity.ok(
-                ApiResponse.success(memberService.searchMemberList(query))
+                ApiResponse.success(memberService.searchMemberList(keyword))
         );
     }
 }
