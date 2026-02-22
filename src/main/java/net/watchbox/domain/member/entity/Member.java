@@ -3,11 +3,9 @@ package net.watchbox.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.auth.entity.OauthAccount;
-import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.entity.member.BoxMember;
-import net.watchbox.domain.box.entity.request.InviteBoxRequest;
-import net.watchbox.domain.box.entity.content.MyBoxContent;
-import net.watchbox.domain.record.entity.WatchRecord;
+import net.watchbox.domain.box.entity.invitation.BoxInvitation;
+import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,22 +31,15 @@ public class Member implements UserDetails {
     @JoinColumn(name = "oauth_account_id", nullable = false)
     private OauthAccount oauthAccount;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WatchRecord> watchHistories;
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxInvitation> boxInvitations;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MyBoxContent> myBoxContents;
-
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InviteBoxRequest> inviteBoxRequests;
-
-    @OneToMany(mappedBy = "addedBy")
-    private List<SharedBoxContent> sharedBoxContents;
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxJoinRequest> boxJoinRequests;
 
     private String email;
     private String nickname;
     private String profileImage;
-
     private String password;
 
     @CreatedDate
@@ -58,10 +49,10 @@ public class Member implements UserDetails {
     private List<BoxMember> boxMembers;
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InviteBoxRequest> senders;
+    private List<BoxInvitation> senders;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InviteBoxRequest> receivers;
+    private List<BoxInvitation> receivers;
 
     /* ================= implements from UserDetails ================= */
     @Override // 권한 반환

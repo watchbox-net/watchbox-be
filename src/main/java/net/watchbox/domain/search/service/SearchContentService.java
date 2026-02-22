@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.search.dto.request.SearchType;
 import net.watchbox.domain.search.dto.response.list.MultiSearchResponse;
-import net.watchbox.domain.search.dto.response.list.SearchListResponse;
+import net.watchbox.domain.search.dto.response.list.ContentSearchPageResponse;
 import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.domain.tmdb.service.TmdbSearchService;
@@ -39,11 +39,11 @@ public class SearchContentService {
      * ├─ TvSearchResponse: TV 검색 결과
      * └─ PersonSearchResponse: 인물 검색 결과
      */
-    public SearchListResponse searchContentList(SearchType searchType, String query, Integer page) {
+    public ContentSearchPageResponse searchContentList(SearchType searchType, String query, Integer page) {
         TmdbSearchCommonResponse tmdbResponseDto = getSearchResponse(searchType, query, page);
         List<MultiSearchResponse> contentList = convertToResponseList(searchType, tmdbResponseDto.getResults());
 
-        return SearchListResponse.builder()
+        return ContentSearchPageResponse.builder()
                 .page(tmdbResponseDto.getPage())
                 .totalResults(tmdbResponseDto.getTotalResults())
                 .totalPages(tmdbResponseDto.getTotalPages())

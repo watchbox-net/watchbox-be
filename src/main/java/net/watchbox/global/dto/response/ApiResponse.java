@@ -35,5 +35,4 @@ public class ApiResponse<T> {
                 .error(error)
                 .build();
     }
-
 }

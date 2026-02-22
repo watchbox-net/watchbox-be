@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'net.watchbox'
-version = '0.0.1-SNAPSHOT'
+version = '0.1.0-beta'
 description = 'watchbox backend server'
 
 java {
@@ -36,11 +36,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // TMDB API 사용을 위한 의존성
+    // TMDB API dependencies
     implementation 'org.springframework.boot:spring-boot-starter-webflux' // WebClient 사용
     implementation 'com.fasterxml.jackson.core:jackson-databind' // JSON 처리
 
-    // Spring Security | OAuth2 | JWT |
+    // Spring Security, OAuth2, JWT
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'

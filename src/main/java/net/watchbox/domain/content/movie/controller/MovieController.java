@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/movies")
+@RequestMapping("/api/contents/movie")
 @Tag(name = "Movie API")
 public class MovieController {
     private final MovieService movieService;

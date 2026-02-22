@@ -3,7 +3,7 @@ package net.watchbox.domain.content.common.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.request.BoxContentRequest;
+import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.content.common.repository.ContentRepository;
@@ -47,15 +47,15 @@ public class ContentCommandService {
     private final TmdbPeopleService tmdbPeopleService;
 
     /**
-     * Content 데이터 존재 여부 확인 및 저장 후 반환
+     * Content DB 존재 여부 확인하여 조회 or 저장
      * - 존재하면 패스
      * - 존재하지 않으면
      *    1) Content 정보 저장
      *    2) SubContents 저장 or ToDo) 요청 이벤트 발행 요청 이벤트 발행
      */
-    public Content getOrSaveContentCascade(BoxContentRequest boxContentRequests) {
-        Long tmdbId = boxContentRequests.getContentId();
-        MediaType mediaType = boxContentRequests.getMediaType();
+    public Content getOrSaveContentCascade(BoxContentAddRequest request) {
+        Long tmdbId = request.getContentId();
+        MediaType mediaType = request.getMediaType();
 
         return contentRepository.findById(tmdbId).orElseGet(() -> {
             // 1) Content 정보 저장
