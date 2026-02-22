@@ -14,7 +14,10 @@ import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +27,13 @@ public class ContentQueryService {
     private final PersonRepository personRepository;
     private final ContentRepository contentRepository;
 
+    public Map<Long, Content> getContentMap(List<Long> tmdbIds) {
+        return contentRepository.findAllByTmdbIdIn(tmdbIds).stream()
+                .collect(Collectors.toMap(Content::getTmdbId, Function.identity()));
+    }
+
     public Optional<Content> findContentById(Long tmdbId) {
         return contentRepository.findById(tmdbId);
-//                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
     }
 
     public Content getContentByIdOrThrow(Long tmdbId) {

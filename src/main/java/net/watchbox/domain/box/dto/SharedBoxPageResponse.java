@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @ToString
 @Builder
-public class MyBoxListResponse {
-    private List<MyBoxResponse> boxList;
+public class SharedBoxPageResponse {
+    private List<SharedBoxResponse> sharedBoxList;
     private int boxCount;
 }

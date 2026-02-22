@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/my")
-@Tag(name = "MyBox CRUD")
+@Tag(name = "MyBox", description = "마이 박스 CRUD API")
 public class MyBoxController { // ToDo: Swagger로 확인하기
     private final MyBoxFacade myBoxFacade;
 
@@ -41,9 +41,9 @@ public class MyBoxController { // ToDo: Swagger로 확인하기
         ));
     }
 
-    @Operation(summary = "마이 박스 리스트 조회", description = "컨텐츠 리스트, 개수 응답")
+    @Operation(summary = "마이 박스 리스트 조회", description = "박스 리스트, 개수 응답")
     @GetMapping
-    public ResponseEntity<ApiResponse<MyBoxListResponse>> getMyBoxList(
+    public ResponseEntity<ApiResponse<MyBoxPageResponse>> getMyBoxList(
             @AuthenticationPrincipal Member member
     ) {
         return ResponseEntity.ok(ApiResponse.success(

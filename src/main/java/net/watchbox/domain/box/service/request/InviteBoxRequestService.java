@@ -29,8 +29,8 @@ public class InviteBoxRequestService {
 
     // 공유 박스 보낸초대 엔티티 생성 (PENDING)
     @Transactional
-    public void inviteToBox(Member sender, Box box, Member receiver) {
-        boxInvitationRepository.save(BoxInvitation.builder()
+    public BoxInvitation inviteToBox(Member sender, Box box, Member receiver) {
+        return boxInvitationRepository.save(BoxInvitation.builder()
                 .sender(sender)
                 .box(box)
                 .receiver(receiver)

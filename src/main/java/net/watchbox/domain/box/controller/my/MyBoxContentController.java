@@ -8,8 +8,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.BoxContentAddResponse;
-import net.watchbox.domain.box.dto.response.my.MyBoxContentListResponse;
+import net.watchbox.domain.box.dto.BoxContentRemoveRequest;
 import net.watchbox.domain.box.facade.my.MyBoxContentFacade;
+import net.watchbox.domain.content.common.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/boxes/my/contents")
-@Tag(name = "MyBox Content")
+@RequestMapping("/api/boxes/my/{boxId}/contents")
+@Tag(name = "MyBoxContent", description = "마이 박스 컨텐츠 API")
 public class MyBoxContentController {
     private final MyBoxContentFacade myBoxContentFacade;
 
@@ -34,29 +35,33 @@ public class MyBoxContentController {
     @PostMapping
     public ResponseEntity<ApiResponse<BoxContentAddResponse>> addMyBoxContent(
             @AuthenticationPrincipal Member member,
+            @PathVariable("boxId") Long boxId,
             @RequestBody BoxContentAddRequest request
             ) {
         return ResponseEntity.status(201).body(
-                ApiResponse.success(myBoxContentFacade.addMyBoxContent(member, request))
+                ApiResponse.success(myBoxContentFacade.addMyBoxContent(member, boxId, request))
         );
     }
 
-    // (임시) 마이 박스 컨텐츠 리스트 조회 ToDo: 무한스크롤로 변경
+    // ToDo: 무한스크롤로 변경
+    @Operation(summary = "마이 박스 컨텐츠 리스트 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<MyBoxContentListResponse>> getMyBoxContents(
-            @AuthenticationPrincipal Member member
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getMyBoxContents(
+            @AuthenticationPrincipal Member member,
+            @PathVariable("boxId") Long boxId
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success(myBoxContentFacade.getMyBoxContents(member))
+                ApiResponse.success(myBoxContentFacade.getMyBoxContents(member, boxId))
         );
     }
 
     @Operation(summary = "마이 박스 컨텐츠 삭제")
-    @DeleteMapping("/{boxContentId}")
+    @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> removeMyBoxContent(
-            @RequestParam Long boxContentId
-    ) {
-        myBoxContentFacade.removeMyBoxContent(boxContentId);
+            @PathVariable("boxId") Long boxId,
+            @RequestBody BoxContentRemoveRequest request
+            ) {
+        myBoxContentFacade.removeMyBoxContent(boxId, request);
         return ResponseEntity.ok(ApiResponse.success());
     }
 }

@@ -8,20 +8,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.BoxContentAddResponse;
-import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
 import net.watchbox.domain.box.facade.shared.SharedBoxContentFacade;
+import net.watchbox.domain.content.common.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/boxes/shared/contents")
-@Tag(name = "SharedBoxContent")
+@RequestMapping("/api/boxes/shared/{boxId}/contents")
+@Tag(name = "SharedBoxContent", description = "공유 박스 컨텐츠 API")
 public class SharedBoxContentController {
     private final SharedBoxContentFacade sharedBoxContentFacade;
 
@@ -36,10 +34,11 @@ public class SharedBoxContentController {
     @PostMapping
     public ResponseEntity<ApiResponse<BoxContentAddResponse>> addSharedBoxContent(
             @AuthenticationPrincipal Member member,
+            @PathVariable("boxId") Long boxId,
             @RequestBody BoxContentAddRequest request
     ) {
         return ResponseEntity.status(201).body(ApiResponse.success(
-                sharedBoxContentFacade.addSharedBoxContent(member, request)
+                sharedBoxContentFacade.addSharedBoxContent(member, boxId, request)
         ));
     }
 
@@ -70,23 +69,26 @@ public class SharedBoxContentController {
 //        return ResponseEntity.status(201).body(ApiResponse.success());
 //    }
 
-    // (임시) 공유 박스의 컨텐츠 전체 조회 ToDo: Selector 별로 필터링
+    // ToDo: Selector 별로 필터링
+    @Operation(summary = "공유 박스 컨텐츠 리스트 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<SharedBoxContentResponse>> getSharedBoxContents(
-            @PathVariable("boxId") Long boxId,
-            @AuthenticationPrincipal Member member
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getSharedBoxContents(
+            @AuthenticationPrincipal Member member,
+            @PathVariable("boxId") Long boxId
     ) {
-        SharedBoxContentResponse response = sharedBoxContentFacade.getSharedBoxContents(member, boxId);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(
+                sharedBoxContentFacade.getSharedBoxContents(member, boxId)
+        ));
     }
 
     @Operation(summary = "공유 박스에서 내 컨텐츠 삭제")
     @DeleteMapping("/{boxContentId}")
     public ResponseEntity<ApiResponse<Void>> removeSharedBoxContent(
             @AuthenticationPrincipal Member member,
+            @PathVariable("boxId") Long boxId,
             @RequestParam Long boxContentId
     ) {
-        sharedBoxContentFacade.removeSharedBoxContent(member, boxContentId);
+        sharedBoxContentFacade.removeSharedBoxContent(member, boxId, boxContentId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 

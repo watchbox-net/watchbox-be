@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared/invitations")
-@Tag(name = "InviteSharedBox")
+@Tag(name = "SharedBoxInvitation", description = "공유 박스 초대 관련 API")
 public class BoxInvitationController {
     private final BoxInvitationFacade boxInvitationFacade;
 
@@ -35,18 +35,19 @@ public class BoxInvitationController {
      *
      */
 
-    @Operation(summary = "공유 박스에 초대하기")
-    @PostMapping("/{boxId}/{inviteeId}")
-    public ResponseEntity<ApiResponse<Void>> inviteToBox(
+    @Operation(summary = "박스 초대 보내기")
+    @PostMapping("/{boxId}/{memberId}")
+    public ResponseEntity<ApiResponse<InvitationSentResponse>> inviteToBox(
             @AuthenticationPrincipal Member member,
             @PathVariable Long boxId,
-            @PathVariable Long inviteeId
+            @PathVariable Long memberId
     ) {
-        boxInvitationFacade.inviteToBox(member, boxId, inviteeId);
-        return ResponseEntity.status(201).body(ApiResponse.success());
+        return ResponseEntity.status(201).body(ApiResponse.success(
+                boxInvitationFacade.inviteToBox(member, boxId, memberId)
+        ));
     }
 
-    @Operation(summary = "공유 박스 받은초대 수락하기")
+    @Operation(summary = "받은 초대 수락하기")
     @PatchMapping("/accept/{requestId}")
     public ResponseEntity<ApiResponse<Void>> acceptBoxInvitation(
             @AuthenticationPrincipal Member member,
@@ -56,7 +57,7 @@ public class BoxInvitationController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
-    @Operation(summary = "공유 박스 받은초대 거절하기")
+    @Operation(summary = "받은 초대 거절하기")
     @PatchMapping("/reject/{requestId}")
     public ResponseEntity<ApiResponse<Void>> rejectBoxInvitation(
             @AuthenticationPrincipal Member member,
@@ -66,7 +67,7 @@ public class BoxInvitationController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
-    @Operation(summary = "공유 박스 보낸초대 리스트 조회") // 일단 모든 요청상태 조회
+    @Operation(summary = "보낸 초대 리스트 조회") // 일단 모든 요청상태 조회
     @GetMapping("/sent")
     public ResponseEntity<ApiResponse<List<InvitationSentResponse>>> getBoxInvitationsSent(
             @AuthenticationPrincipal Member member
@@ -77,7 +78,7 @@ public class BoxInvitationController {
         );
     }
 
-    @Operation(summary = "공유 박스 받은초대 리스트 조회") // 일단 모든 요청상태 조회
+    @Operation(summary = "받은 초대 리스트 조회") // 일단 모든 요청상태 조회
     @GetMapping("/received")
     public ResponseEntity<ApiResponse<List<InvitationReceivedResponse>>> getBoxInvitationsReceived(
             @AuthenticationPrincipal Member member

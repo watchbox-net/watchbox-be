@@ -19,6 +19,7 @@ public class BoxValidator {
     private final BoxContentRepository boxContentRepository;
     private final BoxMemberRepository boxMemberRepository;
 
+    // ToDo: 접근 상황별로 예외 멘트 다르게 나오도록 나눠야함
     // ------------------- Box CRUD 권한 검증 -------------------
 
     // 해당 BoxMember인지 검증
@@ -72,7 +73,7 @@ public class BoxValidator {
 
     // 해당 멤버로 이미 추가된 컨텐츠인지 확인
     public boolean contentExistsInSharedBox(Member member, Box box, Content content) {
-        return boxContentRepository.existsByAddedByAndBoxAndContent(member, box, content);
+        return boxContentRepository.existsByPublisherAndBoxAndContent(member, box, content);
     }
 
     // 해당 멤버로 이미 추가된 컨텐츠인지 검증
@@ -96,7 +97,7 @@ public class BoxValidator {
 
     public void validateBoxContentRemover(Member member, BoxContent boxContent) {
         // BoxContent 추가한 멤버인지
-        if(!boxContent.getAddedBy().getMemberId().equals(member.getMemberId())) {
+        if(!boxContent.getPublisher().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.FORBIDDEN_CONTENT_REMOVAL, member.getMemberId(), "Member");
         }
     }

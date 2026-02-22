@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.*;
 import net.watchbox.domain.box.entity.Box;
+import net.watchbox.domain.box.entity.BoxType;
 import net.watchbox.domain.box.service.BoxMemberService;
 import net.watchbox.domain.box.service.BoxValidator;
 import net.watchbox.domain.box.service.BoxService;
@@ -27,32 +28,36 @@ public class SharedBoxFacade {
 
     @Transactional
     public BoxCreateResponse createSharedBox(Member member, BoxCreateRequest request) {
-        Box box = boxService.createBox(request);
+        Box box = boxService.createBox(member, request, BoxType.SHARED);
         boxMemberService.addOwnerToBox(member, box);
         return BoxCreateResponse.from(box, member.getMemberId());
     }
 
     @Transactional(readOnly = true)
     public SharedBoxResponse getSharedBox(Member member, Long boxId) {
-        Box box = boxService.findById(boxId);
+        Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxMember(box, member);
         return SharedBoxResponse.from(box);
     }
 
     @Transactional(readOnly = true)
-    public SharedBoxListResponse getSharedBoxList(Member member) {
-        List<Box> sharedBoxList = boxService.findAllSharedBoxListByMember(member);
+    public SharedBoxPageResponse getMySharedBoxList(Member member) {
+        log.info("Get My Shared Box List");
+        List<Box> sharedBoxList = boxService.getAllSharedBoxListByMember(member);
+        log.info("실행");
+        log.info("Shared box list: {}", sharedBoxList);
         List<SharedBoxResponse> sharedBoxResponseList = sharedBoxList.stream()
                 .map(SharedBoxResponse::from)
                 .toList();
-        return SharedBoxListResponse.builder()
+        return SharedBoxPageResponse.builder()
                 .sharedBoxList(sharedBoxResponseList)
+                .boxCount(sharedBoxResponseList.size())
                 .build();
     }
 
     @Transactional
     public BoxUpdateResponse updateSharedBox(Member member, Long boxId, BoxUpdateRequest request) {
-        Box box = boxService.findById(boxId);
+        Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxEditor(box, member);
         box.update(request.getName(), request.getDescription(), request.getVisibleType());
         return BoxUpdateResponse.from(box);
@@ -60,7 +65,7 @@ public class SharedBoxFacade {
 
     @Transactional
     public void deleteSharedBox(Member member, Long boxId) {
-        Box box = boxService.findById(boxId);
+        Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxOwner(box, member);
 
         Map<Long, String> boxMembers = box.getBoxMembers().stream()

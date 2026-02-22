@@ -53,9 +53,9 @@ public class ContentCommandService {
      *    1) Content 정보 저장
      *    2) SubContents 저장 or ToDo) 요청 이벤트 발행 요청 이벤트 발행
      */
-    public Content getOrSaveContentCascade(BoxContentAddRequest boxContentAddRequests) {
-        Long tmdbId = boxContentAddRequests.getContentId();
-        MediaType mediaType = boxContentAddRequests.getMediaType();
+    public Content getOrSaveContentCascade(BoxContentAddRequest request) {
+        Long tmdbId = request.getContentId();
+        MediaType mediaType = request.getMediaType();
 
         return contentRepository.findById(tmdbId).orElseGet(() -> {
             // 1) Content 정보 저장

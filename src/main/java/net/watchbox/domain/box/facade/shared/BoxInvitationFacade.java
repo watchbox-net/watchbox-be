@@ -29,16 +29,18 @@ public class BoxInvitationFacade {
     private final BoxValidator boxValidator;
 
     @Transactional
-    public void inviteToBox(Member sender, Long boxId, Long receiverId) {
-        Member receiver = memberService.findById(receiverId);
-        Box box = boxService.findById(boxId);
+    public InvitationSentResponse inviteToBox(Member sender, Long boxId, Long receiverId) {
+        Member receiver = memberService.getByMemberId(receiverId);
+        Box box = boxService.getByBoxId(boxId);
 
         // 기존 박스 멤버인지 검증
         boxValidator.validateExistingBoxMember(box, receiver);
         // 초대 요청 중복 검증
         inviteBoxRequestService.validateDuplicateInviteRequest(box, receiver);
         // 초대 요청 생성
-        inviteBoxRequestService.inviteToBox(sender, box, receiver);
+        BoxInvitation boxInvitation = inviteBoxRequestService.inviteToBox(sender, box, receiver);
+
+        return InvitationSentResponse.from(boxInvitation);
     }
 
     @Transactional (readOnly = true)

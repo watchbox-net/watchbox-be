@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
-@Tag(name = "SharedBox CRUD")
+@Tag(name = "SharedBox", description = "공유 박스 CRUD API")
 public class SharedBoxController { // ToDo: Swagger로 확인하기
     private final SharedBoxFacade sharedBoxFacade;
 
@@ -42,13 +42,13 @@ public class SharedBoxController { // ToDo: Swagger로 확인하기
     }
 
 
-    @Operation(summary = "공유 박스 리스트 조회", description = "컨텐츠 리스트, 개수 응답")
+    @Operation(summary = "내가 속한 공유 박스 리스트 조회", description = "박스 리스트, 개수 응답")
     @GetMapping
-    public ResponseEntity<ApiResponse<SharedBoxListResponse>> getSharedBoxList(
+    public ResponseEntity<ApiResponse<SharedBoxPageResponse>> getMySharedBoxList(
             @AuthenticationPrincipal Member member
     ) {
         return ResponseEntity.ok(ApiResponse.success(
-                sharedBoxFacade.getSharedBoxList(member)
+                sharedBoxFacade.getMySharedBoxList(member)
         ));
     }
 
@@ -64,7 +64,7 @@ public class SharedBoxController { // ToDo: Swagger로 확인하기
         ));
     }
 
-    @Operation(summary = "마이 박스 삭제", description = "BoxMember, BoxContent 모두 삭제 " +
+    @Operation(summary = "공유 박스 삭제", description = "BoxMember, BoxContent 모두 삭제 " +
             "\n로그 남김")
     @DeleteMapping("/{boxId}")
     public ResponseEntity<ApiResponse<Void>> deleteSharedBox(

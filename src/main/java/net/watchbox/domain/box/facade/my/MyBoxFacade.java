@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.*;
 import net.watchbox.domain.box.entity.Box;
+import net.watchbox.domain.box.entity.BoxType;
 import net.watchbox.domain.box.service.BoxMemberService;
 import net.watchbox.domain.box.service.BoxService;
 import net.watchbox.domain.box.service.BoxValidator;
@@ -25,32 +26,32 @@ public class MyBoxFacade {
 
     @Transactional
     public BoxCreateResponse createMyBox(Member member, BoxCreateRequest request) {
-        Box box = boxService.createBox(request);
+        Box box = boxService.createBox(member, request, BoxType.MY);
         boxMemberService.addOwnerToBox(member, box);
         return BoxCreateResponse.from(box, member.getMemberId());
     }
 
     @Transactional(readOnly = true)
     public MyBoxResponse getMyBox(Member member, Long boxId) {
-        Box box = boxService.findById(boxId);
+        Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxOwner(box, member);
         return MyBoxResponse.from(box);
     }
 
     @Transactional(readOnly = true)
-    public MyBoxListResponse getMyBoxList(Member member) {
-        List<Box> myBoxList = boxService.findAllMyBoxListByOwner(member);
+    public MyBoxPageResponse getMyBoxList(Member member) {
+        List<Box> myBoxList = boxService.getAllMyBoxListByOwner(member);
         List<MyBoxResponse> myBoxResponseList = myBoxList.stream()
                 .map(MyBoxResponse::from)
                 .toList();
-        return MyBoxListResponse.builder()
+        return MyBoxPageResponse.builder()
                 .boxList(myBoxResponseList)
                 .build();
     }
 
     @Transactional
     public BoxUpdateResponse updateMyBox(Member member, Long boxId, BoxUpdateRequest request) {
-        Box box = boxService.findById(boxId);
+        Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxOwner(box, member);
         box.update(request.getName(), request.getDescription(), request.getVisibleType());
         return BoxUpdateResponse.from(box);
@@ -58,7 +59,7 @@ public class MyBoxFacade {
 
     @Transactional
     public void deleteMyBox(Member member, Long boxId) {
-        Box box = boxService.findById(boxId);
+        Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxOwner(box, member);
         boxContentCommandService.deleteAllByBox(box);
         boxService.deleteBox(box); // BoxMember 포함

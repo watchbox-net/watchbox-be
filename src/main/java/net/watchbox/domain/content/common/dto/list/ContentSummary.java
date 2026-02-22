@@ -1,8 +1,9 @@
-package net.watchbox.domain.box.dto.response.content;
+package net.watchbox.domain.content.common.dto.list;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.content.common.entity.MediaType;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.person.entity.Person;
@@ -33,6 +34,14 @@ public class ContentSummary { // 하나의 응답 클래스에 모든 변수 포
     private String profilePath;
 
     // genre는 변환해야함
+
+    public static ContentSummary fromContent(Content content) {
+        return switch (content.getMediaType()) {
+            case MOVIE -> fromMovie(content.getMovie());
+            case TV -> fromTv(content.getTv());
+            case PERSON -> fromPerson(content.getPerson());
+        };
+    }
 
     public static ContentSummary fromMovie(Movie movie) {
         return ContentSummary.builder()

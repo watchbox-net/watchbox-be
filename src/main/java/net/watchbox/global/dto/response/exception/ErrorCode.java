@@ -44,7 +44,7 @@ public enum ErrorCode {
     BOX_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-MEMBER-404", "BoxMember를 찾을 수 없습니다."),
     NOT_BOX_MEMBER(HttpStatus.FORBIDDEN, "BOX-MEMBER-403", "해당 박스의 멤버가 아닙니다."),
     ALREADY_BOX_MEMBER(HttpStatus.CONFLICT, "BOX-MEMBER-409", "이미 박스 멤버로 존재합니다."),
-    FORBIDDEN_BOX_ACCESS(HttpStatus.FORBIDDEN, "BOX-MEMBER-403", "박스에 접근 권한이 없습니다."),
+    FORBIDDEN_BOX_ACCESS(HttpStatus.FORBIDDEN, "BOX-MEMBER-403", "박스에 대한 권한이 부족합니다."),
 
     // SharedBoxContent 오류
     SHARED_BOX_CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "SHARED-BOX-CONTENT-404", "SharedBoxContent를 찾을 수 없습니다."),

@@ -11,14 +11,14 @@ public class BoxContentAddResponse {
     private Long contentId;
     private MediaType mediaType;
     private Long boxContentId;
-    private Long addedById;
+    private Long publisherId;
 
     public static BoxContentAddResponse from(BoxContent boxContent) {
         BoxContentAddResponse response = new BoxContentAddResponse();
         response.contentId = boxContent.getContent().getTmdbId();
         response.mediaType = boxContent.getMediaType();
         response.boxContentId = boxContent.getBoxContentId();
-        response.addedById = boxContent.getAddedBy().getMemberId();
+        response.publisherId = boxContent.getPublisher().getMemberId();
         return response;
     }
 }

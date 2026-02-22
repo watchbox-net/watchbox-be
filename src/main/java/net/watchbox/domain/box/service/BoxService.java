@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.BoxCreateRequest;
 import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.BoxType;
+import net.watchbox.domain.box.entity.member.BoxMember;
+import net.watchbox.domain.box.repository.BoxMemberRepository;
 import net.watchbox.domain.box.repository.BoxRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
@@ -18,28 +20,32 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BoxService {
     private final BoxRepository boxRepository;
+    private final BoxMemberRepository boxMemberRepository;
 
-    public Box findById(Long boxId) {
+    public Box getByBoxId(Long boxId) {
         return boxRepository.findById(boxId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_NOT_FOUND, boxId));
     }
 
-    public List<Box> findAllMyBoxListByOwner(Member owner) {
+    public List<Box> getAllMyBoxListByOwner(Member owner) {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);
     }
 
-
-    public List<Box> findAllSharedBoxListByMember(Member member) {
-        return boxRepository.findAllByBoxMembers_MemberAndBoxType(member, BoxType.SHARED);
+    public List<Box> getAllSharedBoxListByMember(Member member){
+        return boxMemberRepository.findWithSharedBoxByMember(member)
+                .stream()
+                .map(BoxMember::getBox)
+                .toList();
     }
 
     @Transactional
-    public Box createBox(BoxCreateRequest request) {
+    public Box createBox(Member member, BoxCreateRequest request, BoxType boxType) {
         return boxRepository.save(Box.builder()
                 .name(request.getName())
-                .boxType(request.getBoxType())
+                .boxType(boxType)
                 .description(request.getDescription())
                 .visibleType(request.getVisibleType())
+                .owner(member)
                 .build());
     }
 

@@ -1,11 +1,9 @@
 package net.watchbox.domain.box.facade.shared;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.BoxContentAddResponse;
-import net.watchbox.domain.box.dto.response.content.SharedBoxContentResponse;
 import net.watchbox.domain.box.entity.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.service.BoxMemberService;
@@ -13,17 +11,21 @@ import net.watchbox.domain.box.service.BoxValidator;
 import net.watchbox.domain.box.service.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.content.common.dto.list.ContentItem;
+import net.watchbox.domain.content.common.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.content.common.mapper.SharedBoxContentMapper;
 import net.watchbox.domain.content.common.service.ContentCommandService;
 import net.watchbox.domain.content.common.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class SharedBoxContentFacade {
     private final ContentCommandService contentCommandService;
     private final ContentQueryService contentQueryService;
@@ -32,10 +34,12 @@ public class SharedBoxContentFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxMemberService boxMemberService;
     private final BoxValidator boxValidator;
+    private final SharedBoxContentMapper sharedBoxContentMapper;
 
+    // 공유 박스에 컨텐츠 추가
     @Transactional
-    public BoxContentAddResponse addSharedBoxContent(Member member, BoxContentAddRequest request) {
-        Box box = boxService.findById(request.getBoxId());
+    public BoxContentAddResponse addSharedBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
+        Box box = boxService.getByBoxId(boxId);
 
         // 추가 권한 검증
         boxValidator.validateBoxContentAdder(box, member);
@@ -90,17 +94,36 @@ public class SharedBoxContentFacade {
 //        }
 //    }
 
-    public SharedBoxContentResponse getSharedBoxContents(Member member, Long boxId) {
-        Box box = boxService.findById(boxId);
-        return boxContentQueryService.getSharedBoxContentsAll(box, member);
+    // 공유 박스 컨텐츠 리스트 조회
+    @Transactional(readOnly = true)
+    public ContentPageResponse getSharedBoxContents(Member member, Long boxId) {
+        Box box = boxService.getByBoxId(boxId);
+        List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);
+
+        if (boxContents.isEmpty()) {
+            return ContentPageResponse.empty();
+        }
+
+//        List<ContentItem> contentItemList = sharedBoxContentMapper.toContentItems(boxContents);
+        List<ContentItem> contentItemList = sharedBoxContentMapper.toContentItemsWithPublisher(boxContents);
+
+        // 5. 응답
+        return ContentPageResponse.builder()
+                .contentItemList(contentItemList)
+                .totalCount((long) contentItemList.size())
+//                .totalPages()
+//                .currentPage()
+                .build();
     }
 
+    // 공유 박스에서 내 컨텐츠 삭제
     @Transactional
-    public void removeSharedBoxContent(Member member, Long boxContentId) {
-        BoxContent boxContent = boxContentQueryService.findById(boxContentId);
+    public void removeSharedBoxContent(Member member, Long boxId, Long boxContentId) {
+        Box box = boxService.getByBoxId(boxId);
+        BoxContent boxContent = boxContentQueryService.getByBoxContentId(boxContentId);
         boxValidator.validateBoxContentRemover(member, boxContent);
         boxContentCommandService.deleteContentFromBox(boxContent);
-        log.info("Deleted SharedBoxContent with ID: {} from SharedBox ID: {}", boxContentId, boxContent.getBox().getBoxId());
+        log.info("Deleted SharedBoxContent with ID: {} from SharedBox ID: {}", boxContentId, boxId);
     }
 
 //    @Transactional

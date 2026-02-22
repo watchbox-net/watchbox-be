@@ -28,7 +28,7 @@ public class TokenController {
     @PostMapping("/refresh")
     public ResponseEntity<TokenRefreshResponse> createNewAccessToken(@RequestBody TokenRefreshRequest request){
         Long tokenMemberId = tokenProvider.getMemberId(request.getRefreshToken());
-        Member member = memberService.findById(tokenMemberId);
+        Member member = memberService.getByMemberId(tokenMemberId);
 
         String newAccessToken = tokenService.createNewAccessToken(member, request.getRefreshToken());
         return ResponseEntity.status(HttpStatus.CREATED)

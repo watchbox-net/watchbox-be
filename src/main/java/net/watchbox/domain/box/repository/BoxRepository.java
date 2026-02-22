@@ -25,5 +25,5 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
     Member → BoxMember의 member 필드
     DB 쿼리가 한 번으로 끝나고, 불필요하게 BoxMember 레이어를 거칠 필요가 없어서 코드도 단순
      */
-    List<Box> findAllByBoxMembers_MemberAndBoxType(Member member, BoxType boxType);
+//    List<Box> findAllByBoxMembers_MemberAndBoxType(Member member, BoxType boxType);
 }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface ContentRepository extends JpaRepository<Content, Long> {
     @Modifying
@@ -16,4 +18,6 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
             nativeQuery = true
     )
     void insertContent(Long tmdbId, String mediaType);
+
+    List<Content> findAllByTmdbIdIn(List<Long> tmdbIds);
 }

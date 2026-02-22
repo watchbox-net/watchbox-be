@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/tv")
+@RequestMapping("/api/contents/tv")
 @Tag(name = "TV API")
 public class TvController {
     private final TvService tvService;

@@ -19,7 +19,7 @@ public class BoxContentCommandService {
     public BoxContent addContentToBox(Member member, Box box, Content content) {
         return boxContentRepository.save(BoxContent.builder()
                 .box(box)
-                .addedBy(member)
+                .publisher(member)
                 .content(content)
                 .mediaType(content.getMediaType())
                 .build());

@@ -27,10 +27,13 @@ public class BoxContent extends BaseTime {
     private Content content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "added_by_id", nullable = false)
-    private Member addedBy;
+    @JoinColumn(name = "publisher_id", nullable = false)
+    private Member publisher;
 
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 
+    public Long getTmdbId() {
+        return content.getTmdbId();
+    }
 }
