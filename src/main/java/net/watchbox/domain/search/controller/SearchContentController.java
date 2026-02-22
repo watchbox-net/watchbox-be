@@ -3,7 +3,7 @@ package net.watchbox.domain.search.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.search.dto.request.SearchType;
-import net.watchbox.domain.search.dto.response.list.SearchListResponse;
+import net.watchbox.domain.search.dto.response.list.ContentSearchPageResponse;
 import net.watchbox.domain.search.facade.SearchFacade;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class SearchContentController {
      * 4. Person 검색
      */
     @GetMapping("/multi")
-    public ResponseEntity<ApiResponse<SearchListResponse>> searchMultiList(
+    public ResponseEntity<ApiResponse<ContentSearchPageResponse>> searchMultiList(
             @RequestParam String query,
             @RequestParam Integer page
     ) {
@@ -38,7 +38,7 @@ public class SearchContentController {
     }
 
     @GetMapping("/movie")
-    public ResponseEntity<ApiResponse<SearchListResponse>> searchMovieList(
+    public ResponseEntity<ApiResponse<ContentSearchPageResponse>> searchMovieList(
             @RequestParam String query,
             @RequestParam Integer page
     ) {
@@ -49,7 +49,7 @@ public class SearchContentController {
     }
 
     @GetMapping("/tv")
-    public ResponseEntity<ApiResponse<SearchListResponse>> searchTvList(
+    public ResponseEntity<ApiResponse<ContentSearchPageResponse>> searchTvList(
             @RequestParam String query,
             @RequestParam Integer page
     ) {
@@ -60,7 +60,7 @@ public class SearchContentController {
     }
 
     @GetMapping("/person")
-    public ResponseEntity<ApiResponse<SearchListResponse>> searchPersonList(
+    public ResponseEntity<ApiResponse<ContentSearchPageResponse>> searchPersonList(
             @RequestParam String query,
             @RequestParam Integer page
     ) {

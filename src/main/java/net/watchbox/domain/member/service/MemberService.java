@@ -1,6 +1,7 @@
 package net.watchbox.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.member.dto.response.SearchMemberPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
@@ -20,6 +21,10 @@ public class MemberService {
     public Member getByNickname(String nickname) {
         return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public SearchMemberPageResponse searchMemberList(String query) {
+        return null;
     }
 
     // 닉네임 등록, 수정

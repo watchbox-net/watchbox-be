@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @ToString
 @Builder
-public class SearchListResponse {
+public class ContentSearchPageResponse {
     private int page;
     private int totalResults;
     private int totalPages;
