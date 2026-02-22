@@ -2,7 +2,7 @@ package net.watchbox.domain.member.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.member.dto.response.SearchMemberPageResponse;
+import net.watchbox.domain.member.dto.response.MemberSearchPageResponse;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<SearchMemberPageResponse>> searchMemberList(
+    public ResponseEntity<ApiResponse<MemberSearchPageResponse>> searchMemberList(
             @RequestParam String query
     ){
         return ResponseEntity.ok(

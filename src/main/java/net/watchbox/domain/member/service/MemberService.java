@@ -1,7 +1,7 @@
 package net.watchbox.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.member.dto.response.SearchMemberPageResponse;
+import net.watchbox.domain.member.dto.response.MemberSearchPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
@@ -23,7 +23,7 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
-    public SearchMemberPageResponse searchMemberList(String query) {
+    public MemberSearchPageResponse searchMemberList(String query) {
         return null;
     }
 

@@ -5,5 +5,5 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class SearchMemberPageResponse {
+public class MemberSearchPageResponse {
 }
