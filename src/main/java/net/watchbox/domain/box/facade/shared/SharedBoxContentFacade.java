@@ -110,7 +110,7 @@ public class SharedBoxContentFacade {
         // 5. 응답
         return ContentPageResponse.builder()
                 .contentItemList(contentItemList)
-                .totalCount((long) contentItemList.size())
+                .totalCount(contentItemList.size())
 //                .totalPages()
 //                .currentPage()
                 .build();
