@@ -50,6 +50,6 @@ jobs:
             --env-file ./watchbox-dev-be.env \
             --network watchbox-net \
             -p 8080:8080 \
-#            -v /home/ubuntu/backup/spring-boot/logs:/app/logs \
+            -v /home/ubuntu/backup/spring-boot/logs:/app/logs \
             ${{ env.DOCKER_IMAGE }}
           docker image prune -f
