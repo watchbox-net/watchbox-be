@@ -2,7 +2,7 @@ package net.watchbox.domain.box.entity.invitation;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.box.entity.Box;
+import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 

@@ -2,7 +2,7 @@ package net.watchbox.domain.box.service.content;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.entity.Box;
+import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
 import net.watchbox.domain.content.common.entity.Content;

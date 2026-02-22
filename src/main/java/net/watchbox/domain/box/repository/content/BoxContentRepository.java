@@ -1,6 +1,6 @@
 package net.watchbox.domain.box.repository.content;
 
-import net.watchbox.domain.box.entity.Box;
+import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.common.entity.Content;
 import net.watchbox.domain.member.entity.Member;
