@@ -44,8 +44,8 @@ public class SharedBoxContentFacade {
         // 추가 권한 검증
         boxValidator.validateBoxContentAdder(box, member);
 
-        // Content DB 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request);
+        // Content 조회 or 저장
+        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
 
         // 해당 멤버로 이미 추가된 컨텐츠인지 검증
         boxValidator.validateContentNotInSharedBox(member, box, content);

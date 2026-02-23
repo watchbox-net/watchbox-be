@@ -37,7 +37,7 @@ public class MyBoxContentController {
             @AuthenticationPrincipal Member member,
             @PathVariable("boxId") Long boxId,
             @RequestBody BoxContentAddRequest request
-            ) {
+    ) {
         return ResponseEntity.status(201).body(
                 ApiResponse.success(myBoxContentFacade.addMyBoxContent(member, boxId, request))
         );
@@ -60,7 +60,7 @@ public class MyBoxContentController {
     public ResponseEntity<ApiResponse<Void>> removeMyBoxContent(
             @PathVariable("boxId") Long boxId,
             @RequestBody BoxContentRemoveRequest request
-            ) {
+    ) {
         myBoxContentFacade.removeMyBoxContent(boxId, request);
         return ResponseEntity.ok(ApiResponse.success());
     }

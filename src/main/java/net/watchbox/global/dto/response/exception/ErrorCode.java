@@ -70,7 +70,14 @@ public enum ErrorCode {
 
     // InviteBoxRequest 오류
     DUPLICATE_INVITE_REQUEST(HttpStatus.CONFLICT, "INVITE-409", "이미 진행중인 초대 요청입니다."),
-    INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "INVITE-409", "이미 처리된 초대 요청입니다.");
+    INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "INVITE-409", "이미 처리된 초대 요청입니다."),
+
+    /**
+     * WatchRecord
+     */
+    // WatchRecord 오류
+    WATCH_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "RECORD-404", "WatchRecord를 찾을 수 없습니다."),
+    NOT_RECORD_MEMBER(HttpStatus.FORBIDDEN, "RECORD-403", "시청 기록에 해당하는 멤버가 아닙니다.");
 
 
     private final HttpStatus httpStatus;

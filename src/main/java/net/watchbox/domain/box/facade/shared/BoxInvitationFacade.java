@@ -36,7 +36,7 @@ public class BoxInvitationFacade {
         // 기존 박스 멤버인지 검증
         boxValidator.validateExistingBoxMember(box, receiver);
         // 초대 요청 중복 검증
-        boxInvitationService.validateDuplicateInviteRequest(box, receiver);
+        boxValidator.validateDuplicateInviteRequest(box, receiver);
         // 초대 요청 생성
         BoxInvitation boxInvitation = boxInvitationService.inviteToBox(sender, box, receiver);
 
@@ -59,7 +59,9 @@ public class BoxInvitationFacade {
         Box box = boxInvitation.getBox();
 
         // 이미 처리된 요청인지지 검증
-        boxInvitationService.validatePendingInviteRequest(boxInvitation);
+        boxValidator.validatePendingInviteRequest(boxInvitation);
+        // 수신자 본인인지 검증
+        boxValidator.validateReceiver(boxInvitation.getReceiver(), member);
         // 수락 처리
         boxInvitationService.acceptBoxInvitation(member, boxInvitation);
         // 박스 멤버(EDITOR 권한)로 추가
@@ -76,7 +78,9 @@ public class BoxInvitationFacade {
     public void rejectBoxInvitation(Member member, Long requestId) {
         BoxInvitation boxInvitation = boxInvitationService.findById(requestId);
         // 이미 처리된 요청인지지 검증
-        boxInvitationService.validatePendingInviteRequest(boxInvitation);
+        boxValidator.validatePendingInviteRequest(boxInvitation);
+        // 수신자 본인인지 검증
+        boxValidator.validateReceiver(boxInvitation.getReceiver(), member);
         // 거절 처리
         boxInvitationService.rejectBoxInvitation(member, boxInvitation);
     }

@@ -1,7 +1,7 @@
 package net.watchbox.domain.record.entity;
 
 public enum WatchStatus {
-    WATCHED,
+    COMPLETED,
     WATCHING,
     PLANNED,
     PAUSED

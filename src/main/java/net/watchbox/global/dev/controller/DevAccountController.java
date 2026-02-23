@@ -1,5 +1,6 @@
 package net.watchbox.global.dev.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class DevAccountController {
         return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
     }
 
+    @Hidden
     @GetMapping("/member")
     public String getMember(
             @AuthenticationPrincipal Member member

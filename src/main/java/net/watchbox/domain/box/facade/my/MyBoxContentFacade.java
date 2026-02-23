@@ -38,8 +38,8 @@ public class MyBoxContentFacade {
     public BoxContentAddResponse addMyBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
         Box box = boxService.getByBoxId(boxId);
 
-        // Content DB 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request);
+        // Content 조회 or 저장
+        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
 
         // 마이 박스에 이미 존재하는지 검증
         boxValidator.validateContentNotInBox(box, content);

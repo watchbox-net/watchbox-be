@@ -6,7 +6,7 @@ import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
-import net.watchbox.domain.record.entity.WatchRecord;
+import net.watchbox.domain.record.entity.ContentRecord;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,7 +41,7 @@ public class Member implements UserDetails {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<WatchRecord> watchRecords;
+    private List<ContentRecord> contentRecords;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoxMember> boxMembers;

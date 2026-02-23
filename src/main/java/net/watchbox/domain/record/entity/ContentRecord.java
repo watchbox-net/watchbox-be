@@ -14,10 +14,10 @@ import java.time.LocalDate;
 @Builder
 @Getter
 @Entity
-public class WatchRecord extends BaseTime {
+public class ContentRecord extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long watchRecordId;
+    private Long contentRecordId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -40,4 +40,16 @@ public class WatchRecord extends BaseTime {
 
 //    private Double rating; // 평점
 
+    public void updateWatchStatus(WatchStatus watchStatus){
+        this.watchStatus = watchStatus;
+        if (watchStatus == WatchStatus.COMPLETED) {
+            this.watchedDate = LocalDate.now();
+        } else {
+            this.watchedDate = null;
+        }
+    }
+
+    public void updateLiked(Boolean liked){
+        this.liked = liked;
+    }
 }

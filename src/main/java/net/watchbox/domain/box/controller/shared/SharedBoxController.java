@@ -64,8 +64,8 @@ public class SharedBoxController { // ToDo: Swagger로 확인하기
         ));
     }
 
-    @Operation(summary = "공유 박스 삭제", description = "BoxMember, BoxContent 모두 삭제 " +
-            "\n로그 남김")
+    @Operation(summary = "공유 박스 삭제", description = "BoxMember, BoxContent 모두 삭제 <br>" +
+            "로그 남김")
     @DeleteMapping("/{boxId}")
     public ResponseEntity<ApiResponse<Void>> deleteSharedBox(
             @AuthenticationPrincipal Member member,
