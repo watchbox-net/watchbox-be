@@ -1,5 +1,6 @@
 package net.watchbox.global.dev.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +13,12 @@ import net.watchbox.domain.tmdb.service.TmdbTvSeriesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev/tmdb")
-@Slf4j
-@Tag(name = "DevTmdbDetails")
+@Tag(name = "DevTmdb")
+@Hidden
 public class DevTmdbDetailsController {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;

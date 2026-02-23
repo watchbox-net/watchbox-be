@@ -1,5 +1,6 @@
 package net.watchbox.global.dev.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +25,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev/contents")
-@Slf4j
 @Tag(name = "DevContent")
-public class DevContentController {
+@Hidden
+public class DevContentSaveController {
     private final ContentCommandService contentCommandService;
     private final ContentQueryService contentQueryService;
     private final TmdbMoviesService tmdbMoviesService;

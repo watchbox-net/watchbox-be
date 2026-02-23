@@ -1,5 +1,6 @@
 package net.watchbox.global.dev.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev/tmdb/search")
-@Slf4j
-@Tag(name = "DevTmdbSearch")
+@Tag(name = "DevTmdb")
+@Hidden
 public class DevTmdbSearchController {
     private final DevSearchService searchService;
 

@@ -28,16 +28,15 @@ public class WatchRecord extends BaseTime {
     private Content content;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private WatchStatus watchStatus;
+
+    private Boolean liked; // 좋아요 여부
 
     private LocalDate watchedDate; // 시청 완료일
 
     @Column(name = "media_type")
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
-
-//    private Boolean isLiked; // 좋아요 여부
 
 //    private Double rating; // 평점
 
