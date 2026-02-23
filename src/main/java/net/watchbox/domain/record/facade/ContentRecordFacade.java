@@ -2,8 +2,8 @@ package net.watchbox.domain.record.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.service.ContentCommandService;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordPageResponse;

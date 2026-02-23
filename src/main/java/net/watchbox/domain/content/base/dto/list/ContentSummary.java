@@ -1,15 +1,13 @@
-package net.watchbox.domain.content.common.dto.list;
+package net.watchbox.domain.content.base.dto.list;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.entity.MediaType;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.person.entity.Person;
 import net.watchbox.domain.content.tv.entity.Tv;
-
-import java.util.List;
 
 @Getter
 @ToString

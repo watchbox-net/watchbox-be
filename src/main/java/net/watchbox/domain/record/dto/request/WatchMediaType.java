@@ -1,6 +1,6 @@
 package net.watchbox.domain.record.dto.request;
 
-import net.watchbox.domain.content.common.entity.MediaType;
+import net.watchbox.domain.content.base.entity.MediaType;
 
 public enum WatchMediaType {
     MOVIE,

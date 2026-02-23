@@ -1,8 +1,8 @@
-package net.watchbox.domain.content.common.dto.list;
+package net.watchbox.domain.content.base.dto.list;
 
 import lombok.*;
-import net.watchbox.domain.content.common.dto.interaction.PublisherSummary;
-import net.watchbox.domain.content.common.dto.interaction.MemberInteraction;
+import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
+import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
 
 import java.util.List;
 

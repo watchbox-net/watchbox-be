@@ -2,7 +2,7 @@ package net.watchbox.domain.record.dto.response;
 
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.content.common.entity.MediaType;
+import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.entity.WatchStatus;
 

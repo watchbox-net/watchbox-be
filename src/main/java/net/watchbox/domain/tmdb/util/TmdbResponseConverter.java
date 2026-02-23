@@ -1,6 +1,6 @@
 package net.watchbox.domain.tmdb.util;
 
-import net.watchbox.domain.content.common.entity.MediaType;
+import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.search.dto.response.list.*;
 import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
 

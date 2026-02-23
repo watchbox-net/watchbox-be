@@ -1,6 +1,6 @@
-package net.watchbox.domain.content.common.repository;
+package net.watchbox.domain.content.base.repository;
 
-import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.content.base.entity.Content;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

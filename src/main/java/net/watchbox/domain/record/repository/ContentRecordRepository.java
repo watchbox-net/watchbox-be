@@ -1,6 +1,6 @@
 package net.watchbox.domain.record.repository;
 
-import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
 import org.springframework.data.jpa.repository.JpaRepository;

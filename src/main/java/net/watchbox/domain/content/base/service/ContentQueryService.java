@@ -1,8 +1,8 @@
-package net.watchbox.domain.content.common.service;
+package net.watchbox.domain.content.base.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.repository.ContentRepository;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.repository.ContentRepository;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.movie.repository.MovieRepository;
 import net.watchbox.domain.content.person.entity.Person;

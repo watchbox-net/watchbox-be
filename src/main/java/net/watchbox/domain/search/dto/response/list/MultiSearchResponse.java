@@ -3,7 +3,7 @@ package net.watchbox.domain.search.dto.response.list;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import net.watchbox.domain.content.common.entity.MediaType;
+import net.watchbox.domain.content.base.entity.MediaType;
 
 @Getter
 @ToString

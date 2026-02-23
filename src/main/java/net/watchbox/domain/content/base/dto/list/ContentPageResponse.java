@@ -1,4 +1,4 @@
-package net.watchbox.domain.content.common.dto.list;
+package net.watchbox.domain.content.base.dto.list;
 
 import lombok.*;
 

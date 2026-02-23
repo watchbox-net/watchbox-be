@@ -1,4 +1,4 @@
-package net.watchbox.domain.content.common.entity;
+package net.watchbox.domain.content.base.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,12 +1,11 @@
-package net.watchbox.domain.content.common.service;
+package net.watchbox.domain.content.base.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.entity.MediaType;
-import net.watchbox.domain.content.common.repository.ContentRepository;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.entity.MediaType;
+import net.watchbox.domain.content.base.repository.ContentRepository;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.movie.entity.MovieDetail;
 import net.watchbox.domain.content.movie.repository.MovieDetailRepository;
@@ -19,7 +18,6 @@ import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.domain.content.tv.entity.TvDetail;
 import net.watchbox.domain.content.tv.repository.TvDetailRepository;
 import net.watchbox.domain.content.tv.repository.TvRepository;
-import net.watchbox.domain.record.dto.request.WatchMediaType;
 import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
 import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;

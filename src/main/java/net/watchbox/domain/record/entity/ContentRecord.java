@@ -2,8 +2,8 @@ package net.watchbox.domain.record.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.entity.MediaType;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 

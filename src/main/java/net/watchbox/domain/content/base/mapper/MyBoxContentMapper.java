@@ -1,8 +1,8 @@
-package net.watchbox.domain.content.common.mapper;
+package net.watchbox.domain.content.base.mapper;
 
 import net.watchbox.domain.box.entity.content.BoxContent;
-import net.watchbox.domain.content.common.dto.list.ContentItem;
-import net.watchbox.domain.content.common.dto.list.ContentSummary;
+import net.watchbox.domain.content.base.dto.list.ContentItem;
+import net.watchbox.domain.content.base.dto.list.ContentSummary;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
