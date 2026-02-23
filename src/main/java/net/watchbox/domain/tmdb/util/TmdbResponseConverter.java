@@ -32,7 +32,7 @@ public final class TmdbResponseConverter {
                 .id(result.getId())             // 부모 필드
                 .mediaType(MediaType.MOVIE)     // 부모 필드
                 .title(result.getTitle())
-                .originalTitle(result.getOriginalTitle())
+                .titleOriginal(result.getOriginalTitle())
                 .overview(result.getOverview())
                 .genreIds(result.getGenreIds())
                 .posterPath(buildImageFullUrl(result.getPosterPath()))

@@ -11,7 +11,7 @@ import java.util.List;
 @SuperBuilder
 public class MovieSearchResponse extends MultiSearchResponse {
     private String title;
-    private String originalTitle;
+    private String titleOriginal;
     private String overview;
     private List<Integer> genreIds;
     private String posterPath;

@@ -11,10 +11,10 @@ import java.util.List;
 @ToString
 @Builder
 public class MovieListResponse {
+    private List<MovieResponse> movieList;
     private Integer page;
     private Integer totalPages;
     private Integer totalResults;
-    private List<MovieResponse> movieList;
 
     public static MovieListResponse from(TmdbMovieListsResponse response) {
         List<MovieResponse> movieList = response.getResults().stream()
