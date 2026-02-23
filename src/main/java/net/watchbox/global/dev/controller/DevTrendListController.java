@@ -1,5 +1,6 @@
 package net.watchbox.global.dev.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResponse;
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/dev/tmdb")
-@Tag(name = "DevTrendList")
+@Tag(name = "DevTmdb")
+@Hidden
 public class DevTrendListController { // 인기, 평점 높은 x 영화, TV 리스트 조회
     private final TmdbMovieListsService tmdbMovieListsService;
     private final TmdbTvSeriesListsService tmdbTvSeriesListsService;

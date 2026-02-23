@@ -80,3 +80,7 @@ jwt:
 springdoc:
   api-docs:
     path: /api-docs
+  swagger-ui:
+    doc-expansion: none
+    persist-authorization: true
+    tags-sorter: alpha

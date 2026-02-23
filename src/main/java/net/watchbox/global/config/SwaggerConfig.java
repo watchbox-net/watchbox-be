@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,7 +34,22 @@ public class SwaggerConfig {
                 .info(info)
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
                 .addSecurityItem(securityRequirement)
-                .addServersItem(new Server().url("/"));
-//                .servers(List.of(new Server().url(backendDomain).description(swaggerServer)));
+                .addServersItem(new Server().url("/"))
+                .tags(List.of(
+                        new Tag().name("DevAccount"),
+                        new Tag().name("Member"),
+                        new Tag().name("MyBox"),
+                        new Tag().name("MyBoxContent"),
+                        new Tag().name("SharedBox"),
+                        new Tag().name("SharedBoxContent"),
+                        new Tag().name("SharedBoxInvitation"),
+                        new Tag().name("SearchContent"),
+                        new Tag().name("TV API"),
+                        new Tag().name("Movie API"),
+                        new Tag().name("ContentRecord"),
+                        new Tag().name("Auth"),
+                        new Tag().name("HealthCheck"),
+                        new Tag().name("DevWatchRecord")
+                ));
     }
 }

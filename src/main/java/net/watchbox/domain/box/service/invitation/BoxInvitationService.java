@@ -42,14 +42,12 @@ public class BoxInvitationService {
     // 공유 박스 받은초대 수락 (ACCEPTED)
     @Transactional
     public void acceptBoxInvitation(Member receiver, BoxInvitation boxInvitation) {
-        validateReceiver(boxInvitation.getReceiver(), receiver);
         boxInvitation.updateStatus(RequestStatus.ACCEPTED);
     }
 
     // 공유 박스 받은초대 거절 (REJECTED)
     @Transactional
     public void rejectBoxInvitation(Member receiver, BoxInvitation boxInvitation) {
-        validateReceiver(boxInvitation.getReceiver(), receiver);
         boxInvitation.updateStatus(RequestStatus.REJECTED);
     }
 
@@ -65,26 +63,5 @@ public class BoxInvitationService {
         return boxInvitationRepository.findAllByReceiver(member).stream()
                 .map(InvitationReceivedResponse::from)
                 .toList();
-    }
-
-    // 수신자 검증
-    private void validateReceiver(Member actor, Member receiver) {
-        if (!actor.getMemberId().equals(receiver.getMemberId())) {
-            throw new CustomException(ErrorCode.REQUEST_UNAUTHORIZED_ACCESS);
-        }
-    }
-
-    // 중복 초대 요청 검증
-    public void validateDuplicateInviteRequest(Box box, Member receiver) {
-        if (boxInvitationRepository.existsByBoxAndReceiverAndStatus(box, receiver, RequestStatus.PENDING)) {
-            throw new CustomException(ErrorCode.DUPLICATE_INVITE_REQUEST, receiver.getMemberId(), "Member");
-        }
-    }
-
-    // 이미 처리된 요청인지지 검증 (대기중인 요청 상태인지 검증)
-    public void validatePendingInviteRequest(BoxInvitation boxInvitation) {
-        if (boxInvitation.getStatus() != RequestStatus.PENDING) {
-            throw new CustomException(ErrorCode.INVITATION_ALREADY_RESPONDED, boxInvitation.getRequestId());
-        }
     }
 }

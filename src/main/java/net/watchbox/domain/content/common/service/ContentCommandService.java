@@ -19,6 +19,7 @@ import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.domain.content.tv.entity.TvDetail;
 import net.watchbox.domain.content.tv.repository.TvDetailRepository;
 import net.watchbox.domain.content.tv.repository.TvRepository;
+import net.watchbox.domain.record.dto.request.WatchMediaType;
 import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
 import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
@@ -53,10 +54,7 @@ public class ContentCommandService {
      *    1) Content 정보 저장
      *    2) SubContents 저장 or ToDo) 요청 이벤트 발행 요청 이벤트 발행
      */
-    public Content getOrSaveContentCascade(BoxContentAddRequest request) {
-        Long tmdbId = request.getContentId();
-        MediaType mediaType = request.getMediaType();
-
+    public Content getOrSaveContentCascade(Long tmdbId, MediaType mediaType) {
         return contentRepository.findById(tmdbId).orElseGet(() -> {
             // 1) Content 정보 저장
             Content content = createContent(tmdbId, mediaType);

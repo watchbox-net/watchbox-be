@@ -65,8 +65,8 @@ public class MyBoxController { // ToDo: Swagger로 확인하기
 
     // ToDo: 마이 박스 -> 공유 박스 전환하기
 
-    @Operation(summary = "마이 박스 삭제", description = "BoxMember 본인과 BoxContent 모두 삭제 " +
-            "\n로그 남김")
+    @Operation(summary = "마이 박스 삭제", description = "BoxMember 본인과 BoxContent 모두 삭제 <br>" +
+            "로그 남김")
     @DeleteMapping("/{boxId}")
     public ResponseEntity<ApiResponse<Void>> deleteMyBox(
             @AuthenticationPrincipal Member member,

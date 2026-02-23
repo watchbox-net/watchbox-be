@@ -6,6 +6,7 @@ import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
+import net.watchbox.domain.record.entity.ContentRecord;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,12 +32,6 @@ public class Member implements UserDetails {
     @JoinColumn(name = "oauth_account_id", nullable = false)
     private OauthAccount oauthAccount;
 
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BoxInvitation> boxInvitations;
-
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BoxJoinRequest> boxJoinRequests;
-
     private String email;
     private String nickname;
     private String profileImage;
@@ -45,14 +40,20 @@ public class Member implements UserDetails {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ContentRecord> contentRecords;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoxMember> boxMembers;
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoxInvitation> senders;
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxInvitation> sentBoxInvitations;
 
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoxInvitation> receivers;
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxInvitation> receivedBoxInvitations;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxJoinRequest> sentBoxJoinRequests;
 
     /* ================= implements from UserDetails ================= */
     @Override // 권한 반환

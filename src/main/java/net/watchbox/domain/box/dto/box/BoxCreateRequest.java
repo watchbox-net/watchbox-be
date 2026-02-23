@@ -16,10 +16,6 @@ public class BoxCreateRequest {
     @Schema(description = "박스 설명", example = "영화 박스")
     private String description;
 
-    @Schema(description = "공개 여부", allowableValues = {"PRIVATE", "PUBLIC"}, defaultValue = "PRIVATE")
+    @Schema(description = "공개 여부", implementation = VisibleType.class, defaultValue = "PRIVATE")
     private VisibleType visibleType = VisibleType.PRIVATE;
-
-//    @NotNull
-//    @Schema(description = "박스 타입", allowableValues = {"MY", "SHARED"}, defaultValue = "MY")
-//    private BoxType boxType;
 }
