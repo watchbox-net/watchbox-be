@@ -1,6 +1,7 @@
 package net.watchbox.domain.content.base.dto.list;
 
 import lombok.*;
+import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResponse;
 
 import java.util.List;
 

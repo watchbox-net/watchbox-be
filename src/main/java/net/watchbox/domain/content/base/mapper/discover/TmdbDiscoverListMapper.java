@@ -9,20 +9,18 @@ import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResultItem;
 import net.watchbox.domain.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import net.watchbox.domain.tmdb.response.tvserieslists.TmdbTvSeriesListsResultItem;
 
+import java.util.List;
+
 public class TmdbDiscoverListMapper {
     // Discover가 늘어나면 현재 페이지도 분리해야
 
-    public static ContentPageResponse toContentPageResponse(TmdbMovieListsResponse response) {
-        return ContentPageResponse.builder()
-                .contentItemList(response.getResults().stream()
-                        .map(item -> ContentItem.builder()
-                                .contentSummary(toMovieSummary(item))
-                                .build())
-                        .toList())
-                .totalCount(response.getTotalResults())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getPage())
-                .build();
+    // -------------- TmdbMovieListsResponse -----------------
+    public static List<ContentItem> toContentItemList(TmdbMovieListsResponse response) {
+        return response.getResults().stream()
+                .map(item -> ContentItem.builder()
+                        .contentSummary(toMovieSummary(item))
+                        .build())
+                .toList();
     }
 
     private static ContentSummary toMovieSummary(TmdbMovieListsResultItem item) {
@@ -39,17 +37,13 @@ public class TmdbDiscoverListMapper {
                 .build();
     }
 
-    public static ContentPageResponse toContentPageResponse(TmdbTvSeriesListsResponse response) {
-        return ContentPageResponse.builder()
-                .contentItemList(response.getResults().stream()
-                        .map(item -> ContentItem.builder()
-                                .contentSummary(toTvSummary(item))
-                                .build())
-                        .toList())
-                .totalCount(response.getTotalResults())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getPage())
-                .build();
+    // -------------- TmdbTvSeriesListsResponse -----------------
+    public static List<ContentItem> toContentItemList(TmdbTvSeriesListsResponse response) {
+        return response.getResults().stream()
+                .map(item -> ContentItem.builder()
+                        .contentSummary(toTvSummary(item))
+                        .build())
+                .toList();
     }
 
     private static ContentSummary toTvSummary(TmdbTvSeriesListsResultItem item) {
