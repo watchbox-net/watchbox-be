@@ -4,8 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import net.watchbox.domain.content.movie.entity.Movie;
-import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResultItem;
-import net.watchbox.domain.tmdb.util.MovieGenre;
+import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResultItem;
+import net.watchbox.global.tmdb.util.MovieGenre;
 
 import java.util.List;
 import java.util.Objects;

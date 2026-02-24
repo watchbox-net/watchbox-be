@@ -3,15 +3,13 @@ package net.watchbox.global.dev.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.search.dto.response.list.MultiSearchResponse;
-import net.watchbox.domain.tmdb.client.TmdbClient;
-import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
+import net.watchbox.global.tmdb.client.TmdbClient;
+import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
+import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.dev.dto.DevMultiSearchRequest;
 import net.watchbox.global.dev.dto.DevMultiSearchResponseDto;
 import net.watchbox.global.dev.dto.DevTmdbContentInfoDto;
-import net.watchbox.global.properties.TmdbProperties;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;

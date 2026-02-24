@@ -3,10 +3,10 @@ package net.watchbox.domain.discover;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.base.mapper.discover.TmdbDiscoverListMapper;
-import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResponse;
-import net.watchbox.domain.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
-import net.watchbox.domain.tmdb.service.TmdbMovieListsService;
-import net.watchbox.domain.tmdb.service.TmdbTvSeriesListsService;
+import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
+import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
+import net.watchbox.global.tmdb.service.TmdbMovieListsService;
+import net.watchbox.global.tmdb.service.TmdbTvSeriesListsService;
 import org.springframework.stereotype.Component;
 
 @Component

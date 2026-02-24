@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
-import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
-import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
-import net.watchbox.domain.tmdb.service.TmdbMoviesService;
-import net.watchbox.domain.tmdb.service.TmdbPeopleService;
-import net.watchbox.domain.tmdb.service.TmdbTvSeriesService;
+import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
+import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
+import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
+import net.watchbox.global.tmdb.service.TmdbMoviesService;
+import net.watchbox.global.tmdb.service.TmdbPeopleService;
+import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

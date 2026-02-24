@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.search.dto.request.SearchType;
 import net.watchbox.domain.search.dto.response.list.MultiSearchResponse;
 import net.watchbox.domain.search.dto.response.list.ContentSearchPageResponse;
-import net.watchbox.domain.tmdb.inner.search.TmdbSearchResultItem;
-import net.watchbox.domain.tmdb.response.search.TmdbSearchCommonResponse;
-import net.watchbox.domain.tmdb.service.TmdbSearchService;
-import net.watchbox.domain.tmdb.util.TmdbResponseConverter;
+import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
+import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
+import net.watchbox.global.tmdb.service.TmdbSearchService;
+import net.watchbox.global.tmdb.util.TmdbResponseConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

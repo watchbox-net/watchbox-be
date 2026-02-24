@@ -1,10 +1,9 @@
 package net.watchbox.domain.content.movie.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.movie.dto.response.MovieListResponse;
-import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResponse;
-import net.watchbox.domain.tmdb.service.TmdbMovieListsService;
+import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
+import net.watchbox.global.tmdb.service.TmdbMovieListsService;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor

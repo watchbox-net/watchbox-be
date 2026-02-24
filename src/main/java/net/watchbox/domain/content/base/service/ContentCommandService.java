@@ -18,12 +18,12 @@ import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.domain.content.tv.entity.TvDetail;
 import net.watchbox.domain.content.tv.repository.TvDetailRepository;
 import net.watchbox.domain.content.tv.repository.TvRepository;
-import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
-import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
-import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
-import net.watchbox.domain.tmdb.service.TmdbMoviesService;
-import net.watchbox.domain.tmdb.service.TmdbPeopleService;
-import net.watchbox.domain.tmdb.service.TmdbTvSeriesService;
+import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
+import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
+import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
+import net.watchbox.global.tmdb.service.TmdbMoviesService;
+import net.watchbox.global.tmdb.service.TmdbPeopleService;
+import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

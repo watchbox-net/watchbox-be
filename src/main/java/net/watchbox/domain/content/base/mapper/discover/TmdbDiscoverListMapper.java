@@ -1,13 +1,12 @@
 package net.watchbox.domain.content.base.mapper.discover;
 
 import net.watchbox.domain.content.base.dto.list.ContentItem;
-import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.base.dto.list.ContentSummary;
 import net.watchbox.domain.content.base.entity.MediaType;
-import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResponse;
-import net.watchbox.domain.tmdb.response.movielists.TmdbMovieListsResultItem;
-import net.watchbox.domain.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
-import net.watchbox.domain.tmdb.response.tvserieslists.TmdbTvSeriesListsResultItem;
+import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
+import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResultItem;
+import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
+import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResultItem;
 
 import java.util.List;
 
