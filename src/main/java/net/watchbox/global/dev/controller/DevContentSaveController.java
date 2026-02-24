@@ -55,7 +55,7 @@ public class DevContentSaveController {
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         } else {
             // 1) Content 정보 저장 - SQL Insert
-            content = contentCommandService.createContent(tmdbId, MediaType.MOVIE);
+            content = contentCommandService.saveContent(tmdbId, MediaType.MOVIE);
             // 2) Content의 하위 엔티티 저장
             // TMDB API 상세 검색으로 TmdbMovieDetailsResponse 호출
             // TmdbMovieDetailsResponse 가공하여 Movie 저장
@@ -82,7 +82,7 @@ public class DevContentSaveController {
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         }else{
             // 1) Content 정보 저장
-            content = contentCommandService.createContent(tmdbId, MediaType.TV);
+            content = contentCommandService.saveContent(tmdbId, MediaType.TV);
             // 2) Content의 하위 엔티티 저장
             contentCommandService.createTvContent(content, response);
         }
@@ -108,7 +108,7 @@ public class DevContentSaveController {
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         }else{
             // 1) Content 정보 저장
-            content = contentCommandService.createContent(tmdbId, MediaType.PERSON);
+            content = contentCommandService.saveContent(tmdbId, MediaType.PERSON);
             // 2) Content의 하위 엔티티 저장
             contentCommandService.createPersonContent(content, response);
         }

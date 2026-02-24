@@ -55,7 +55,7 @@ public class ContentCommandService {
     public Content getOrSaveContentCascade(Long tmdbId, MediaType mediaType) {
         return contentRepository.findById(tmdbId).orElseGet(() -> {
             // 1) Content 정보 저장
-            Content content = createContent(tmdbId, mediaType);
+            Content content = saveContent(tmdbId, mediaType);
             // 2) Content의 하위 엔티티 저장
             createSubContents(content);
             return content;
@@ -63,7 +63,7 @@ public class ContentCommandService {
     }
 
     // ToDo: (위변조 방지) 일단 만들어놓고 나중에 tmdb api 검색에서 없으면 위변조로 간주하고 DB에서 삭제할 것
-    public Content createContent(Long tmdbId, MediaType mediaType) {
+    public Content saveContent(Long tmdbId, MediaType mediaType) {
 //        contentRepository.insertContent(tmdbId, String.valueOf(mediaType));
         Content content = contentRepository.save(
                 Content.builder()

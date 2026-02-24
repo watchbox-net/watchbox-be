@@ -23,7 +23,6 @@ public class DiscoverFacade {
                 .totalPages(response.getTotalPages())
                 .currentPage(response.getPage())
                 .build();
-
     }
 
     public ContentPageResponse getPopularTvSeries(Integer page) {
