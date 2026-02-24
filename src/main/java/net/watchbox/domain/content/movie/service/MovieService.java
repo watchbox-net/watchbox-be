@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 public class MovieService {
     private final TmdbMovieListsService tmdbMovieListsService;
 
-//    public MovieListResponse getPopularMovies(Integer page, String region) {
-    public ContentPageResponse getPopularMovies(Integer page, String region) {
+    public MovieListResponse getPopularMovies(Integer page, String region) {
         TmdbMovieListsResponse tmdbPopularMovieList = tmdbMovieListsService.getPopularMovieLists(page, region);
 
         return MovieListResponse.from(tmdbPopularMovieList);

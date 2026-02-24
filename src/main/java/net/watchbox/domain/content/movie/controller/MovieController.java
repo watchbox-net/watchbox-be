@@ -21,8 +21,7 @@ public class MovieController {
 
     // 인기 영화 리스트 조회
     @GetMapping("/popular")
-//    public ResponseEntity<ApiResponse<MovieListResponse>> getPopularMovies(
-    public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularMovies(
+    public ResponseEntity<ApiResponse<MovieListResponse>> getPopularMovies(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "KR") String region) {
         return ResponseEntity.ok(
