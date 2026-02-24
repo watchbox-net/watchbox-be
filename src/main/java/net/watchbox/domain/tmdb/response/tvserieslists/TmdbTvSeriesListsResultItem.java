@@ -17,7 +17,7 @@ public class TmdbTvSeriesListsResultItem {
     @JsonProperty("genre_ids")
     private List<Integer> genreIds;
 
-    private Integer id;
+    private Long id;
 
     @JsonProperty("origin_country")
     private List<String> originCountry;
@@ -44,5 +44,5 @@ public class TmdbTvSeriesListsResultItem {
     private Double voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 }

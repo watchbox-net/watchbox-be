@@ -14,7 +14,7 @@ import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.base.entity.Content;
-import net.watchbox.domain.content.base.mapper.MyBoxContentMapper;
+import net.watchbox.domain.content.base.mapper.box.MyBoxContentMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;

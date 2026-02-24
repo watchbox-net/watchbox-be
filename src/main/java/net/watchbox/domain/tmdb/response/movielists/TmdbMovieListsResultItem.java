@@ -17,7 +17,7 @@ public class TmdbMovieListsResultItem {
     @JsonProperty("genre_ids")
     private List<Integer> genreIds;
 
-    private Integer id;
+    private Long id;
 
     @JsonProperty("original_language")
     private String originalLanguage;
@@ -43,5 +43,5 @@ public class TmdbMovieListsResultItem {
     private Double voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 }

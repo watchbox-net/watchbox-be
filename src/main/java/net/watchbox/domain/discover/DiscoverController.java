@@ -1,10 +1,9 @@
-package net.watchbox.domain.content.movie.controller;
+package net.watchbox.domain.discover;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
-import net.watchbox.domain.content.movie.dto.response.MovieListResponse;
-import net.watchbox.domain.content.movie.service.MovieService;
+import net.watchbox.domain.content.tv.dto.response.TvListResponse;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,23 +11,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/contents/movie")
-@Tag(name = "Movie API")
-public class MovieController {
-    private final MovieService movieService;
+@RequiredArgsConstructor
+@RequestMapping("/api/discover")
+@Tag(name = "Discover API")
+public class DiscoverController {
+    private final DiscoverFacade discoverFacade;
 
-    // 인기 영화 리스트 조회
-    @GetMapping("/popular")
-//    public ResponseEntity<ApiResponse<MovieListResponse>> getPopularMovies(
+    @GetMapping("/popular/movies")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularMovies(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "KR") String region) {
         return ResponseEntity.ok(
-                ApiResponse.success(movieService.getPopularMovies(page, region))
+                ApiResponse.success(discoverFacade.getPopularMovies(page, region))
         );
     }
 
-    // 높은 평점 영화 리스트 조회
+    @GetMapping("/popular/tv")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularTvSeries(
+            @RequestParam(defaultValue = "1") Integer page) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getPopularTvSeries(page))
+        );
+    }
+
 }

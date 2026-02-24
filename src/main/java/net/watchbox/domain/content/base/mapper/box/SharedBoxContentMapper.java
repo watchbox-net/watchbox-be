@@ -1,15 +1,15 @@
-package net.watchbox.domain.content.base.mapper;
+package net.watchbox.domain.content.base.mapper.box;
 
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.list.ContentSummary;
 import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
+import net.watchbox.domain.content.base.mapper.ContentMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class SharedBoxContentMapper {
 
     // === BoxContent만 ===
@@ -20,7 +20,7 @@ public class SharedBoxContentMapper {
                 .map(group -> {
                     BoxContent first = group.get(0);  // 콘텐츠 정보는 첫번째 것 사용
                     return ContentItem.builder()
-                            .contentSummary(ContentSummary.fromContent(first.getContent()))
+                            .contentSummary(ContentMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
                             .memberInteraction(null)
                             .publisherSummaryList(null)
@@ -41,7 +41,7 @@ public class SharedBoxContentMapper {
                             .toList();
 
                     return ContentItem.builder()
-                            .contentSummary(ContentSummary.fromContent(first.getContent()))
+                            .contentSummary(ContentMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
                             .memberInteraction(null)
                             .publisherSummaryList(publisherSummaries)
