@@ -24,6 +24,7 @@ import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
+import net.watchbox.global.tmdb.util.TmdbUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -105,7 +106,7 @@ public class ContentCommandService {
                 .popularity(tmdbMovieDetail.getPopularity())
                 .voteAverage(tmdbMovieDetail.getVoteAverage())
                 .voteCount(tmdbMovieDetail.getVoteCount())
-                .year(Integer.parseInt(tmdbMovieDetail.getReleaseDate().substring(0, 4)))
+                .year(TmdbUtils.extractYear(tmdbMovieDetail.getReleaseDate()))
                 .genreIds(tmdbMovieDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
                 .build();
 
@@ -114,7 +115,7 @@ public class ContentCommandService {
                 .overview(tmdbMovieDetail.getOverview())
                 .backdropPath(tmdbMovieDetail.getBackdropPath())
                 .originalLanguage(tmdbMovieDetail.getOriginalLanguage())
-                .releaseDate(java.time.LocalDate.parse(tmdbMovieDetail.getReleaseDate()))
+                .releaseDate(LocalDate.parse(tmdbMovieDetail.getReleaseDate()))
                 .adult(tmdbMovieDetail.isAdult())
                 .video(tmdbMovieDetail.isVideo())  // 추후 매핑 로직 추가 필요
                 .status(tmdbMovieDetail.getStatus())
@@ -163,7 +164,7 @@ public class ContentCommandService {
                 .popularity(tmdbTvSeriesDetail.getPopularity())
                 .voteAverage(tmdbTvSeriesDetail.getVoteAverage())
                 .voteCount(tmdbTvSeriesDetail.getVoteCount())
-                .year(Integer.parseInt(tmdbTvSeriesDetail.getFirstAirDate().substring(0, 4)))
+                .year(TmdbUtils.extractYear(tmdbTvSeriesDetail.getFirstAirDate()))
                 .genreIds(tmdbTvSeriesDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
                 .build();
 
@@ -172,8 +173,8 @@ public class ContentCommandService {
                 .overview(tmdbTvSeriesDetail.getOverview())
                 .backdropPath(tmdbTvSeriesDetail.getBackdropPath())
                 .originalLanguage(tmdbTvSeriesDetail.getOriginalLanguage())
-                .firstAirDate(java.time.LocalDate.parse(tmdbTvSeriesDetail.getFirstAirDate()))
-                .lastAirDate(java.time.LocalDate.parse(tmdbTvSeriesDetail.getLastAirDate()))
+                .firstAirDate(LocalDate.parse(tmdbTvSeriesDetail.getFirstAirDate()))
+                .lastAirDate(LocalDate.parse(tmdbTvSeriesDetail.getLastAirDate()))
 //                .inProduction(tmdbTvSeriesDetail.isInProduction())
                 .numberOfEpisodes(tmdbTvSeriesDetail.getNumberOfEpisodes().intValue())
                 .numberOfSeasons(tmdbTvSeriesDetail.getNumberOfSeasons().intValue())

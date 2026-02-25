@@ -7,6 +7,7 @@ import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResultItem;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResultItem;
+import net.watchbox.global.tmdb.util.TmdbUtils;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class TmdbDiscoverDtoMapper {
                 .posterPath(item.getPosterPath())
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
-                .year(Integer.parseInt(item.getReleaseDate().substring(0, 4)))
+                .year(TmdbUtils.extractYear(item.getReleaseDate()))
                 .title(item.getTitle())
                 .titleOriginal(item.getOriginalTitle())
                 .build();
@@ -53,7 +54,7 @@ public class TmdbDiscoverDtoMapper {
                 .posterPath(item.getPosterPath())
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
-                .year(Integer.parseInt(item.getFirstAirDate().substring(0, 4)))
+                .year(TmdbUtils.extractYear(item.getFirstAirDate()))
                 .name(item.getName())
                 .nameOriginal(item.getOriginalName())
                 .build();
