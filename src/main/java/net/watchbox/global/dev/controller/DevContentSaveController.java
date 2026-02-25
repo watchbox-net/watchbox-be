@@ -59,7 +59,7 @@ public class DevContentSaveController {
             // 2) Content의 하위 엔티티 저장
             // TMDB API 상세 검색으로 TmdbMovieDetailsResponse 호출
             // TmdbMovieDetailsResponse 가공하여 Movie 저장
-            contentCommandService.createMovieContent(content, response);
+            contentCommandService.saveMovieContent(content, response);
         }
 //        movieRepository.flush();
         Movie movie = contentQueryService.getMovieByIdOrThrow(tmdbId);
@@ -84,7 +84,7 @@ public class DevContentSaveController {
             // 1) Content 정보 저장
             content = contentCommandService.saveContent(tmdbId, MediaType.TV);
             // 2) Content의 하위 엔티티 저장
-            contentCommandService.createTvContent(content, response);
+            contentCommandService.saveTvContent(content, response);
         }
 
         Tv tv = contentQueryService.getTvByIdOrThrow(tmdbId);
@@ -110,7 +110,7 @@ public class DevContentSaveController {
             // 1) Content 정보 저장
             content = contentCommandService.saveContent(tmdbId, MediaType.PERSON);
             // 2) Content의 하위 엔티티 저장
-            contentCommandService.createPersonContent(content, response);
+            contentCommandService.savePersonContent(content, response);
         }
 
         Person person = contentQueryService.getPersonByIdOrThrow(tmdbId);

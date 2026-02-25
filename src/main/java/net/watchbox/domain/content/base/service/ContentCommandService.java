@@ -57,7 +57,7 @@ public class ContentCommandService {
             // 1) Content 정보 저장
             Content content = saveContent(tmdbId, mediaType);
             // 2) Content의 하위 엔티티 저장
-            createSubContents(content);
+            saveSubContents(content);
             return content;
         });
     }
@@ -76,26 +76,26 @@ public class ContentCommandService {
         return content;
     }
 
-    public void createSubContents(Content content) {
+    public void saveSubContents(Content content) {
         // 타입별로 해당 상세 정보 요청 받아와서 저장
         switch (content.getMediaType()) {
             case MOVIE -> {
                 TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetails(content.getTmdbId());
-                createMovieContent(content, response);
+                saveMovieContent(content, response);
             }
             case TV -> {
                 TmdbTvSeriesDetailsResponse response = tmdbTvSeriesService.getTvSeriesDetails(content.getTmdbId());
-                createTvContent(content, response);
+                saveTvContent(content, response);
             }
             case PERSON -> {
                 TmdbPeopleDetailsResponse response = tmdbPeopleService.getPeopleDetails(content.getTmdbId());
-                createPersonContent(content, response);
+                savePersonContent(content, response);
             }
         }
     }
 
     // TmdbMovieDetailsResponse -> Movie, MovieDetail 저장
-    public void createMovieContent(Content content, TmdbMoviesDetailsResponse tmdbMovieDetail) {
+    public void saveMovieContent(Content content, TmdbMoviesDetailsResponse tmdbMovieDetail) {
         Movie movie = Movie.builder()
                 .content(content)
                 .titleKo(tmdbMovieDetail.getTitle())
@@ -153,7 +153,7 @@ public class ContentCommandService {
     }
 
     // TmdbTvSeriesDetailsResponse -> Tv, TvDetail 저장
-    public void createTvContent(Content content, TmdbTvSeriesDetailsResponse tmdbTvSeriesDetail) {
+    public void saveTvContent(Content content, TmdbTvSeriesDetailsResponse tmdbTvSeriesDetail) {
         Tv tv = Tv.builder()
                 .content(content)
                 .nameKo(tmdbTvSeriesDetail.getName())
@@ -203,7 +203,7 @@ public class ContentCommandService {
     }
 
     // TmdbPeopleDetailsResponse -> Person, PersonDetail 저장
-    public void createPersonContent(Content content, TmdbPeopleDetailsResponse tmdbPersonDetail) {
+    public void savePersonContent(Content content, TmdbPeopleDetailsResponse tmdbPersonDetail) {
         Person person = Person.builder()
                 .content(content)
                 .nameKo(tmdbPersonDetail.getName())
