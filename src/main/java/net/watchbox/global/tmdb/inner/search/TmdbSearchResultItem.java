@@ -42,7 +42,7 @@ public class TmdbSearchResultItem {
     private Double voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 
     private Double popularity;
 

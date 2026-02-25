@@ -16,22 +16,22 @@ public class DiscoverFacade {
     private final TmdbTvSeriesListsService tmdbTvSeriesListsService;
 
     public ContentPageResponse getPopularMovies(Integer page, String region) {
-        TmdbMovieListsResponse response = tmdbMovieListsService.getPopularMovieLists(page, region);
+        TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getPopularMovieLists(page, region);
         return ContentPageResponse.builder()
-                .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(response))
-                .totalCount(response.getTotalResults())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getPage())
+                .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
+                .totalCount(tmdbResponse.getTotalResults())
+                .totalPages(tmdbResponse.getTotalPages())
+                .currentPage(tmdbResponse.getPage())
                 .build();
     }
 
     public ContentPageResponse getPopularTvSeries(Integer page) {
-        TmdbTvSeriesListsResponse response = tmdbTvSeriesListsService.getPopularTvSeriesLists(page);
+        TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getPopularTvSeriesLists(page);
         return ContentPageResponse.builder()
-                .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(response))
-                .totalCount(response.getTotalResults())
-                .totalPages(response.getTotalPages())
-                .currentPage(response.getPage())
+                .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
+                .totalCount(tmdbResponse.getTotalResults())
+                .totalPages(tmdbResponse.getTotalPages())
+                .currentPage(tmdbResponse.getPage())
                 .build();
     }
 }

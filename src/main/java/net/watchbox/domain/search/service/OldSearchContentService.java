@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SearchContentService {
+public class OldSearchContentService {
     private final TmdbSearchService tmdbSearchService;
 
     /**
@@ -39,6 +39,7 @@ public class SearchContentService {
      * ├─ TvSearchResponse: TV 검색 결과
      * └─ PersonSearchResponse: 인물 검색 결과
      */
+
     public ContentSearchPageResponse searchContentList(SearchType searchType, String query, Integer page) {
         TmdbSearchCommonResponse tmdbResponseDto = getSearchResponse(searchType, query, page);
         List<MultiSearchResponse> contentList = convertToResponseList(searchType, tmdbResponseDto.getResults());
@@ -51,6 +52,7 @@ public class SearchContentService {
                 .build();
     }
 
+    // MultiSearch 때문에 필요함
     private TmdbSearchCommonResponse getSearchResponse(SearchType searchType, String query, Integer page) {
         return switch (searchType) {
             case MULTI -> tmdbSearchService.searchMulti(query, page);
