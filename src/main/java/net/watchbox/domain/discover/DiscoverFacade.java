@@ -2,7 +2,7 @@ package net.watchbox.domain.discover;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
-import net.watchbox.domain.content.base.mapper.discover.TmdbDiscoverListMapper;
+import net.watchbox.domain.content.base.mapper.tmdb.TmdbDiscoverDtoMapper;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import net.watchbox.global.tmdb.service.TmdbMovieListsService;
@@ -18,7 +18,7 @@ public class DiscoverFacade {
     public ContentPageResponse getPopularMovies(Integer page, String region) {
         TmdbMovieListsResponse response = tmdbMovieListsService.getPopularMovieLists(page, region);
         return ContentPageResponse.builder()
-                .contentItemList(TmdbDiscoverListMapper.toContentItemList(response))
+                .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(response))
                 .totalCount(response.getTotalResults())
                 .totalPages(response.getTotalPages())
                 .currentPage(response.getPage())
@@ -28,7 +28,7 @@ public class DiscoverFacade {
     public ContentPageResponse getPopularTvSeries(Integer page) {
         TmdbTvSeriesListsResponse response = tmdbTvSeriesListsService.getPopularTvSeriesLists(page);
         return ContentPageResponse.builder()
-                .contentItemList(TmdbDiscoverListMapper.toContentItemList(response))
+                .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(response))
                 .totalCount(response.getTotalResults())
                 .totalPages(response.getTotalPages())
                 .currentPage(response.getPage())

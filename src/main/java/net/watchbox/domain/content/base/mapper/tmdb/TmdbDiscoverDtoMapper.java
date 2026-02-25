@@ -1,4 +1,4 @@
-package net.watchbox.domain.content.base.mapper.discover;
+package net.watchbox.domain.content.base.mapper.tmdb;
 
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.list.ContentSummary;
@@ -10,7 +10,7 @@ import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResultIt
 
 import java.util.List;
 
-public class TmdbDiscoverListMapper {
+public class TmdbDiscoverDtoMapper {
     // Discover가 늘어나면 현재 페이지도 분리해야
 
     // -------------- TmdbMovieListsResponse -----------------
