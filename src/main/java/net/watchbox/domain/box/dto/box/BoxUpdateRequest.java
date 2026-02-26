@@ -14,6 +14,6 @@ public class BoxUpdateRequest {
     @Schema(description = "박스 설명", example = "시리즈 박스")
     private String description;
 
-    @Schema(description = "공개 여부", implementation = VisibleType.class, defaultValue = "PRIVATE")
+    @Schema(description = "공개 여부", defaultValue = "PRIVATE")
     private VisibleType visibleType;
 }

@@ -2,7 +2,7 @@ package net.watchbox.domain.content.movie.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.global.entity.BaseTime;
 
 import java.util.List;

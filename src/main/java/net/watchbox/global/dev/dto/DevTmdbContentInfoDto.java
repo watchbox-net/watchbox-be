@@ -19,7 +19,7 @@ public class DevTmdbContentInfoDto {
     private String backdropUrl;
     private String releaseDate;
     private Double voteAverage;
-    private Integer voteCount;
+    private Long voteCount;
     private Double popularity;
     private String mediaType; // movie or tv
     private String originalLanguage;

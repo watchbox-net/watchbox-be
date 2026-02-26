@@ -3,7 +3,7 @@ package net.watchbox.domain.content.tv.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
+import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 
 import java.util.List;
 

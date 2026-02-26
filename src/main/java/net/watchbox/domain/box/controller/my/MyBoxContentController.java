@@ -10,7 +10,7 @@ import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
 import net.watchbox.domain.box.dto.content.BoxContentRemoveRequest;
 import net.watchbox.domain.box.facade.my.MyBoxContentFacade;
-import net.watchbox.domain.content.common.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;

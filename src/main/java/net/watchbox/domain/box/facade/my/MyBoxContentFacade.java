@@ -11,11 +11,11 @@ import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
-import net.watchbox.domain.content.common.dto.list.ContentItem;
-import net.watchbox.domain.content.common.dto.list.ContentPageResponse;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.mapper.MyBoxContentMapper;
-import net.watchbox.domain.content.common.service.ContentCommandService;
+import net.watchbox.domain.content.base.dto.list.ContentItem;
+import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.mapper.box.MyBoxContentMapper;
+import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,6 @@ public class MyBoxContentFacade {
     private final BoxContentCommandService boxContentCommandService;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
-    private final MyBoxContentMapper myBoxContentMapper;
 
     // 마이 박스에 컨텐츠 추가
     @Transactional
@@ -75,7 +74,7 @@ public class MyBoxContentFacade {
 //                contentLikeService.getLikedTmdbIds(member, tmdbIds);
 
         // 4. ContentItem 리스트 조립
-        List<ContentItem> contentItemList = myBoxContentMapper.toContentItems(boxContents);
+        List<ContentItem> contentItemList = MyBoxContentMapper.toContentItems(boxContents);
 
         // 5. 응답
         return ContentPageResponse.builder()

@@ -4,22 +4,22 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.entity.MediaType;
-import net.watchbox.domain.content.common.service.ContentCommandService;
-import net.watchbox.domain.content.common.service.ContentQueryService;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.entity.MediaType;
+import net.watchbox.domain.content.base.service.ContentCommandService;
+import net.watchbox.domain.content.base.service.ContentQueryService;
 import net.watchbox.domain.content.movie.dto.response.MovieResponse;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.person.dto.response.PersonResponse;
 import net.watchbox.domain.content.person.entity.Person;
 import net.watchbox.domain.content.tv.dto.response.TvResponse;
 import net.watchbox.domain.content.tv.entity.Tv;
-import net.watchbox.domain.tmdb.response.movies.TmdbMoviesDetailsResponse;
-import net.watchbox.domain.tmdb.response.people.TmdbPeopleDetailsResponse;
-import net.watchbox.domain.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
-import net.watchbox.domain.tmdb.service.TmdbMoviesService;
-import net.watchbox.domain.tmdb.service.TmdbPeopleService;
-import net.watchbox.domain.tmdb.service.TmdbTvSeriesService;
+import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
+import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
+import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
+import net.watchbox.global.tmdb.service.TmdbMoviesService;
+import net.watchbox.global.tmdb.service.TmdbPeopleService;
+import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,11 +55,11 @@ public class DevContentSaveController {
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         } else {
             // 1) Content 정보 저장 - SQL Insert
-            content = contentCommandService.createContent(tmdbId, MediaType.MOVIE);
+            content = contentCommandService.saveContent(tmdbId, MediaType.MOVIE);
             // 2) Content의 하위 엔티티 저장
             // TMDB API 상세 검색으로 TmdbMovieDetailsResponse 호출
             // TmdbMovieDetailsResponse 가공하여 Movie 저장
-            contentCommandService.createMovieContent(content, response);
+            contentCommandService.saveMovieContent(content, response);
         }
 //        movieRepository.flush();
         Movie movie = contentQueryService.getMovieByIdOrThrow(tmdbId);
@@ -82,9 +82,9 @@ public class DevContentSaveController {
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         }else{
             // 1) Content 정보 저장
-            content = contentCommandService.createContent(tmdbId, MediaType.TV);
+            content = contentCommandService.saveContent(tmdbId, MediaType.TV);
             // 2) Content의 하위 엔티티 저장
-            contentCommandService.createTvContent(content, response);
+            contentCommandService.saveTvContent(content, response);
         }
 
         Tv tv = contentQueryService.getTvByIdOrThrow(tmdbId);
@@ -108,9 +108,9 @@ public class DevContentSaveController {
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         }else{
             // 1) Content 정보 저장
-            content = contentCommandService.createContent(tmdbId, MediaType.PERSON);
+            content = contentCommandService.saveContent(tmdbId, MediaType.PERSON);
             // 2) Content의 하위 엔티티 저장
-            contentCommandService.createPersonContent(content, response);
+            contentCommandService.savePersonContent(content, response);
         }
 
         Person person = contentQueryService.getPersonByIdOrThrow(tmdbId);

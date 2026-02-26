@@ -11,12 +11,12 @@ import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
-import net.watchbox.domain.content.common.dto.list.ContentItem;
-import net.watchbox.domain.content.common.dto.list.ContentPageResponse;
-import net.watchbox.domain.content.common.entity.Content;
-import net.watchbox.domain.content.common.mapper.SharedBoxContentMapper;
-import net.watchbox.domain.content.common.service.ContentCommandService;
-import net.watchbox.domain.content.common.service.ContentQueryService;
+import net.watchbox.domain.content.base.dto.list.ContentItem;
+import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.mapper.box.SharedBoxContentMapper;
+import net.watchbox.domain.content.base.service.ContentCommandService;
+import net.watchbox.domain.content.base.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +34,6 @@ public class SharedBoxContentFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxMemberService boxMemberService;
     private final BoxValidator boxValidator;
-    private final SharedBoxContentMapper sharedBoxContentMapper;
 
     // 공유 박스에 컨텐츠 추가
     @Transactional
@@ -105,7 +104,7 @@ public class SharedBoxContentFacade {
         }
 
 //        List<ContentItem> contentItemList = sharedBoxContentMapper.toContentItems(boxContents);
-        List<ContentItem> contentItemList = sharedBoxContentMapper.toContentItemsWithPublisher(boxContents);
+        List<ContentItem> contentItemList = SharedBoxContentMapper.toContentItemsWithPublisher(boxContents);
 
         // 5. 응답
         return ContentPageResponse.builder()

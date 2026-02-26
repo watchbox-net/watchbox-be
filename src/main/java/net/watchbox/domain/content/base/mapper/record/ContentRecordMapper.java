@@ -1,0 +1,24 @@
+package net.watchbox.domain.content.base.mapper.record;
+
+import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
+import net.watchbox.domain.content.base.dto.list.ContentItem;
+import net.watchbox.domain.content.base.mapper.ContentMapper;
+import net.watchbox.domain.record.entity.ContentRecord;
+
+import java.util.List;
+
+public class ContentRecordMapper {
+    public static List<ContentItem> toContentItems(List<ContentRecord> contentRecords) {
+        return contentRecords.stream()
+                .map(record -> ContentItem.builder()
+                        .contentSummary(ContentMapper.fromContent(record.getContent()))
+                        .memberInteraction(MemberInteraction.builder()
+                                .watchStatus(record.getWatchStatus())
+                                .liked(record.getLiked())
+                                .build())
+                        .contentRecordId(record.getContentRecordId())
+                        .build()
+                )
+                .toList();
+    }
+}

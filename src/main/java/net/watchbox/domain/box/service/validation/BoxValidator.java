@@ -10,7 +10,7 @@ import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.repository.invitation.BoxInvitationRepository;
 import net.watchbox.domain.box.repository.member.BoxMemberRepository;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
-import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package net.watchbox.domain.record.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -48,8 +48,8 @@ public class ContentRecordService {
         }
     }
 
-    public List<ContentRecord> getContentRecordsByMemberAndNotNullWatchStatus(Member member) {
-        return contentRecordRepository.findByMemberAndWatchStatusIsNotNull(member);
+    public List<ContentRecord> getWatchRecordsWithContent(Member member) {
+        return contentRecordRepository.findWatchRecordsWithContent(member);
     }
 
     @Transactional
@@ -60,8 +60,8 @@ public class ContentRecordService {
         }
     }
 
-    public List<ContentRecord> getContentRecordsByMemberAndLikedTrue(Member member) {
-        return contentRecordRepository.findByMemberAndLiked(member, true);
+    public List<ContentRecord> getLikedRecordsWithContent(Member member) {
+        return contentRecordRepository.findLikedRecordsWithContent(member, true);
     }
 
     public ContentRecordResponse getRecordInfo(Long recordId) {
