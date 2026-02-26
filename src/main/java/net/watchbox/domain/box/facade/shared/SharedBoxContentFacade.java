@@ -34,7 +34,6 @@ public class SharedBoxContentFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxMemberService boxMemberService;
     private final BoxValidator boxValidator;
-    private final SharedBoxContentMapper sharedBoxContentMapper;
 
     // 공유 박스에 컨텐츠 추가
     @Transactional
@@ -105,7 +104,7 @@ public class SharedBoxContentFacade {
         }
 
 //        List<ContentItem> contentItemList = sharedBoxContentMapper.toContentItems(boxContents);
-        List<ContentItem> contentItemList = sharedBoxContentMapper.toContentItemsWithPublisher(boxContents);
+        List<ContentItem> contentItemList = SharedBoxContentMapper.toContentItemsWithPublisher(boxContents);
 
         // 5. 응답
         return ContentPageResponse.builder()

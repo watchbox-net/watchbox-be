@@ -31,7 +31,6 @@ public class MyBoxContentFacade {
     private final BoxContentCommandService boxContentCommandService;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
-    private final MyBoxContentMapper myBoxContentMapper;
 
     // 마이 박스에 컨텐츠 추가
     @Transactional
@@ -75,7 +74,7 @@ public class MyBoxContentFacade {
 //                contentLikeService.getLikedTmdbIds(member, tmdbIds);
 
         // 4. ContentItem 리스트 조립
-        List<ContentItem> contentItemList = myBoxContentMapper.toContentItems(boxContents);
+        List<ContentItem> contentItemList = MyBoxContentMapper.toContentItems(boxContents);
 
         // 5. 응답
         return ContentPageResponse.builder()

@@ -17,7 +17,7 @@
 //@RequiredArgsConstructor
 //@RequestMapping("/api/search/contents")
 //@Tag(name = "SearchContent", description = "컨텐츠 검색 API")
-//public class OldSearchContentController {
+//public class SearchContentController {
 //    private final SearchFacade searchFacade;
 //
 //    /**

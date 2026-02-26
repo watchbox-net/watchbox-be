@@ -2,10 +2,8 @@ package net.watchbox.domain.content.base.mapper.box;
 
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
-import net.watchbox.domain.content.base.dto.list.ContentSummary;
 import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
 import net.watchbox.domain.content.base.mapper.ContentMapper;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +11,7 @@ import java.util.stream.Collectors;
 public class SharedBoxContentMapper {
 
     // === BoxContent만 ===
-    public List<ContentItem> toContentItems(List<BoxContent> boxContents) {
+    public static List<ContentItem> toContentItems(List<BoxContent> boxContents) {
         return boxContents.stream()
                 .collect(Collectors.groupingBy(BoxContent::getTmdbId))  // tmdbId로 그룹핑
                 .values().stream()
@@ -30,7 +28,7 @@ public class SharedBoxContentMapper {
     }
 
     // === + Publisher ===
-    public List<ContentItem> toContentItemsWithPublisher(List<BoxContent> boxContents) {
+    public static List<ContentItem> toContentItemsWithPublisher(List<BoxContent> boxContents) {
         return boxContents.stream()
                 .collect(Collectors.groupingBy(BoxContent::getTmdbId))  // tmdbId로 그룹핑
                 .values().stream()

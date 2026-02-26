@@ -1,6 +1,7 @@
 package net.watchbox.domain.content.base.dto.list;
 
 import lombok.*;
+import net.watchbox.domain.content.base.dto.meta.ResponseMeta;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class ContentPageResponse {
     private int totalCount;
     private int totalPages;
     private int currentPage;
+    private ResponseMeta responseMeta;
 
     public static ContentPageResponse empty() {
         return ContentPageResponse.builder()
