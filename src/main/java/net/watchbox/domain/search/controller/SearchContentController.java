@@ -25,6 +25,7 @@ public class SearchContentController {
      * 3. TV 검색
      * 4. Person 검색
      */
+
     @GetMapping("/multi")
     public ResponseEntity<ApiResponse<ContentPageResponse>> searchMultiList(
             @RequestParam String query,
