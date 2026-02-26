@@ -30,9 +30,9 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build -x test
+          ./gradlew clean build -x test --no-daemon --max-workers=1
         env:
-          GRADLE_OPTS: "-Xmx512m -XX:MaxMetaspaceSize=256m -Dorg.gradle.daemon=false"
+          GRADLE_OPTS: -Xmx384m -XX:MaxMetaspaceSize=192m -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1
 
       - name: Build Docker image
         run: docker build -f Dockerfile -t ${{ env.DOCKER_IMAGE }} .
