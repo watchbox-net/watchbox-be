@@ -9,6 +9,6 @@ import net.watchbox.domain.record.entity.WatchStatus;
 @ToString
 @Builder
 public class MemberInteraction {
-    private Boolean isLiked;
+    private Boolean liked;
     private WatchStatus watchStatus;
 }

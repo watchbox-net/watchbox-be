@@ -4,6 +4,8 @@ import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +17,13 @@ public interface ContentRecordRepository extends JpaRepository<ContentRecord, Lo
 
     Optional<ContentRecord> findByMemberAndContent(Member member, Content content);
 
-    List<ContentRecord> findByMemberAndWatchStatusIsNotNull(Member member);
+//    List<ContentRecord> findByMemberAndWatchStatusIsNotNull(Member member);
 
-    List<ContentRecord> findByMemberAndLiked(Member member, Boolean liked);
+    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.watchStatus IS NOT NULL")
+    List<ContentRecord> findWatchRecordsWithContent(@Param("member") Member member);
+
+    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.liked = :liked")
+    List<ContentRecord> findLikedRecordsWithContent(@Param("member") Member member, @Param("liked") Boolean liked);
+
+//    List<ContentRecord> findByMemberAndLiked(Member member, Boolean liked);
 }

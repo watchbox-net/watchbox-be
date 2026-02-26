@@ -10,14 +10,14 @@ import net.watchbox.domain.record.entity.WatchStatus;
 @ToString
 public class WatchStatusUpsertRequest {
     @NotNull
-    @Schema(description = "Content ID", defaultValue = "550")
+    @Schema(defaultValue = "550")
     private Long contentId;
 
     @NotNull
-    @Schema(description = "MOVIE | TV", implementation = WatchMediaType.class, defaultValue = "MOVIE")
+    @Schema(defaultValue = "MOVIE")
     private WatchMediaType watchMediaType;
 
     @NotNull
-    @Schema(description = "WatchStatus", implementation = WatchStatus.class, defaultValue = "COMPLETED")
+    @Schema(defaultValue = "COMPLETED")
     private WatchStatus watchStatus;
 }

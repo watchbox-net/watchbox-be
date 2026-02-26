@@ -32,7 +32,6 @@ public class DevAccountController {
         return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
     }
 
-    @Hidden
     @GetMapping("/member")
     public String getMember(
             @AuthenticationPrincipal Member member

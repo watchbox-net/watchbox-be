@@ -10,14 +10,14 @@ import net.watchbox.domain.content.base.entity.MediaType;
 @ToString
 public class ContentLikeUpsertRequest {
     @NotNull
-    @Schema(description = "Content ID", defaultValue = "550")
+    @Schema(description = "tjfasdgsadgsadgasdgasdg", defaultValue = "550")
     private Long contentId;
 
     @NotNull
-    @Schema(description = "MOVIE | TV | PERSON", implementation = MediaType.class, defaultValue = "MOVIE")
+    @Schema(defaultValue = "MOVIE")
     private MediaType mediaType;
 
     @NotNull
-    @Schema(description = "Liked or Dislike", defaultValue = "true")
+    @Schema(defaultValue = "true")
     private Boolean liked;
 }

@@ -6,6 +6,7 @@ import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.person.entity.Person;
 import net.watchbox.domain.content.tv.entity.Tv;
+import net.watchbox.domain.record.entity.ContentRecord;
 
 public class ContentMapper {
     public static ContentSummary fromContent(Content content) {
@@ -26,7 +27,7 @@ public class ContentMapper {
                 .voteCount(movie.getVoteCount())
                 .year(movie.getYear())
                 .title(movie.getTitleKo())
-                .title(movie.getTitleOriginal())
+                .titleOriginal(movie.getTitleOriginal())
                 .build();
     }
 

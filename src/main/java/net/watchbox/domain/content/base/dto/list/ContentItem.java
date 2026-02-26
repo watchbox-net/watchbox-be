@@ -14,5 +14,5 @@ public class ContentItem {
     private MemberInteraction memberInteraction;
     private List<PublisherSummary> publisherSummaryList;
     private Long boxContentId;
-    private Long watchRecordId;
+    private Long contentRecordId;
 }
