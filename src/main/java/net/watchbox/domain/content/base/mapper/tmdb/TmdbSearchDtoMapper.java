@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.list.ContentSummary;
 import net.watchbox.domain.content.base.entity.MediaType;
-import net.watchbox.domain.search.dto.request.SearchType;
+import net.watchbox.domain.search.SearchType;
 import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
 

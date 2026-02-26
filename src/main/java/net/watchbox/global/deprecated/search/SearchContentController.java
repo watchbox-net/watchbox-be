@@ -3,7 +3,7 @@
 //import io.swagger.v3.oas.annotations.tags.Tag;
 //import lombok.RequiredArgsConstructor;
 //import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
-//import net.watchbox.domain.search.dto.request.SearchType;
+//import net.watchbox.domain.search.SearchType;
 //import net.watchbox.domain.search.dto.response.list.ContentSearchPageResponse;
 //import net.watchbox.domain.search.facade.SearchFacade;
 //import net.watchbox.global.dto.response.ApiResponse;

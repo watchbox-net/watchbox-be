@@ -1,4 +1,4 @@
-package net.watchbox.domain.search.dto.request;
+package net.watchbox.domain.search;
 
 public enum SearchType {
     MULTI,
