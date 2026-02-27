@@ -18,10 +18,14 @@ import net.watchbox.domain.content.base.mapper.box.SharedBoxContentMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.content.base.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.service.ContentRecordService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -34,6 +38,7 @@ public class SharedBoxContentFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxMemberService boxMemberService;
     private final BoxValidator boxValidator;
+    private final ContentRecordService contentRecordService;
 
     // 공유 박스에 컨텐츠 추가
     @Transactional
@@ -97,14 +102,28 @@ public class SharedBoxContentFacade {
     @Transactional(readOnly = true)
     public ContentPageResponse getSharedBoxContents(Member member, Long boxId) {
         Box box = boxService.getByBoxId(boxId);
+
+        // 1. BoxContent 리스트 조회 (SubContent fetch join)
         List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);
 
         if (boxContents.isEmpty()) {
             return ContentPageResponse.empty();
         }
 
-//        List<ContentItem> contentItemList = sharedBoxContentMapper.toContentItems(boxContents);
-        List<ContentItem> contentItemList = SharedBoxContentMapper.toContentItemsWithPublisher(boxContents);
+        // 2. 해당 contentIdList로 ContentRecord 리스트 조회
+        List<Long> contentIdList = boxContents.stream()
+                .map(BoxContent::getTmdbId)
+                .toList();
+
+        List<ContentRecord> records = contentRecordService.getByMemberAndContentIdIn(member, contentIdList);
+
+        // 3. Map으로 매핑
+        Map<Long, ContentRecord> recordMap = records.stream()
+                .collect(Collectors.toMap(cr -> cr.getContent().getTmdbId(), cr -> cr));
+
+
+        // 4. ContentItem 리스트 조립
+        List<ContentItem> contentItemList = SharedBoxContentMapper.toContentItemsWithPublisher(boxContents, recordMap);
 
         // 5. 응답
         return ContentPageResponse.builder()

@@ -35,5 +35,5 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "LEFT JOIN FETCH c.tv " +
             "LEFT JOIN FETCH c.person " +
             "WHERE bc.box = :box")
-    List<BoxContent> findAllWithContentDetailsByBox(@Param("box") Box box);
+    List<BoxContent> findAllWithSubContentByBox(@Param("box") Box box);
 }

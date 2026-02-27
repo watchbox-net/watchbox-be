@@ -17,10 +17,14 @@ import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.content.base.mapper.box.MyBoxContentMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.service.ContentRecordService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -31,6 +35,7 @@ public class MyBoxContentFacade {
     private final BoxContentCommandService boxContentCommandService;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
+    private final ContentRecordService contentRecordService;
 
     // 마이 박스에 컨텐츠 추가
     @Transactional
@@ -54,27 +59,26 @@ public class MyBoxContentFacade {
     public ContentPageResponse getMyBoxContents(Member member, Long boxId) {
         Box box = boxService.getByBoxId(boxId);
 
-        // 1. BoxContent 리스트 조회
+        // 1. BoxContent 리스트 조회 (SubContent fetch join)
         List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);
 
         if (boxContents.isEmpty()) {
             return ContentPageResponse.empty();
         }
 
-//        // 2. 필요한 ID들 추출
-//        List<Long> tmdbIdList = boxContents.stream()
-//                .map(BoxContent::getTmdbId)
-//                .toList();
-//
-//        // 3. 부가 정보 일괄 조회 (각각 IN 쿼리 1번씩)
-//        Map<Long, WatchStatus> watchStatusMap =
-//                watchRecordService.getWatchStatusMap(member, tmdbIds);
-//
-//        Set<Long> likedTmdbIds =
-//                contentLikeService.getLikedTmdbIds(member, tmdbIds);
+        // 2. 해당 contentIdList로 ContentRecord 리스트 조회
+        List<Long> contentIdList = boxContents.stream()
+                .map(BoxContent::getTmdbId)
+                .toList();
+
+        List<ContentRecord> records = contentRecordService.getByMemberAndContentIdIn(member, contentIdList);
+
+        // 3. Map으로 매핑
+        Map<Long, ContentRecord> recordMap = records.stream()
+                .collect(Collectors.toMap(cr -> cr.getContent().getTmdbId(), cr -> cr));
 
         // 4. ContentItem 리스트 조립
-        List<ContentItem> contentItemList = MyBoxContentMapper.toContentItems(boxContents);
+        List<ContentItem> contentItemList = MyBoxContentMapper.toContentItems(boxContents, recordMap);
 
         // 5. 응답
         return ContentPageResponse.builder()

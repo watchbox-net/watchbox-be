@@ -1,14 +1,17 @@
 package net.watchbox.domain.content.base.mapper.box;
 
 import net.watchbox.domain.box.entity.content.BoxContent;
+import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.mapper.ContentMapper;
+import net.watchbox.domain.record.entity.ContentRecord;
 
 import java.util.List;
+import java.util.Map;
 
 public class MyBoxContentMapper {
 
-    // === BoxContent만 ===
+    // === SubContent ===
     public static List<ContentItem> toContentItems(List<BoxContent> boxContents) {
         return boxContents.stream()
                 .map(bc -> ContentItem.builder()
@@ -19,42 +22,24 @@ public class MyBoxContentMapper {
                 .toList();
     }
 
+    // === SubContent + Record
+    public static List<ContentItem> toContentItems(List<BoxContent> boxContents, Map<Long, ContentRecord> recordMap) {
+        return boxContents.stream()
+                .map(bc -> {
+                    ContentRecord record = recordMap.get(bc.getTmdbId());
+                    MemberInteraction interaction = record != null
+                            ? MemberInteraction.builder()
+                            .liked(record.getLiked())
+                            .watchStatus(record.getWatchStatus())
+                            .build()
+                            : null;
+                    return ContentItem.builder()
+                            .contentSummary(ContentMapper.fromContent(bc.getContent()))
+                            .boxContentId(bc.getBoxContentId())
+                            .memberInteraction(interaction)
+                            .build();
+                })
+                .toList();
+    }
 
-    // 아래는 WatchRecord 만들고 수정해야함
-
-//    // === + WatchStatus ===
-//    public List<ContentItem> toContentItems(
-//            List<BoxContent> boxContents,
-//            Map<Long, WatchStatus> watchStatusMap
-//    ) {
-//        return boxContents.stream()
-//                .map(bc -> ContentItem.builder()
-//                        .contentSummary(ContentSummary.fromContent(bc.getContent()))
-//                        .memberInteraction(MemberInteraction.builder()
-//                                .watchStatus(watchStatusMap.get(bc.getTmdbId()))
-//                                .isLiked(null)
-//                                .build())
-//                        .adderItem(null)
-//                        .build())
-//                .toList();
-//    }
-//
-//    // === + WatchStatus + Like ===
-//    public List<ContentItem> toContentItems(
-//            List<BoxContent> boxContents,
-//            Map<Long, WatchStatus> watchStatusMap,
-//            Set<Long> likedTmdbIds
-//    ) {
-//        return boxContents.stream()
-//                .map(bc -> ContentItem.builder()
-//                        .contentSummary(ContentSummary.fromContent(bc.getContent()))
-//                        .memberInteraction(MemberInteraction.builder()
-//                                .watchStatus(watchStatusMap.get(bc.getTmdbId()))
-//                                .isLiked(likedTmdbIds.contains(bc.getTmdbId()))
-//                                .build())
-//                        .adderItem(null)
-//                        .build())
-//                .toList();
-//    }
-//
 }

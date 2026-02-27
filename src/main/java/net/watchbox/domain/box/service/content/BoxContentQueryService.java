@@ -78,11 +78,12 @@ public class BoxContentQueryService { // find로 전부바꾸기
         return boxContentRepository.findAllByBox(box);
     }
 
+    // BoxContent + Content
     public List<BoxContent> getMyBoxContentAllWithSubContent(Box box) {
-        return boxContentRepository.findAllWithContentDetailsByBox(box);
+        return boxContentRepository.findAllWithSubContentByBox(box);
     }
 
     public List<BoxContent> getSharedBoxContentAllWithSubContent(Box box) {
-        return boxContentRepository.findAllWithContentDetailsByBox(box);
+        return boxContentRepository.findAllWithSubContentByBox(box);
     }
 }
