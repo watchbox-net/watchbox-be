@@ -19,11 +19,24 @@ public interface ContentRecordRepository extends JpaRepository<ContentRecord, Lo
 
 //    List<ContentRecord> findByMemberAndWatchStatusIsNotNull(Member member);
 
-    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.watchStatus IS NOT NULL")
+    @Query("SELECT cr FROM ContentRecord cr " +
+            "JOIN FETCH cr.content c " +
+            "LEFT JOIN FETCH c.movie " +
+            "LEFT JOIN FETCH c.tv " +
+            "LEFT JOIN FETCH c.person " +
+            "WHERE cr.member = :member AND cr.watchStatus IS NOT NULL")
     List<ContentRecord> findWatchRecordsWithContent(@Param("member") Member member);
 
-    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.liked = :liked")
+    @Query("SELECT cr FROM ContentRecord cr " +
+            "JOIN FETCH cr.content c " +
+            "LEFT JOIN FETCH c.movie " +
+            "LEFT JOIN FETCH c.tv " +
+            "LEFT JOIN FETCH c.person " +
+            "WHERE cr.member = :member AND cr.liked = :liked")
     List<ContentRecord> findLikedRecordsWithContent(@Param("member") Member member, @Param("liked") Boolean liked);
+
+    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.content.tmdbId IN :tmdbIds")
+    List<ContentRecord> findContentRecordsByMemberAndContentIdIn(@Param("member") Member member, @Param("tmdbIds") List<Long> tmdbIds);
 
 //    List<ContentRecord> findByMemberAndLiked(Member member, Boolean liked);
 }

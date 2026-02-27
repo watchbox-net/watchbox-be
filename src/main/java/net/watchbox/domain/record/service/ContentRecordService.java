@@ -34,6 +34,10 @@ public class ContentRecordService {
                 .orElseThrow(() -> new CustomException(ErrorCode.WATCH_RECORD_NOT_FOUND));
     }
 
+    public List<ContentRecord> getByMemberAndContentIdIn(Member member, List<Long> contentIds) {
+        return contentRecordRepository.findContentRecordsByMemberAndContentIdIn(member, contentIds);
+    }
+
     public void validateMember(ContentRecord contentRecord, Member member) {
         if (!contentRecord.getMember().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.NOT_RECORD_MEMBER);

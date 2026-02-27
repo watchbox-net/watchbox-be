@@ -1,22 +1,25 @@
 package net.watchbox.domain.content.base.mapper.box;
 
 import net.watchbox.domain.box.entity.content.BoxContent;
+import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
 import net.watchbox.domain.content.base.mapper.ContentMapper;
+import net.watchbox.domain.record.entity.ContentRecord;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SharedBoxContentMapper {
 
-    // === BoxContent만 ===
+    // === SubContent ===
     public static List<ContentItem> toContentItems(List<BoxContent> boxContents) {
         return boxContents.stream()
                 .collect(Collectors.groupingBy(BoxContent::getTmdbId))  // tmdbId로 그룹핑
                 .values().stream()
                 .map(group -> {
-                    BoxContent first = group.get(0);  // 콘텐츠 정보는 첫번째 것 사용
+                    BoxContent first = group.getFirst();  // 콘텐츠 정보는 첫번째 것 사용
                     return ContentItem.builder()
                             .contentSummary(ContentMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
@@ -27,13 +30,13 @@ public class SharedBoxContentMapper {
                 .toList();
     }
 
-    // === + Publisher ===
+    // === SubContent + Publisher ===
     public static List<ContentItem> toContentItemsWithPublisher(List<BoxContent> boxContents) {
         return boxContents.stream()
                 .collect(Collectors.groupingBy(BoxContent::getTmdbId))  // tmdbId로 그룹핑
                 .values().stream()
                 .map(group -> {
-                    BoxContent first = group.get(0);  // 콘텐츠 정보는 첫번째 것 사용
+                    BoxContent first = group.getFirst();  // 콘텐츠 정보는 첫번째 것 사용
                     List<PublisherSummary> publisherSummaries = group.stream()
                             .map(bc -> PublisherSummary.from(bc.getPublisher()))
                             .toList();
@@ -48,59 +51,31 @@ public class SharedBoxContentMapper {
                 .toList();
     }
 
-    // 아래는 WatchRecord 만들고 수정해야함
+    // === SubContent + Publisher + Record ===
+    public static List<ContentItem> toContentItemsWithPublisher(List<BoxContent> boxContents, Map<Long, ContentRecord> recordMap) {
+        return boxContents.stream()
+                .collect(Collectors.groupingBy(BoxContent::getTmdbId))
+                .values().stream()
+                .map(group -> {
+                    BoxContent first = group.getFirst();
+                    ContentRecord record = recordMap.get(first.getTmdbId());
+                    MemberInteraction interaction = record != null
+                            ? MemberInteraction.builder()
+                            .liked(record.getLiked())
+                            .watchStatus(record.getWatchStatus())
+                            .build()
+                            : null;
+                    List<PublisherSummary> publisherSummaries = group.stream()
+                            .map(bc -> PublisherSummary.from(bc.getPublisher()))
+                            .toList();
 
-//    // === + WatchStatus ===
-//    public List<ContentItem> toContentItems(
-//            List<BoxContent> boxContents,
-//            Map<Long, WatchStatus> watchStatusMap
-//    ) {
-//        return boxContents.stream()
-//                .map(bc -> ContentItem.builder()
-//                        .contentSummary(ContentSummary.fromContent(bc.getContent()))
-//                        .memberInteraction(MemberInteraction.builder()
-//                                .watchStatus(watchStatusMap.get(bc.getTmdbId()))
-//                                .isLiked(null)
-//                                .build())
-//                        .adderItem(null)
-//                        .build())
-//                .toList();
-//    }
-//
-//    // === + WatchStatus + Like ===
-//    public List<ContentItem> toContentItems(
-//            List<BoxContent> boxContents,
-//            Map<Long, WatchStatus> watchStatusMap,
-//            Set<Long> likedTmdbIds
-//    ) {
-//        return boxContents.stream()
-//                .map(bc -> ContentItem.builder()
-//                        .contentSummary(ContentSummary.fromContent(bc.getContent()))
-//                        .memberInteraction(MemberInteraction.builder()
-//                                .watchStatus(watchStatusMap.get(bc.getTmdbId()))
-//                                .isLiked(likedTmdbIds.contains(bc.getTmdbId()))
-//                                .build())
-//                        .adderItem(null)
-//                        .build())
-//                .toList();
-//    }
-//
-//    // === 전부 ===
-//    public List<ContentItem> toContentItems(
-//            List<BoxContent> boxContents,
-//            Map<Long, WatchStatus> watchStatusMap,
-//            Set<Long> likedTmdbIds,
-//            Map<Long, Member> addedByMap
-//    ) {
-//        return boxContents.stream()
-//                .map(bc -> ContentItem.builder()
-//                        .contentSummary(ContentSummary.fromContent(bc.getContent()))
-//                        .memberInteraction(MemberInteraction.builder()
-//                                .watchStatus(watchStatusMap.get(bc.getTmdbId()))
-//                                .isLiked(likedTmdbIds.contains(bc.getTmdbId()))
-//                                .addedBy(addedByMap.get(bc.getAddedBy().getMemberId()))
-//                                .build())
-//                        .build())
-//                .toList();
-//    }
+                    return ContentItem.builder()
+                            .contentSummary(ContentMapper.fromContent(first.getContent()))
+                            .boxContentId(first.getBoxContentId())
+                            .memberInteraction(interaction)
+                            .publisherSummaryList(publisherSummaries)
+                            .build();
+                })
+                .toList();
+    }
 }
