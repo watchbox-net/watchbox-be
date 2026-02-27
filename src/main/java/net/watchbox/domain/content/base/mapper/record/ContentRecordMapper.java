@@ -12,13 +12,17 @@ public class ContentRecordMapper {
         return contentRecords.stream()
                 .map(record -> ContentItem.builder()
                         .contentSummary(ContentMapper.fromContent(record.getContent()))
-                        .memberInteraction(MemberInteraction.builder()
-                                .watchStatus(record.getWatchStatus())
-                                .liked(record.getLiked())
-                                .build())
+                        .memberInteraction(toMemberInteraction(record))
                         .contentRecordId(record.getContentRecordId())
                         .build()
                 )
                 .toList();
+    }
+
+    public static MemberInteraction toMemberInteraction(ContentRecord record) {
+        return MemberInteraction.builder()
+                .liked(record.getLiked())
+                .watchStatus(record.getWatchStatus())
+                .build();
     }
 }
