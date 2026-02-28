@@ -1,7 +1,7 @@
 //package net.watchbox.global.deprecated;
 //
 //import lombok.RequiredArgsConstructor;
-//import net.watchbox.domain.content.tv.dto.response.TvListResponse;
+//import net.watchbox.global.dev.deprecated.response.TvListResponse;
 //import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 //import net.watchbox.global.tmdb.service.TmdbTvSeriesListsService;
 //import org.springframework.stereotype.Service;
