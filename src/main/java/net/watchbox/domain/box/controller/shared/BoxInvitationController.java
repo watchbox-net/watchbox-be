@@ -87,4 +87,6 @@ public class BoxInvitationController {
                 ApiResponse.success(boxInvitationFacade.getBoxInvitationsReceived(member))
         );
     }
+
+    // ToDo: 보낸 초대 요청 취소하기
 }
