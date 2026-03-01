@@ -1,4 +1,4 @@
-package net.watchbox.domain.content.tv.dto.response;
+package net.watchbox.global.dev.deprecated.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class TvResponse {
 
     public static TvResponse from(Tv tv){
         List<String> genreNames = tv.getGenreIds().stream()
-                .map(TvGenre::getKoreanNameById)
+                .map(TvGenre::getNameById)
                 .filter(Objects::nonNull)
                 .toList();
 
@@ -51,7 +51,7 @@ public class TvResponse {
 
     public static TvResponse from(TmdbTvSeriesListsResultItem item) {
         List<String> genreNames = item.getGenreIds().stream()
-                .map(TvGenre::getKoreanNameById)
+                .map(TvGenre::getNameById)
                 .filter(Objects::nonNull)
                 .toList();
 

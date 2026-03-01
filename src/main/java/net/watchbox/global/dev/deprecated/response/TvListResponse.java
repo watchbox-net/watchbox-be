@@ -1,4 +1,4 @@
-package net.watchbox.domain.content.tv.dto.response;
+package net.watchbox.global.dev.deprecated.response;
 
 import lombok.Builder;
 import lombok.Getter;

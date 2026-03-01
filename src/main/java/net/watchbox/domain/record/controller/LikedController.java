@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
-import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.facade.ContentRecordFacade;
 import net.watchbox.global.dto.response.ApiResponse;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/records")
-@Tag(name = "ContentRecord", description = "컨텐츠 기록(시청 상태, 좋아요) API")
-public class ContentRecordController {
+@Tag(name = "Liked", description = "좋아요 API")
+public class LikedController {
     private final ContentRecordFacade contentRecordFacade;
     /**
      # 시청 상태
@@ -40,45 +39,6 @@ public class ContentRecordController {
      ! 시청 상태는 MOVIE, TV 까지만 취급
      ! 좋아요는 MOVIE, TV, PERSON 모두 취급
      */
-
-    @Operation(summary = "시청 상태 등록된 시청 기록 리스트 조회")
-    @GetMapping("/status")
-    public ResponseEntity<ApiResponse<ContentPageResponse>> getWatchStatusList(
-            @AuthenticationPrincipal Member member
-//            @RequestParam(value = "mediaType", required = false) String mediaType,
-//            @RequestParam(value = "watchStatus", required = false) WatchStatus watchStatus,
-//            @RequestParam(value = "page", defaultValue = "0") int page,
-//            @RequestParam(value = "size", defaultValue = "10") int size
-    ) {
-        return ResponseEntity.ok(ApiResponse.success(
-                contentRecordFacade.getWatchStatusList(member)
-//                watchRecordFacade.getWatchStatusList(member, mediaType, watchStatus, page, size))
-        ));
-    }
-
-    @Operation(summary = "시청 상태 등록/변경", description = "WatchMediaType = {MOVIE, TV} <br>" +
-            "WatchStatus = {COMPLETED, WATCHING, PLANNED, PAUSED}")
-    @PostMapping("/status")
-    public ResponseEntity<ApiResponse<ContentRecordResponse>> upsertWatchStatus(
-            @AuthenticationPrincipal Member member,
-            @RequestBody @Valid WatchStatusUpsertRequest request
-    ) {
-        return ResponseEntity.ok(ApiResponse.success(
-                contentRecordFacade.upsertWatchStatus(member, request))
-        );
-    }
-
-    @Operation(summary = "시청 상태 삭제")
-    @DeleteMapping("/status/{recordId}")
-    public ResponseEntity<ApiResponse<Void>> deleteWatchStatus(
-            @AuthenticationPrincipal Member member,
-            @PathVariable Long recordId
-    ) {
-        contentRecordFacade.deleteWatchStatus(member, recordId);
-        return ResponseEntity.ok(ApiResponse.success());
-    }
-
-
 
     @Operation(summary = "좋아요 표시된 시청 기록 리스트 조회",
             description = "좋아요는 시청 상태와 달리 PERSON도 포함하여 조회 <br>"+

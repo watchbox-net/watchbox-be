@@ -29,7 +29,7 @@ public enum TvGenre {
 
     private final int id;
     private final String englishName;
-    private final String koreanName;
+    private final String name;
 
     private static final Map<Integer, TvGenre> ID_MAP =
             Arrays.stream(values())
@@ -41,9 +41,9 @@ public enum TvGenre {
     }
 
     // ID로 한글 장르명 가져오기
-    public static String getKoreanNameById(int id) {
+    public static String getNameById(int id) {
         TvGenre genre = findById(id);
-        return genre != null ? genre.getKoreanName() : null;
+        return genre != null ? genre.getName() : null;
     }
 
     // ID로 영문 장르명 가져오기

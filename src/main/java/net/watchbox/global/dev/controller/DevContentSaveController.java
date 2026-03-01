@@ -4,15 +4,14 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.content.base.dto.list.ContentSummary;
 import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.content.base.entity.MediaType;
+import net.watchbox.domain.content.base.mapper.ContentMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.content.base.service.ContentQueryService;
-import net.watchbox.domain.content.movie.dto.response.MovieResponse;
 import net.watchbox.domain.content.movie.entity.Movie;
-import net.watchbox.domain.content.person.dto.response.PersonResponse;
 import net.watchbox.domain.content.person.entity.Person;
-import net.watchbox.domain.content.tv.dto.response.TvResponse;
 import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
@@ -43,7 +42,7 @@ public class DevContentSaveController {
      * 49797
      */
     @PostMapping("/movie/detail/{tmdbId}")
-    public ResponseEntity<MovieResponse> fetchAndSaveTmdbMovieDetails(
+    public ResponseEntity<ContentSummary> fetchAndSaveTmdbMovieDetails(
             @PathVariable Long tmdbId
     ) {
         Optional<Content> foundContent = contentQueryService.findContentById(tmdbId);
@@ -63,7 +62,7 @@ public class DevContentSaveController {
         }
 //        movieRepository.flush();
         Movie movie = contentQueryService.getMovieByIdOrThrow(tmdbId);
-        return ResponseEntity.ok(MovieResponse.from(movie));
+        return ResponseEntity.ok(ContentMapper.fromMovie(movie));
     }
 
     /**
@@ -71,7 +70,7 @@ public class DevContentSaveController {
      * 93405
      */
     @PostMapping("/tv/detail/{tmdbId}")
-    public ResponseEntity<TvResponse> fetchAndSaveTmdbTvDetails(
+    public ResponseEntity<ContentSummary> fetchAndSaveTmdbTvDetails(
             @PathVariable Long tmdbId
     ) {
         Optional<Content> foundContent = contentQueryService.findContentById(tmdbId);
@@ -88,7 +87,7 @@ public class DevContentSaveController {
         }
 
         Tv tv = contentQueryService.getTvByIdOrThrow(tmdbId);
-        return ResponseEntity.ok(TvResponse.from(tv));
+        return ResponseEntity.ok(ContentMapper.fromTv(tv));
     }
 
 
@@ -97,7 +96,7 @@ public class DevContentSaveController {
      *
      */
     @PostMapping("/person/detail/{tmdbId}")
-    public ResponseEntity<PersonResponse> fetchAndSaveTmdbPersonDetails(
+    public ResponseEntity<ContentSummary> fetchAndSaveTmdbPersonDetails(
             @PathVariable Long tmdbId
     ) {
         Optional<Content> foundContent = contentQueryService.findContentById(tmdbId);
@@ -114,7 +113,7 @@ public class DevContentSaveController {
         }
 
         Person person = contentQueryService.getPersonByIdOrThrow(tmdbId);
-        return ResponseEntity.ok(PersonResponse.from(person));
+        return ResponseEntity.ok(ContentMapper.fromPerson(person));
     }
 
     
