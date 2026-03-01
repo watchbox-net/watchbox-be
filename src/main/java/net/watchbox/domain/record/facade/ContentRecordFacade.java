@@ -9,7 +9,6 @@ import net.watchbox.domain.content.base.mapper.record.ContentRecordMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
-import net.watchbox.domain.record.dto.response.ContentRecordPageResponse;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -28,6 +27,7 @@ public class ContentRecordFacade {
 
     @Transactional(readOnly = true)
     public ContentPageResponse getWatchStatusList(Member member) {
+        log.debug("Login Member: {}", member.getMemberId());
         // 시청 기록이 등록된 ContentRecord 리스트 조회
         List<ContentRecord> contentRecords = contentRecordService.getWatchRecordsWithContent(member);
 
