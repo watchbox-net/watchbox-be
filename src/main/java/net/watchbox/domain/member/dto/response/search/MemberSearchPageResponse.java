@@ -1,4 +1,4 @@
-package net.watchbox.domain.member.dto.response;
+package net.watchbox.domain.member.dto.response.search;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.List;
 @ToString
 @Builder
 public class MemberSearchPageResponse {
-    private List<MemberResponse> memberList;
+    private List<MemberSearchResponse> memberSearchList;
     private int totalCount;
     private int totalPages;
     private int currentPage;

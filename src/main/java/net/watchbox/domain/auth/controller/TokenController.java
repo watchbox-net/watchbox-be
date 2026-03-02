@@ -34,4 +34,7 @@ public class TokenController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new TokenRefreshResponse(newAccessToken));
     }
+
+    // ToDO: 로그아웃
+    // ToDO: 회원탈퇴
 }

@@ -1,8 +1,7 @@
 package net.watchbox.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.member.dto.response.MemberResponse;
-import net.watchbox.domain.member.dto.response.MemberSearchPageResponse;
+import net.watchbox.domain.member.dto.response.search.MemberInvitationProjection;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
@@ -26,12 +25,17 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
-    public MemberSearchPageResponse searchMemberList(String keyword) {
-        List<Member> members = memberRepository.findByNicknameContainingIgnoreCase(keyword);
-        return MemberSearchPageResponse.builder()
-                .memberList(members.stream().map(MemberResponse::from).toList())
-                .totalCount(members.size())
-                .build();
+//    public List<Member> searchMemberList(String keyword) {
+//        return memberRepository.findByNicknameContainingIgnoreCase(keyword);
+//        return MemberSearchPageResponse.builder()
+//                .memberList(members.stream().map(MemberResponse::from).toList())
+//                .totalCount(members.size())
+//                .build();
+//    }
+
+    // MemberService - 조회만
+    public List<MemberInvitationProjection> searchMembersForBoxInvitation(String query, Long boxId) {
+        return memberRepository.findMembersWithInvitationStatus(query, boxId);
     }
 
     // 닉네임 등록, 수정
