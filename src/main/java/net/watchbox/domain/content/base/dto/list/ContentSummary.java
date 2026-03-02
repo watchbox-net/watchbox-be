@@ -3,11 +3,9 @@ package net.watchbox.domain.content.base.dto.list;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.content.base.entity.MediaType;
-import net.watchbox.domain.content.movie.entity.Movie;
-import net.watchbox.domain.content.person.entity.Person;
-import net.watchbox.domain.content.tv.entity.Tv;
+
+import java.util.List;
 
 @Getter
 @ToString
@@ -23,7 +21,7 @@ public class ContentSummary { // 하나의 응답 클래스에 모든 변수 포
     private Long voteCount;
     private Integer year;
 //    private String overview;
-//    private List<String> genreNameList; // ToDo: 장르 리스트 변환
+    private List<String> genreList; // ToDo: 장르 리스트 변환
 
     // 영화 전용
     private String title; // titleKo
