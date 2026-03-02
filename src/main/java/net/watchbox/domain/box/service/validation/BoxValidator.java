@@ -122,11 +122,17 @@ public class BoxValidator {
         }
     }
 
-    // 이미 처리된 요청인지지 검증 (대기중인 요청 상태인지 검증)
+    // 이미 처리된 요청인지지 검증 (대기중인 상태인지)
     public void validatePendingInviteRequest(BoxInvitation boxInvitation) {
         if (boxInvitation.getStatus() != RequestStatus.PENDING) {
             throw new CustomException(INVITATION_ALREADY_RESPONDED, boxInvitation.getRequestId());
         }
     }
 
+    // 송신자 본인인지 검증
+    public void validateSender(Member actor, Member sender) {
+        if (!actor.getMemberId().equals(sender.getMemberId())) {
+            throw new CustomException(REQUEST_UNAUTHORIZED_ACCESS);
+        }
+    }
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     private final MemberService memberService;
 
+    // ToDo: 공유박스ID 파라미터로 들어오면 해당 공유박스에 초대된 멤버인지 아닌지 정보도 함께 전송
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<MemberSearchPageResponse>> searchMemberList(
             @RequestParam String keyword
@@ -26,4 +27,7 @@ public class MemberController {
                 ApiResponse.success(memberService.searchMemberList(keyword))
         );
     }
+
+    // ToDo: 마이 페이지 응답
+    // 프로필 정보, 컨텐츠 개수s
 }

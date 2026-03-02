@@ -64,4 +64,9 @@ public class BoxInvitationService {
                 .map(InvitationReceivedResponse::from)
                 .toList();
     }
+
+    @Transactional
+    public void deleteBoxInvitation(BoxInvitation boxInvitation) {
+        boxInvitationRepository.delete(boxInvitation);
+    }
 }
