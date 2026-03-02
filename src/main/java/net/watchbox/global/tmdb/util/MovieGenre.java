@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -53,5 +55,21 @@ public enum MovieGenre {
     public static String getEnglishNameById(int id) {
         MovieGenre genre = findById(id);
         return genre != null ? genre.getEnglishName() : null;
+    }
+
+    /**
+     * 장르 ID 리스트를 한글명으로 매핑
+     * 최대 3개까지만 반환
+     */
+    public static List<String> mapGenreIdListToKorean(List<Integer> genreIds) {
+        if (genreIds == null || genreIds.isEmpty()) {
+            return List.of();
+        }
+
+        return genreIds.stream()
+                .limit(3)
+                .map(MovieGenre::getKoreanNameById)
+                .filter(Objects::nonNull)
+                .toList();
     }
 }

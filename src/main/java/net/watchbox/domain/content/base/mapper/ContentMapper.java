@@ -6,7 +6,8 @@ import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.person.entity.Person;
 import net.watchbox.domain.content.tv.entity.Tv;
-import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.global.tmdb.util.MovieGenre;
+import net.watchbox.global.tmdb.util.TvGenre;
 
 public class ContentMapper {
     public static ContentSummary fromContent(Content content) {
@@ -26,6 +27,7 @@ public class ContentMapper {
                 .voteAverage(movie.getVoteAverage())
                 .voteCount(movie.getVoteCount())
                 .year(movie.getYear())
+                .genreList(MovieGenre.mapGenreIdListToKorean(movie.getGenreIds()))
                 .title(movie.getTitleKo())
                 .titleOriginal(movie.getTitleOriginal())
                 .build();
@@ -40,6 +42,7 @@ public class ContentMapper {
                 .voteAverage(tv.getVoteAverage())
                 .voteCount(tv.getVoteCount())
                 .year(tv.getYear())
+                .genreList(TvGenre.mapGenreIdListToKorean(tv.getGenreIds()))
                 .name(tv.getNameKo())
                 .nameOriginal(tv.getNameOriginal())
                 .build();
