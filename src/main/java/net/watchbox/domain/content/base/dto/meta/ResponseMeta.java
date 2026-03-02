@@ -9,7 +9,7 @@ import java.util.Set;
 @Builder
 public class ResponseMeta {
     private ContentType contentType;
-    private DataSource dataSource;
+    private DataSource dataSource; // ContentMeta로 옮겨야할듯
     private Set<ContentItemField> contentItemIncluded;
 //    private Instant fetchedAt;           // 캐시 신선도 확인용으로도 활용 가능
 }
