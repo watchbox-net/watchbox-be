@@ -21,6 +21,7 @@ import java.util.List;
 public class BoxInvitationController {
     private final BoxInvitationFacade boxInvitationFacade;
 
+    // ToDo: 모두 큐로 설계 바꿀것
     /**
      * 공유 박스에 초대하기
      * 공유 박스 초대 알림 전송하기(SSE) to 초대 받는사람
@@ -48,7 +49,7 @@ public class BoxInvitationController {
     }
 
     @Operation(summary = "받은 초대 수락하기")
-    @PatchMapping("/accept/{requestId}")
+    @PatchMapping("/{requestId}/accept")
     public ResponseEntity<ApiResponse<Void>> acceptBoxInvitation(
             @AuthenticationPrincipal Member member,
             @PathVariable Long requestId
@@ -58,7 +59,7 @@ public class BoxInvitationController {
     }
 
     @Operation(summary = "받은 초대 거절하기")
-    @PatchMapping("/reject/{requestId}")
+    @PatchMapping("/{requestId}/reject")
     public ResponseEntity<ApiResponse<Void>> rejectBoxInvitation(
             @AuthenticationPrincipal Member member,
             @PathVariable Long requestId
@@ -88,5 +89,14 @@ public class BoxInvitationController {
         );
     }
 
-    // ToDo: 보낸 초대 요청 취소하기
+    @Operation(summary = "보낸 초대 요청 취소하기")
+    @DeleteMapping("{requestId}/cancel")
+    public ResponseEntity<ApiResponse<Void>> cancelBoxInvitation(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long requestId
+    ){
+        boxInvitationFacade.cancelBoxInvitation(member, requestId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
 }

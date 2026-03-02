@@ -61,7 +61,7 @@ public class BoxInvitationFacade {
         // 이미 처리된 요청인지지 검증
         boxValidator.validatePendingInviteRequest(boxInvitation);
         // 수신자 본인인지 검증
-        boxValidator.validateReceiver(boxInvitation.getReceiver(), member);
+        boxValidator.validateReceiver(member, boxInvitation.getReceiver());
         // 수락 처리
         boxInvitationService.acceptBoxInvitation(member, boxInvitation);
         // 박스 멤버(EDITOR 권한)로 추가
@@ -80,9 +80,21 @@ public class BoxInvitationFacade {
         // 이미 처리된 요청인지지 검증
         boxValidator.validatePendingInviteRequest(boxInvitation);
         // 수신자 본인인지 검증
-        boxValidator.validateReceiver(boxInvitation.getReceiver(), member);
+        boxValidator.validateReceiver(member, boxInvitation.getReceiver());
         // 거절 처리
         boxInvitationService.rejectBoxInvitation(member, boxInvitation);
     }
 
+    @Transactional
+    public void cancelBoxInvitation(Member member, Long requestId) {
+        BoxInvitation boxInvitation = boxInvitationService.findById(requestId);
+        // 이미 처리된 요청인지지 검증
+        boxValidator.validatePendingInviteRequest(boxInvitation);
+        // 송신자 본인인지 검증
+        boxValidator.validateSender(member, boxInvitation.getSender());
+        // 초대 요청 취소 (삭제)
+        boxInvitationService.deleteBoxInvitation(boxInvitation);
+
+        log.info("BoxInvitation with requestId {} has been cancelled by sender {}", requestId, member.getMemberId());
+    }
 }
