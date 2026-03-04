@@ -1,6 +1,7 @@
 name: Backend CI/CD Dev
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev
