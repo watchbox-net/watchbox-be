@@ -2,18 +2,6 @@ name: Backend CI/CD Dev
 
 on:
   workflow_dispatch:
-    inputs:
-      confirm:
-        description: '액션 실행 여부'
-        required: true
-        type: choice
-        options:
-          - 'yes'
-          - 'no'
-        default: 'no'
-#  push:
-#    branches:
-#      - dev
 
 env:
   APP_NAME: watchbox-be
