@@ -24,9 +24,9 @@ public class SearchFacade {
         TmdbSearchCommonResponse tmdbResponse = tmdbSearchService.searchMulti(query, page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbSearchDtoMapper.toContentItemList(tmdbResponse, SearchType.MULTI))
-                .totalCount(tmdbResponse.getTotalResults())
-                .totalPages(tmdbResponse.getTotalPages())
-                .currentPage(tmdbResponse.getPage())
+                .totalCount((long) tmdbResponse.getTotalResults())
+                .totalPages((long) tmdbResponse.getTotalPages())
+                .currentPage((long) tmdbResponse.getPage())
                 .build();
     }
 
@@ -34,9 +34,9 @@ public class SearchFacade {
         TmdbSearchCommonResponse tmdbResponse = tmdbSearchService.searchMovie(query, page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbSearchDtoMapper.toContentItemList(tmdbResponse, SearchType.MOVIE))
-                .totalCount(tmdbResponse.getTotalResults())
-                .totalPages(tmdbResponse.getTotalPages())
-                .currentPage(tmdbResponse.getPage())
+                .totalCount((long) tmdbResponse.getTotalResults())
+                .totalPages((long) tmdbResponse.getTotalPages())
+                .currentPage((long) tmdbResponse.getPage())
                 .build();
     }
 
@@ -44,9 +44,9 @@ public class SearchFacade {
         TmdbSearchCommonResponse tmdbResponse = tmdbSearchService.searchTv(query, page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbSearchDtoMapper.toContentItemList(tmdbResponse, SearchType.TV))
-                .totalCount(tmdbResponse.getTotalResults())
-                .totalPages(tmdbResponse.getTotalPages())
-                .currentPage(tmdbResponse.getPage())
+                .totalCount((long) tmdbResponse.getTotalResults())
+                .totalPages((long) tmdbResponse.getTotalPages())
+                .currentPage((long) tmdbResponse.getPage())
                 .build();
     }
 
@@ -54,9 +54,9 @@ public class SearchFacade {
         TmdbSearchCommonResponse tmdbResponse = tmdbSearchService.searchPerson(query, page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbSearchDtoMapper.toContentItemList(tmdbResponse, SearchType.PERSON))
-                .totalCount(tmdbResponse.getTotalResults())
-                .totalPages(tmdbResponse.getTotalPages())
-                .currentPage(tmdbResponse.getPage())
+                .totalCount((long) tmdbResponse.getTotalResults())
+                .totalPages((long) tmdbResponse.getTotalPages())
+                .currentPage((long) tmdbResponse.getPage())
                 .build();
     }
 

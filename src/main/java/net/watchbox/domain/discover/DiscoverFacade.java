@@ -19,9 +19,9 @@ public class DiscoverFacade {
         TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getPopularMovieLists(page, region);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
-                .totalCount(tmdbResponse.getTotalResults())
-                .totalPages(tmdbResponse.getTotalPages())
-                .currentPage(tmdbResponse.getPage())
+                .totalCount(tmdbResponse.getTotalResults().longValue())
+                .totalPages(tmdbResponse.getTotalPages().longValue())
+                .currentPage(tmdbResponse.getPage().longValue())
                 .build();
     }
 
@@ -29,9 +29,9 @@ public class DiscoverFacade {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getPopularTvSeriesLists(page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
-                .totalCount(tmdbResponse.getTotalResults())
-                .totalPages(tmdbResponse.getTotalPages())
-                .currentPage(tmdbResponse.getPage())
+                .totalCount(tmdbResponse.getTotalResults().longValue())
+                .totalPages(tmdbResponse.getTotalPages().longValue())
+                .currentPage(tmdbResponse.getPage().longValue())
                 .build();
     }
 }

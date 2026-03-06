@@ -34,7 +34,7 @@ public class ContentRecordFacade {
         List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
         return ContentPageResponse.builder()
                 .contentItemList(contentItemList)
-                .totalCount(contentItemList.size())
+                .totalCount((long) contentItemList.size())
                 .build();
 
     }
@@ -73,7 +73,7 @@ public class ContentRecordFacade {
         List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
         return ContentPageResponse.builder()
                 .contentItemList(contentItemList)
-                .totalCount(contentItemList.size())
+                .totalCount((long) contentItemList.size())
                 .build();
     }
 

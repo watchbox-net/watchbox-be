@@ -83,7 +83,7 @@ public class MyBoxContentFacade {
         // 5. 응답
         return ContentPageResponse.builder()
                 .contentItemList(contentItemList)
-                .totalCount(contentItemList.size())
+                .totalCount((long) contentItemList.size())
 //                .totalPages()
 //                .currentPage()
                 .build();

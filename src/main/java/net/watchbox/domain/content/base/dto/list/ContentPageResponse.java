@@ -10,17 +10,17 @@ import java.util.List;
 @Builder
 public class ContentPageResponse {
     private List<ContentItem> contentItemList;
-    private int totalCount;
-    private int totalPages;
-    private int currentPage;
+    private Long totalCount;
+    private Long totalPages;
+    private Long currentPage;
     private ResponseMeta responseMeta;
 
     public static ContentPageResponse empty() {
         return ContentPageResponse.builder()
                 .contentItemList(List.of())
-                .totalCount(0)
-                .totalPages(0)
-                .currentPage(0)
+                .totalCount(0L)
+                .totalPages(0L)
+                .currentPage(0L)
                 .build();
     }
 }
