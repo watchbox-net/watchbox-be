@@ -1,14 +1,16 @@
 package net.watchbox.domain.member.dto.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
+@Builder
 public class MemberStatsResponse {
-    private int likeCount;
-    private int boxCount;
-    private int recordCount;
-    private int followerCount;
-    private int followingCount;
+    private Long likeCount;
+    private Long boxCount;
+    private Long watchStatusCount;
+    private Long followerCount;
+    private Long followingCount;
 }

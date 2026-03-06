@@ -26,6 +26,10 @@ public class BoxMemberService {
         return boxMemberRepository.findAllByMember(member);
     }
 
+    public long countByMember(Member member) {
+        return boxMemberRepository.countByMember(member);
+    }
+
     @Transactional
     public void addOwnerToBox(Member member, Box box) {
         boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()

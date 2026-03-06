@@ -26,4 +26,6 @@ public interface BoxMemberRepository extends JpaRepository<BoxMember, Long> {
             "JOIN FETCH bm.box b " +
             "WHERE bm.member = :member AND b.boxType = 'SHARED'")
     List<BoxMember> findWithSharedBoxByMember(@Param("member") Member member);
+
+    long countByMember(Member member);
 }

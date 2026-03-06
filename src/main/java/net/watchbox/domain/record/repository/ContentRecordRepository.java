@@ -39,4 +39,8 @@ public interface ContentRecordRepository extends JpaRepository<ContentRecord, Lo
     List<ContentRecord> findContentRecordsByMemberAndContentIdIn(@Param("member") Member member, @Param("tmdbIds") List<Long> tmdbIds);
 
 //    List<ContentRecord> findByMemberAndLiked(Member member, Boolean liked);
+
+    long countByMemberAndLikedTrue(Member member);
+
+    long countByMemberAndWatchStatusIsNotNull(Member member);
 }

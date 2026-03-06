@@ -38,6 +38,14 @@ public class ContentRecordService {
         return contentRecordRepository.findContentRecordsByMemberAndContentIdIn(member, contentIds);
     }
 
+    public long countLikedContentsByMember(Member member) {
+        return contentRecordRepository.countByMemberAndLikedTrue(member);
+    }
+
+    public long countWatchStatusByMember(Member member) {
+        return contentRecordRepository.countByMemberAndWatchStatusIsNotNull(member);
+    }
+
     public void validateMember(ContentRecord contentRecord, Member member) {
         if (!contentRecord.getMember().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.NOT_RECORD_MEMBER);

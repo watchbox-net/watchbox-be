@@ -1,6 +1,7 @@
 package net.watchbox.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.domain.member.dto.response.search.MemberInvitationProjection;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
@@ -23,6 +24,10 @@ public class MemberService {
     public Member getByNickname(String nickname) {
         return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public ProfileResponse getProfile(Member member) {
+        return ProfileResponse.from(member);
     }
 
 //    public List<Member> searchMemberList(String keyword) {
