@@ -9,7 +9,6 @@ env:
 
 jobs:
   build-and-deploy:
-    if: github.event_name == 'push' || inputs.confirm == 'yes'
     runs-on: [self-hosted, dev, backend]
     environment: development
 
@@ -43,6 +42,11 @@ jobs:
           DB_URL=${{ secrets.DB_URL }}
           DB_USERNAME=${{ secrets.DB_USERNAME }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
+          JWT_ISSUER=${{ secrets.JWT_ISSUER }}
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
           EOF
 
       - name: Run docker container on watchbox-dev server

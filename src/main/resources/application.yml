@@ -28,15 +28,15 @@ spring:
       client:
         registration:
           google:
-            client-id: 368529952006-3pjat35sq8k6bco7mvrf1kt43ttsdml7.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - email
               - profile
 
 tmdb:
   api:
-    key: 7a71b03109fd04667129147735ca6ff5
+    key: ${TMDB_API_KEY}
     base-url: https://api.themoviedb.org/3
   image-url: https://image.tmdb.org/t/p/w500
 
@@ -50,10 +50,10 @@ url:
 #        domain: https://api.watch-box.net
 
 jwt:
-    issuer: watchbox-net@gmail.com
-    secret_key: watchbox-net-secret-key
+    issuer: ${JWT_ISSUER:abc}
+    secret_key: ${JWT_SECRET_KEY:abcdefgh1234567890}
     refresh_token_expiry: 7d
-    access_token_expiry: 1h
+    access_token_expiry: 3h
 
 springdoc:
   api-docs:
