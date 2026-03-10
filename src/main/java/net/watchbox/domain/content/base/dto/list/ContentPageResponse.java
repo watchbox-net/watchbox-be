@@ -13,7 +13,7 @@ public class ContentPageResponse {
     private Long totalCount;
     private Long totalPages;
     private Long currentPage;
-    private ResponseMeta responseMeta;
+    private ResponseMeta responseMeta; // 아직 미사용중
 
     public static ContentPageResponse empty() {
         return ContentPageResponse.builder()
