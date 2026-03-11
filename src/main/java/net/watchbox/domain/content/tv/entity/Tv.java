@@ -37,14 +37,6 @@ public class Tv extends BaseTime {
     @Column(name = "genre_id")
     private List<Integer> genreIds;
 
-    @Column(columnDefinition = "TEXT")
-    private String overview;
-
-    @ElementCollection
-    @CollectionTable(name = "tv_origin_country", joinColumns = @JoinColumn(name = "tmdb_id"))
-    @Column(name = "country_code")
-    private List<String> originCountry; // TMDB API 응답이 단수형
-
     @OneToOne(mappedBy = "tv", cascade = CascadeType.ALL, orphanRemoval = true)
     private TvDetail tvDetail;
 }
