@@ -1,5 +1,6 @@
 package net.watchbox.domain.content.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.detail.ContentDetailResponse;
 import net.watchbox.domain.content.base.entity.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContentController {
     private final ContentFacade contentFacade;
 
+    @Operation(summary = "콘텐츠 상세 조회 (사용자 기록 포함)")
     @GetMapping("/api/contents/{mediaType}/{contentId}/record")
     public ResponseEntity<ApiResponse<ContentDetailResponse>> getContentDetailWithRecord(
             @AuthenticationPrincipal Long memberId,

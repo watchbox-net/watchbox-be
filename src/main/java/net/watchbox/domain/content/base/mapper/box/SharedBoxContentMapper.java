@@ -1,7 +1,7 @@
 package net.watchbox.domain.content.base.mapper.box;
 
 import net.watchbox.domain.box.entity.content.BoxContent;
-import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
+import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
 import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
@@ -23,7 +23,7 @@ public class SharedBoxContentMapper {
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
-                            .memberInteraction(null)
+                            .memberRecord(null)
                             .publisherSummaryList(null)
                             .build();
                 })
@@ -44,7 +44,7 @@ public class SharedBoxContentMapper {
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
-                            .memberInteraction(null)
+                            .memberRecord(null)
                             .publisherSummaryList(publisherSummaries)
                             .build();
                 })
@@ -65,7 +65,7 @@ public class SharedBoxContentMapper {
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
-                            .memberInteraction(MemberInteraction.from(recordMap.get(first.getTmdbId())))
+                            .memberRecord(MemberRecord.from(recordMap.get(first.getTmdbId())))
                             .publisherSummaryList(publisherSummaries)
                             .build();
                 })

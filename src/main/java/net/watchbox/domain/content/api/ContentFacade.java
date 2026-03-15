@@ -3,7 +3,7 @@ package net.watchbox.domain.content.api;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.detail.ContentInfo;
 import net.watchbox.domain.content.base.dto.detail.ContentDetailResponse;
-import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
+import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.content.base.mapper.ContentDetailMapper;
 import net.watchbox.domain.content.base.service.ContentQueryService;
@@ -40,12 +40,18 @@ public class ContentFacade {
         return ContentDetailResponse.builder()
                 .mediaType(mediaType)
                 .contentInfo(contentInfo)
-                .memberInteraction(MemberInteraction.from(contentRecord))
+                .memberRecord(MemberRecord.from(contentRecord))
                 .build();
     }
 
     @Transactional(readOnly = true)
     public ContentDetailResponse getContentDetail(MediaType mediaType, Long contentId) {
-        return null;
+
+
+
+        return ContentDetailResponse.builder()
+                .mediaType(mediaType)
+                .contentInfo(contentInfo)
+                .build();
     }
 }

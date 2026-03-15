@@ -1,6 +1,6 @@
 package net.watchbox.domain.content.base.mapper.record;
 
-import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
+import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -12,7 +12,7 @@ public class ContentRecordMapper {
         return contentRecords.stream()
                 .map(record -> ContentItem.builder()
                         .contentSummary(ContentSummaryMapper.fromContent(record.getContent()))
-                        .memberInteraction(MemberInteraction.from(record))
+                        .memberRecord(MemberRecord.from(record))
                         .contentRecordId(record.getContentRecordId())
                         .build()
                 )
