@@ -35,7 +35,6 @@ public class ContentDetailMapper {
                 .homepage(movieDetail.getHomepage())
                 .budget(movieDetail.getBudget())
                 .revenue(movieDetail.getRevenue())
-                .originCountryList(JsonParseUtil.toStringList(movieDetail.getOriginCountries()))
                 .build();
     }
 
@@ -64,8 +63,6 @@ public class ContentDetailMapper {
                 .numberOfEpisodes(tvDetail.getNumberOfEpisodes())
                 .numberOfSeasons(tvDetail.getNumberOfSeasons())
                 .lastAirDate(tvDetail.getLastAirDate())
-                .languageList(JsonParseUtil.toStringList(tvDetail.getSpokenLanguages()))
-                .originCountryList(JsonParseUtil.toStringList(tvDetail.getOriginCountries()))
                 .build();
     }
 

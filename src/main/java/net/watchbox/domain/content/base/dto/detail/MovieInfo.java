@@ -34,5 +34,5 @@ public final class MovieInfo implements ContentInfo {
     private Long revenue;
 
     // 변환
-    private List<String> originCountryList; // "['US', 'KR']"
+//    private List<String> productionCountryList; // "['US', 'KR']"
 }

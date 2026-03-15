@@ -6,6 +6,7 @@ import net.watchbox.domain.content.base.dto.detail.ContentDetailResponse;
 import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.content.base.mapper.ContentDetailMapper;
+import net.watchbox.domain.content.base.mapper.tmdb.TmdbContentDetailDtoMapper;
 import net.watchbox.domain.content.base.service.ContentQueryService;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.service.ContentRecordService;
@@ -46,8 +47,12 @@ public class ContentFacade {
 
     @Transactional(readOnly = true)
     public ContentDetailResponse getContentDetail(MediaType mediaType, Long contentId) {
-
-
+        ContentInfo contentInfo =
+                switch (mediaType) {
+                    case MOVIE -> TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(contentId));
+                    case TV -> TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetails(contentId));
+                    case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(contentId));
+                };
 
         return ContentDetailResponse.builder()
                 .mediaType(mediaType)

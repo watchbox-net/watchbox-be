@@ -9,15 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/contents")
 public class ContentController {
     private final ContentFacade contentFacade;
 
-    @Operation(summary = "콘텐츠 상세 조회 (사용자 기록 포함)")
-    @GetMapping("/api/contents/{mediaType}/{contentId}/record")
+    @Operation(summary = "컨텐츠 상세 조회 (사용자 기록 포함)")
+    @GetMapping("/{mediaType}/{contentId}/record")
     public ResponseEntity<ApiResponse<ContentDetailResponse>> getContentDetailWithRecord(
             @AuthenticationPrincipal Long memberId,
             @PathVariable MediaType mediaType,
@@ -29,7 +31,8 @@ public class ContentController {
         ));
     }
 
-    @GetMapping("/api/contents/{mediaType}/{contentId})")
+    @Operation(summary = "컨텐츠 상세 조회")
+    @GetMapping("/{mediaType}/{contentId})")
     public ResponseEntity<ApiResponse<ContentDetailResponse>> getContentDetail(
             @PathVariable MediaType mediaType,
             @PathVariable Long contentId

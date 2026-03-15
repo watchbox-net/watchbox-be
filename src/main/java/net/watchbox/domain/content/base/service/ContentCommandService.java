@@ -125,27 +125,21 @@ public class ContentCommandService {
                 .imdbId(tmdbMovieDetail.getImdbId())
                 .budget(tmdbMovieDetail.getBudget())
                 .revenue(tmdbMovieDetail.getRevenue())
-                //
-                .originCountries(
-                        tmdbMovieDetail.getProductionCountries().stream()
-                                .map(c -> "\"" + c.getIso31661() + "\"")
-                                .toList().toString()
-                )
-                .productionCompanies(
-                        tmdbMovieDetail.getGenres().stream()
-                                .map(g -> "{\"id\":" + g.getId() + ",\"name\":\"" + g.getName() + "\"}")
-                                .toList().toString()
-                )
-                .productionCountries(
-                        tmdbMovieDetail.getProductionCountries().stream()
-                                .map(c -> "{\"iso_3166_1\":\"" + c.getIso31661() + "\",\"name\":\"" + c.getName() + "\"}")
-                                .toList().toString()
-                )
-                .spokenLanguages(
-                        tmdbMovieDetail.getGenres().stream()
-                                .map(g -> "{\"iso_639_1\":\"" + g.getId() + "\",\"name\":\"" + g.getName() + "\"}")
-                                .toList().toString()
-                )
+//                .productionCompanies(
+//                        tmdbMovieDetail.get().stream()
+//                                .map(g -> "{\"id\":" + g.getId() + ",\"name\":\"" + g.getName() + "\"}")
+//                                .toList().toString()
+//                )
+//                .productionCountries(
+//                        tmdbMovieDetail.getProductionCountries().stream()
+//                                .map(c -> "{\"iso_3166_1\":\"" + c.getIso31661() + "\",\"name\":\"" + c.getName() + "\"}")
+//                                .toList().toString()
+//                )
+//                .spokenLanguages(
+//                        tmdbMovieDetail.getGenres().stream()
+//                                .map(g -> "{\"iso_639_1\":\"" + g.getId() + "\",\"name\":\"" + g.getName() + "\"}")
+//                                .toList().toString()
+//                )
                 .build();
 
         movieRepository.save(movie);
@@ -176,27 +170,27 @@ public class ContentCommandService {
                 .firstAirDate(LocalDate.parse(tmdbTvSeriesDetail.getFirstAirDate()))
                 .lastAirDate(LocalDate.parse(tmdbTvSeriesDetail.getLastAirDate()))
 //                .inProduction(tmdbTvSeriesDetail.isInProduction())
-                .numberOfEpisodes(tmdbTvSeriesDetail.getNumberOfEpisodes().intValue())
-                .numberOfSeasons(tmdbTvSeriesDetail.getNumberOfSeasons().intValue())
+                .numberOfEpisodes(tmdbTvSeriesDetail.getNumberOfEpisodes())
+                .numberOfSeasons(tmdbTvSeriesDetail.getNumberOfSeasons())
                 .status(tmdbTvSeriesDetail.getStatus())
                 .tagline(tmdbTvSeriesDetail.getTagline())
                 .homepage(tmdbTvSeriesDetail.getHomepage())
                 //
-                .originCountries(
-                        tmdbTvSeriesDetail.getOriginCountry().stream()
-                                .map(c -> "\"" + c + "\"")
-                                .toList().toString()
-                )
-                .productionCompanies(
-                        tmdbTvSeriesDetail.getGenres().stream()
-                                .map(g -> "{\"id\":" + g.getId() + ",\"name\":\"" + g.getName() + "\"}")
-                                .toList().toString()
-                )
-                .spokenLanguages(
-                        tmdbTvSeriesDetail.getGenres().stream()
-                                .map(g -> "{\"iso_639_1\":\"" + g.getId() + "\",\"name\":\"" + g.getName() + "\"}")
-                                .toList().toString()
-                )
+//                .originCountries(
+//                        tmdbTvSeriesDetail.getOriginCountry().stream()
+//                                .map(c -> "\"" + c + "\"")
+//                                .toList().toString()
+//                )
+//                .productionCompanies(
+//                        tmdbTvSeriesDetail.getGenres().stream()
+//                                .map(g -> "{\"id\":" + g.getId() + ",\"name\":\"" + g.getName() + "\"}")
+//                                .toList().toString()
+//                )
+//                .spokenLanguages(
+//                        tmdbTvSeriesDetail.getGenres().stream()
+//                                .map(g -> "{\"iso_639_1\":\"" + g.getId() + "\",\"name\":\"" + g.getName() + "\"}")
+//                                .toList().toString()
+//                )
                 .build();
         tvRepository.save(tv);
         tvDetailRepository.save(tvDetail);

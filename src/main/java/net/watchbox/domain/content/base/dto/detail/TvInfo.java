@@ -38,6 +38,5 @@ public final class TvInfo implements ContentInfo {
     private LocalDate lastAirDate;
 
     // 변환
-    private List<String> languageList;  // "['en', 'ko']"
-    private List<String> originCountryList;  // "['US', 'KR']"
+//    private List<String> productionCountryList; // "['US', 'KR']"
 }

@@ -68,11 +68,6 @@ public class TmdbMoviesDetailsResponse {
     @JsonProperty("vote_count")
     private Long voteCount;
 
-    //
-
-    @JsonProperty("origin_country")
-    private List<String> originCountry;
-
     @JsonProperty("production_companies")
     private List<TmdbProductionCompanyItem> productionCompanies;
 
