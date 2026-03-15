@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @ToString
 @Builder
-public final class PersonDetailResponse implements ContentDetail {
-    private Long tmdbId;
+public final class PersonInfo implements ContentInfo {
+    private Long contentId;
     private String nameKo;
     private String nameEn;
     private String nameOriginal;
@@ -24,8 +24,8 @@ public final class PersonDetailResponse implements ContentDetail {
     private String biography;
     private Integer gender;
     private LocalDate birthday;
-    private String homepage;
-    private Boolean adult;
     private LocalDate deathday;
     private String placeOfBirth;
+    private String homepage;
+    private Boolean adult;
 }

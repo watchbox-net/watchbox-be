@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @ToString
 @Builder
-public final class TvDetailResponse implements ContentDetail {
-    private Long tmdbId;
+public final class TvInfo implements ContentInfo {
+    private Long contentId;
     private String nameKo;
     private String nameOriginal;
     private String posterPath;

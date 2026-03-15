@@ -3,8 +3,6 @@ package net.watchbox.domain.box.service.invitation;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.Invitation.InvitationReceivedResponse;
-import net.watchbox.domain.box.dto.Invitation.InvitationSentResponse;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.entity.invitation.RequestStatus;
@@ -52,17 +50,13 @@ public class BoxInvitationService {
     }
 
     // 공유 박스 보낸초대 리스트 조회
-    public List<InvitationSentResponse> getBoxInvitationsSent(Member member) {
-        return boxInvitationRepository.findAllBySender(member).stream()
-                .map(InvitationSentResponse::from)
-                .toList();
+    public List<BoxInvitation> getAllBySender(Member sender) {
+        return boxInvitationRepository.findAllBySender(sender);
     }
 
     // 공유 박스 받은초대 리스트 조회
-    public List<InvitationReceivedResponse> getBoxInvitationsReceived(Member member) {
-        return boxInvitationRepository.findAllByReceiver(member).stream()
-                .map(InvitationReceivedResponse::from)
-                .toList();
+    public List<BoxInvitation> getAllByReceiver(Member receiver) {
+        return boxInvitationRepository.findAllByReceiver(receiver);
     }
 
     @Transactional

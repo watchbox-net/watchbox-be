@@ -9,7 +9,7 @@ import net.watchbox.domain.content.tv.entity.Tv;
 import net.watchbox.global.tmdb.util.MovieGenre;
 import net.watchbox.global.tmdb.util.TvGenre;
 
-public class ContentMapper {
+public class ContentSummaryMapper {
     public static ContentSummary fromContent(Content content) {
         return switch (content.getMediaType()) {
             case MOVIE -> fromMovie(content.getMovie());

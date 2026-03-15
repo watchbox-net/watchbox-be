@@ -1,7 +1,10 @@
 package net.watchbox.domain.content.base.service;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.content.base.dto.detail.ContentInfo;
 import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.entity.MediaType;
+import net.watchbox.domain.content.base.mapper.ContentDetailMapper;
 import net.watchbox.domain.content.base.repository.ContentRepository;
 import net.watchbox.domain.content.movie.entity.Movie;
 import net.watchbox.domain.content.movie.repository.MovieRepository;
@@ -45,6 +48,7 @@ public class ContentQueryService {
         return contentRepository.findAllById(tmdbIds);
     }
 
+    // ============================== Content <- Id ==============================
     public Movie getMovieByIdOrThrow(Long tmdbId) {
         return movieRepository.findById(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
@@ -58,6 +62,31 @@ public class ContentQueryService {
     public Person getPersonByIdOrThrow(Long tmdbId) {
         return personRepository.findById(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
+    }
+
+    // ============================== Content, ContentDetail <- Id ==============================
+    public Movie getMovieAndMovieDetailByIdOrThrow(Long tmdbId) {
+        return movieRepository.findWithDetailByTmdbId(tmdbId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+    }
+
+    public Tv getTvAndTvDetailByIdOrThrow(Long tmdbId) {
+        return tvRepository.findWithDetailByTmdbId(tmdbId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TV_NOT_FOUND));
+    }
+
+    public Person getPersonAndPersonDetailByIdOrThrow(Long tmdbId) {
+        return personRepository.findWithDetailByTmdbId(tmdbId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
+    }
+
+    public ContentInfo getContentDetailByIdAndMediaType(Long tmdbId, MediaType mediaType) {
+
+        return switch (mediaType) {
+            case MOVIE -> ContentDetailMapper.fromMovie(getMovieAndMovieDetailByIdOrThrow(tmdbId));
+            case TV -> ContentDetailMapper.fromTv(getTvAndTvDetailByIdOrThrow(tmdbId));
+            case PERSON -> ContentDetailMapper.fromPerson(getPersonAndPersonDetailByIdOrThrow(tmdbId));
+        };
     }
 
 

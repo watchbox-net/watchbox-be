@@ -4,7 +4,7 @@ import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
-import net.watchbox.domain.content.base.mapper.ContentMapper;
+import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
 import net.watchbox.domain.content.base.mapper.record.ContentRecordMapper;
 import net.watchbox.domain.record.entity.ContentRecord;
 
@@ -22,7 +22,7 @@ public class SharedBoxContentMapper {
                 .map(group -> {
                     BoxContent first = group.getFirst();  // 콘텐츠 정보는 첫번째 것 사용
                     return ContentItem.builder()
-                            .contentSummary(ContentMapper.fromContent(first.getContent()))
+                            .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
                             .memberInteraction(null)
                             .publisherSummaryList(null)
@@ -43,7 +43,7 @@ public class SharedBoxContentMapper {
                             .toList();
 
                     return ContentItem.builder()
-                            .contentSummary(ContentMapper.fromContent(first.getContent()))
+                            .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
                             .memberInteraction(null)
                             .publisherSummaryList(publisherSummaries)
@@ -67,7 +67,7 @@ public class SharedBoxContentMapper {
                             .toList();
 
                     return ContentItem.builder()
-                            .contentSummary(ContentMapper.fromContent(first.getContent()))
+                            .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
                             .memberInteraction(interaction)
                             .publisherSummaryList(publisherSummaries)

@@ -11,7 +11,7 @@ import net.watchbox.domain.content.base.entity.MediaType;
 @Builder
 public class ContentDetailResponse {
     private MediaType mediaType;
-    private ContentDetail contentDetail;
+    private ContentInfo contentInfo;
     private MemberInteraction memberInteraction;
 //    private DataSource dataSource;
 }

@@ -3,7 +3,7 @@ package net.watchbox.domain.content.base.mapper.box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
-import net.watchbox.domain.content.base.mapper.ContentMapper;
+import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
 import net.watchbox.domain.record.entity.ContentRecord;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class MyBoxContentMapper {
     public static List<ContentItem> toContentItems(List<BoxContent> boxContents) {
         return boxContents.stream()
                 .map(bc -> ContentItem.builder()
-                        .contentSummary(ContentMapper.fromContent(bc.getContent()))
+                        .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
                         .boxContentId(bc.getBoxContentId())
                         .memberInteraction(null)
                         .build())
@@ -34,7 +34,7 @@ public class MyBoxContentMapper {
                             .build()
                             : null;
                     return ContentItem.builder()
-                            .contentSummary(ContentMapper.fromContent(bc.getContent()))
+                            .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
                             .boxContentId(bc.getBoxContentId())
                             .memberInteraction(interaction)
                             .build();

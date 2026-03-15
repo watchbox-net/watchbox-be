@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.content.base.dto.list.ContentSummary;
 import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.content.base.entity.MediaType;
-import net.watchbox.domain.content.base.mapper.ContentMapper;
+import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.content.base.service.ContentQueryService;
 import net.watchbox.domain.content.movie.entity.Movie;
@@ -62,7 +62,7 @@ public class DevContentSaveController {
         }
 //        movieRepository.flush();
         Movie movie = contentQueryService.getMovieByIdOrThrow(tmdbId);
-        return ResponseEntity.ok(ContentMapper.fromMovie(movie));
+        return ResponseEntity.ok(ContentSummaryMapper.fromMovie(movie));
     }
 
     /**
@@ -87,7 +87,7 @@ public class DevContentSaveController {
         }
 
         Tv tv = contentQueryService.getTvByIdOrThrow(tmdbId);
-        return ResponseEntity.ok(ContentMapper.fromTv(tv));
+        return ResponseEntity.ok(ContentSummaryMapper.fromTv(tv));
     }
 
 
@@ -113,7 +113,7 @@ public class DevContentSaveController {
         }
 
         Person person = contentQueryService.getPersonByIdOrThrow(tmdbId);
-        return ResponseEntity.ok(ContentMapper.fromPerson(person));
+        return ResponseEntity.ok(ContentSummaryMapper.fromPerson(person));
     }
 
     
