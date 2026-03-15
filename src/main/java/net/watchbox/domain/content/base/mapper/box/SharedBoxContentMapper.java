@@ -5,7 +5,6 @@ import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
 import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
-import net.watchbox.domain.content.base.mapper.record.ContentRecordMapper;
 import net.watchbox.domain.record.entity.ContentRecord;
 
 import java.util.List;
@@ -59,9 +58,6 @@ public class SharedBoxContentMapper {
                 .values().stream()
                 .map(group -> {
                     BoxContent first = group.getFirst();
-                    ContentRecord record = recordMap.get(first.getTmdbId());
-                    MemberInteraction interaction = record != null
-                            ? ContentRecordMapper.toMemberInteraction(record) : null;
                     List<PublisherSummary> publisherSummaries = group.stream()
                             .map(bc -> PublisherSummary.from(bc.getPublisher()))
                             .toList();
@@ -69,7 +65,7 @@ public class SharedBoxContentMapper {
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
-                            .memberInteraction(interaction)
+                            .memberInteraction(MemberInteraction.from(recordMap.get(first.getTmdbId())))
                             .publisherSummaryList(publisherSummaries)
                             .build();
                 })

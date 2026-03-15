@@ -25,20 +25,11 @@ public class MyBoxContentMapper {
     // === SubContent + Record
     public static List<ContentItem> toContentItems(List<BoxContent> boxContents, Map<Long, ContentRecord> recordMap) {
         return boxContents.stream()
-                .map(bc -> {
-                    ContentRecord record = recordMap.get(bc.getTmdbId());
-                    MemberInteraction interaction = record != null
-                            ? MemberInteraction.builder()
-                            .liked(record.getLiked())
-                            .watchStatus(record.getWatchStatus())
-                            .build()
-                            : null;
-                    return ContentItem.builder()
-                            .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
-                            .boxContentId(bc.getBoxContentId())
-                            .memberInteraction(interaction)
-                            .build();
-                })
+                .map(bc -> ContentItem.builder()
+                        .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
+                        .boxContentId(bc.getBoxContentId())
+                        .memberInteraction(MemberInteraction.from(recordMap.get(bc.getTmdbId())))
+                        .build())
                 .toList();
     }
 

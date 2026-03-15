@@ -13,5 +13,4 @@ public class ContentDetailResponse {
     private MediaType mediaType;
     private ContentInfo contentInfo;
     private MemberInteraction memberInteraction;
-//    private DataSource dataSource;
 }

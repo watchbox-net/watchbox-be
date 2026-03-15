@@ -43,4 +43,6 @@ public interface ContentRecordRepository extends JpaRepository<ContentRecord, Lo
     long countByMemberAndLikedTrue(Member member);
 
     long countByMemberAndWatchStatusIsNotNull(Member member);
+
+    Optional<ContentRecord> findByMember_MemberIdAndContent_TmdbId(Long memberId, Long tmdbId);
 }

@@ -30,7 +30,7 @@ public class ContentRecord extends BaseTime {
     @Enumerated(EnumType.STRING)
     private WatchStatus watchStatus;
 
-    private Boolean liked; // 좋아요 여부
+    private Boolean liked; // true: 좋아요, false: 미등록 응답용 | 싫어요는 따로 저장X
 
     private LocalDate watchedDate; // 시청 완료일
 
