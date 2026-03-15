@@ -37,10 +37,6 @@ public class MovieDetail {
     private Long budget;  // 제작비 (USD)
     private Long revenue;  // 수익 (USD)
 
-    // JSON으로 저장하는 방식 (나중에 필요해지면 가공)
-    @Column(name = "origin_countries", columnDefinition = "json")
-    private String originCountries;  // ["US", "KR"]
-
     @Column(name = "production_companies", columnDefinition = "json")
     private String productionCompanies;  // JSON 배열
 

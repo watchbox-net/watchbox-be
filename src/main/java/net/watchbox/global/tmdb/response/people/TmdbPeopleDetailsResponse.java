@@ -41,8 +41,6 @@ public class TmdbPeopleDetailsResponse {
     @JsonProperty("profile_path")
     private String profilePath;
 
-    //
-
     @JsonProperty("also_known_as")
     private List<String> alsoKnownAs;
 }

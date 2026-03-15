@@ -73,11 +73,11 @@ public enum ErrorCode {
     INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "INVITE-409", "이미 처리된 초대 요청입니다."),
 
     /**
-     * WatchRecord
+     * ContentRecord
      */
-    // WatchRecord 오류
-    WATCH_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "RECORD-404", "WatchRecord를 찾을 수 없습니다."),
-    NOT_RECORD_MEMBER(HttpStatus.FORBIDDEN, "RECORD-403", "시청 기록에 해당하는 멤버가 아닙니다.");
+    // ContentRecord 오류
+    CONTENT_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "RECORD-404", "ContentRecord를 찾을 수 없습니다."),
+    NOT_RECORD_MEMBER(HttpStatus.FORBIDDEN, "RECORD-403", "기록한 멤버가 아닙니다.");
 
 
     private final HttpStatus httpStatus;

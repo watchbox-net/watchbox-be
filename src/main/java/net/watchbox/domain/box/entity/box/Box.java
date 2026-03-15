@@ -8,6 +8,7 @@ import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +28,8 @@ public class Box extends BaseTime {
     private String name;
 
     private String description; // 설명은 선택 사항
+
+    private LocalDateTime lastContentAddedAt; // 마지막으로 콘텐츠가 추가된 시점
 
     @Enumerated(EnumType.STRING)
     private VisibleType visibleType; // 공유 박스일 경우에만 공개 가능

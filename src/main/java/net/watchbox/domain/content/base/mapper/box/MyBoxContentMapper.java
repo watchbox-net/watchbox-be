@@ -1,9 +1,9 @@
 package net.watchbox.domain.content.base.mapper.box;
 
 import net.watchbox.domain.box.entity.content.BoxContent;
-import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
+import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
-import net.watchbox.domain.content.base.mapper.ContentMapper;
+import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
 import net.watchbox.domain.record.entity.ContentRecord;
 
 import java.util.List;
@@ -15,9 +15,9 @@ public class MyBoxContentMapper {
     public static List<ContentItem> toContentItems(List<BoxContent> boxContents) {
         return boxContents.stream()
                 .map(bc -> ContentItem.builder()
-                        .contentSummary(ContentMapper.fromContent(bc.getContent()))
+                        .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
                         .boxContentId(bc.getBoxContentId())
-                        .memberInteraction(null)
+                        .memberRecord(null)
                         .build())
                 .toList();
     }
@@ -25,20 +25,11 @@ public class MyBoxContentMapper {
     // === SubContent + Record
     public static List<ContentItem> toContentItems(List<BoxContent> boxContents, Map<Long, ContentRecord> recordMap) {
         return boxContents.stream()
-                .map(bc -> {
-                    ContentRecord record = recordMap.get(bc.getTmdbId());
-                    MemberInteraction interaction = record != null
-                            ? MemberInteraction.builder()
-                            .liked(record.getLiked())
-                            .watchStatus(record.getWatchStatus())
-                            .build()
-                            : null;
-                    return ContentItem.builder()
-                            .contentSummary(ContentMapper.fromContent(bc.getContent()))
-                            .boxContentId(bc.getBoxContentId())
-                            .memberInteraction(interaction)
-                            .build();
-                })
+                .map(bc -> ContentItem.builder()
+                        .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
+                        .boxContentId(bc.getBoxContentId())
+                        .memberRecord(MemberRecord.from(recordMap.get(bc.getTmdbId())))
+                        .build())
                 .toList();
     }
 

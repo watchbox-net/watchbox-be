@@ -2,7 +2,7 @@ package net.watchbox.domain.content.base.dto.list;
 
 import lombok.*;
 import net.watchbox.domain.content.base.dto.interaction.PublisherSummary;
-import net.watchbox.domain.content.base.dto.interaction.MemberInteraction;
+import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class ContentItem {
     private ContentSummary contentSummary;
-    private MemberInteraction memberInteraction;
+    private MemberRecord memberRecord;
     private List<PublisherSummary> publisherSummaryList;
     private Long boxContentId;
     private Long contentRecordId;

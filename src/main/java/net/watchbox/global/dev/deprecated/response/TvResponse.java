@@ -44,8 +44,6 @@ public class TvResponse {
                 .voteCount(tv.getVoteCount())
                 .year(tv.getYear())
                 .genres(genreNames)
-                .overview(tv.getOverview())
-                .originCountry(tv.getOriginCountry())
                 .build();
     }
 
@@ -61,13 +59,13 @@ public class TvResponse {
         }
 
         return TvResponse.builder()
-                .id(item.getId().longValue())
+                .id(item.getId())
                 .nameKo(item.getName())
                 .nameOriginal(item.getOriginalName())
                 .posterPath(item.getPosterPath())
                 .popularity(item.getPopularity())
                 .voteAverage(item.getVoteAverage())
-                .voteCount(item.getVoteCount().longValue())
+                .voteCount(item.getVoteCount())
                 .year(year)
                 .genres(genreNames)
                 .overview(item.getOverview())

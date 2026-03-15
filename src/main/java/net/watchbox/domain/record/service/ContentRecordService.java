@@ -31,11 +31,16 @@ public class ContentRecordService {
 
     public ContentRecord getByContentRecordId(Long contentRecordId) {
         return contentRecordRepository.findById(contentRecordId)
-                .orElseThrow(() -> new CustomException(ErrorCode.WATCH_RECORD_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
     }
 
     public List<ContentRecord> getByMemberAndContentIdIn(Member member, List<Long> contentIds) {
         return contentRecordRepository.findContentRecordsByMemberAndContentIdIn(member, contentIds);
+    }
+
+    public ContentRecord getByMemberIdAndContentId(Long memberId, Long contentId) {
+        return contentRecordRepository.findByMember_MemberIdAndContent_TmdbId(memberId, contentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
     }
 
     public long countLikedContentsByMember(Member member) {
@@ -78,7 +83,7 @@ public class ContentRecordService {
 
     public ContentRecordResponse getRecordInfo(Long recordId) {
         ContentRecord contentRecord = contentRecordRepository.findById(recordId)
-                .orElseThrow(() -> new CustomException(ErrorCode.WATCH_RECORD_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
         return ContentRecordResponse.from(contentRecord);
     }
 }

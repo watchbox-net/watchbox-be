@@ -45,12 +45,18 @@ public class BoxInvitationFacade {
 
     @Transactional (readOnly = true)
     public List<InvitationSentResponse> getBoxInvitationsSent(Member member) {
-        return boxInvitationService.getBoxInvitationsSent(member);
+        List<BoxInvitation> sentInvitations = boxInvitationService.getAllBySender(member);
+        return sentInvitations.stream()
+                .map(InvitationSentResponse::from)
+                .toList();
     }
 
     @Transactional (readOnly = true)
     public List<InvitationReceivedResponse> getBoxInvitationsReceived(Member member) {
-        return boxInvitationService.getBoxInvitationsReceived(member);
+        List<BoxInvitation> receivedInvitations = boxInvitationService.getAllByReceiver(member);
+        return receivedInvitations.stream()
+                .map(InvitationReceivedResponse::from)
+                .toList();
     }
 
     @Transactional
