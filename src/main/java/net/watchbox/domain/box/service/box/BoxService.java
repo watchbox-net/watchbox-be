@@ -39,6 +39,15 @@ public class BoxService {
     }
 
     @Transactional
+    public void createInitialMyBox(Member member) {
+        boxRepository.save(Box.builder()
+                .name("나의 박스")
+                .boxType(BoxType.MY)
+                .owner(member)
+                .build());
+    }
+
+    @Transactional
     public Box createBox(Member member, BoxCreateRequest request, BoxType boxType) {
         return boxRepository.save(Box.builder()
                 .name(request.getName())

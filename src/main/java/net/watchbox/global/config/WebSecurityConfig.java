@@ -1,7 +1,8 @@
 package net.watchbox.global.config;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.member.repository.MemberRepository;
+import net.watchbox.domain.box.service.box.BoxService;
+import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenAuthenticationFilter;
 import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.global.auth.jwt.TokenProvider;
@@ -18,7 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +28,9 @@ public class WebSecurityConfig {
     private final TokenProvider tokenProvider;
     private final OAuth2UserCustomService oAuth2UserCustomService;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final MemberRepository memberRepository;
+
+    private final MemberService memberService;
+    private final BoxService boxService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -59,7 +62,8 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                                new AntPathRequestMatcher("/api/**")
+//                                new AntPathRequestMatcher("/api/**")
+                                PathPatternRequestMatcher.withDefaults().matcher("/api/**")
                         )
                 )
                 .build();
@@ -81,7 +85,8 @@ public class WebSecurityConfig {
                 tokenProvider,
                 refreshTokenRepository,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
-                memberRepository
+                memberService,
+                boxService
         );
     }
 }

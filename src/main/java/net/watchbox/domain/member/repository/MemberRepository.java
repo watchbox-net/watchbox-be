@@ -34,4 +34,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             @Param("query") String query,
             @Param("boxId") Long boxId
     );
+
+    boolean existsByNickname(String nickname);
 }

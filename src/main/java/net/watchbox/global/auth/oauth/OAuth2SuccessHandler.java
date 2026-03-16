@@ -5,10 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.auth.entity.RefreshToken;
 import net.watchbox.domain.auth.repository.RefreshTokenRepository;
-import net.watchbox.domain.member.repository.MemberRepository;
+import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.util.CookieUtil;
 import org.springframework.security.core.Authentication;
@@ -19,7 +20,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -34,16 +34,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final RefreshTokenRepository refreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
-    private final MemberRepository memberRepository;
-//    private final BoxRepository boxRepository;
+    private final MemberService memberService;
+    private final BoxService boxService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        /**
-         * 최초 가입시
-         * 1. Member 생성
-         * 2. MyBox 생성
-         */
         // OAuth2UserCustomService의 loadUser()에서 반환한 OAuth2User 사용
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
@@ -54,18 +49,17 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         CustomOAuth2User customUser = (CustomOAuth2User) oAuth2User;
         OauthAccount oauthAccount = customUser.getOauthAccount();
 
-        // 신규 가입자면 Member와 MyBox 생성
-        Optional<Member> optionalMember = memberRepository.findByOauthAccount(oauthAccount);
+        /**
+         * 최초 가입시
+         * 1. Member 생성
+         * 2. MyBox 생성
+         */
         Member member;
-        if(optionalMember.isEmpty()) {
-            member = Member.builder()
-                    .email(oauthAccount.getEmail())
-                    .nickname(oauthAccount.getName())
-                    .oauthAccount(oauthAccount)
-                    .build();
-            memberRepository.save(member);
-        } else {
-            member = optionalMember.get();
+        if(memberService.notExistsByOauthAccount(oauthAccount)) {
+            member = memberService.getByOauthAccount(oauthAccount);
+            boxService.createInitialMyBox(member);
+        }else{
+            member = memberService.createMember(oauthAccount);
         }
 
         // 리프레시 토큰 생성 -> DB에 저장 -> 쿠키에 저장
