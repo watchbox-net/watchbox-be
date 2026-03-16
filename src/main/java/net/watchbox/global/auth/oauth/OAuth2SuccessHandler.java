@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
@@ -22,10 +23,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.time.Duration;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // 인증 성공시 실행할 핸들러
-    @Value("${url.frontend}")
+    @Value("${url.oauth-callback}")
     private String REDIRECT_PATH;
 //    public static final String REDIRECT_PATH = "http://localhost:3000/login/success";
 
@@ -59,10 +61,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
          */
         Member member;
         if(memberService.notExistsByOauthAccount(oauthAccount)) {
-            member = memberService.getByOauthAccount(oauthAccount);
+            log.info("OAuth2SuccessHandler: 신규 회원 가입 - 이메일: {}", oauthAccount.getEmail());
+            member = memberService.createMember(oauthAccount);
             boxService.createInitialMyBox(member);
         }else{
-            member = memberService.createMember(oauthAccount);
+            log.info("OAuth2SuccessHandler: 기존 회원 로그인 - 이메일: {}", oauthAccount.getEmail());
+            member = memberService.getByOauthAccount(oauthAccount);
         }
 
         // 리프레시 토큰 생성 -> DB에 저장 -> 쿠키에 저장

@@ -43,6 +43,7 @@ tmdb:
 
 url:
   frontend: ${URL_FRONTEND:http://localhost:3000}
+  oauth-callback: ${URL_OAUTH_CALLBACK:http://localhost:3000/api/auth/callback}
 #  backend:  ${URL_BACKEND:http://localhost:9000}
 
 jwt:
