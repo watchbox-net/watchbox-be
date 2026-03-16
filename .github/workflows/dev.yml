@@ -44,7 +44,9 @@ jobs:
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
           TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
+          URL_FRONTEND=${{ secrets.URL_FRONTEND }}
           JWT_ISSUER=${{ secrets.JWT_ISSUER }}
           JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
           EOF

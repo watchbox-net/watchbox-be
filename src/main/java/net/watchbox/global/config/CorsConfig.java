@@ -9,15 +9,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class CorsConfig implements WebMvcConfigurer {
-    @Value("${url.frontend.local-main}")
-    private String localMain;
-    @Value("${url.frontend.local-sub}")
-    private String localSub;
+    @Value("${url.frontend}")
+    private String frontendUrl;
 
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
-                .allowedOrigins(localMain, localSub)
+                .allowedOrigins(frontendUrl)
 //                .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

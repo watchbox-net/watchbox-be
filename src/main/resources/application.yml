@@ -30,6 +30,7 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
             scope:
               - email
               - profile
@@ -41,19 +42,14 @@ tmdb:
   image-url: https://image.tmdb.org/t/p/w500
 
 url:
-    frontend:
-        local-main: http://localhost:3000
-        local-sub: http://localhost:4000
-        domain: https://www.watch-box.net
-    backend:
-        local: http://localhost:9000
-#        domain: https://api.watch-box.net
+  frontend: ${URL_FRONTEND:http://localhost:3000}
+#  backend:  ${URL_BACKEND:http://localhost:9000}
 
 jwt:
-    issuer: ${JWT_ISSUER:abc}
-    secret_key: ${JWT_SECRET_KEY:abcdefgh1234567890}
-    refresh_token_expiry: 7d
-    access_token_expiry: 3h
+  issuer: ${JWT_ISSUER:abc}
+  secret_key: ${JWT_SECRET_KEY:abcdefgh1234567890}
+  refresh_token_expiry: 7d
+  access_token_expiry: 3h
 
 springdoc:
   api-docs:

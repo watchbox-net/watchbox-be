@@ -12,6 +12,7 @@ import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.util.CookieUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -24,7 +25,9 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // 인증 성공시 실행할 핸들러
-    public static final String REDIRECT_PATH = "http://localhost:3000/login/success";
+    @Value("${url.frontend}")
+    private String REDIRECT_PATH;
+//    public static final String REDIRECT_PATH = "http://localhost:3000/login/success";
 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
