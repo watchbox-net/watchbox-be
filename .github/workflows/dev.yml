@@ -34,6 +34,7 @@ jobs:
         run: docker build -f Dockerfile -t ${{ env.DOCKER_IMAGE }} .
 
       - name: Deploy with Docker Compose
+        working-directory: /home/ubuntu/app
         run: |
           docker compose up -d --no-deps watchbox-be
           docker image prune -f
