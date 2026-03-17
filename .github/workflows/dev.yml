@@ -4,13 +4,11 @@ on:
   workflow_dispatch:
 
 env:
-  APP_NAME: watchbox-be
   DOCKER_IMAGE: watchbox-be:latest
 
 jobs:
   build-and-deploy:
     runs-on: [self-hosted, dev, backend]
-    environment: development
 
     steps:
       - name: Git Checkout
@@ -35,31 +33,7 @@ jobs:
       - name: Build Docker image
         run: docker build -f Dockerfile -t ${{ env.DOCKER_IMAGE }} .
 
-      - name: Create .env file for Docker
+      - name: Deploy with Docker Compose
         run: |
-          cat <<'EOF' > watchbox-dev-be.env
-          SPRING_PROFILES_ACTIVE=dev
-          DB_URL=${{ secrets.DB_URL }}
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
-          TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
-          URL_FRONTEND=${{ secrets.URL_FRONTEND }}
-          JWT_ISSUER=${{ secrets.JWT_ISSUER }}
-          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
-          EOF
-
-      - name: Run docker container on watchbox-dev server
-        run: |
-          docker stop ${{ env.APP_NAME }} || true
-          docker rm -f ${{ env.APP_NAME }} || true
-          docker run -d \
-            --name ${{ env.APP_NAME }} \
-            --env-file ./watchbox-dev-be.env \
-            --network watchbox-net \
-            -p 8080:8080 \
-            -v /home/ubuntu/backup/spring-boot/logs:/app/logs \
-            ${{ env.DOCKER_IMAGE }}
+          docker compose up -d --no-deps watchbox-be
           docker image prune -f
