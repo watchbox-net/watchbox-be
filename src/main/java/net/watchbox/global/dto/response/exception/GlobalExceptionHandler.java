@@ -3,6 +3,7 @@ package net.watchbox.global.dto.response.exception;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -21,6 +22,24 @@ public class GlobalExceptionHandler {
                         .build()
         );
         return ResponseEntity.status(e.getHttpStatus()).body(response);
+    }
+
+    // Bean Validation 실패 처리 핸들러 (@Valid 검증 실패)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException e) {
+        log.info(e.getMessage(), e);
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("입력값이 올바르지 않습니다.");
+
+        ApiResponse<Void> response = ApiResponse.error(
+                ErrorDetail.builder()
+                        .code("VALIDATION-400")
+                        .message(message)
+                        .build()
+        );
+        return ResponseEntity.status(400).body(response);
     }
 
     // 존재하지 않는 API 경로 요청 처리 핸들러

@@ -2,6 +2,7 @@ package net.watchbox.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.domain.member.dto.response.search.MemberInvitationProjection;
 import net.watchbox.domain.member.entity.Member;
@@ -9,6 +10,7 @@ import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -93,6 +95,17 @@ public class MemberService {
     public List<MemberInvitationProjection> searchMembersForBoxInvitation(String query, Long boxId) {
         String formattedQuery = query.trim();
         return memberRepository.findMembersWithInvitationStatus(formattedQuery, boxId);
+    }
+
+    @Transactional
+    public Member updateProfile(Member member, ProfileUpdateRequest request) {
+            if (request.getNickname() != null && !request.getNickname().isBlank()) {
+                if (!member.getNickname().equals(request.getNickname()) && memberRepository.existsByNickname(request.getNickname())) {
+                    throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+                }
+                member.updateNickname(request.getNickname());
+            }
+            return memberRepository.save(member);
     }
 
     // 닉네임 등록, 수정

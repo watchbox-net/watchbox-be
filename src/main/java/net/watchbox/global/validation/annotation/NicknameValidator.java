@@ -2,19 +2,16 @@ package net.watchbox.global.validation.annotation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import net.watchbox.global.validation.ValidationPatterns;
 import net.watchbox.global.validation.validatator.ValidNickname;
 
-import java.util.regex.Pattern;
-
 public class NicknameValidator implements ConstraintValidator<ValidNickname, String> {
-    private static final Pattern NICKNAME_PATTERN =
-            Pattern.compile("^[가-힣a-zA-Z0-9]{2,20}$");
 
     // 금지어 목록 (실제로는 DB나 설정 파일에서 관리)
     private static final String[] FORBIDDEN_WORDS = {
             "관리자", "admin", "운영자", "시스템", "TMDB", "WatchBox",
-            "운영", "관리", "test", "마스터",
-            "Master", "Owner", "Editor", "Root", "CEO", "CTO", "CFO"
+            "운영", "관리", "test", "마스터", "CEO", "CTO", "CFO",
+            "Master", "Owner", "Editor", "Root"
     };
 
     @Override
@@ -24,7 +21,7 @@ public class NicknameValidator implements ConstraintValidator<ValidNickname, Str
         }
 
         // 1. 패턴 검증
-        if (!NICKNAME_PATTERN.matcher(value).matches()) {
+        if (!ValidationPatterns.NICKNAME.matcher(value).matches()) {
             return false;
         }
 

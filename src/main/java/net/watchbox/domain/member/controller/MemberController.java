@@ -2,8 +2,11 @@ package net.watchbox.domain.member.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
 import net.watchbox.domain.member.dto.response.MyPageResponse;
+import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.domain.member.dto.response.search.MemberSearchPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.facade.MemberFacade;
@@ -31,10 +34,17 @@ public class MemberController {
         );
     }
 
-    // ToDo: 프로필 수정
-//    @PatchMapping("/profile")
+    @Operation(summary = "프로필 수정 API", description = "닉네임(2~12글자) 수정")
+    @PatchMapping("/profile")
+    public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
+            @AuthenticationPrincipal Member member,
+            @RequestBody @Valid ProfileUpdateRequest request
+            ){
+        return ResponseEntity.ok(
+                ApiResponse.success(memberFacade.updateProfile(member, request))
+        );
+    }
 
-    // ToDo: 마이 페이지 응답
     @Operation(summary = "마이 페이지 조회 API", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
     @GetMapping("/mypage")
     public ResponseEntity<ApiResponse<MyPageResponse>> getMyPage(

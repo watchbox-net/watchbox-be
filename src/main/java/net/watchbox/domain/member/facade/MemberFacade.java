@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.invitation.BoxInvitationService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
+import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
 import net.watchbox.domain.member.dto.response.MemberStatsResponse;
 import net.watchbox.domain.member.dto.response.MyPageResponse;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
@@ -15,6 +16,7 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.domain.record.service.ContentRecordService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class MemberFacade {
     private final BoxService boxService;
     private final BoxInvitationService boxInvitationService;
 
+    @Transactional(readOnly = true)
     public MemberSearchPageResponse searchMemberListWithSharedStatus(String keyword, Long boxId) {
         List<MemberSearchResponse> memberSearchResponseList  = memberService.searchMembersForBoxInvitation(keyword, boxId)
                 .stream()
@@ -45,6 +48,7 @@ public class MemberFacade {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public MyPageResponse getMyPage(Member member) {
         ProfileResponse profileResponse = memberService.getProfile(member);
         long likeCount = contentRecordService.countLikedContentsByMember(member);
@@ -56,5 +60,10 @@ public class MemberFacade {
                 .boxCount(boxCount)
                 .build();
         return MyPageResponse.of(profileResponse, statsResponse);
+    }
+
+    @Transactional
+    public ProfileResponse updateProfile(Member member, ProfileUpdateRequest request) {
+        return ProfileResponse.from(memberService.updateProfile(member, request));
     }
 }
