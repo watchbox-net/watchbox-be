@@ -22,4 +22,13 @@ public final class ConvertUtils {  //
         }
     }
 
+    /**
+     * 평점 소수점 첫째 자리까지 반올림
+     */
+    public static Double roundVoteAverage(Double value) {
+        if (value == null) {
+            return null;
+        }
+        return Math.round(value * 10) / 10.0;
+    }
 }
