@@ -1,0 +1,44 @@
+package net.watchbox.global.tmdb.service;
+
+import lombok.RequiredArgsConstructor;
+import net.watchbox.global.tmdb.client.TmdbClient;
+import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TmdbTrendingService { // TRENDING
+    private final TmdbClient tmdbClient;
+
+    /**
+     * Movies Get 요청
+     * @time_window (day, week)
+     */
+    public TmdbMovieListsResponse getTrendingMovies(String timeWindow, Integer page) {
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
+                        .path("/trending/movie/{timeWindow}")
+                        .queryParam("page", page)
+                        .build(timeWindow))
+                .retrieve()
+                .bodyToMono(TmdbMovieListsResponse.class)
+                .block();
+    }
+
+    /**
+     * TV Get 요청
+     * @time_window (day, week)
+     */
+    public TmdbMovieListsResponse getTrendingTv(String timeWindow, Integer page) {
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
+                        .path("/trending/tv/{timeWindow}")
+                        .queryParam("page", page)
+                        .build(timeWindow))
+                .retrieve()
+                .bodyToMono(TmdbMovieListsResponse.class)
+                .block();
+    }
+}

@@ -23,7 +23,7 @@ public class DevTrendListController { // 인기, 평점 높은 x 영화, TV 리�
     // 인기 영화 리스트 조회
     @GetMapping("/popular/movies")
     public TmdbMovieListsResponse getPopularMovieList() {
-        return tmdbMovieListsService.getPopularMovieLists(1, "KR");
+        return tmdbMovieListsService.getPopularMovieLists(1);
     }
 
     // 인기 TV 시리즈 리스트 조회

@@ -19,10 +19,9 @@ public class DiscoverController {
 
     @GetMapping("/popular/movies")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularMovies(
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "KR") String region) {
+            @RequestParam(defaultValue = "1") Integer page){
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getPopularMovies(page, region))
+                ApiResponse.success(discoverFacade.getPopularMovies(page))
         );
     }
 
@@ -34,4 +33,53 @@ public class DiscoverController {
         );
     }
 
+    @GetMapping("/top-rated/movies")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getTopRatedMovies(
+            @RequestParam(defaultValue = "1") Integer page) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getTopRatedMovies(page))
+        );
+    }
+
+    @GetMapping("/top-rated/tv")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getTopRatedTvSeries(
+            @RequestParam(defaultValue = "1") Integer page) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getTopRatedTvSeries(page))
+        );
+    }
+
+    @GetMapping("/now-showing/movies")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getNowShowingMovies(
+            @RequestParam(defaultValue = "1") Integer page) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getNowPlayingMovies(page))
+        );
+    }
+
+    @GetMapping("/now-showing/tv")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getNowShowingTvSeries(
+            @RequestParam(defaultValue = "1") Integer page) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getOnTheAirTvSeries(page))
+        );
+    }
+
+    @GetMapping("/trending/movies") // ToDo: 일단 확인만 해보고 나중에 분기 나누기
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getTrendingMovies(
+            @RequestParam(defaultValue = "week") String timeWindow,
+            @RequestParam(defaultValue = "1") Integer page) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getTrendingMovies(timeWindow, page))
+        );
+    }
+
+    @GetMapping("/trending/tv")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getTrendingTv(
+            @RequestParam(defaultValue = "week") String timeWindow,
+            @RequestParam(defaultValue = "1") Integer page) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getTrendingTv(timeWindow, page))
+        );
+    }
 }
