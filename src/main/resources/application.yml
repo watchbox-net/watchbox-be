@@ -59,3 +59,13 @@ springdoc:
     doc-expansion: none
     persist-authorization: true
     tags-sorter: alpha
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # local, dev: 전체 요청 트레이싱
+    propagation:
+      type: w3c
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces

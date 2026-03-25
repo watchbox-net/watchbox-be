@@ -4,3 +4,8 @@ server:
 spring:
   application:
     name: watchbox
+
+management:
+  tracing:
+    sampling:
+      probability: 0.1  # prod: 10% 샘플링 (비용/성능 고려)

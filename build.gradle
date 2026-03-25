@@ -48,6 +48,11 @@ dependencies {
 
     // Swagger UI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+
+    // Observability
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'           // OTLP exporter (Collector로 전송)
 }
 
 tasks.named('test') {
