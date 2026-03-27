@@ -15,6 +15,3 @@ management:
   tracing:
     sampling:
       probability: 1.0  # dev: 전체 요청 트레이싱 (운영에서는 0.1 등으로 낮출 것)
-  otlp:
-    tracing:
-      endpoint: http://localhost:4318/v1/traces  # OTel Collector (HTTP)
