@@ -23,7 +23,7 @@ public class ObservationConfig {
     public Resource otelResource() {
         return Resource.create(
                 Attributes.of(
-                        AttributeKey.stringKey("service.name"), applicationName + "-springboot"
+                        AttributeKey.stringKey("service.name"), applicationName + "-spring"
                 )
         );
     }
