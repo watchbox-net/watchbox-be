@@ -43,7 +43,7 @@ public class WatchStatusController {
      */
 
     @Operation(summary = "시청 상태 등록된 시청 기록 리스트 조회")
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<ApiResponse<ContentPageResponse>> getWatchStatusList(
             @AuthenticationPrincipal Member member
 //            @RequestParam(value = "mediaType", required = false) String mediaType,
@@ -59,7 +59,7 @@ public class WatchStatusController {
 
     @Operation(summary = "시청 상태 등록/변경", description = "WatchMediaType = {MOVIE, TV} <br>" +
             "WatchStatus = {COMPLETED, WATCHING, PLANNED, PAUSED}")
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<ApiResponse<ContentRecordResponse>> upsertWatchStatus(
             @AuthenticationPrincipal Member member,
             @RequestBody @Valid WatchStatusUpsertRequest request

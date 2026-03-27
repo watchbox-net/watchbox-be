@@ -43,7 +43,7 @@ public class LikedController {
     @Operation(summary = "좋아요 표시된 시청 기록 리스트 조회",
             description = "좋아요는 시청 상태와 달리 PERSON도 포함하여 조회 <br>"+
                     "좋아요만 포함, 싫어요는 미포함")
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<ApiResponse<ContentPageResponse>> getContentLikeList(
             @AuthenticationPrincipal Member member
 //            @RequestParam(value = "mediaType", required = false) String mediaType,
@@ -56,7 +56,7 @@ public class LikedController {
     }
 
     @Operation(summary = "좋아요 등록/변경")
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<ApiResponse<ContentRecordResponse>> createContentLike(
             @AuthenticationPrincipal Member member,
             @RequestBody @Valid ContentLikeUpsertRequest request
