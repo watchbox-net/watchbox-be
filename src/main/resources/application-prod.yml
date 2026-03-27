@@ -5,6 +5,11 @@ spring:
   application:
     name: watchbox
 
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
 management:
   tracing:
     sampling:
