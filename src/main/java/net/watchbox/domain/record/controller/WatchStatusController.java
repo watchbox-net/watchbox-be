@@ -1,5 +1,6 @@
 package net.watchbox.domain.record.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -16,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/records")
+@RequestMapping("/api/records/status")
 @Tag(name = "WatchStatus", description = "시청 상태 API")
+@Observed
 public class WatchStatusController {
     private final ContentRecordFacade contentRecordFacade;
     /**
@@ -41,7 +43,7 @@ public class WatchStatusController {
      */
 
     @Operation(summary = "시청 상태 등록된 시청 기록 리스트 조회")
-    @GetMapping("/status")
+    @GetMapping
     public ResponseEntity<ApiResponse<ContentPageResponse>> getWatchStatusList(
             @AuthenticationPrincipal Member member
 //            @RequestParam(value = "mediaType", required = false) String mediaType,
@@ -57,7 +59,7 @@ public class WatchStatusController {
 
     @Operation(summary = "시청 상태 등록/변경", description = "WatchMediaType = {MOVIE, TV} <br>" +
             "WatchStatus = {COMPLETED, WATCHING, PLANNED, PAUSED}")
-    @PostMapping("/status")
+    @PostMapping
     public ResponseEntity<ApiResponse<ContentRecordResponse>> upsertWatchStatus(
             @AuthenticationPrincipal Member member,
             @RequestBody @Valid WatchStatusUpsertRequest request
@@ -68,7 +70,7 @@ public class WatchStatusController {
     }
 
     @Operation(summary = "시청 상태 삭제")
-    @DeleteMapping("/status/{recordId}")
+    @DeleteMapping("/{recordId}")
     public ResponseEntity<ApiResponse<Void>> deleteWatchStatus(
             @AuthenticationPrincipal Member member,
             @PathVariable Long recordId

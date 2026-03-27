@@ -6,7 +6,11 @@ spring:
     name: watchbox-dev
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # dev: 전체 요청 트레이싱 (운영에서는 0.1 등으로 낮출 것)

@@ -1,5 +1,6 @@
 package net.watchbox.domain.record.service;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.member.entity.Member;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Observed
 public class ContentRecordService {
     private final ContentRecordRepository contentRecordRepository;
 

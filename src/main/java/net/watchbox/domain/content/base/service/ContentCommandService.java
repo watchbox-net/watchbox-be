@@ -1,5 +1,6 @@
 package net.watchbox.domain.content.base.service;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
+@Observed
 public class ContentCommandService {
     private final ContentRepository contentRepository;
     private final MovieRepository movieRepository;
@@ -64,6 +66,7 @@ public class ContentCommandService {
     }
 
     // ToDo: (위변조 방지) 일단 만들어놓고 나중에 tmdb api 검색에서 없으면 위변조로 간주하고 DB에서 삭제할 것
+    @Observed
     public Content saveContent(Long tmdbId, MediaType mediaType) {
 //        contentRepository.insertContent(tmdbId, String.valueOf(mediaType));
         Content content = contentRepository.save(
