@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Observed
 public class TmdbMovieListsService { // MOVIE LISTS
     private final TmdbClient tmdbClient;
 

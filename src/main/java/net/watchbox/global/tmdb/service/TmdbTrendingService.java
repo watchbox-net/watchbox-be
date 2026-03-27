@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Observed
 public class TmdbTrendingService { // TRENDING
     private final TmdbClient tmdbClient;
 
