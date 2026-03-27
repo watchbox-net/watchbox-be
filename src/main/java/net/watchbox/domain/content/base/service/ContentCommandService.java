@@ -1,5 +1,6 @@
 package net.watchbox.domain.content.base.service;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
+@Observed
 public class ContentCommandService {
     private final ContentRepository contentRepository;
     private final MovieRepository movieRepository;

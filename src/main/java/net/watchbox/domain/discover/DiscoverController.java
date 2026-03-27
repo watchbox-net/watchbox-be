@@ -1,5 +1,6 @@
 package net.watchbox.domain.discover;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/discover")
 @Tag(name = "Discover", description = "영화, 시리즈 트렌드 리스트 조회 API")
+@Observed
 public class DiscoverController {
     private final DiscoverFacade discoverFacade;
 

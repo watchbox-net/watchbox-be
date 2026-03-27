@@ -1,5 +1,6 @@
 package net.watchbox.domain.record.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/records")
 @Tag(name = "WatchStatus", description = "시청 상태 API")
+@Observed
 public class WatchStatusController {
     private final ContentRecordFacade contentRecordFacade;
     /**

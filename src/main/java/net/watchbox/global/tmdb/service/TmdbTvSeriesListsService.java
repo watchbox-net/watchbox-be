@@ -1,5 +1,6 @@
 package net.watchbox.global.tmdb.service;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.global.tmdb.client.TmdbClient;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Observed
 public class TmdbTvSeriesListsService { // TV SERIES LISTS
     private final TmdbClient tmdbClient;
 

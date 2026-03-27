@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.controller.my;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/my")
 @Tag(name = "MyBox", description = "마이 박스 CRUD API")
+@Observed
 public class MyBoxController { // ToDo: Swagger로 확인하기
     private final MyBoxFacade myBoxFacade;
 

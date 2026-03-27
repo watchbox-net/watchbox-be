@@ -1,5 +1,6 @@
 package net.watchbox.domain.discover;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.base.mapper.tmdb.TmdbDiscoverDtoMapper;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Observed
 public class DiscoverFacade {
     private final TmdbMovieListsService tmdbMovieListsService;
     private final TmdbTvSeriesListsService tmdbTvSeriesListsService;

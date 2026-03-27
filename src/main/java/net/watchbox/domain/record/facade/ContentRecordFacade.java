@@ -1,5 +1,6 @@
 package net.watchbox.domain.record.facade;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
@@ -21,6 +22,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Observed
 public class ContentRecordFacade {
     private final ContentRecordService contentRecordService;
     private final ContentCommandService contentCommandService;
