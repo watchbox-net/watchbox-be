@@ -50,7 +50,7 @@ jwt:
   issuer: ${JWT_ISSUER:abc}
   secret_key: ${JWT_SECRET_KEY:abcdefgh1234567890}
   refresh_token_expiry: 7d
-  access_token_expiry: 3h
+  access_token_expiry: 20h
 
 springdoc:
   api-docs:

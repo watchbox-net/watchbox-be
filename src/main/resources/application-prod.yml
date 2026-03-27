@@ -9,3 +9,7 @@ management:
   tracing:
     sampling:
       probability: 0.1  # prod: 10% 샘플링 (비용/성능 고려)
+
+jwt:
+  refresh_token_expiry: 7d
+  access_token_expiry: 1h
