@@ -68,4 +68,4 @@ management:
       type: w3c
   otlp:
     tracing:
-      endpoint: http://localhost:4318/v1/traces
+      endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318/v1/traces}
