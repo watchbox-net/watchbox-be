@@ -40,9 +40,9 @@ public class ContentRecordService {
         return contentRecordRepository.findContentRecordsByMemberAndContentIdIn(member, contentIds);
     }
 
-    public ContentRecord getByMemberIdAndContentId(Long memberId, Long contentId) {
+    public ContentRecord getByMemberIdAndContentIdOrElseNull(Long memberId, Long contentId) {
         return contentRecordRepository.findByMember_MemberIdAndContent_TmdbId(memberId, contentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
+                .orElse(null);
     }
 
     public long countLikedContentsByMember(Member member) {
