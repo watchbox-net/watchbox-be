@@ -66,6 +66,7 @@ public class LikedController {
         );
     }
 
+    // 현재 미사용중
     @Operation(summary = "좋아요 삭제")
     @DeleteMapping("/{recordId}")
     public ResponseEntity<ApiResponse<Void>> deleteContentLike(

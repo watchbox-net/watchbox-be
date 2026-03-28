@@ -1,20 +1,28 @@
 package net.watchbox.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.properties.JwtProperties;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 public class TokenService {
     private final TokenProvider tokenProvider;
     private final JwtProperties jwtProperties;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 리프레시 토큰 발급
     public String createNewRefreshToken(Member member) {
         return tokenProvider.generateToken(member, jwtProperties.getRefreshTokenExpiry());
+    }
+
+    @Transactional
+    public void logout(Long memberId) {
+        refreshTokenRepository.deleteByMemberId(memberId);
     }
 
     // 액세스 토큰 발급(by 리프레시 토큰)

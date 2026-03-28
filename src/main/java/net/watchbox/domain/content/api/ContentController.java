@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents")
-@Tag(name = "Content Detail")
+@Tag(name = "Content Detail", description = "컨텐츠 상세 조회 API")
 @Slf4j
 public class ContentController {
     private final ContentFacade contentFacade;

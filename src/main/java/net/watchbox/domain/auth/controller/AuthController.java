@@ -8,18 +8,17 @@ import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.domain.auth.dto.TokenRefreshRequest;
 import net.watchbox.domain.auth.dto.TokenRefreshResponse;
 import net.watchbox.global.auth.jwt.TokenProvider;
+import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Auth", description = "Auth API")
-public class TokenController {
+@Tag(name = "Auth", description = "인증 API")
+public class AuthController {
     private final TokenProvider tokenProvider;
     private final TokenService tokenService;
     private final MemberService memberService;
@@ -35,6 +34,11 @@ public class TokenController {
                 .body(new TokenRefreshResponse(newAccessToken));
     }
 
-    // ToDO: 로그아웃
+    @DeleteMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal Member member) {
+        tokenService.logout(member.getMemberId());
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
     // ToDO: 회원탈퇴
 }
