@@ -1,5 +1,6 @@
 package net.watchbox.domain.box.controller.shared;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared/{boxId}/contents")
 @Tag(name = "SharedBoxContent", description = "공유 박스 컨텐츠 API")
+@Observed
 public class SharedBoxContentController {
     private final SharedBoxContentFacade sharedBoxContentFacade;
 

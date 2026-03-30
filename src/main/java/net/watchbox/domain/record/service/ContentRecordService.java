@@ -1,5 +1,6 @@
 package net.watchbox.domain.record.service;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.member.entity.Member;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Observed
 public class ContentRecordService {
     private final ContentRecordRepository contentRecordRepository;
 
@@ -38,9 +40,9 @@ public class ContentRecordService {
         return contentRecordRepository.findContentRecordsByMemberAndContentIdIn(member, contentIds);
     }
 
-    public ContentRecord getByMemberIdAndContentId(Long memberId, Long contentId) {
+    public ContentRecord getByMemberIdAndContentIdOrElseNull(Long memberId, Long contentId) {
         return contentRecordRepository.findByMember_MemberIdAndContent_TmdbId(memberId, contentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
+                .orElse(null);
     }
 
     public long countLikedContentsByMember(Member member) {
