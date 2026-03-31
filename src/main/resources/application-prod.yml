@@ -18,3 +18,9 @@ management:
 jwt:
   refresh_token_expiry: 7d
   access_token_expiry: 1h
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
