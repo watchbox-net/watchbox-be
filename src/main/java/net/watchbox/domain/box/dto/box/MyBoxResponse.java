@@ -6,6 +6,9 @@ import lombok.ToString;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @ToString
 public class MyBoxResponse {
@@ -13,6 +16,8 @@ public class MyBoxResponse {
     private String name;
     private String description;
     private BoxType boxType;
+    private List<String> previewPosterList; // 3개
+    private LocalDateTime lastContentAddedAt;
 
     public static MyBoxResponse from(Box box) {
         MyBoxResponse response = new MyBoxResponse();

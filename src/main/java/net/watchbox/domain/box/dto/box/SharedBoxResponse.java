@@ -15,8 +15,8 @@ public class SharedBoxResponse {
     private String name;
     private String description;
     private BoxType boxType;
-
-    private List<BoxMemberResponse> members;
+    private List<BoxMemberResponse> memberList;
+    private List<String> previewPosterList; // 3개
 
     public static SharedBoxResponse from(Box box){
         SharedBoxResponse sharedBoxResponse = new SharedBoxResponse();
@@ -24,7 +24,7 @@ public class SharedBoxResponse {
         sharedBoxResponse.name = box.getName();
         sharedBoxResponse.description = box.getDescription();
         sharedBoxResponse.boxType = box.getBoxType();
-        sharedBoxResponse.members = box.getBoxMembers().stream()
+        sharedBoxResponse.memberList = box.getBoxMembers().stream()
                 .map(BoxMemberResponse::from)
                 .collect(Collectors.toList());
         return sharedBoxResponse;
