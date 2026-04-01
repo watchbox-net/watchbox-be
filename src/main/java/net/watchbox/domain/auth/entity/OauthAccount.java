@@ -11,7 +11,6 @@ import net.watchbox.global.entity.BaseTime;
 @Getter
 @Entity
 public class OauthAccount extends BaseTime {
-    //UserDetails를 상속 받아 인증 객체로 사용
     //사용자의 인증 정보와 권한 정보를 저장하는 메서드 제공
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +21,7 @@ public class OauthAccount extends BaseTime {
     @Column(name = "oauth_provider", nullable = false, updatable = false)
     private OauthProvider oauthProvider;
 
-    @OneToOne(mappedBy = "oauthAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "oauthAccount", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Member member;
 
     @Column(name = "oauthId", nullable = false, updatable = false, unique = true)

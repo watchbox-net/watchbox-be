@@ -3,11 +3,10 @@ package net.watchbox.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.auth.entity.OauthAccount;
-import net.watchbox.domain.box.entity.content.SharedBoxContent;
 import net.watchbox.domain.box.entity.member.BoxMember;
-import net.watchbox.domain.box.entity.request.InviteBoxRequest;
-import net.watchbox.domain.box.entity.content.MyBoxContent;
-import net.watchbox.domain.record.entity.WatchRecord;
+import net.watchbox.domain.box.entity.invitation.BoxInvitation;
+import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
+import net.watchbox.domain.record.entity.ContentRecord;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,35 +32,28 @@ public class Member implements UserDetails {
     @JoinColumn(name = "oauth_account_id", nullable = false)
     private OauthAccount oauthAccount;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WatchRecord> watchHistories;
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MyBoxContent> myBoxContents;
-
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InviteBoxRequest> inviteBoxRequests;
-
-    @OneToMany(mappedBy = "addedBy")
-    private List<SharedBoxContent> sharedBoxContents;
-
     private String email;
     private String nickname;
     private String profileImage;
-
     private String password;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ContentRecord> contentRecords;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoxMember> boxMembers;
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InviteBoxRequest> senders;
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxInvitation> sentBoxInvitations;
 
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InviteBoxRequest> receivers;
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxInvitation> receivedBoxInvitations;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoxJoinRequest> sentBoxJoinRequests;
 
     /* ================= implements from UserDetails ================= */
     @Override // 권한 반환
@@ -101,5 +93,9 @@ public class Member implements UserDetails {
     public boolean isEnabled() {
         // 계정이 사용 가능한지 확인하는 로직
         return true; // true -> 사용 가능
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

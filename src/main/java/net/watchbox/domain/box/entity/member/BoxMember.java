@@ -2,7 +2,7 @@ package net.watchbox.domain.box.entity.member;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.box.entity.Box;
+import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
@@ -16,7 +16,7 @@ public class BoxMember extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boxMemberId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) // 양방향
     @JoinColumn(name = "box_id", nullable = false)
     private Box box;
 

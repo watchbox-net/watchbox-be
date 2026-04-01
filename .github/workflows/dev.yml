@@ -1,45 +1,40 @@
 name: Backend CI/CD Dev
 
 on:
-  push:
-    branches:
-      - dev
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE: watchbox-be:latest
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: [self-hosted, dev, backend]
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
-#      - name: Create resources directory
-#        run: mkdir -p ./src/main/resources
-#
-#      - name: Create and Upload application.yml
-#        run: |
-#          touch ./src/main/resources/application.yml
-#          echo -e "${{secrets.DEV_APPLICATION}}" | base64 --decode > ./src/main/resources/application.yml
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-#      - name: Setup Gradle
-#        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-#
-#      - name: Build with Gradle
-#        run: |
-#          chmod +x ./gradlew
-#          ./gradlew clean build -x test
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build -x test --no-daemon --max-workers=1
+        env:
+          GRADLE_OPTS: -Xmx384m -XX:MaxMetaspaceSize=192m -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1
 
       - name: Build Docker image
-        run: docker build -f Dockerfile.prod -t petfit-prod .
+        run: docker build -f Dockerfile -t ${{ env.DOCKER_IMAGE }} .
 
-      - name: Run docker container on watchbox-dev server
+      - name: Deploy with Docker Compose
+        working-directory: /home/ubuntu/app
         run: |
-          docker compose up -d
+          docker compose up -d --no-deps watchbox-be
           docker image prune -f
-        working-directory: /home/${{secrets.EC2_USER}}

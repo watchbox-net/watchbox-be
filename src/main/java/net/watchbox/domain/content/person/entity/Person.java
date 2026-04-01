@@ -2,7 +2,7 @@ package net.watchbox.domain.content.person.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.content.common.entity.Content;
+import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.global.entity.BaseTime;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class Person extends BaseTime {
 
     @ElementCollection
     @CollectionTable(name = "known_for", joinColumns = @JoinColumn(name = "tmdb_id"))
-    private List<KnownFor> knownFor;
+    private List<KnownFor> knownFor; // Search 결과의 작품 리스트
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonDetail personDetail;

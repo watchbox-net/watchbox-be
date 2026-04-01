@@ -1,14 +1,11 @@
 package net.watchbox.domain.record.entity;
 
 public enum WatchStatus {
-//    PLAN_TO_WATCH,  // 볼 예정, 찜하기
-//    WATCHING,       // 보는 중
-//    WATCHED,        // 봤음
-//    DROPPED         // 중단
-//    NOT_INTERESTED
-    UNWATCHED,
-    WATCHED,
+    COMPLETED,
     WATCHING,
-    PLAN_TO_WATCH
+    PLANNED,
+    PAUSED,
+    NONE // NONE은 시청 기록이 없는 상태 (DTO 반환용, DB에는 저장되지 않는 타입)
+    // DROP = null
 }
 
