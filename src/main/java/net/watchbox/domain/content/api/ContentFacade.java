@@ -7,6 +7,7 @@ import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.content.base.mapper.tmdb.TmdbContentDetailDtoMapper;
 import net.watchbox.domain.content.base.service.ContentQueryService;
+import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.service.ContentRecordService;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
@@ -26,7 +27,7 @@ public class ContentFacade {
     private final TmdbPeopleService tmdbPeopleService;
 
     @Transactional(readOnly = true)
-    public ContentDetailResponse getContentDetail(MediaType mediaType, Long contentId) {
+    public ContentDetailResponse getContentDetail(MediaType mediaType, Long contentId, Member member) {
         ContentInfo contentInfo =
                 switch (mediaType) {
                     case MOVIE -> TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(contentId));
@@ -34,26 +35,9 @@ public class ContentFacade {
                     case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(contentId));
                 };
 
-        return ContentDetailResponse.builder()
-                .mediaType(mediaType)
-                .contentInfo(contentInfo)
-                .build();
-    }
-
-    @Transactional(readOnly = true)
-    public ContentDetailResponse getContentDetailWithRecord(Long memberId, MediaType mediaType, Long contentId) {
-        // 캐싱 후보
-        ContentInfo contentInfo =
-                switch (mediaType) {
-//                    case MOVIE -> ContentDetailMapper.fromMovie(contentQueryService.getMovieByIdOrThrow(contentId));
-//                    case TV -> ContentDetailMapper.fromTv(contentQueryService.getTvByIdOrThrow(contentId));
-//                    case PERSON -> ContentDetailMapper.fromPerson(contentQueryService.getPersonByIdOrThrow(contentId));
-                    case MOVIE -> TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(contentId));
-                    case TV -> TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetails(contentId));
-                    case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(contentId));
-                };
-
-        ContentRecord contentRecord = contentRecordService.getByMemberIdAndContentIdOrElseNull(memberId, contentId);
+        ContentRecord contentRecord = member == null
+                ? null // 비로그인
+                : contentRecordService.getByMemberIdAndContentIdOrElseNull(member.getMemberId(), contentId); // 로그인
 
         return ContentDetailResponse.builder()
                 .mediaType(mediaType)
@@ -61,4 +45,26 @@ public class ContentFacade {
                 .memberRecord(MemberRecord.from(contentRecord))
                 .build();
     }
+
+//    @Transactional(readOnly = true)
+//    public ContentDetailResponse getContentDetailWithRecord(Long memberId, MediaType mediaType, Long contentId) {
+//        // 캐싱 후보
+//        ContentInfo contentInfo =
+//                switch (mediaType) {
+////                    case MOVIE -> ContentDetailMapper.fromMovie(contentQueryService.getMovieByIdOrThrow(contentId));
+////                    case TV -> ContentDetailMapper.fromTv(contentQueryService.getTvByIdOrThrow(contentId));
+////                    case PERSON -> ContentDetailMapper.fromPerson(contentQueryService.getPersonByIdOrThrow(contentId));
+//                    case MOVIE -> TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(contentId));
+//                    case TV -> TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetails(contentId));
+//                    case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(contentId));
+//                };
+//
+//        ContentRecord contentRecord = contentRecordService.getByMemberIdAndContentIdOrElseNull(memberId, contentId);
+//
+//        return ContentDetailResponse.builder()
+//                .mediaType(mediaType)
+//                .contentInfo(contentInfo)
+//                .memberRecord(MemberRecord.from(contentRecord))
+//                .build();
+//    }
 }

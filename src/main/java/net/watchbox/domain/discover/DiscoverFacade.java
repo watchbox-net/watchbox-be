@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.base.mapper.tmdb.TmdbDiscoverDtoMapper;
+import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import net.watchbox.global.tmdb.service.TmdbMovieListsService;
@@ -19,7 +20,7 @@ public class DiscoverFacade {
     private final TmdbTvSeriesListsService tmdbTvSeriesListsService;
     private final TmdbTrendingService tmdbTrendingService;
 
-    public ContentPageResponse getPopularMovies(Integer page, boolean withRecord) {
+    public ContentPageResponse getPopularMovies(Integer page, boolean withRecord, Member member) {
         TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getPopularMovieLists(page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
@@ -29,7 +30,7 @@ public class DiscoverFacade {
                 .build();
     }
 
-    public ContentPageResponse getPopularTvSeries(Integer page, boolean withRecord) {
+    public ContentPageResponse getPopularTvSeries(Integer page, boolean withRecord, Member member) {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getPopularTvSeriesLists(page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
@@ -39,7 +40,7 @@ public class DiscoverFacade {
                 .build();
     }
 
-    public ContentPageResponse getTopRatedMovies(Integer page, boolean withRecord) {
+    public ContentPageResponse getTopRatedMovies(Integer page, boolean withRecord, Member member) {
         TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getTopRatedMovieLists(page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
@@ -49,7 +50,7 @@ public class DiscoverFacade {
                 .build();
     }
 
-    public ContentPageResponse getTopRatedTvSeries(Integer page, boolean withRecord) {
+    public ContentPageResponse getTopRatedTvSeries(Integer page, boolean withRecord, Member member) {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getTopRatedTvSeriesLists(page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
@@ -59,7 +60,7 @@ public class DiscoverFacade {
                 .build();
     }
 
-    public ContentPageResponse getNowPlayingMovies(Integer page, boolean withRecord) {
+    public ContentPageResponse getNowPlayingMovies(Integer page, boolean withRecord, Member member) {
         TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getNowPlayingMovieLists(page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
@@ -69,7 +70,7 @@ public class DiscoverFacade {
                 .build();
     }
 
-    public ContentPageResponse getOnTheAirTvSeries(Integer page, boolean withRecord) {
+    public ContentPageResponse getOnTheAirTvSeries(Integer page, boolean withRecord, Member member) {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getOnTheAirTvSeriesLists(page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
@@ -79,7 +80,7 @@ public class DiscoverFacade {
                 .build();
     }
 
-    public ContentPageResponse getTrendingMovies(String timeWindow, Integer page, boolean withRecord) {
+    public ContentPageResponse getTrendingMovies(String timeWindow, Integer page, boolean withRecord, Member member) {
         TmdbMovieListsResponse tmdbResponse = tmdbTrendingService.getTrendingMovies(timeWindow, page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))
@@ -89,7 +90,7 @@ public class DiscoverFacade {
                 .build();
     }
 
-    public ContentPageResponse getTrendingTv(String timeWindow, Integer page, boolean withRecord) {
+    public ContentPageResponse getTrendingTv(String timeWindow, Integer page, boolean withRecord, Member member) {
         TmdbMovieListsResponse tmdbResponse = tmdbTrendingService.getTrendingTv(timeWindow, page);
         return ContentPageResponse.builder()
                 .contentItemList(TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse))

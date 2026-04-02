@@ -12,6 +12,7 @@ import net.watchbox.global.tmdb.util.TmdbUtils;
 import java.util.List;
 
 public class TmdbDiscoverDtoMapper {
+    // 비로그인 사용자의 순수 TMDB 컨텐츠 리스트 결과 변환
     // Discover가 늘어나면 현재 페이지도 분리해야
 
     // -------------- TmdbMovieListsResponse -----------------
