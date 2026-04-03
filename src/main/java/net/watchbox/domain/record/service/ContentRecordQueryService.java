@@ -2,7 +2,8 @@ package net.watchbox.domain.record.service;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
+import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -10,26 +11,16 @@ import net.watchbox.domain.record.repository.ContentRecordRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 @Observed
-public class ContentRecordService {
+public class ContentRecordQueryService {
     private final ContentRecordRepository contentRecordRepository;
-
-    @Transactional
-    public ContentRecord getOrCreate(Member member, Content content) {
-        return contentRecordRepository.findByMemberAndContent(member, content)
-                .orElseGet(() -> contentRecordRepository.save(
-                        ContentRecord.builder()
-                                .member(member)
-                                .content(content)
-                                .build()
-                ));
-    }
 
     public ContentRecord getByContentRecordId(Long contentRecordId) {
         return contentRecordRepository.findById(contentRecordId)
@@ -53,30 +44,8 @@ public class ContentRecordService {
         return contentRecordRepository.countByMemberAndWatchStatusIsNotNull(member);
     }
 
-    public void validateMember(ContentRecord contentRecord, Member member) {
-        if (!contentRecord.getMember().getMemberId().equals(member.getMemberId())) {
-            throw new CustomException(ErrorCode.NOT_RECORD_MEMBER);
-        }
-    }
-
-    @Transactional
-    public void deleteWatchStatus(ContentRecord contentRecord) {
-        contentRecord.updateWatchStatus(null);
-        if(contentRecord.getLiked() == null){
-            contentRecordRepository.delete(contentRecord);
-        }
-    }
-
     public List<ContentRecord> getWatchRecordsWithContent(Member member) {
         return contentRecordRepository.findWatchRecordsWithContent(member);
-    }
-
-    @Transactional
-    public void deleteLiked(ContentRecord contentRecord) {
-        contentRecord.updateLiked(null);
-        if(contentRecord.getWatchStatus() == null){
-            contentRecordRepository.delete(contentRecord);
-        }
     }
 
     public List<ContentRecord> getLikedRecordsWithContent(Member member) {
@@ -87,5 +56,33 @@ public class ContentRecordService {
         ContentRecord contentRecord = contentRecordRepository.findById(recordId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
         return ContentRecordResponse.from(contentRecord);
+    }
+
+    // 로그인 사용자의 ContentRecord를 각 컨텐츠에 후처리로 병합
+    public List<ContentItem> attachMemberRecord(List<ContentItem> items, Member member) {
+        List<Long> tmdbIds = items.stream()
+                .map(item -> item.getContentSummary().getContentId())
+                .toList();
+
+        Map<Long, ContentRecord> recordMap = getByMemberAndContentIdIn(member, tmdbIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        r -> r.getContent().getTmdbId(),
+                        r -> r
+                ));
+
+        return items.stream()
+                .map(item -> ContentItem.builder()
+                        .contentSummary(item.getContentSummary())
+                        .memberRecord(MemberRecord.from(
+                                recordMap.get(item.getContentSummary().getContentId())))
+                        .build())
+                .toList();
+    }
+
+    public void validateMember(ContentRecord contentRecord, Member member) {
+        if (!contentRecord.getMember().getMemberId().equals(member.getMemberId())) {
+            throw new CustomException(ErrorCode.NOT_RECORD_MEMBER);
+        }
     }
 }

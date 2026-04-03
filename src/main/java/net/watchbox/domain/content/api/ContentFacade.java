@@ -9,7 +9,7 @@ import net.watchbox.domain.content.base.mapper.tmdb.TmdbContentDetailDtoMapper;
 import net.watchbox.domain.content.base.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.service.ContentRecordService;
+import net.watchbox.domain.record.service.ContentRecordQueryService;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ContentFacade {
     private final ContentQueryService contentQueryService;
-    private final ContentRecordService contentRecordService;
+    private final ContentRecordQueryService contentRecordQueryService;
 
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;
@@ -37,7 +37,7 @@ public class ContentFacade {
 
         ContentRecord contentRecord = member == null
                 ? null // 비로그인
-                : contentRecordService.getByMemberIdAndContentIdOrElseNull(member.getMemberId(), contentId); // 로그인
+                : contentRecordQueryService.getByMemberIdAndContentIdOrElseNull(member.getMemberId(), contentId); // 로그인
 
         return ContentDetailResponse.builder()
                 .mediaType(mediaType)

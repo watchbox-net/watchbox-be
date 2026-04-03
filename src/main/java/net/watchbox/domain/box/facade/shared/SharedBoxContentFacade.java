@@ -19,7 +19,7 @@ import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.content.base.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.service.ContentRecordService;
+import net.watchbox.domain.record.service.ContentRecordQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +38,7 @@ public class SharedBoxContentFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxMemberService boxMemberService;
     private final BoxValidator boxValidator;
-    private final ContentRecordService contentRecordService;
+    private final ContentRecordQueryService contentRecordQueryService;
 
     // 공유 박스에 컨텐츠 추가
     @Transactional
@@ -115,7 +115,7 @@ public class SharedBoxContentFacade {
                 .map(BoxContent::getTmdbId)
                 .toList();
 
-        List<ContentRecord> records = contentRecordService.getByMemberAndContentIdIn(member, contentIdList);
+        List<ContentRecord> records = contentRecordQueryService.getByMemberAndContentIdIn(member, contentIdList);
 
         // 3. Map으로 매핑
         Map<Long, ContentRecord> recordMap = records.stream()
