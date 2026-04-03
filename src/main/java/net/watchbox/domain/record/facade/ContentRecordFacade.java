@@ -13,7 +13,8 @@ import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.service.ContentRecordService;
+import net.watchbox.domain.record.service.ContentRecordCommandService;
+import net.watchbox.domain.record.service.ContentRecordQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +25,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Observed
 public class ContentRecordFacade {
-    private final ContentRecordService contentRecordService;
+    private final ContentRecordQueryService contentRecordQueryService;
+    private final ContentRecordCommandService  contentRecordCommandService;
     private final ContentCommandService contentCommandService;
 
     @Transactional(readOnly = true)
     public ContentPageResponse getWatchStatusList(Member member) {
         log.debug("Login Member: {}", member.getMemberId());
         // 시청 기록이 등록된 ContentRecord 리스트 조회
-        List<ContentRecord> contentRecords = contentRecordService.getWatchRecordsWithContent(member);
+        List<ContentRecord> contentRecords = contentRecordQueryService.getWatchRecordsWithContent(member);
 
         List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
         return ContentPageResponse.builder()
@@ -48,7 +50,7 @@ public class ContentRecordFacade {
                 request.getWatchMediaType().toMediaType());
 
         // ContentRecord 조회 or 생성
-        ContentRecord contentRecord = contentRecordService.getOrCreate(member, content);
+        ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
 
         // WatchStatus 업데이트
         contentRecord.updateWatchStatus(request.getWatchStatus());
@@ -58,19 +60,19 @@ public class ContentRecordFacade {
 
     @Transactional
     public void deleteWatchStatus(Member member, Long recordId) {
-        ContentRecord contentRecord = contentRecordService.getByContentRecordId(recordId);
+        ContentRecord contentRecord = contentRecordQueryService.getByContentRecordId(recordId);
 
         // 시청 기록한 사용자인지 검증
-        contentRecordService.validateMember(contentRecord, member);
+        contentRecordQueryService.validateMember(contentRecord, member);
 
         // WatchStatus 삭제
-        contentRecordService.deleteWatchStatus(contentRecord);
+        contentRecordCommandService.deleteWatchStatus(contentRecord);
     }
 
     @Transactional(readOnly = true)
     public ContentPageResponse getContentLikeList(Member member) {
         // 시청 기록 중에 좋아요 상태가 true인 것들만 조회
-        List<ContentRecord> contentRecords = contentRecordService.getLikedRecordsWithContent(member);
+        List<ContentRecord> contentRecords = contentRecordQueryService.getLikedRecordsWithContent(member);
 
         List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
         return ContentPageResponse.builder()
@@ -85,7 +87,7 @@ public class ContentRecordFacade {
         Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
 
         // ContentRecord 조회 or 생성
-        ContentRecord contentRecord = contentRecordService.getOrCreate(member, content);
+        ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
 
         // Liked 업데이트
         contentRecord.updateLiked(request.getLiked());
@@ -95,13 +97,13 @@ public class ContentRecordFacade {
 
     @Transactional
     public void deleteContentLike(Member member, Long recordId) {
-        ContentRecord contentRecord = contentRecordService.getByContentRecordId(recordId);
+        ContentRecord contentRecord = contentRecordQueryService.getByContentRecordId(recordId);
 
         // 좋아요한 사용자인지 검증
-        contentRecordService.validateMember(contentRecord, member);
+        contentRecordQueryService.validateMember(contentRecord, member);
 
         // Liked 삭제
-        contentRecordService.deleteLiked(contentRecord);
+        contentRecordCommandService.deleteLiked(contentRecord);
 
     }
 

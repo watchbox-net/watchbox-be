@@ -14,7 +14,7 @@ import net.watchbox.domain.member.dto.response.search.MemberSearchPageResponse;
 import net.watchbox.domain.member.dto.response.search.MemberSearchResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
-import net.watchbox.domain.record.service.ContentRecordService;
+import net.watchbox.domain.record.service.ContentRecordQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +27,7 @@ import java.util.List;
 public class MemberFacade {
     private final MemberService memberService;
     private final BoxMemberService boxMemberService;
-    private final ContentRecordService contentRecordService;
+    private final ContentRecordQueryService contentRecordQueryService;
     private final BoxService boxService;
     private final BoxInvitationService boxInvitationService;
 
@@ -51,8 +51,8 @@ public class MemberFacade {
     @Transactional(readOnly = true)
     public MyPageResponse getMyPage(Member member) {
         ProfileResponse profileResponse = memberService.getProfile(member);
-        long likeCount = contentRecordService.countLikedContentsByMember(member);
-        long watchStatusCount = contentRecordService.countWatchStatusByMember(member);
+        long likeCount = contentRecordQueryService.countLikedContentsByMember(member);
+        long watchStatusCount = contentRecordQueryService.countWatchStatusByMember(member);
         long boxCount = boxMemberService.countByMember(member); // 회원이 속한 박스 개수 (마이 박스 + 공유 박스) | 박스 멤버 개수가 곧 박스 개수이다
         MemberStatsResponse statsResponse = MemberStatsResponse.builder()
                 .likeCount(likeCount)
