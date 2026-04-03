@@ -19,12 +19,13 @@ public class MyBoxResponse {
     private List<String> previewPosterList; // 3개
     private LocalDateTime lastContentAddedAt;
 
-    public static MyBoxResponse from(Box box) {
+    public static MyBoxResponse from(Box box, List<String> previewPosters) {
         MyBoxResponse response = new MyBoxResponse();
         response.boxId = box.getBoxId();
         response.name = box.getName();
         response.description = box.getDescription();
         response.boxType = box.getBoxType();
+        response.previewPosterList = previewPosters;
         return response;
     }
 }
