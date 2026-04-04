@@ -39,7 +39,7 @@ public class MyBoxFacade {
     public MyBoxResponse getMyBox(Member member, Long boxId) {
         Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxOwner(box, member);
-        return MyBoxResponse.from(box, Collections.emptyList());
+        return MyBoxResponse.of(box, Collections.emptyList());
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +48,7 @@ public class MyBoxFacade {
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(myBoxList);
 
         List<MyBoxResponse> myBoxResponseList = myBoxList.stream()
-                .map(box -> MyBoxResponse.from(box,
+                .map(box -> MyBoxResponse.of(box,
                         posterMap.getOrDefault(box.getBoxId(), Collections.emptyList())))
                 .toList();
         return MyBoxPageResponse.builder()

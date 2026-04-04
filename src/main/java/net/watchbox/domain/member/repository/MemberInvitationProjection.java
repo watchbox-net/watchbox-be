@@ -1,4 +1,4 @@
-package net.watchbox.domain.member.dto.response.search;
+package net.watchbox.domain.member.repository;
 
 import net.watchbox.domain.box.entity.invitation.RequestStatus;
 

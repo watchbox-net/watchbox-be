@@ -51,6 +51,9 @@ public class MyBoxContentFacade {
         // 박스에 컨텐츠 추가
         BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
 
+        // 박스 lastContentAddedAt 업데이트
+        box.updateLastContentAddedAt(boxContent.getCreatedAt());
+
         return BoxContentAddResponse.from(boxContent);
     }
 

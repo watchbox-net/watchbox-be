@@ -16,15 +16,16 @@ public class MyBoxResponse {
     private String name;
     private String description;
     private BoxType boxType;
-    private List<String> previewPosterList; // 3개
     private LocalDateTime lastContentAddedAt;
+    private List<String> previewPosterList; // 3개
 
-    public static MyBoxResponse from(Box box, List<String> previewPosters) {
+    public static MyBoxResponse of(Box box, List<String> previewPosters) {
         MyBoxResponse response = new MyBoxResponse();
         response.boxId = box.getBoxId();
         response.name = box.getName();
         response.description = box.getDescription();
         response.boxType = box.getBoxType();
+        response.lastContentAddedAt = box.getLastContentAddedAt();
         response.previewPosterList = previewPosters;
         return response;
     }

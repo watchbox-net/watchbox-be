@@ -17,12 +17,14 @@ public class BoxContentCommandService {
 
     // 박스 컨텐츠 추가
     public BoxContent addContentToBox(Member member, Box box, Content content) {
-        return boxContentRepository.save(BoxContent.builder()
+        BoxContent boxContent = boxContentRepository.save(BoxContent.builder()
                 .box(box)
                 .publisher(member)
                 .content(content)
                 .mediaType(content.getMediaType())
                 .build());
+        box.updateLastContentAddedAt(boxContent.getCreatedAt());
+        return boxContent;
     }
 
     // 마이 박스 컨텍츠 삭제

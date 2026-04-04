@@ -40,7 +40,7 @@ public class SharedBoxFacade {
     public SharedBoxResponse getSharedBox(Member member, Long boxId) {
         Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxMember(box, member);
-        return SharedBoxResponse.from(box, Collections.emptyList());
+        return SharedBoxResponse.of(box, Collections.emptyList());
     }
 
     @Transactional(readOnly = true)
@@ -49,7 +49,7 @@ public class SharedBoxFacade {
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(sharedBoxList);
 
         List<SharedBoxResponse> sharedBoxResponseList = sharedBoxList.stream()
-                .map(box -> SharedBoxResponse.from(box,
+                .map(box -> SharedBoxResponse.of(box,
                         posterMap.getOrDefault(box.getBoxId(), Collections.emptyList())))
                 .toList();
         return SharedBoxPageResponse.builder()

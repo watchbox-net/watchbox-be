@@ -1,7 +1,7 @@
 package net.watchbox.domain.box.service.content;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.repository.content.BoxPosterDto;
+import net.watchbox.domain.box.repository.content.BoxPosterProjection;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
@@ -96,18 +96,19 @@ public class BoxContentQueryService { // find로 전부바꾸기
         if (boxes.isEmpty()) {
             return Collections.emptyMap();
         }
-        List<BoxPosterDto> allPosters = boxContentRepository.findRecentPostersByBoxes(boxes);
+        List<BoxPosterProjection> boxPosters = boxContentRepository.findRecentPostersByBoxes(boxes);
 
-        return allPosters.stream()
+        return boxPosters.stream()
                 .collect(Collectors.groupingBy(
-                        BoxPosterDto::getBoxId,
+                        BoxPosterProjection::getBoxId,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 list -> list.stream()
-                                        .map(BoxPosterDto::getPosterPath)
+                                        .map(BoxPosterProjection::getPosterPath)
                                         .limit(3)
                                         .toList()
                         )
                 ));
     }
+
 }

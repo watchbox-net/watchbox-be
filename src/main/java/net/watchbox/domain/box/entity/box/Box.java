@@ -50,6 +50,10 @@ public class Box extends BaseTime {
         this.name = String.join("와 ", memberNames) + "의 공유 박스";
     }
 
+    public void updateLastContentAddedAt(LocalDateTime lastContentAddedAt) {
+        this.lastContentAddedAt = lastContentAddedAt;
+    }
+
     public void update(String name, String description, VisibleType visibleType) {
         if (name != null && !name.isEmpty()) {
             this.name = name;

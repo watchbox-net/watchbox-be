@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
-import net.watchbox.domain.member.dto.response.search.MemberInvitationProjection;
+import net.watchbox.domain.member.repository.MemberInvitationProjection;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
