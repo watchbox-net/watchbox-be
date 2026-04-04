@@ -3,6 +3,7 @@ package net.watchbox.domain.box.repository.content;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.base.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,20 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "LEFT JOIN FETCH c.person " +
             "WHERE bc.box = :box")
     List<BoxContent> findAllWithSubContentByBox(@Param("box") Box box);
+
+    // 박스 리스트 조회 시 최근 포스터 경로 조회 (방법 A: JPQL + Java 그룹핑)
+    @Query("SELECT new net.watchbox.domain.box.repository.content.BoxPosterDto(" +
+            "bc.box.boxId, " +
+            "CASE WHEN bc.mediaType = net.watchbox.domain.content.base.entity.MediaType.MOVIE " +
+            "     THEN m.posterPath ELSE t.posterPath END, " +
+            "bc.createdAt) " +
+            "FROM BoxContent bc " +
+            "JOIN bc.content c " +
+            "LEFT JOIN c.movie m " +
+            "LEFT JOIN c.tv t " +
+            "WHERE bc.box IN :boxes " +
+            "AND bc.mediaType IN (net.watchbox.domain.content.base.entity.MediaType.MOVIE, " +
+            "                     net.watchbox.domain.content.base.entity.MediaType.TV) " +
+            "ORDER BY bc.box.boxId, bc.createdAt DESC")
+    List<BoxPosterDto> findRecentPostersByBoxes(@Param("boxes") List<Box> boxes);
 }

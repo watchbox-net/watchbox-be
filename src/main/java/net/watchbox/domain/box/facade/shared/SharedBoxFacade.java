@@ -9,10 +9,12 @@ import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
+import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ public class SharedBoxFacade {
     private final BoxMemberService boxMemberService;
     private final BoxValidator boxValidator;
     private final BoxContentCommandService boxContentCommandService;
+    private final BoxContentQueryService boxContentQueryService;
 
     @Transactional
     public BoxCreateResponse createSharedBox(Member member, BoxCreateRequest request) {
@@ -37,17 +40,17 @@ public class SharedBoxFacade {
     public SharedBoxResponse getSharedBox(Member member, Long boxId) {
         Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxMember(box, member);
-        return SharedBoxResponse.from(box);
+        return SharedBoxResponse.from(box, Collections.emptyList());
     }
 
     @Transactional(readOnly = true)
     public SharedBoxPageResponse getMySharedBoxList(Member member) {
-        log.info("Get My Shared Box List");
         List<Box> sharedBoxList = boxService.getAllSharedBoxListByMember(member);
-        log.info("실행");
-        log.info("Shared box list: {}", sharedBoxList);
+        Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(sharedBoxList);
+
         List<SharedBoxResponse> sharedBoxResponseList = sharedBoxList.stream()
-                .map(SharedBoxResponse::from)
+                .map(box -> SharedBoxResponse.from(box,
+                        posterMap.getOrDefault(box.getBoxId(), Collections.emptyList())))
                 .toList();
         return SharedBoxPageResponse.builder()
                 .sharedBoxList(sharedBoxResponseList)

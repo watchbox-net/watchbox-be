@@ -9,11 +9,14 @@ import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
+import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -23,6 +26,7 @@ public class MyBoxFacade {
     private final BoxMemberService boxMemberService;
     private final BoxValidator boxValidator;
     private final BoxContentCommandService boxContentCommandService;
+    private final BoxContentQueryService boxContentQueryService;
 
     @Transactional
     public BoxCreateResponse createMyBox(Member member, BoxCreateRequest request) {
@@ -35,14 +39,17 @@ public class MyBoxFacade {
     public MyBoxResponse getMyBox(Member member, Long boxId) {
         Box box = boxService.getByBoxId(boxId);
         boxValidator.validateBoxOwner(box, member);
-        return MyBoxResponse.from(box);
+        return MyBoxResponse.from(box, Collections.emptyList());
     }
 
     @Transactional(readOnly = true)
     public MyBoxPageResponse getMyBoxList(Member member) {
         List<Box> myBoxList = boxService.getAllMyBoxListByOwner(member);
+        Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(myBoxList);
+
         List<MyBoxResponse> myBoxResponseList = myBoxList.stream()
-                .map(MyBoxResponse::from)
+                .map(box -> MyBoxResponse.from(box,
+                        posterMap.getOrDefault(box.getBoxId(), Collections.emptyList())))
                 .toList();
         return MyBoxPageResponse.builder()
                 .boxList(myBoxResponseList)
