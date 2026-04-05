@@ -23,25 +23,28 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContentController {
     private final ContentFacade contentFacade;
 
-    @Operation(summary = "컨텐츠 상세 페이지 조회")
+    @Operation(summary = "컨텐츠 상세 페이지 조회", description = "비로그인/로그인 분기 있음")
     @GetMapping("/{mediaType}/{contentId}")
     public ResponseEntity<ApiResponse<ContentDetailResponse>> getContentDetail(
-            @AuthenticationPrincipal Member member,
             @PathVariable MediaType mediaType,
-            @PathVariable Long contentId
+            @PathVariable Long contentId,
+            @AuthenticationPrincipal Member member
     ) {
-        Long memberId = member != null ? member.getMemberId() : null;
-        if(memberId == null) {
-            log.info("memberId is null");
-            return ResponseEntity.ok(ApiResponse.success(
-                    contentFacade.getContentDetail(mediaType, contentId)
-            ));
-        }
-
-        log.info("memberId is {}", memberId);
         return ResponseEntity.ok(ApiResponse.success(
-//                contentFacade.getContentDetail(mediaType, contentId)
-                contentFacade.getContentDetailWithRecord(memberId, mediaType, contentId)
+                contentFacade.getContentDetail(mediaType, contentId, member)
         ));
+//        Long memberId = member != null ? member.getMemberId() : null;
+//        if(memberId == null) {
+//            log.info("memberId is null");
+//            return ResponseEntity.ok(ApiResponse.success(
+//                    contentFacade.getContentDetail(mediaType, contentId)
+//            ));
+//        }
+//
+//        log.info("memberId is {}", memberId);
+//        return ResponseEntity.ok(ApiResponse.success(
+////                contentFacade.getContentDetail(mediaType, contentId)
+//                contentFacade.getContentDetailWithRecord(memberId, mediaType, contentId)
+//        ));
     }
 }

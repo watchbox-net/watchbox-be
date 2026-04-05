@@ -69,7 +69,7 @@ public class WatchStatusController {
         );
     }
 
-    @Operation(summary = "시청 상태 삭제")
+    @Operation(summary = "시청 상태 기록 삭제")
     @DeleteMapping("/{recordId}")
     public ResponseEntity<ApiResponse<Void>> deleteWatchStatus(
             @AuthenticationPrincipal Member member,

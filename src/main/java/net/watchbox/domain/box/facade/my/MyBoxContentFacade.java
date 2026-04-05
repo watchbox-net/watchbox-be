@@ -18,7 +18,7 @@ import net.watchbox.domain.content.base.mapper.box.MyBoxContentMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.service.ContentRecordService;
+import net.watchbox.domain.record.service.ContentRecordQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +35,7 @@ public class MyBoxContentFacade {
     private final BoxContentCommandService boxContentCommandService;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
-    private final ContentRecordService contentRecordService;
+    private final ContentRecordQueryService contentRecordQueryService;
 
     // 마이 박스에 컨텐츠 추가
     @Transactional
@@ -50,6 +50,9 @@ public class MyBoxContentFacade {
 
         // 박스에 컨텐츠 추가
         BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
+
+        // 박스 lastContentAddedAt 업데이트
+        box.updateLastContentAddedAt(boxContent.getCreatedAt());
 
         return BoxContentAddResponse.from(boxContent);
     }
@@ -71,7 +74,7 @@ public class MyBoxContentFacade {
                 .map(BoxContent::getTmdbId)
                 .toList();
 
-        List<ContentRecord> records = contentRecordService.getByMemberAndContentIdIn(member, contentIdList);
+        List<ContentRecord> records = contentRecordQueryService.getByMemberAndContentIdIn(member, contentIdList);
 
         // 3. Map으로 매핑
         Map<Long, ContentRecord> recordMap = records.stream()

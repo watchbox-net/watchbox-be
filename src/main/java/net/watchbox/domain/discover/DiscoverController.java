@@ -4,8 +4,10 @@ import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
+import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,54 +24,66 @@ public class DiscoverController {
     @GetMapping("/popular/movies")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularMovies(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getPopularMovies(page, withRecord))
+                ApiResponse.success(discoverFacade.getPopularMovies(page, withRecord, member))
         );
     }
 
     @GetMapping("/popular/tv")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularTvSeries(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getPopularTvSeries(page, withRecord))
+                ApiResponse.success(discoverFacade.getPopularTvSeries(page, withRecord, member))
         );
     }
 
     @GetMapping("/top-rated/movies")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getTopRatedMovies(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getTopRatedMovies(page, withRecord))
+                ApiResponse.success(discoverFacade.getTopRatedMovies(page, withRecord, member))
         );
     }
 
     @GetMapping("/top-rated/tv")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getTopRatedTvSeries(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getTopRatedTvSeries(page, withRecord))
+                ApiResponse.success(discoverFacade.getTopRatedTvSeries(page, withRecord, member))
         );
     }
 
     @GetMapping("/now-showing/movies")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getNowShowingMovies(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getNowPlayingMovies(page, withRecord))
+                ApiResponse.success(discoverFacade.getNowPlayingMovies(page, withRecord, member))
         );
     }
 
     @GetMapping("/now-showing/tv")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getNowShowingTvSeries(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getOnTheAirTvSeries(page, withRecord))
+                ApiResponse.success(discoverFacade.getOnTheAirTvSeries(page, withRecord, member))
         );
     }
 
@@ -77,9 +91,11 @@ public class DiscoverController {
     public ResponseEntity<ApiResponse<ContentPageResponse>> getTrendingMovies(
             @RequestParam(defaultValue = "week") String timeWindow,
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getTrendingMovies(timeWindow, page, withRecord))
+                ApiResponse.success(discoverFacade.getTrendingMovies(timeWindow, page, withRecord, member))
         );
     }
 
@@ -87,9 +103,11 @@ public class DiscoverController {
     public ResponseEntity<ApiResponse<ContentPageResponse>> getTrendingTv(
             @RequestParam(defaultValue = "week") String timeWindow,
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "false") boolean withRecord) {
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
         return ResponseEntity.ok(
-                ApiResponse.success(discoverFacade.getTrendingTv(timeWindow, page, withRecord))
+                ApiResponse.success(discoverFacade.getTrendingTv(timeWindow, page, withRecord, member))
         );
     }
 }
