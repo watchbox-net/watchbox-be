@@ -10,6 +10,7 @@ import net.watchbox.domain.record.entity.WatchStatus;
 @ToString
 @Builder
 public class MemberRecord {
+    private Long recordId;
     private Boolean liked;
     private WatchStatus watchStatus;
 
@@ -18,11 +19,13 @@ public class MemberRecord {
     public static MemberRecord from(ContentRecord record) {
         if (record == null) {
             return MemberRecord.builder()
+                    .recordId(null)
                     .liked(false)
                     .watchStatus(WatchStatus.NONE)
                     .build();
         }
         return MemberRecord.builder()
+                .recordId(record.getContentRecordId())
                 .liked(record.getLiked() != null ? record.getLiked() : false)
                 .watchStatus(record.getWatchStatus() != null ? record.getWatchStatus() : WatchStatus.NONE)
                 .build();
