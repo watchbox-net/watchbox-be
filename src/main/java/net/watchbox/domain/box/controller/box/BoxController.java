@@ -75,7 +75,7 @@ public class BoxController {
                     + "공유 박스 - BoxMember 전부와 BoxContent 모두 삭제 <br>"
                     + "로그 남김")
     @DeleteMapping("/{boxId}")
-    public ResponseEntity<ApiResponse<Void>> deleteSharedBox(
+    public ResponseEntity<ApiResponse<Void>> deleteBox(
             @AuthenticationPrincipal Member member,
             @PathVariable Long boxId
     ) {
