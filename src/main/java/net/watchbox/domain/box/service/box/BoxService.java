@@ -22,7 +22,7 @@ public class BoxService {
     private final BoxRepository boxRepository;
     private final BoxMemberRepository boxMemberRepository;
 
-    public Box getByBoxId(Long boxId) {
+    public Box getByBoxIdOrElseThrow(Long boxId) {
         return boxRepository.findById(boxId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_NOT_FOUND, boxId));
     }

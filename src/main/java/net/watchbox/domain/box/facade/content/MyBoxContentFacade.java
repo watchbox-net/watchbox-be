@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.facade.my;
+package net.watchbox.domain.box.facade.content;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class MyBoxContentFacade {
     // 마이 박스에 컨텐츠 추가
     @Transactional
     public BoxContentAddResponse addMyBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // Content 조회 or 저장
         Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
@@ -60,7 +60,7 @@ public class MyBoxContentFacade {
     // 마이 박스 컨텐츠 리스트 조회
     @Transactional(readOnly = true)
     public ContentPageResponse getMyBoxContents(Member member, Long boxId) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 1. BoxContent 리스트 조회 (SubContent fetch join)
         List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);

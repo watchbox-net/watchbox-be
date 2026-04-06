@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.facade.shared;
+package net.watchbox.domain.box.facade.invitation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class BoxInvitationFacade {
     @Transactional
     public InvitationSentResponse inviteToBox(Member sender, Long boxId, Long receiverId) {
         Member receiver = memberService.getByMemberId(receiverId);
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 기존 박스 멤버인지 검증
         boxValidator.validateExistingBoxMember(box, receiver);

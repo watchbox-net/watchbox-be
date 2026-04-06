@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.facade.shared;
+package net.watchbox.domain.box.facade.box;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class SharedBoxFacade {
 
     @Transactional(readOnly = true)
     public SharedBoxResponse getSharedBox(Member member, Long boxId) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxMember(box, member);
         return SharedBoxResponse.of(box, Collections.emptyList());
     }
@@ -60,7 +60,7 @@ public class SharedBoxFacade {
 
     @Transactional
     public BoxUpdateResponse updateSharedBox(Member member, Long boxId, BoxUpdateRequest request) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxEditor(box, member);
         box.update(request.getName(), request.getDescription(), request.getVisibleType());
         return BoxUpdateResponse.from(box);
@@ -68,7 +68,7 @@ public class SharedBoxFacade {
 
     @Transactional
     public void deleteSharedBox(Member member, Long boxId) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxOwner(box, member);
 
         Map<Long, String> boxMembers = box.getBoxMembers().stream()

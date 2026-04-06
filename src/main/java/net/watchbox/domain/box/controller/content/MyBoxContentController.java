@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.controller.my;
+package net.watchbox.domain.box.controller.content;
 
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
 import net.watchbox.domain.box.dto.content.BoxContentRemoveRequest;
-import net.watchbox.domain.box.facade.my.MyBoxContentFacade;
+import net.watchbox.domain.box.facade.content.MyBoxContentFacade;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;

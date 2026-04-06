@@ -1,11 +1,11 @@
-package net.watchbox.domain.box.controller.shared;
+package net.watchbox.domain.box.controller.invitation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.Invitation.InvitationReceivedResponse;
 import net.watchbox.domain.box.dto.Invitation.InvitationSentResponse;
-import net.watchbox.domain.box.facade.shared.BoxInvitationFacade;
+import net.watchbox.domain.box.facade.invitation.BoxInvitationFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;

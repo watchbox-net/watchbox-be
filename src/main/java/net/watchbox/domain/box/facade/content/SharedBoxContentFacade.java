@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.facade.shared;
+package net.watchbox.domain.box.facade.content;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class SharedBoxContentFacade {
     // 공유 박스에 컨텐츠 추가
     @Transactional
     public BoxContentAddResponse addSharedBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 추가 권한 검증
         boxValidator.validateBoxContentAdder(box, member);
@@ -104,7 +104,7 @@ public class SharedBoxContentFacade {
     // 공유 박스 컨텐츠 리스트 조회
     @Transactional(readOnly = true)
     public ContentPageResponse getSharedBoxContents(Member member, Long boxId) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 1. BoxContent 리스트 조회 (SubContent fetch join)
         List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);
@@ -140,7 +140,7 @@ public class SharedBoxContentFacade {
     // 공유 박스에서 내 컨텐츠 삭제
     @Transactional
     public void removeSharedBoxContent(Member member, Long boxId, Long boxContentId) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
         BoxContent boxContent = boxContentQueryService.getByBoxContentId(boxContentId);
         boxValidator.validateBoxContentRemover(member, boxContent);
         boxContentCommandService.deleteContentFromBox(boxContent);

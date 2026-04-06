@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.facade.my;
+package net.watchbox.domain.box.facade.box;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class MyBoxFacade {
 
     @Transactional(readOnly = true)
     public MyBoxResponse getMyBox(Member member, Long boxId) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxOwner(box, member);
         return MyBoxResponse.of(box, Collections.emptyList());
     }
@@ -58,7 +58,7 @@ public class MyBoxFacade {
 
     @Transactional
     public BoxUpdateResponse updateMyBox(Member member, Long boxId, BoxUpdateRequest request) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxOwner(box, member);
         box.update(request.getName(), request.getDescription(), request.getVisibleType());
         return BoxUpdateResponse.from(box);
@@ -66,7 +66,7 @@ public class MyBoxFacade {
 
     @Transactional
     public void deleteMyBox(Member member, Long boxId) {
-        Box box = boxService.getByBoxId(boxId);
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxOwner(box, member);
         boxContentCommandService.deleteAllByBox(box);
         boxService.deleteBox(box); // BoxMember 포함

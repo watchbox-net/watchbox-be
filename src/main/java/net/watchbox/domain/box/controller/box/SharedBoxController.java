@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.controller.shared;
+package net.watchbox.domain.box.controller.box;
 
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.box.*;
-import net.watchbox.domain.box.facade.shared.SharedBoxFacade;
+import net.watchbox.domain.box.facade.box.SharedBoxFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared")
-@Tag(name = "SharedBox", description = "공유 박스 CRUD API")
+@Tag(name = "SharedBox", description = "공유 박스 생성/수정/삭제 API")
 @Observed
 public class SharedBoxController { // ToDo: Swagger로 확인하기
     private final SharedBoxFacade sharedBoxFacade;
