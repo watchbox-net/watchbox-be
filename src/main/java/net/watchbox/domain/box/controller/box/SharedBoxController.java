@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/boxes/shared")
 @Tag(name = "SharedBox", description = "공유 박스 생성/수정/삭제 API")
 @Observed
+@Deprecated
 public class SharedBoxController { // ToDo: Swagger로 확인하기
     private final SharedBoxFacade sharedBoxFacade;
 

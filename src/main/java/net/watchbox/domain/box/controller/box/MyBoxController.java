@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/boxes/my")
 @Tag(name = "MyBox", description = "마이 박스 생성/수정/삭제 API")
 @Observed
+@Deprecated
 public class MyBoxController { // ToDo: Swagger로 확인하기
     private final MyBoxFacade myBoxFacade;
 
