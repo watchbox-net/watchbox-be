@@ -8,7 +8,6 @@ import net.watchbox.domain.box.entity.box.BoxType;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @ToString
@@ -23,38 +22,29 @@ public class BoxResponse {
 
     // 박스 생성/수정 응답
     public static BoxResponse from(Box box) {
-        BoxResponse boxResponse = new BoxResponse();
-        boxResponse.boxId = box.getBoxId();
-        boxResponse.name = box.getName();
-        boxResponse.description = box.getDescription();
-        boxResponse.boxType = box.getBoxType();
-        boxResponse.lastContentAddedAt = box.getLastContentAddedAt();
-        return boxResponse;
+        BoxResponse response = new BoxResponse();
+        response.boxId = box.getBoxId();
+        response.name = box.getName();
+        response.description = box.getDescription();
+        response.boxType = box.getBoxType();
+        response.lastContentAddedAt = box.getLastContentAddedAt();
+        return response;
     }
 
-    // 박스 페이지 마이 박스 응답
+    // 박스 페이지 마이/공유 박스 응답
     public static BoxResponse of(Box box, List<String> previewPosters){
-       BoxResponse boxResponse = new BoxResponse();
-       boxResponse.boxId = box.getBoxId();
-       boxResponse.name = box.getName();
-       boxResponse.description = box.getDescription();
-       boxResponse.boxType = box.getBoxType();
-       boxResponse.lastContentAddedAt = box.getLastContentAddedAt();
-       boxResponse.previewPosterList = previewPosters;
-       return boxResponse;
-    }
-
-    // 박스 페이지 공유 박스 응답
-    public static BoxResponse of(Box box, List<String> previewPosters,
-                                 List<BoxMemberResponse> memberList){
-        BoxResponse boxResponse = new BoxResponse();
-        boxResponse.boxId = box.getBoxId();
-        boxResponse.name = box.getName();
-        boxResponse.description = box.getDescription();
-        boxResponse.boxType = box.getBoxType();
-        boxResponse.lastContentAddedAt = box.getLastContentAddedAt();
-        boxResponse.previewPosterList = previewPosters;
-        boxResponse.memberList = memberList;
-        return boxResponse;
+       BoxResponse response = new BoxResponse();
+       response.boxId = box.getBoxId();
+       response.name = box.getName();
+       response.description = box.getDescription();
+       response.boxType = box.getBoxType();
+       response.lastContentAddedAt = box.getLastContentAddedAt();
+       response.previewPosterList = previewPosters;
+        if (box.getBoxType() == BoxType.SHARED) { // 공유 박스일 경우
+            response.memberList = box.getBoxMembers().stream()
+                    .map(BoxMemberResponse::from)
+                    .toList();
+        }
+       return response;
     }
 }

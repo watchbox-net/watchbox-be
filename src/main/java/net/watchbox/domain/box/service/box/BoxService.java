@@ -27,6 +27,11 @@ public class BoxService {
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_NOT_FOUND, boxId));
     }
 
+    public List<Box> getAllBoxesByMember(Member member) {
+        return boxRepository.findAllBoxesByMember(member);
+    }
+
+
     public List<Box> getAllMyBoxListByOwner(Member owner) {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);
     }
