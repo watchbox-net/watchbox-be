@@ -4,17 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
-import net.watchbox.domain.box.dto.content.BoxContentRemoveRequest;
 import net.watchbox.domain.box.entity.box.Box;
+import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.service.box.BoxService;
-import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.content.base.dto.list.ContentItem;
 import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.base.entity.Content;
 import net.watchbox.domain.content.base.mapper.box.MyBoxContentMapper;
+import net.watchbox.domain.content.base.mapper.box.SharedBoxContentMapper;
 import net.watchbox.domain.content.base.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -26,11 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-@Deprecated
-public class MyBoxContentFacade {
+@Slf4j
+public class BoxContentFacade {
     private final BoxService boxService;
     private final ContentCommandService contentCommandService;
     private final BoxContentCommandService boxContentCommandService;
@@ -38,29 +38,8 @@ public class MyBoxContentFacade {
     private final BoxValidator boxValidator;
     private final ContentRecordQueryService contentRecordQueryService;
 
-    // 마이 박스에 컨텐츠 추가
-    @Transactional
-    public BoxContentAddResponse addMyBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
-        Box box = boxService.getByBoxIdOrElseThrow(boxId);
-
-        // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
-
-        // 마이 박스에 이미 존재하는지 검증
-        boxValidator.validateContentNotInBox(box, content);
-
-        // 박스에 컨텐츠 추가
-        BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
-
-        // 박스 lastContentAddedAt 업데이트
-        box.updateLastContentAddedAt(boxContent.getCreatedAt());
-
-        return BoxContentAddResponse.from(boxContent);
-    }
-
-    // 마이 박스 컨텐츠 리스트 조회
     @Transactional(readOnly = true)
-    public ContentPageResponse getMyBoxContents(Member member, Long boxId) {
+    public ContentPageResponse getBoxContentPage(Member member, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 1. BoxContent 리스트 조회 (SubContent fetch join)
@@ -82,7 +61,9 @@ public class MyBoxContentFacade {
                 .collect(Collectors.toMap(cr -> cr.getContent().getTmdbId(), cr -> cr));
 
         // 4. ContentItem 리스트 조립
-        List<ContentItem> contentItemList = MyBoxContentMapper.toContentItems(boxContents, recordMap);
+        List<ContentItem> contentItemList = box.getBoxType().equals(BoxType.MY)
+                ? MyBoxContentMapper.toContentItems(boxContents, recordMap)
+                : SharedBoxContentMapper.toContentItemsWithPublisher(boxContents, recordMap);
 
         // 5. 응답
         return ContentPageResponse.builder()
@@ -93,13 +74,46 @@ public class MyBoxContentFacade {
                 .build();
     }
 
-
-    // 마이 박스 컨텐츠 삭제
     @Transactional
-    public void removeMyBoxContent(Long boxId, BoxContentRemoveRequest request) {
-        BoxContent boxContent = boxContentQueryService.getByBoxContentId(request.getBoxContentId());
-        boxContentCommandService.deleteContentFromBox(boxContent);
-        log.info("Box content {} has been removed from boxId {}", boxContent, boxId);
+    public BoxContentAddResponse addBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+
+        // 추가 권한 검증
+        boxValidator.validateBoxContentAdder(box, member);
+
+        // Content 조회 or 저장
+        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
+
+        // 박스에 이미 존재하는지 검증
+        if (box.getBoxType().equals(BoxType.MY)) { // 마이 박스에 이미 존재하는지 검증
+            boxValidator.validateContentNotInBox(box, content);
+        } else { // 해당 멤버로 이미 추가된 컨텐츠인지 검증
+            boxValidator.validateContentNotInSharedBox(member, box, content);
+        }
+
+        // 박스에 컨텐츠 추가
+        BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
+
+        // 박스 lastContentAddedAt 업데이트
+        box.updateLastContentAddedAt(boxContent.getCreatedAt());
+
+        return BoxContentAddResponse.from(boxContent);
     }
 
+    @Transactional
+    public void removeBoxContent(Member member, Long boxId, Long boxContentId) {
+        BoxType boxType = boxService.getByBoxIdOrElseThrow(boxId).getBoxType();
+        BoxContent boxContent = boxContentQueryService.getByBoxContentId(boxContentId);
+
+        // 박스 컨텐츠 추가한 사람인지 검증
+        boxValidator.validateBoxContentRemover(member, boxContent);
+
+        boxContentCommandService.deleteContentFromBox(boxContent);
+
+        if (boxType == BoxType.MY) {
+            log.info("Box content {} has been removed from boxId {}", boxContent, boxId);
+        } else {
+            log.info("Deleted SharedBoxContent with ID: {} from SharedBox ID: {}", boxContentId, boxId);
+        }
+    }
 }

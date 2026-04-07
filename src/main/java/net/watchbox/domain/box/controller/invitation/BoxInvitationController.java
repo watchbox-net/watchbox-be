@@ -21,7 +21,7 @@ import java.util.List;
 public class BoxInvitationController {
     private final BoxInvitationFacade boxInvitationFacade;
 
-    // ToDo: 모두 큐로 설계 바꿀것
+    // ToDo: 큐로 설계?
     /**
      * 공유 박스에 초대하기
      * 공유 박스 초대 알림 전송하기(SSE) to 초대 받는사람

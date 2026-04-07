@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/boxes/shared/{boxId}/contents")
 @Tag(name = "SharedBoxContent", description = "공유 박스 컨텐츠 API")
 @Observed
+@Deprecated
 public class SharedBoxContentController {
     private final SharedBoxContentFacade sharedBoxContentFacade;
 

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Deprecated
 public class SharedBoxFacade {
     private final BoxService boxService;
     private final BoxMemberService boxMemberService;

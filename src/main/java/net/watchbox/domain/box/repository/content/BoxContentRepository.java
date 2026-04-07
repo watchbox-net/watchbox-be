@@ -34,7 +34,8 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "LEFT JOIN FETCH c.movie " +
             "LEFT JOIN FETCH c.tv " +
             "LEFT JOIN FETCH c.person " +
-            "WHERE bc.box = :box")
+            "WHERE bc.box = :box " +
+            "ORDER BY bc.createdAt DESC")
     List<BoxContent> findAllWithSubContentByBox(@Param("box") Box box);
 
     // 박스 리스트 조회 시 최근 포스터 경로 조회 (방법 A: JPQL + Java 그룹핑)

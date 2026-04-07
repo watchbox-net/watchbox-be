@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/boxes/my/{boxId}/contents")
 @Tag(name = "MyBoxContent", description = "마이 박스 컨텐츠 API")
 @Observed
+@Deprecated
 public class MyBoxContentController {
     private final MyBoxContentFacade myBoxContentFacade;
 

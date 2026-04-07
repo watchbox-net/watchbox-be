@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Deprecated
 public class SharedBoxContentFacade {
     private final ContentCommandService contentCommandService;
     private final ContentQueryService contentQueryService;
