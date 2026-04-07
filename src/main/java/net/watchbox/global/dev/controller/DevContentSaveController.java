@@ -4,15 +4,15 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.content.base.dto.list.ContentSummary;
-import net.watchbox.domain.content.base.entity.Content;
-import net.watchbox.domain.content.base.entity.MediaType;
-import net.watchbox.domain.content.base.mapper.ContentSummaryMapper;
-import net.watchbox.domain.content.base.service.ContentCommandService;
-import net.watchbox.domain.content.base.service.ContentQueryService;
-import net.watchbox.domain.content.movie.entity.Movie;
-import net.watchbox.domain.content.person.entity.Person;
-import net.watchbox.domain.content.tv.entity.Tv;
+import net.watchbox.domain.content.dto.list.ContentSummary;
+import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.entity.MediaType;
+import net.watchbox.domain.content.mapper.ContentSummaryMapper;
+import net.watchbox.domain.content.service.ContentCommandService;
+import net.watchbox.domain.content.service.ContentQueryService;
+import net.watchbox.domain.content.sub.movie.entity.Movie;
+import net.watchbox.domain.content.sub.person.entity.Person;
+import net.watchbox.domain.content.sub.tv.entity.Tv;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
@@ -50,7 +50,6 @@ public class DevContentSaveController {
         Content content;
         TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetails(tmdbId);
         if (foundContent.isPresent()) {
-            content = foundContent.get();
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         } else {
             // 1) Content 정보 저장 - SQL Insert
@@ -103,7 +102,6 @@ public class DevContentSaveController {
         Content content;
         TmdbPeopleDetailsResponse response = tmdbPeopleService.getPeopleDetails(tmdbId);
         if (foundContent.isPresent()) {
-            content = foundContent.get();
             System.out.println("이미 Content가 존재합니다. tmdbId = " + tmdbId);
         }else{
             // 1) Content 정보 저장

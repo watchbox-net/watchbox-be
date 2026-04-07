@@ -2,8 +2,8 @@ package net.watchbox.domain.record.service;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.base.dto.interaction.MemberRecord;
-import net.watchbox.domain.content.base.dto.list.ContentItem;
+import net.watchbox.domain.content.dto.interaction.MemberRecord;
+import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;

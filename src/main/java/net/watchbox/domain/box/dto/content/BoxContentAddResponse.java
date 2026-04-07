@@ -3,7 +3,7 @@ package net.watchbox.domain.box.dto.content;
 import lombok.Getter;
 import lombok.ToString;
 import net.watchbox.domain.box.entity.content.BoxContent;
-import net.watchbox.domain.content.base.entity.MediaType;
+import net.watchbox.domain.content.entity.MediaType;
 
 @Getter
 @ToString

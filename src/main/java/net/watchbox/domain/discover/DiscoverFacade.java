@@ -2,9 +2,9 @@ package net.watchbox.domain.discover;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.base.dto.list.ContentItem;
-import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
-import net.watchbox.domain.content.base.mapper.tmdb.TmdbDiscoverDtoMapper;
+import net.watchbox.domain.content.dto.list.ContentItem;
+import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.mapper.tmdb.TmdbDiscoverDtoMapper;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.service.ContentRecordQueryService;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;

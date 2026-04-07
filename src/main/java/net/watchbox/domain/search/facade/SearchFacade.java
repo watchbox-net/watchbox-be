@@ -2,8 +2,8 @@ package net.watchbox.domain.search.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
-import net.watchbox.domain.content.base.mapper.tmdb.TmdbSearchDtoMapper;
+import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.mapper.tmdb.TmdbSearchDtoMapper;
 import net.watchbox.domain.search.SearchType;
 import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.tmdb.service.TmdbSearchService;
