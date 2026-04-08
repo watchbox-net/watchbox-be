@@ -11,7 +11,8 @@ import java.util.List;
 @ToString
 @Builder
 public class ContentSummary { // 하나의 응답 클래스에 모든 변수 포함 (Union Type 방식)
-    private Long contentId;
+    private Long contentId;    // surrogate key (DB 저장 시에만 존재, TMDB 조회 시 null)
+    private Long tmdbId;       // TMDB ID
     private MediaType mediaType;  // MOVIE, TV, PERSON
     private Double popularity;
 

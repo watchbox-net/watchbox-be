@@ -41,7 +41,7 @@ public class TmdbSearchDtoMapper {
 
     public static ContentSummary toMovieSummary(TmdbSearchResultItem item) {
         return ContentSummary.builder()
-                .contentId(item.getId())
+                .tmdbId(item.getId())
                 .mediaType(MediaType.MOVIE)
                 .popularity(item.getPopularity())
                 .posterPath(item.getPosterPath())
@@ -56,7 +56,7 @@ public class TmdbSearchDtoMapper {
 
     public static ContentSummary toTvSummary(TmdbSearchResultItem item) {
         return ContentSummary.builder()
-                .contentId(item.getId())
+                .tmdbId(item.getId())
                 .mediaType(MediaType.TV)
                 .popularity(item.getPopularity())
                 .posterPath(item.getPosterPath())
@@ -71,7 +71,7 @@ public class TmdbSearchDtoMapper {
 
     public static ContentSummary toPersonSummary(TmdbSearchResultItem item) {
         return ContentSummary.builder()
-                .contentId(item.getId())
+                .tmdbId(item.getId())
                 .mediaType(MediaType.PERSON)
                 .popularity(item.getPopularity())
                 .profilePath(item.getProfilePath())

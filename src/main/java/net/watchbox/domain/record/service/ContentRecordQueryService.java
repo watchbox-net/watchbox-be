@@ -66,7 +66,7 @@ public class ContentRecordQueryService {
     // 로그인 사용자의 ContentRecord를 각 컨텐츠에 후처리로 병합
     public List<ContentItem> attachMemberRecord(List<ContentItem> items, Member member, MediaType mediaType) {
         List<Long> tmdbIds = items.stream()
-                .map(item -> item.getContentSummary().getContentId())
+                .map(item -> item.getContentSummary().getTmdbId())
                 .toList();
 
         Map<Long, ContentRecord> recordMap = getByMemberAndTmdbIdsAndMediaType(member, tmdbIds, mediaType)
@@ -80,7 +80,7 @@ public class ContentRecordQueryService {
                 .map(item -> ContentItem.builder()
                         .contentSummary(item.getContentSummary())
                         .memberRecord(MemberRecord.from(
-                                recordMap.get(item.getContentSummary().getContentId())))
+                                recordMap.get(item.getContentSummary().getTmdbId())))
                         .build())
                 .toList();
     }

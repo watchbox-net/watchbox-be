@@ -18,7 +18,7 @@ import net.watchbox.global.entity.BaseTime;
 public class Content extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long contentId;
+    private Long contentId; // surrogate key
 
     @Column(name = "tmdb_id", nullable = false)
     private Long tmdbId;

@@ -28,7 +28,7 @@ public class TmdbDiscoverDtoMapper {
 
     private static ContentSummary toMovieSummary(TmdbMovieListsResultItem item) {
         return ContentSummary.builder()
-                .contentId(item.getId())
+                .tmdbId(item.getId())
                 .mediaType(MediaType.MOVIE)
                 .popularity(item.getPopularity())
                 .posterPath(item.getPosterPath())
@@ -52,7 +52,7 @@ public class TmdbDiscoverDtoMapper {
 
     private static ContentSummary toTvSummary(TmdbTvSeriesListsResultItem item) {
         return ContentSummary.builder()
-                .contentId(item.getId())
+                .tmdbId(item.getId())
                 .mediaType(MediaType.TV)
                 .popularity(item.getPopularity())
                 .posterPath(item.getPosterPath())

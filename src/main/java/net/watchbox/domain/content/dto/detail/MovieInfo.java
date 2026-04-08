@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public final class MovieInfo implements ContentInfo {
     private Long contentId;
+    private Long tmdbId;
     private String titleKo;
     private String titleOriginal;
     private String posterPath;

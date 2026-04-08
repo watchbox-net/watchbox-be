@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public final class PersonInfo implements ContentInfo {
     private Long contentId;
+    private Long tmdbId;
     private String nameKo;
     private String nameEn;
     private String nameOriginal;

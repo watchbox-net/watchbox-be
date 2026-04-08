@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public final class TvInfo implements ContentInfo {
     private Long contentId;
+    private Long tmdbId;
     private String nameKo;
     private String nameOriginal;
     private String posterPath;

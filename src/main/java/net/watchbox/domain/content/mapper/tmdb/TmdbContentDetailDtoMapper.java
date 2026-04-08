@@ -15,7 +15,7 @@ public class TmdbContentDetailDtoMapper {
 
     public static MovieInfo toMovieInfo(TmdbMoviesDetailsResponse response) {
         return MovieInfo.builder()
-                .contentId(response.getId())
+                .tmdbId(response.getId())
                 .titleKo(response.getTitle())
                 .titleOriginal(response.getOriginalTitle())
                 .posterPath(response.getPosterPath())
@@ -38,7 +38,7 @@ public class TmdbContentDetailDtoMapper {
 
     public static TvInfo toTvInfo(TmdbTvSeriesDetailsResponse response) {
         return TvInfo.builder()
-                .contentId(response.getId())
+                .tmdbId(response.getId())
                 .nameKo(response.getName())
                 .nameOriginal(response.getOriginalName())
                 .posterPath(response.getPosterPath())
@@ -62,7 +62,7 @@ public class TmdbContentDetailDtoMapper {
 
     public static PersonInfo toPersonInfo(TmdbPeopleDetailsResponse response) {
         return PersonInfo.builder()
-                .contentId(response.getId())
+                .tmdbId(response.getId())
                 .nameKo(response.getName())
                 .profilePath(response.getProfilePath())
                 .knownForDepartment(response.getKnownForDepartment())

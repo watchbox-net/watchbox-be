@@ -13,15 +13,16 @@ import net.watchbox.global.util.ConvertUtils;
 public class ContentSummaryMapper {
     public static ContentSummary fromContent(Content content) {
         return switch (content.getMediaType()) {
-            case MOVIE -> fromMovie(content.getMovie());
-            case TV -> fromTv(content.getTv());
-            case PERSON -> fromPerson(content.getPerson());
+            case MOVIE -> fromMovie(content.getContentId(), content.getMovie());
+            case TV -> fromTv(content.getContentId(), content.getTv());
+            case PERSON -> fromPerson(content.getContentId(), content.getPerson());
         };
     }
 
-    public static ContentSummary fromMovie(Movie movie) {
+    public static ContentSummary fromMovie(Long contentId, Movie movie) {
         return ContentSummary.builder()
-                .contentId(movie.getTmdbId())
+                .contentId(contentId)
+                .tmdbId(movie.getTmdbId())
                 .mediaType(MediaType.MOVIE)
                 .popularity(movie.getPopularity())
                 .posterPath(movie.getPosterPath())
@@ -34,9 +35,10 @@ public class ContentSummaryMapper {
                 .build();
     }
 
-    public static ContentSummary fromTv(Tv tv) {
+    public static ContentSummary fromTv(Long contentId, Tv tv) {
         return ContentSummary.builder()
-                .contentId(tv.getTmdbId())
+                .contentId(contentId)
+                .tmdbId(tv.getTmdbId())
                 .mediaType(MediaType.TV)
                 .popularity(tv.getPopularity())
                 .posterPath(tv.getPosterPath())
@@ -49,9 +51,10 @@ public class ContentSummaryMapper {
                 .build();
     }
 
-    public static ContentSummary fromPerson(Person person) {
+    public static ContentSummary fromPerson(Long contentId, Person person) {
         return ContentSummary.builder()
-                .contentId(person.getTmdbId())
+                .contentId(contentId)
+                .tmdbId(person.getTmdbId())
                 .mediaType(MediaType.PERSON)
                 .popularity(person.getPopularity())
                 .name(person.getNameKo())

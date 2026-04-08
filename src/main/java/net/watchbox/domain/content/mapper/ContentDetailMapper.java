@@ -15,7 +15,8 @@ public class ContentDetailMapper {
     public static MovieInfo fromMovie(Movie movie) {
         MovieDetail movieDetail = movie.getMovieDetail();
         return MovieInfo.builder()
-                .contentId(movie.getTmdbId())
+                .contentId(movie.getContent().getContentId())
+                .tmdbId(movie.getTmdbId())
                 .titleKo(movie.getTitleKo())
                 .titleOriginal(movie.getTitleOriginal())
                 .posterPath(movie.getPosterPath())
@@ -40,7 +41,8 @@ public class ContentDetailMapper {
     public static TvInfo fromTv(Tv tv) {
         TvDetail tvDetail = tv.getTvDetail();
         return TvInfo.builder()
-                .contentId(tv.getTmdbId())
+                .contentId(tv.getContent().getContentId())
+                .tmdbId(tv.getTmdbId())
                 .nameKo(tv.getNameKo())
                 .nameOriginal(tv.getNameOriginal())
                 .posterPath(tv.getPosterPath())
@@ -68,7 +70,8 @@ public class ContentDetailMapper {
     public static PersonInfo fromPerson(Person person) {
         PersonDetail personDetail = person.getPersonDetail();
         return PersonInfo.builder()
-                .contentId(person.getTmdbId())
+                .contentId(person.getContent().getContentId())
+                .tmdbId(person.getTmdbId())
                 .nameKo(person.getNameKo())
                 .nameOriginal(person.getNameOriginal())
                 .profilePath(person.getProfilePath())
