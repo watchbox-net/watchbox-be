@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.global.tmdb.client.TmdbClient;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
+import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,7 +32,7 @@ public class TmdbTrendingService { // TRENDING
      * TV Get 요청
      * @time_window (day, week)
      */
-    public TmdbMovieListsResponse getTrendingTv(String timeWindow, Integer page) {
+    public TmdbTvSeriesListsResponse getTrendingTv(String timeWindow, Integer page) {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
@@ -39,7 +40,7 @@ public class TmdbTrendingService { // TRENDING
                         .queryParam("page", page)
                         .build(timeWindow))
                 .retrieve()
-                .bodyToMono(TmdbMovieListsResponse.class)
+                .bodyToMono(TmdbTvSeriesListsResponse.class)
                 .block();
     }
 }

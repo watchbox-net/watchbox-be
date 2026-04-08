@@ -124,7 +124,7 @@ public class DiscoverFacade {
     }
 
     public ContentPageResponse getTrendingTv(String timeWindow, Integer page, boolean withRecord, Member member) {
-        TmdbMovieListsResponse tmdbResponse = tmdbTrendingService.getTrendingTv(timeWindow, page);
+        TmdbTvSeriesListsResponse tmdbResponse = tmdbTrendingService.getTrendingTv(timeWindow, page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
             items = contentRecordQueryService.attachMemberRecord(items, member);
