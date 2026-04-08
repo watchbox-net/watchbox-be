@@ -27,17 +27,17 @@ public class ContentDetailFacade {
     private final TmdbPeopleService tmdbPeopleService;
 
     @Transactional(readOnly = true)
-    public ContentDetailResponse getContentDetail(MediaType mediaType, Long contentId, Member member) {
+    public ContentDetailResponse getContentDetail(MediaType mediaType, Long tmdbId, Member member) {
         ContentInfo contentInfo =
                 switch (mediaType) {
-                    case MOVIE -> TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(contentId));
-                    case TV -> TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetails(contentId));
-                    case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(contentId));
+                    case MOVIE -> TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(tmdbId));
+                    case TV -> TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetails(tmdbId));
+                    case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(tmdbId));
                 };
 
         ContentRecord contentRecord = member == null
                 ? null // 비로그인
-                : contentRecordQueryService.getByMemberIdAndContentIdOrElseNull(member.getMemberId(), contentId); // 로그인
+                : contentRecordQueryService.getByMemberIdAndTmdbIdOrElseNull(member.getMemberId(), tmdbId, mediaType); // 로그인
 
         return ContentDetailResponse.builder()
                 .mediaType(mediaType)

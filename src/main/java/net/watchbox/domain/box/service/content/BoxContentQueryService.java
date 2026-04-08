@@ -5,6 +5,7 @@ import net.watchbox.domain.box.repository.content.BoxPosterProjection;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -91,7 +92,11 @@ public class BoxContentQueryService { // find로 전부바꾸기
                 ));
     }
 
-    public List<Long> getBoxIdsContainingContent(Long contentId) {
-        return boxContentRepository.findBoxIdsByContentTmdbId(contentId);
+    public List<Long> getBoxIdsContainingContent(Long tmdbId, MediaType mediaType) {
+        return boxContentRepository.findBoxIdsByContentTmdbIdAndMediaType(tmdbId, mediaType);
+    }
+
+    public List<Long> getBoxIdsContainingContentById(Long contentId) {
+        return boxContentRepository.findBoxIdsByContentId(contentId);
     }
 }

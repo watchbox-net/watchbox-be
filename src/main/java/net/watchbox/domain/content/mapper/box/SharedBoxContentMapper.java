@@ -16,7 +16,7 @@ public class SharedBoxContentMapper {
     // === SubContent ===
     public static List<ContentItem> toContentItems(List<BoxContent> boxContents) {
         return boxContents.stream()
-                .collect(Collectors.groupingBy(BoxContent::getTmdbId))  // tmdbId로 그룹핑
+                .collect(Collectors.groupingBy(bc -> bc.getContent().getContentId()))  // tmdbId로 그룹핑
                 .values().stream()
                 .map(group -> {
                     BoxContent first = group.getFirst();  // 콘텐츠 정보는 첫번째 것 사용
@@ -33,7 +33,7 @@ public class SharedBoxContentMapper {
     // === SubContent + Publisher ===
     public static List<ContentItem> toContentItemsWithPublisher(List<BoxContent> boxContents) {
         return boxContents.stream()
-                .collect(Collectors.groupingBy(BoxContent::getTmdbId))  // tmdbId로 그룹핑
+                .collect(Collectors.groupingBy(bc -> bc.getContent().getContentId()))  // tmdbId로 그룹핑
                 .values().stream()
                 .map(group -> {
                     BoxContent first = group.getFirst();  // 콘텐츠 정보는 첫번째 것 사용
@@ -54,7 +54,7 @@ public class SharedBoxContentMapper {
     // === SubContent + Publisher + Record ===
     public static List<ContentItem> toContentItemsWithPublisher(List<BoxContent> boxContents, Map<Long, ContentRecord> recordMap) {
         return boxContents.stream()
-                .collect(Collectors.groupingBy(BoxContent::getTmdbId))
+                .collect(Collectors.groupingBy(bc -> bc.getContent().getContentId()))
                 .values().stream()
                 .map(group -> {
                     BoxContent first = group.getFirst();
@@ -65,7 +65,7 @@ public class SharedBoxContentMapper {
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
                             .boxContentId(first.getBoxContentId())
-                            .memberRecord(MemberRecord.from(recordMap.get(first.getTmdbId())))
+                            .memberRecord(MemberRecord.from(recordMap.get(first.getContent().getContentId())))
                             .publisherSummaryList(publisherSummaries)
                             .build();
                 })

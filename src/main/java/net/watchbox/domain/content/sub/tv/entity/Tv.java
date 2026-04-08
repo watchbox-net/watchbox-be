@@ -18,9 +18,8 @@ public class Tv extends BaseTime {
     @Id
     private Long tmdbId;
 
-    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tmdb_id", nullable = false, unique = true)
+    @JoinColumn(name = "content_id", nullable = false, unique = true)
     private Content content;
 
     private String nameKo;

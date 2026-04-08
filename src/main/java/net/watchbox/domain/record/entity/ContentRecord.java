@@ -24,7 +24,7 @@ public class ContentRecord extends BaseTime {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tmdb_id", nullable = false)
+    @JoinColumn(name = "content_id", nullable = false)
     private Content content;
 
     @Enumerated(EnumType.STRING)

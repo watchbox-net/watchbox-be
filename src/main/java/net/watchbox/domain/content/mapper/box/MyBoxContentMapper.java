@@ -28,7 +28,7 @@ public class MyBoxContentMapper {
                 .map(bc -> ContentItem.builder()
                         .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
                         .boxContentId(bc.getBoxContentId())
-                        .memberRecord(MemberRecord.from(recordMap.get(bc.getTmdbId())))
+                        .memberRecord(MemberRecord.from(recordMap.get(bc.getContent().getContentId())))
                         .build())
                 .toList();
     }

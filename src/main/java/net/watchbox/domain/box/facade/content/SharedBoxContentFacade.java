@@ -114,16 +114,16 @@ public class SharedBoxContentFacade {
             return ContentPageResponse.empty();
         }
 
-        // 2. 해당 contentIdList로 ContentRecord 리스트 조회
-        List<Long> contentIdList = boxContents.stream()
-                .map(BoxContent::getTmdbId)
+        // 2. 해당 contentId로 ContentRecord 리스트 조회
+        List<Long> contentIds = boxContents.stream()
+                .map(bc -> bc.getContent().getContentId())
                 .toList();
 
-        List<ContentRecord> records = contentRecordQueryService.getByMemberAndContentIdIn(member, contentIdList);
+        List<ContentRecord> records = contentRecordQueryService.getByMemberAndContentIds(member, contentIds);
 
-        // 3. Map으로 매핑
+        // 3. Map으로 매핑 (contentId 기준)
         Map<Long, ContentRecord> recordMap = records.stream()
-                .collect(Collectors.toMap(cr -> cr.getContent().getTmdbId(), cr -> cr));
+                .collect(Collectors.toMap(cr -> cr.getContent().getContentId(), cr -> cr));
 
 
         // 4. ContentItem 리스트 조립

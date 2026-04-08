@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.dto.list.ContentItem;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -27,12 +28,16 @@ public class ContentRecordQueryService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
     }
 
-    public List<ContentRecord> getByMemberAndContentIdIn(Member member, List<Long> contentIds) {
-        return contentRecordRepository.findContentRecordsByMemberAndContentIdIn(member, contentIds);
+    public List<ContentRecord> getByMemberAndTmdbIdsAndMediaType(Member member, List<Long> tmdbIds, MediaType mediaType) {
+        return contentRecordRepository.findContentRecordsByMemberAndTmdbIdsAndMediaType(member, tmdbIds, mediaType);
     }
 
-    public ContentRecord getByMemberIdAndContentIdOrElseNull(Long memberId, Long contentId) {
-        return contentRecordRepository.findByMember_MemberIdAndContent_TmdbId(memberId, contentId)
+    public List<ContentRecord> getByMemberAndContentIds(Member member, List<Long> contentIds) {
+        return contentRecordRepository.findByMemberAndContentIdIn(member, contentIds);
+    }
+
+    public ContentRecord getByMemberIdAndTmdbIdOrElseNull(Long memberId, Long tmdbId, MediaType mediaType) {
+        return contentRecordRepository.findByMember_MemberIdAndContent_TmdbIdAndContent_MediaType(memberId, tmdbId, mediaType)
                 .orElse(null);
     }
 
@@ -59,12 +64,12 @@ public class ContentRecordQueryService {
     }
 
     // 로그인 사용자의 ContentRecord를 각 컨텐츠에 후처리로 병합
-    public List<ContentItem> attachMemberRecord(List<ContentItem> items, Member member) {
+    public List<ContentItem> attachMemberRecord(List<ContentItem> items, Member member, MediaType mediaType) {
         List<Long> tmdbIds = items.stream()
                 .map(item -> item.getContentSummary().getContentId())
                 .toList();
 
-        Map<Long, ContentRecord> recordMap = getByMemberAndContentIdIn(member, tmdbIds)
+        Map<Long, ContentRecord> recordMap = getByMemberAndTmdbIdsAndMediaType(member, tmdbIds, mediaType)
                 .stream()
                 .collect(Collectors.toMap(
                         r -> r.getContent().getTmdbId(),

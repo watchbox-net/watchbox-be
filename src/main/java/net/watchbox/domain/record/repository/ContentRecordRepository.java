@@ -1,6 +1,7 @@
 package net.watchbox.domain.record.repository;
 
 import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,14 +36,29 @@ public interface ContentRecordRepository extends JpaRepository<ContentRecord, Lo
             "WHERE cr.member = :member AND cr.liked = :liked")
     List<ContentRecord> findLikedRecordsWithContent(@Param("member") Member member, @Param("liked") Boolean liked);
 
-    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.content.tmdbId IN :tmdbIds")
-    List<ContentRecord> findContentRecordsByMemberAndContentIdIn(@Param("member") Member member, @Param("tmdbIds") List<Long> tmdbIds);
+//    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.content.tmdbId IN :tmdbIds")
+//    List<ContentRecord> findContentRecordsByMemberAndContentIdIn(@Param("member") Member member, @Param("tmdbIds") List<Long> tmdbIds);
+
+    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content " +
+            "WHERE cr.member = :member " +
+            "AND cr.content.tmdbId IN :tmdbIds " +
+            "AND cr.content.mediaType = :mediaType")
+    List<ContentRecord> findContentRecordsByMemberAndTmdbIdsAndMediaType(
+            @Param("member") Member member,
+            @Param("tmdbIds") List<Long> tmdbIds,
+            @Param("mediaType") MediaType mediaType);
 
 //    List<ContentRecord> findByMemberAndLiked(Member member, Boolean liked);
+
+    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content " +
+            "WHERE cr.member = :member AND cr.content.contentId IN :contentIds")
+    List<ContentRecord> findByMemberAndContentIdIn(
+            @Param("member") Member member,
+            @Param("contentIds") List<Long> contentIds);
 
     long countByMemberAndLikedTrue(Member member);
 
     long countByMemberAndWatchStatusIsNotNull(Member member);
 
-    Optional<ContentRecord> findByMember_MemberIdAndContent_TmdbId(Long memberId, Long tmdbId);
+    Optional<ContentRecord> findByMember_MemberIdAndContent_TmdbIdAndContent_MediaType(Long memberId, Long tmdbId, MediaType mediaType);
 }

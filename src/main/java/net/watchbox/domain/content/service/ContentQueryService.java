@@ -64,4 +64,8 @@ public class ContentQueryService {
     public boolean isContentSaved(Long tmdbId, MediaType mediaType) {
         return contentRepository.existsByTmdbIdAndMediaType(tmdbId, mediaType);
     }
+
+    public Optional<Content> findByTmdbIdAndMediaType(Long tmdbId, MediaType mediaType) {
+        return contentRepository.findByTmdbIdAndMediaType(tmdbId, mediaType);
+    }
 }

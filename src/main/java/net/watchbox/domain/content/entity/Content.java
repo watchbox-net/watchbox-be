@@ -12,15 +12,18 @@ import net.watchbox.global.entity.BaseTime;
 @Builder
 @Entity
 @Getter
-//@Inheritance(strategy = InheritanceType.JOINED)
-//@DiscriminatorColumn(name = "media_type")
-@Table(name = "content")
+@Table(name = "content", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"tmdb_id", "media_type"})
+})
 public class Content extends BaseTime {
     @Id
-    @Column(name = "tmdb_id")
-    private Long tmdbId;  // TMDB ID 그대로 사용, shared key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long contentId;
 
-    @Column(name = "media_type")
+    @Column(name = "tmdb_id", nullable = false)
+    private Long tmdbId;
+
+    @Column(name = "media_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 

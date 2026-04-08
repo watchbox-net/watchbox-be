@@ -3,6 +3,7 @@ package net.watchbox.domain.box.repository.content;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -53,7 +54,15 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "ORDER BY bc.box.boxId, bc.createdAt DESC")
     List<BoxPosterProjection> findRecentPostersByBoxes(@Param("boxes") List<Box> boxes);
 
-    // 특정 Content가 포함된 박스 ID 목록 조회
-    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.tmdbId = :tmdbId")
-    List<Long> findBoxIdsByContentTmdbId(@Param("tmdbId") Long tmdbId);
+    // 특정 Content가 포함된 박스 ID 목록 조회 (tmdbId + mediaType)
+    @Query("SELECT bc.box.boxId FROM BoxContent bc " +
+            "WHERE bc.content.tmdbId = :tmdbId " +
+            "AND bc.content.mediaType = :mediaType")
+    List<Long> findBoxIdsByContentTmdbIdAndMediaType(
+            @Param("tmdbId") Long tmdbId,
+            @Param("mediaType") MediaType mediaType);
+
+    // 특정 Content가 포함된 박스 ID 목록 조회 (contentId)
+    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.contentId = :contentId")
+    List<Long> findBoxIdsByContentId(@Param("contentId") Long contentId);
 }

@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.mapper.tmdb.TmdbDiscoverDtoMapper;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.service.ContentRecordQueryService;
@@ -29,7 +30,7 @@ public class DiscoverFacade {
         TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getPopularMovieLists(page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.MOVIE);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)
@@ -43,7 +44,7 @@ public class DiscoverFacade {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getPopularTvSeriesLists(page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.TV);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)
@@ -57,7 +58,7 @@ public class DiscoverFacade {
         TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getTopRatedMovieLists(page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.MOVIE);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)
@@ -71,7 +72,7 @@ public class DiscoverFacade {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getTopRatedTvSeriesLists(page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.TV);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)
@@ -85,7 +86,7 @@ public class DiscoverFacade {
         TmdbMovieListsResponse tmdbResponse = tmdbMovieListsService.getNowPlayingMovieLists(page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.MOVIE);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)
@@ -99,7 +100,7 @@ public class DiscoverFacade {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTvSeriesListsService.getOnTheAirTvSeriesLists(page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.TV);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)
@@ -113,7 +114,7 @@ public class DiscoverFacade {
         TmdbMovieListsResponse tmdbResponse = tmdbTrendingService.getTrendingMovies(timeWindow, page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.MOVIE);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)
@@ -127,7 +128,7 @@ public class DiscoverFacade {
         TmdbTvSeriesListsResponse tmdbResponse = tmdbTrendingService.getTrendingTv(timeWindow, page);
         List<ContentItem> items = TmdbDiscoverDtoMapper.toContentItemList(tmdbResponse);
         if (withRecord && member != null) {
-            items = contentRecordQueryService.attachMemberRecord(items, member);
+            items = contentRecordQueryService.attachMemberRecord(items, member, MediaType.TV);
         }
         return ContentPageResponse.builder()
                 .contentItemList(items)

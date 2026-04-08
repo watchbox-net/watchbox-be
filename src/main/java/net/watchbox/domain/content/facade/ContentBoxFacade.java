@@ -12,10 +12,12 @@ import net.watchbox.domain.content.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 
+import net.watchbox.domain.content.entity.Content;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -25,19 +27,18 @@ public class ContentBoxFacade {
     private final BoxService boxService;
     private final BoxContentQueryService boxContentQueryService;
 
-    public ContentBoxSheetResponse getContentBoxSheet(Member member, Long contentId, MediaType mediaType) {
+    public ContentBoxSheetResponse getContentBoxSheet(Member member, Long tmdbId, MediaType mediaType) {
         List<Box> boxList = boxService.getAllBoxesByMember(member);
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(boxList);
 
         /*
-        content가 DB에 저장되어 있는지부터 체크
-        있으면 contentId로 모든 box 조회해서 포함 여부 체크,
-        없으면 boxContent에도 전부 미포함이니 빈 리스트로 hasContent = false
+        Content가 DB에 있으면 contentId로 박스 포함 여부 조회,
+        없으면 어떤 박스에도 없으니 빈 리스트
         */
-        boolean isContentSaved = contentQueryService.isContentSaved(contentId, mediaType);
-        List<Long> boxIdsWithContent = isContentSaved
-                ? boxContentQueryService.getBoxIdsContainingContent(contentId)
-                : Collections.emptyList();
+        Optional<Content> contentOpt = contentQueryService.findByTmdbIdAndMediaType(tmdbId, mediaType);
+        List<Long> boxIdsWithContent = contentOpt
+                .map(content -> boxContentQueryService.getBoxIdsContainingContentById(content.getContentId()))
+                .orElse(Collections.emptyList());
 
         List<ContentBoxItem> contentBoxItemList = boxList.stream()
                 .map(box -> ContentBoxItem.of(box,

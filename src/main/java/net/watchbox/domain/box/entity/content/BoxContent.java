@@ -23,7 +23,7 @@ public class BoxContent extends BaseTime {
     private Box box;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tmdb_id", nullable = false, unique = false)
+    @JoinColumn(name = "content_id", nullable = false)
     private Content content;
 
     @ManyToOne(fetch = FetchType.LAZY)
