@@ -10,8 +10,8 @@ import net.watchbox.domain.content.entity.MediaType;
 @ToString
 public class ContentLikeUpsertRequest {
     @NotNull
-    @Schema(description = "tjfasdgsadgsadgasdgasdg", defaultValue = "550")
-    private Long contentId;
+    @Schema(defaultValue = "550")
+    private Long tmdbId;
 
     @NotNull
     @Schema(defaultValue = "MOVIE")

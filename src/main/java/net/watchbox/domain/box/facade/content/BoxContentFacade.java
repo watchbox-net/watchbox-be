@@ -83,7 +83,7 @@ public class BoxContentFacade {
         boxValidator.validateBoxContentAdder(box, member);
 
         // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(), request.getMediaType());
 
         // 박스에 이미 존재하는지 검증
         if (box.getBoxType().equals(BoxType.MY)) { // 마이 박스에 이미 존재하는지 검증

@@ -7,6 +7,6 @@ import net.watchbox.domain.content.entity.MediaType;
 @Getter
 @ToString
 public class BoxContentAddRequest {
-    private Long contentId;
+    private Long tmdbId;
     private MediaType mediaType;
 }

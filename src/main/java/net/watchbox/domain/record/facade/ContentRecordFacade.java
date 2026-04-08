@@ -46,7 +46,7 @@ public class ContentRecordFacade {
     @Transactional
     public ContentRecordResponse upsertWatchStatus(Member member, WatchStatusUpsertRequest request) {
         // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(),
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(),
                 request.getWatchMediaType().toMediaType());
 
         // ContentRecord 조회 or 생성
@@ -84,7 +84,7 @@ public class ContentRecordFacade {
     @Transactional
     public ContentRecordResponse upsertContentLike(Member member, ContentLikeUpsertRequest request) {
         // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(), request.getMediaType());
 
         // ContentRecord 조회 or 생성
         ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);

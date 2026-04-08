@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/contents/{contentId}/boxes")
+@RequestMapping("/api/contents/{mediaType}/{tmdbId}/boxes")
 @Tag(name = "ContentBox", description = "컨텐츠 기준 박스 포함 여부 조회 및 일괄 추가/삭제 API")
 public class ContentBoxController {
     private final ContentBoxFacade contentBoxFacade;
@@ -25,19 +25,19 @@ public class ContentBoxController {
     @GetMapping
     public ResponseEntity<ApiResponse<ContentBoxSheetResponse>> getContentBoxSheet(
             @AuthenticationPrincipal Member member,
-            @PathVariable Long contentId,
-            @RequestParam MediaType mediaType
+            @PathVariable MediaType mediaType,
+            @PathVariable Long tmdbId
             ) {
         return ResponseEntity.ok(ApiResponse.success(
-                contentBoxFacade.getContentBoxSheet(member, contentId, mediaType)
+                contentBoxFacade.getContentBoxSheet(member, tmdbId, mediaType)
         ));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<ContentBoxUpdateResponse>> updateContentBoxes(
             @AuthenticationPrincipal Member member,
-            @PathVariable Long contentId,
-            @RequestParam MediaType mediaType,
+            @PathVariable MediaType mediaType,
+            @PathVariable Long tmdbId,
             ContentBoxDiffRequest request
     ){
         return null;

@@ -44,7 +44,7 @@ public class MyBoxContentFacade {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(), request.getMediaType());
 
         // 마이 박스에 이미 존재하는지 검증
         boxValidator.validateContentNotInBox(box, content);

@@ -50,7 +50,7 @@ public class SharedBoxContentFacade {
         boxValidator.validateBoxContentAdder(box, member);
 
         // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(), request.getMediaType());
 
         // 해당 멤버로 이미 추가된 컨텐츠인지 검증
         boxValidator.validateContentNotInSharedBox(member, box, content);

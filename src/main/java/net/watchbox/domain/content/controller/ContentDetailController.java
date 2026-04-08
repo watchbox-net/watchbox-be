@@ -17,33 +17,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/contents")
+@RequestMapping("/api/contents/{mediaType}/{tmdbId}")
 @Tag(name = "Content Detail", description = "컨텐츠 상세 조회 API")
 public class ContentDetailController {
     private final ContentDetailFacade contentDetailFacade;
 
     @Operation(summary = "컨텐츠 상세 페이지 조회", description = "비로그인/로그인 분기 있음")
-    @GetMapping("/{mediaType}/{contentId}")
+    @GetMapping
     public ResponseEntity<ApiResponse<ContentDetailResponse>> getContentDetail(
             @PathVariable MediaType mediaType,
-            @PathVariable Long contentId,
+            @PathVariable Long tmdbId,
             @AuthenticationPrincipal Member member
     ) {
         return ResponseEntity.ok(ApiResponse.success(
-                contentDetailFacade.getContentDetail(mediaType, contentId, member)
+                contentDetailFacade.getContentDetail(mediaType, tmdbId, member)
         ));
 //        Long memberId = member != null ? member.getMemberId() : null;
 //        if(memberId == null) {
 //            log.info("memberId is null");
 //            return ResponseEntity.ok(ApiResponse.success(
-//                    contentFacade.getContentDetail(mediaType, contentId)
+//                    contentFacade.getContentDetail(mediaType, tmdbId)
 //            ));
 //        }
 //
 //        log.info("memberId is {}", memberId);
 //        return ResponseEntity.ok(ApiResponse.success(
-////                contentFacade.getContentDetail(mediaType, contentId)
-//                contentFacade.getContentDetailWithRecord(memberId, mediaType, contentId)
+////                contentFacade.getContentDetail(mediaType, tmdbId)
+//                contentFacade.getContentDetailWithRecord(memberId, mediaType, tmdbId)
 //        ));
     }
 }

@@ -16,7 +16,7 @@ public class ContentRecordResponse {
     private LocalDate watchedDate;
     private Boolean liked;
     private Long memberId;
-    private Long contentId;
+    private Long tmdbId;
     private MediaType mediaType;
 
     public static ContentRecordResponse from(ContentRecord contentRecord){
@@ -26,7 +26,7 @@ public class ContentRecordResponse {
         response.watchedDate = contentRecord.getWatchedDate();
         response.liked = contentRecord.getLiked();
         response.memberId = contentRecord.getMember().getMemberId();
-        response.contentId = contentRecord.getContent().getTmdbId();
+        response.tmdbId = contentRecord.getContent().getTmdbId();
         response.mediaType = contentRecord.getMediaType();
         return response;
     }
