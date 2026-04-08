@@ -7,6 +7,8 @@ import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.search.SearchType;
 import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
+import net.watchbox.global.tmdb.util.MovieGenre;
+import net.watchbox.global.tmdb.util.TvGenre;
 
 import java.util.List;
 
@@ -46,6 +48,7 @@ public class TmdbSearchDtoMapper {
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
                 .year(Integer.parseInt(item.getReleaseDate().substring(0, 4)))
+                .genreList(MovieGenre.mapGenreIdListToKorean(item.getGenreIds()))
                 .title(item.getTitle())
                 .titleOriginal(item.getOriginalTitle())
                 .build();
@@ -60,6 +63,7 @@ public class TmdbSearchDtoMapper {
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
                 .year(Integer.parseInt(item.getFirstAirDate().substring(0, 4)))
+                .genreList(TvGenre.mapGenreIdListToKorean(item.getGenreIds()))
                 .name(item.getName())
                 .nameOriginal(item.getOriginalName())
                 .build();
