@@ -52,4 +52,8 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "                     net.watchbox.domain.content.entity.MediaType.TV) " +
             "ORDER BY bc.box.boxId, bc.createdAt DESC")
     List<BoxPosterProjection> findRecentPostersByBoxes(@Param("boxes") List<Box> boxes);
+
+    // 특정 Content가 포함된 박스 ID 목록 조회
+    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.tmdbId = :tmdbId")
+    List<Long> findBoxIdsByContentTmdbId(@Param("tmdbId") Long tmdbId);
 }

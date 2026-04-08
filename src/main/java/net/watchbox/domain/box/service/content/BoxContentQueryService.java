@@ -9,9 +9,7 @@ import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,4 +91,7 @@ public class BoxContentQueryService { // find로 전부바꾸기
                 ));
     }
 
+    public List<Long> getBoxIdsContainingContent(Long contentId) {
+        return boxContentRepository.findBoxIdsByContentTmdbId(contentId);
+    }
 }

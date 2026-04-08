@@ -2,6 +2,7 @@ package net.watchbox.domain.content.service;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.repository.ContentRepository;
 import net.watchbox.domain.content.sub.movie.entity.Movie;
 import net.watchbox.domain.content.sub.movie.repository.MovieRepository;
@@ -59,4 +60,8 @@ public class ContentQueryService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
     }
 
+    // ============================== Content Saved 여부 조회 ==============================
+    public boolean isContentSaved(Long tmdbId, MediaType mediaType) {
+        return contentRepository.existsByTmdbIdAndMediaType(tmdbId, mediaType);
+    }
 }
