@@ -40,6 +40,8 @@ public class ContentBoxController {
             @PathVariable Long tmdbId,
             ContentBoxDiffRequest request
     ){
-        return null;
+        return ResponseEntity.ok(ApiResponse.success(
+                contentBoxFacade.updateContentBoxes(member, tmdbId, mediaType, request)
+        ));
     }
 }

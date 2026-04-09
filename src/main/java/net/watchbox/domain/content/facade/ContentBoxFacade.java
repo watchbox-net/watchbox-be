@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.content.dto.box.ContentBoxDiffRequest;
 import net.watchbox.domain.content.dto.box.ContentBoxItem;
 import net.watchbox.domain.content.dto.box.ContentBoxSheetResponse;
+import net.watchbox.domain.content.dto.box.ContentBoxUpdateResponse;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.content.service.ContentQueryService;
@@ -13,6 +15,7 @@ import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 
 import net.watchbox.domain.content.entity.Content;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +30,7 @@ public class ContentBoxFacade {
     private final BoxService boxService;
     private final BoxContentQueryService boxContentQueryService;
 
+    @Transactional(readOnly = true)
     public ContentBoxSheetResponse getContentBoxSheet(Member member, Long tmdbId, MediaType mediaType) {
         List<Box> boxList = boxService.getAllBoxesByMember(member);
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(boxList);
@@ -50,6 +54,11 @@ public class ContentBoxFacade {
                 .contentBoxItemList(contentBoxItemList)
                 .totalCount((long) contentBoxItemList.size())
                 .build();
+    }
+
+    @Transactional
+    public ContentBoxUpdateResponse updateContentBoxes(Member member, Long tmdbId, MediaType mediaType, ContentBoxDiffRequest request) {
+        return null;
     }
 
     // contentbox 넣을때도 content getOrSave 동작
