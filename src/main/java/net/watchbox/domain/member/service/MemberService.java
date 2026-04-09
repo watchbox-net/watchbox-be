@@ -21,8 +21,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     private static final List<String> ADJECTIVES = List.of(
-            "신비로운", "용감한", "조용한", "빛나는", "고독한",
-            "차가운", "따뜻한", "냉철한", "몽환적인", "메소드"
+            "신비한", "용감한", "조용한", "빛나는", "고독한",
+            "차가운", "따뜻한", "냉철한", "몽환적", "메소드"
     );
 
     private static final List<String> NOUNS = List.of(
@@ -33,11 +33,11 @@ public class MemberService {
     private String generateNickname() {
         String adjective = ADJECTIVES.get(RANDOM.nextInt(ADJECTIVES.size()));
         String noun = NOUNS.get(RANDOM.nextInt(NOUNS.size()));
-        int number = 1000 + RANDOM.nextInt(9000);
+        int number = 100 + RANDOM.nextInt(900);
         String nickname = adjective + noun + number;
 
         while (memberRepository.existsByNickname(nickname)) {
-            number = 1000 + RANDOM.nextInt(9000);
+            number = 100 + RANDOM.nextInt(900);
             nickname = adjective + noun + number;
         }
 
@@ -65,17 +65,8 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
-    public boolean isNicknameAvailable(String nickname) {
-        return !memberRepository.existsByNickname(nickname);
-    }
-
     public Member getByMemberId(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-    }
-
-    public Member getByNickname(String nickname) {
-        return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
@@ -100,7 +91,7 @@ public class MemberService {
     @Transactional
     public Member updateProfile(Member member, ProfileUpdateRequest request) {
             if (request.getNickname() != null && !request.getNickname().isBlank()) {
-                if (!member.getNickname().equals(request.getNickname()) && memberRepository.existsByNickname(request.getNickname())) {
+                if (!member.getNickname().equals(request.getNickname()) && isNicknameAvailable(request.getNickname())) {
                     throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
                 }
                 member.updateNickname(request.getNickname());
@@ -108,6 +99,8 @@ public class MemberService {
             return memberRepository.save(member);
     }
 
-    // 닉네임 등록, 수정
-    // 닉네임 중복 검사
+    public boolean isNicknameAvailable(String nickname) {
+        return !memberRepository.existsByNickname(nickname);
+    }
+
 }
