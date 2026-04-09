@@ -2,7 +2,8 @@ package net.watchbox.domain.box.repository.content;
 
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
-import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,12 +35,13 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "LEFT JOIN FETCH c.movie " +
             "LEFT JOIN FETCH c.tv " +
             "LEFT JOIN FETCH c.person " +
-            "WHERE bc.box = :box")
+            "WHERE bc.box = :box " +
+            "ORDER BY bc.createdAt DESC")
     List<BoxContent> findAllWithSubContentByBox(@Param("box") Box box);
 
     // 박스 리스트 조회 시 최근 포스터 경로 조회 (방법 A: JPQL + Java 그룹핑)
     @Query("SELECT bc.box.boxId AS boxId, " +
-            "CASE WHEN bc.mediaType = net.watchbox.domain.content.base.entity.MediaType.MOVIE " +
+            "CASE WHEN bc.mediaType = net.watchbox.domain.content.entity.MediaType.MOVIE " +
             "     THEN m.posterPath ELSE t.posterPath END AS posterPath, " +
             "bc.createdAt AS createdAt " +
             "FROM BoxContent bc " +
@@ -47,8 +49,20 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "LEFT JOIN c.movie m " +
             "LEFT JOIN c.tv t " +
             "WHERE bc.box IN :boxes " +
-            "AND bc.mediaType IN (net.watchbox.domain.content.base.entity.MediaType.MOVIE, " +
-            "                     net.watchbox.domain.content.base.entity.MediaType.TV) " +
+            "AND bc.mediaType IN (net.watchbox.domain.content.entity.MediaType.MOVIE, " +
+            "                     net.watchbox.domain.content.entity.MediaType.TV) " +
             "ORDER BY bc.box.boxId, bc.createdAt DESC")
     List<BoxPosterProjection> findRecentPostersByBoxes(@Param("boxes") List<Box> boxes);
+
+    // 특정 Content가 포함된 박스 ID 목록 조회 (tmdbId + mediaType)
+    @Query("SELECT bc.box.boxId FROM BoxContent bc " +
+            "WHERE bc.content.tmdbId = :tmdbId " +
+            "AND bc.content.mediaType = :mediaType")
+    List<Long> findBoxIdsByContentTmdbIdAndMediaType(
+            @Param("tmdbId") Long tmdbId,
+            @Param("mediaType") MediaType mediaType);
+
+    // 특정 Content가 포함된 박스 ID 목록 조회 (contentId)
+    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.contentId = :contentId")
+    List<Long> findBoxIdsByContentId(@Param("contentId") Long contentId);
 }

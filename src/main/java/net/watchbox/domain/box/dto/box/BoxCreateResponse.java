@@ -16,6 +16,18 @@ public class BoxCreateResponse {
     private VisibleType visibleType;
     private Long ownerId;
 
+    public static BoxCreateResponse from(Box box) {
+        BoxCreateResponse response = new BoxCreateResponse();
+        response.boxId = box.getBoxId();
+        response.name = box.getName();
+        response.description = box.getDescription();
+        response.boxType = box.getBoxType();
+        response.visibleType = box.getVisibleType();
+        response.ownerId = box.getOwner().getMemberId();
+        return response;
+    }
+
+    @Deprecated
     public static BoxCreateResponse from(Box box, Long ownerId) {
         BoxCreateResponse response = new BoxCreateResponse();
         response.boxId = box.getBoxId();

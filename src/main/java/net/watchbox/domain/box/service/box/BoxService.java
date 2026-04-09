@@ -22,10 +22,15 @@ public class BoxService {
     private final BoxRepository boxRepository;
     private final BoxMemberRepository boxMemberRepository;
 
-    public Box getByBoxId(Long boxId) {
+    public Box getByBoxIdOrElseThrow(Long boxId) {
         return boxRepository.findById(boxId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_NOT_FOUND, boxId));
     }
+
+    public List<Box> getAllBoxesByMember(Member member) {
+        return boxRepository.findAllBoxesByMember(member);
+    }
+
 
     public List<Box> getAllMyBoxListByOwner(Member owner) {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);

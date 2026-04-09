@@ -1,5 +1,6 @@
 package net.watchbox.global.tmdb.service;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.tmdb.client.TmdbClient;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Observed
 public class TmdbSearchService {
     private final TmdbClient tmdbClient;
 

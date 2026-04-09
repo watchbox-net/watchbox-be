@@ -3,8 +3,8 @@ package net.watchbox.global.dev.deprecated.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.content.person.entity.KnownFor;
-import net.watchbox.domain.content.person.entity.Person;
+import net.watchbox.domain.content.sub.person.entity.KnownFor;
+import net.watchbox.domain.content.sub.person.entity.Person;
 
 import java.util.List;
 

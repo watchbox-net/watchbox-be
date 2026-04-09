@@ -10,7 +10,7 @@ import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.repository.invitation.BoxInvitationRepository;
 import net.watchbox.domain.box.repository.member.BoxMemberRepository;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
-import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
 import org.springframework.stereotype.Service;
@@ -84,16 +84,16 @@ public class BoxValidator {
     // 해당 멤버로 이미 추가된 컨텐츠인지 검증
     public void validateContentNotInSharedBox(Member member, Box box, Content content) {
         if(contentExistsInSharedBox(member, box, content)) {
-            throw new CustomException(CONTENT_ALREADY_IN_SHARED_BOX, member.getMemberId());
+            throw new CustomException(CONTENT_ALREADY_IN_BOX, member.getMemberId());
         }
     }
 
     // ------------------- BoxContent 추가/삭제 권한 검증 -------------------
 
     public void validateBoxContentAdder(Box box, Member member) {
-        // BoxMember 조회
+        // BoxMember인지 조회
         BoxMember boxMember = boxMemberRepository.findByBoxAndMember(box, member)
-                .orElseThrow(() -> new CustomException(BOX_MEMBER_NOT_FOUND, member.getMemberId(), "Member"));
+                .orElseThrow(() -> new CustomException(NOT_BOX_MEMBER, member.getMemberId(), "Member"));
         // Role이 충분한지
         if (boxMember.getRole() == BoxMemberRole.VIEWER) {
             throw new CustomException(INSUFFICIENT_BOX_CONTENT_EDIT_PERMISSION, member.getMemberId(), "Member");

@@ -1,0 +1,120 @@
+package net.watchbox.domain.box.facade.content;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
+import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
+import net.watchbox.domain.box.entity.box.Box;
+import net.watchbox.domain.box.entity.box.BoxType;
+import net.watchbox.domain.box.entity.content.BoxContent;
+import net.watchbox.domain.box.service.box.BoxService;
+import net.watchbox.domain.box.service.content.BoxContentCommandService;
+import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.box.service.validation.BoxValidator;
+import net.watchbox.domain.content.dto.list.ContentItem;
+import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.mapper.box.MyBoxContentMapper;
+import net.watchbox.domain.content.mapper.box.SharedBoxContentMapper;
+import net.watchbox.domain.content.service.ContentCommandService;
+import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.service.ContentRecordQueryService;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class BoxContentFacade {
+    private final BoxService boxService;
+    private final ContentCommandService contentCommandService;
+    private final BoxContentCommandService boxContentCommandService;
+    private final BoxContentQueryService boxContentQueryService;
+    private final BoxValidator boxValidator;
+    private final ContentRecordQueryService contentRecordQueryService;
+
+    @Transactional(readOnly = true)
+    public ContentPageResponse getBoxContentPage(Member member, Long boxId) {
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+
+        // 1. BoxContent 리스트 조회 (SubContent fetch join)
+        List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);
+
+        if (boxContents.isEmpty()) {
+            return ContentPageResponse.empty();
+        }
+
+        // 2. 해당 contentId로 ContentRecord 리스트 조회
+        List<Long> contentIds = boxContents.stream()
+                .map(bc -> bc.getContent().getContentId())
+                .toList();
+
+        List<ContentRecord> records = contentRecordQueryService
+                .getByMemberAndContentIds(member, contentIds);
+
+        // 3. Map으로 매핑 (contentId 기준)
+        Map<Long, ContentRecord> recordMap = records.stream()
+                .collect(Collectors.toMap(cr -> cr.getContent().getContentId(), cr -> cr));
+
+        // 4. ContentItem 리스트 조립
+        List<ContentItem> contentItemList = box.getBoxType().equals(BoxType.MY)
+                ? MyBoxContentMapper.toContentItems(boxContents, recordMap)
+                : SharedBoxContentMapper.toContentItemsWithPublisher(boxContents, recordMap);
+
+        // 5. 응답
+        return ContentPageResponse.builder()
+                .contentItemList(contentItemList)
+                .totalCount((long) contentItemList.size())
+//                .totalPages()
+//                .currentPage()
+                .build();
+    }
+
+    @Transactional
+    public BoxContentAddResponse addBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+
+        // 추가 권한 검증
+        boxValidator.validateBoxContentAdder(box, member);
+
+        // Content 조회 or 저장
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(), request.getMediaType());
+
+        // 박스에 이미 존재하는지 검증
+        if (box.getBoxType().equals(BoxType.MY)) { // 마이 박스에 이미 존재하는지 검증
+            boxValidator.validateContentNotInBox(box, content);
+        } else { // 해당 멤버로 이미 추가된 컨텐츠인지 검증
+            boxValidator.validateContentNotInSharedBox(member, box, content);
+        }
+
+        // 박스에 컨텐츠 추가
+        BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
+
+        // 박스 lastContentAddedAt 업데이트
+        box.updateLastContentAddedAt(boxContent.getCreatedAt());
+
+        return BoxContentAddResponse.from(boxContent);
+    }
+
+    @Transactional
+    public void removeBoxContent(Member member, Long boxId, Long boxContentId) {
+        BoxType boxType = boxService.getByBoxIdOrElseThrow(boxId).getBoxType();
+        BoxContent boxContent = boxContentQueryService.getByBoxContentId(boxContentId);
+
+        // 박스 컨텐츠 추가한 사람인지 검증
+        boxValidator.validateBoxContentRemover(member, boxContent);
+
+        boxContentCommandService.deleteContentFromBox(boxContent);
+
+        if (boxType == BoxType.MY) {
+            log.info("Box content {} has been removed from boxId {}", boxContent, boxId);
+        } else {
+            log.info("Deleted SharedBoxContent with ID: {} from SharedBox ID: {}", boxContentId, boxId);
+        }
+    }
+}

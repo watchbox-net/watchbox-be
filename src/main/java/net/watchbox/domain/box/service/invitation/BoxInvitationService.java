@@ -49,18 +49,19 @@ public class BoxInvitationService {
         boxInvitation.updateStatus(RequestStatus.REJECTED);
     }
 
+    // 공유 박스 받은 대 리스트 + 박스 정보 + 박스 멤버 한 번에 조회
+    public List<BoxInvitation> getAllByReceiverWithBoxAndMembers(Member member) {
+        return boxInvitationRepository.findAllByReceiverWithBoxAndMembers(member);
+    }
+
     // 공유 박스 보낸초대 리스트 조회
     public List<BoxInvitation> getAllBySender(Member sender) {
         return boxInvitationRepository.findAllBySender(sender);
-    }
-
-    // 공유 박스 받은초대 리스트 조회
-    public List<BoxInvitation> getAllByReceiver(Member receiver) {
-        return boxInvitationRepository.findAllByReceiver(receiver);
     }
 
     @Transactional
     public void deleteBoxInvitation(BoxInvitation boxInvitation) {
         boxInvitationRepository.delete(boxInvitation);
     }
+
 }

@@ -2,7 +2,7 @@ package net.watchbox.domain.search.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.search.facade.SearchFacade;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
