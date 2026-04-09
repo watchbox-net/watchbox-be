@@ -1,9 +1,7 @@
 package net.watchbox.domain.content.dto.box;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.box.dto.member.BoxMemberResponse;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 

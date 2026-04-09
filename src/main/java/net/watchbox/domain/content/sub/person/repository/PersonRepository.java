@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
+    Optional<Person> findByTmdbId(Long tmdbId);
+
     @Query("SELECT p FROM Person p JOIN FETCH p.personDetail WHERE p.tmdbId = :tmdbId")
     Optional<Person> findWithDetailByTmdbId(@Param("tmdbId") Long tmdbId);
 

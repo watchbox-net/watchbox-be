@@ -13,14 +13,17 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "tv")
-//@DiscriminatorValue("TV")
 public class Tv extends BaseTime {
     @Id
-    private Long tmdbId;
+    private Long contentId;
 
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "content_id", nullable = false, unique = true)
+    @JoinColumn(name = "content_id")
     private Content content;
+
+    @Column(nullable = false)
+    private Long tmdbId;
 
     private String nameKo;
     private String nameEn;
@@ -32,7 +35,7 @@ public class Tv extends BaseTime {
     private Integer year; // 처음 방영 연도
 
     @ElementCollection
-    @CollectionTable(name = "tv_genre_ids", joinColumns = @JoinColumn(name = "tmdb_id"))
+    @CollectionTable(name = "tv_genre_ids", joinColumns = @JoinColumn(name = "content_id"))
     @Column(name = "genre_id")
     private List<Integer> genreIds;
 

@@ -1,6 +1,0 @@
-account_id,created_at,modified_at,email,name,oauth_id,password,oauth_provider
--5,,,tester5@gmail.com,tester5,id005,,GOOGLE
--4,,,tester4@gmail.com,tester4,id004,,GOOGLE
--3,,,tester3@gmail.com,tester3,id003,,GOOGLE
--2,,,tester2@gmail.com,tester2,id002,,GOOGLE
--1,,,tester1@gmail.com,tester1,id001,,GOOGLE

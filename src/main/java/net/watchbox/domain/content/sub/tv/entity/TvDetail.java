@@ -12,11 +12,11 @@ import java.time.LocalDate;
 @Entity
 public class TvDetail {
     @Id
-    private Long tmdbId;  // Tv의 id를 그대로 사용
+    private Long contentId;
 
     @OneToOne
-    @MapsId  // Tv의 id를 PK로 사용
-    @JoinColumn(name = "tmdb_id")
+    @MapsId
+    @JoinColumn(name = "content_id")
     private Tv tv;
 
     // TMDB List Response

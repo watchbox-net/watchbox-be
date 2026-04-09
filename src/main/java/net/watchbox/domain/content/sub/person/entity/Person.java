@@ -13,14 +13,17 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "person")
-//@DiscriminatorValue("PERSON")
 public class Person extends BaseTime {
     @Id
-    private Long tmdbId;
+    private Long contentId;
 
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "content_id", nullable = false, unique = true)
+    @JoinColumn(name = "content_id")
     private Content content;
+
+    @Column(nullable = false)
+    private Long tmdbId;
 
     private String nameKo;
     private String nameEn;
@@ -30,7 +33,7 @@ public class Person extends BaseTime {
     private Double popularity;
 
     @ElementCollection
-    @CollectionTable(name = "known_for", joinColumns = @JoinColumn(name = "tmdb_id"))
+    @CollectionTable(name = "known_for", joinColumns = @JoinColumn(name = "content_id"))
     private List<KnownFor> knownFor; // Search 결과의 작품 리스트
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)

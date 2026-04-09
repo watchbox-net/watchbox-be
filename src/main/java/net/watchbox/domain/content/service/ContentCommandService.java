@@ -1,6 +1,7 @@
 package net.watchbox.domain.content.service;
 
 import io.micrometer.observation.annotation.Observed;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,8 @@ import java.time.LocalDate;
 @Observed
 public class ContentCommandService {
     private final ContentRepository contentRepository;
+    private final EntityManager entityManager;
+
     private final MovieRepository movieRepository;
     private final MovieDetailRepository movieDetailRepository;
     private final TvRepository tvRepository;
@@ -56,11 +59,12 @@ public class ContentCommandService {
      *    2) SubContents 저장 or ToDo) 요청 이벤트 발행 요청 이벤트 발행
      */
     public Content getOrSaveContentCascade(Long tmdbId, MediaType mediaType) {
-        return contentRepository.findById(tmdbId).orElseGet(() -> {
+        return contentRepository.findByTmdbIdAndMediaType(tmdbId, mediaType).orElseGet(() -> {
             // 1) Content 정보 저장
             Content content = saveContent(tmdbId, mediaType);
+
             // 2) Content의 하위 엔티티 저장
-            saveSubContents(content);
+            saveSubContents(content, mediaType);
             return content;
         });
     }
@@ -77,9 +81,9 @@ public class ContentCommandService {
         );
     }
 
-    public void saveSubContents(Content content) {
+    public void saveSubContents(Content content, MediaType mediaType) {
         // 타입별로 해당 상세 정보 요청 받아와서 저장
-        switch (content.getMediaType()) {
+        switch (mediaType) {
             case MOVIE -> {
                 TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetails(content.getTmdbId());
                 saveMovieContent(content, response);
@@ -98,6 +102,7 @@ public class ContentCommandService {
     // TmdbMovieDetailsResponse -> Movie, MovieDetail 저장
     public void saveMovieContent(Content content, TmdbMoviesDetailsResponse tmdbMovieDetail) {
         Movie movie = Movie.builder()
+                .tmdbId(content.getTmdbId())
                 .content(content)
                 .titleKo(tmdbMovieDetail.getTitle())
 //                .titleEn(tmdbMovieDetail.getOriginalTitle()) // en-US 데이터 추가 요청 필요
@@ -125,21 +130,6 @@ public class ContentCommandService {
                 .imdbId(tmdbMovieDetail.getImdbId())
                 .budget(tmdbMovieDetail.getBudget())
                 .revenue(tmdbMovieDetail.getRevenue())
-//                .productionCompanies(
-//                        tmdbMovieDetail.get().stream()
-//                                .map(g -> "{\"id\":" + g.getId() + ",\"name\":\"" + g.getName() + "\"}")
-//                                .toList().toString()
-//                )
-//                .productionCountries(
-//                        tmdbMovieDetail.getProductionCountries().stream()
-//                                .map(c -> "{\"iso_3166_1\":\"" + c.getIso31661() + "\",\"name\":\"" + c.getName() + "\"}")
-//                                .toList().toString()
-//                )
-//                .spokenLanguages(
-//                        tmdbMovieDetail.getGenres().stream()
-//                                .map(g -> "{\"iso_639_1\":\"" + g.getId() + "\",\"name\":\"" + g.getName() + "\"}")
-//                                .toList().toString()
-//                )
                 .build();
 
         movieRepository.save(movie);
@@ -150,6 +140,7 @@ public class ContentCommandService {
     // TmdbTvSeriesDetailsResponse -> Tv, TvDetail 저장
     public void saveTvContent(Content content, TmdbTvSeriesDetailsResponse tmdbTvSeriesDetail) {
         Tv tv = Tv.builder()
+                .tmdbId(content.getTmdbId())
                 .content(content)
                 .nameKo(tmdbTvSeriesDetail.getName())
 //                .nameEn(tmdbTvSeriesDetail.getOriginalName()) // en-US 데이터 추가 요청 필요
@@ -200,6 +191,7 @@ public class ContentCommandService {
     // TmdbPeopleDetailsResponse -> Person, PersonDetail 저장
     public void savePersonContent(Content content, TmdbPeopleDetailsResponse tmdbPersonDetail) {
         Person person = Person.builder()
+                .tmdbId(content.getTmdbId())
                 .content(content)
                 .nameKo(tmdbPersonDetail.getName())
 //                .nameEn(tmdbPersonDetail.getName()) // en-US 데이터 추가 요청 필요

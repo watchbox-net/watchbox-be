@@ -7,6 +7,7 @@ import net.watchbox.domain.box.dto.Invitation.InvitationSentResponse;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
+import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.box.BoxService;
@@ -16,7 +17,9 @@ import net.watchbox.domain.member.service.MemberService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class BoxInvitationFacade {
     private final BoxInvitationService boxInvitationService;
     private final BoxMemberService boxMemberService;
     private final BoxService boxService;
+    private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
 
     @Transactional
@@ -53,9 +57,15 @@ public class BoxInvitationFacade {
 
     @Transactional (readOnly = true)
     public List<InvitationReceivedResponse> getBoxInvitationsReceived(Member member) {
-        List<BoxInvitation> receivedInvitations = boxInvitationService.getAllByReceiver(member);
+        List<BoxInvitation> receivedInvitations = boxInvitationService.getAllByReceiverWithBoxAndMembers(member);
+        List<Box> boxes = receivedInvitations.stream()
+                .map(BoxInvitation::getBox)
+                .toList();
+        Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(boxes);
+
         return receivedInvitations.stream()
-                .map(InvitationReceivedResponse::from)
+                .map(bi -> InvitationReceivedResponse.from(bi,
+                        posterMap.getOrDefault(bi.getBox().getBoxId(), Collections.emptyList())))
                 .toList();
     }
 
@@ -72,12 +82,6 @@ public class BoxInvitationFacade {
         boxInvitationService.acceptBoxInvitation(member, boxInvitation);
         // 박스 멤버(EDITOR 권한)로 추가
         boxMemberService.addEditorToBox(member, box);
-
-        List<BoxMember> boxMembers = boxMemberService.findAllBySharedBox(box);
-        List<String> memberNames = boxMembers.stream()
-                .map(boxMember -> boxMember.getMember().getNickname())
-                .toList();
-        box.updateAutoTitle(memberNames);
     }
 
     @Transactional
@@ -101,6 +105,17 @@ public class BoxInvitationFacade {
         // 초대 요청 취소 (삭제)
         boxInvitationService.deleteBoxInvitation(boxInvitation);
 
-        log.info("BoxInvitation with requestId {} has been cancelled by sender {}", requestId, member.getMemberId());
+        log.info("Pending boxInvitation requestId {} has been cancelled by sender {}", requestId, member.getMemberId());
+    }
+
+    @Transactional
+    public void deleteBoxInvitation(Member member, Long requestId) {
+        BoxInvitation boxInvitation = boxInvitationService.findById(requestId);
+        // 송신자 본인인지 검증
+        boxValidator.validateSender(member, boxInvitation.getSender());
+        // 초대 요청 취소 (삭제)
+        boxInvitationService.deleteBoxInvitation(boxInvitation);
+
+        log.info("Rejected boxInvitation requestId {} has been deleted by sender {}", requestId, member.getMemberId());
     }
 }

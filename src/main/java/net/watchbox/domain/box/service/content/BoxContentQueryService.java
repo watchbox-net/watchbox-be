@@ -29,44 +29,6 @@ public class BoxContentQueryService { // find로 전부바꾸기
         return boxContentRepository.findAllById(sbcIds);
     }
 
-//    public SharedBoxContentResponse getSharedBoxContentsAll(Box box, Member member) {
-//        Long totalCount = boxContentRepository.countByBox(box);
-//        List<BoxContent> boxContents = boxContentRepository.findAllByBox(box);
-//
-//        List<SharedBoxContentItem> sharedBoxContentItems = boxContents.stream()
-//                .map(sbc -> {
-//                    Content content = sbc.getContent();
-//                    Member addedBy = sbc.getAddedBy();
-//                    AdderItem adderItem = AdderItem.builder()
-//                            .adderid(addedBy.getMemberId())
-//                            .nickname(addedBy.getNickname())
-//                            .profileImage(addedBy.getProfileImage())
-//                            .build();
-//                    switch(content.getMediaType()){
-//                        case MOVIE -> {
-//                            return new SharedBoxContentItem(
-//                                    ContentSummary.fromMovie(content.getMovie()), sbc.getBoxContentId(), List.of(adderItem)
-//                            );
-//                        }
-//                        case TV -> {
-//                            return new SharedBoxContentItem(
-//                                    ContentSummary.fromTv(content.getTv()), sbc.getBoxContentId(), List.of(adderItem)
-//                            );
-//                        }
-//                        case PERSON -> {
-//                            return new SharedBoxContentItem(
-//                                    ContentSummary.fromPerson(content.getPerson()), sbc.getBoxContentId(), List.of(adderItem)
-//                            );
-//                        }
-//                        default -> throw new CustomException(ErrorCode.UNSUPPORTED_MEDIA_TYPE);
-//                    }
-//                })
-//                .toList();
-//        // ToDo: SharedBoxContent에 여러명이 넣었을 경우 하나로 합쳐서 SharedBoxContentItem 응답하는 로직 필요
-//
-//        return new SharedBoxContentResponse(totalCount, sharedBoxContentItems);
-//    }
-
     // BoxContent + Content
     public List<BoxContent> getMyBoxContentAllWithSubContent(Box box) {
         return boxContentRepository.findAllWithSubContentByBox(box);

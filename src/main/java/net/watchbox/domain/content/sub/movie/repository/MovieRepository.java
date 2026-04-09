@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
+    Optional<Movie> findByTmdbId(Long tmdbId);
+
     @Query("SELECT m FROM Movie m JOIN FETCH m.movieDetail WHERE m.tmdbId = :tmdbId")
     Optional<Movie> findWithDetailByTmdbId(@Param("tmdbId") Long tmdbId);
 

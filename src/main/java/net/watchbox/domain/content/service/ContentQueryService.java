@@ -28,19 +28,19 @@ public class ContentQueryService {
         return contentRepository.findById(tmdbId);
     }
 
-    // ============================== Content <- Id ==============================
-    public Movie getMovieByIdOrThrow(Long tmdbId) {
-        return movieRepository.findById(tmdbId)
+    // ============================== Content <- tmdbId ==============================
+    public Movie getMovieByTmdbIdOrThrow(Long tmdbId) {
+        return movieRepository.findByTmdbId(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
     }
 
-    public Tv getTvByIdOrThrow(Long tmdbId) {
-        return tvRepository.findById(tmdbId)
+    public Tv getTvByTmdbIdOrThrow(Long tmdbId) {
+        return tvRepository.findByTmdbId(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TV_NOT_FOUND));
     }
 
-    public Person getPersonByIdOrThrow(Long tmdbId) {
-        return personRepository.findById(tmdbId)
+    public Person getPersonByTmdbIdOrThrow(Long tmdbId) {
+        return personRepository.findByTmdbId(tmdbId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
     }
 

@@ -21,20 +21,26 @@ import java.util.List;
 public class BoxInvitationController {
     private final BoxInvitationFacade boxInvitationFacade;
 
-    // ToDo: 큐로 설계?
-    /**
-     * 공유 박스에 초대하기
-     * 공유 박스 초대 알림 전송하기(SSE) to 초대 받는사람
-     * [보류] 공유 박스 거절 알림 전송하기(SSE) to 초대 보낸사람
-     *
-     * 공유 박스 받은초대 수락
-     * 공유 박스 받은초대 거절
-     *
-     * 공유 박스 초대 요청 리스트 조회 (두 사이드 sent, received)
-     * └── 보낸초대 리스트
-     * └── 받은초대 리스트
-     *
-     */
+    @Operation(summary = "받은 초대 리스트 조회") // 일단 모든 요청상태 조회
+    @GetMapping("/received")
+    public ResponseEntity<ApiResponse<List<InvitationReceivedResponse>>> getBoxInvitationsReceived(
+            @AuthenticationPrincipal Member member
+    ){
+        return ResponseEntity.ok(
+                ApiResponse.success(boxInvitationFacade.getBoxInvitationsReceived(member))
+        );
+    }
+
+    @Operation(summary = "보낸 초대 리스트 조회") // 일단 모든 요청상태 조회
+    @GetMapping("/sent")
+    public ResponseEntity<ApiResponse<List<InvitationSentResponse>>> getBoxInvitationsSent(
+            @AuthenticationPrincipal Member member
+//            @RequestParam (required = true) RequestStatus status
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(boxInvitationFacade.getBoxInvitationsSent(member))
+        );
+    }
 
     @Operation(summary = "박스 초대 보내기")
     @PostMapping("/{boxId}/{memberId}")
@@ -68,28 +74,7 @@ public class BoxInvitationController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
-    @Operation(summary = "보낸 초대 리스트 조회") // 일단 모든 요청상태 조회
-    @GetMapping("/sent")
-    public ResponseEntity<ApiResponse<List<InvitationSentResponse>>> getBoxInvitationsSent(
-            @AuthenticationPrincipal Member member
-//            @RequestParam (required = true) RequestStatus status
-    ) {
-        return ResponseEntity.ok(
-                ApiResponse.success(boxInvitationFacade.getBoxInvitationsSent(member))
-        );
-    }
-
-    @Operation(summary = "받은 초대 리스트 조회") // 일단 모든 요청상태 조회
-    @GetMapping("/received")
-    public ResponseEntity<ApiResponse<List<InvitationReceivedResponse>>> getBoxInvitationsReceived(
-            @AuthenticationPrincipal Member member
-    ){
-        return ResponseEntity.ok(
-                ApiResponse.success(boxInvitationFacade.getBoxInvitationsReceived(member))
-        );
-    }
-
-    @Operation(summary = "보낸 초대 요청 취소하기")
+    @Operation(summary = "보낸 초대 요청 취소")
     @DeleteMapping("{requestId}/cancel")
     public ResponseEntity<ApiResponse<Void>> cancelBoxInvitation(
             @AuthenticationPrincipal Member member,
@@ -99,4 +84,13 @@ public class BoxInvitationController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
+    @Operation(summary = "거절 당한 초대 요청 삭제")
+    @DeleteMapping("{requestId}/delete")
+    public ResponseEntity<ApiResponse<Void>> deleteBoxInvitation(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long requestId
+    ){
+        boxInvitationFacade.deleteBoxInvitation(member, requestId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
 }

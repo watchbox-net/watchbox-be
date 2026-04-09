@@ -18,13 +18,15 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
     /**
      * JPQL 마이 박스 + 공유 박스 통합 조회
      * - 마이 박스: owner = member AND boxType = MY
-     * - 공유 박스: boxMembers에 member 포함 AND boxType = SHARED
-     * - LEFT JOIN FETCH로 공유 박스 멤버 목록 한 번에 로딩
+     * - 공유 박스: EXISTS 서브쿼리로 소속 여부 확인 (WHERE에서 boxMembers 필터링하면 다른 멤버 누락됨)
+     * - LEFT JOIN FETCH로 공유 박스의 전체 멤버 목록 한 번에 로딩
      */
     @Query("SELECT DISTINCT b FROM Box b " +
             "LEFT JOIN FETCH b.boxMembers bm " +
+            "LEFT JOIN FETCH bm.member " +
             "WHERE (b.owner = :member AND b.boxType = 'MY') " +
-            "OR (bm.member = :member AND b.boxType = 'SHARED')")
+            "OR (b.boxType = 'SHARED' AND EXISTS (" +
+            "    SELECT 1 FROM BoxMember bm2 WHERE bm2.box = b AND bm2.member = :member))")
     List<Box> findAllBoxesByMember(@Param("member") Member member);
 
     /*

@@ -12,11 +12,11 @@ import java.time.LocalDate;
 @Entity
 public class PersonDetail {
     @Id
-    private Long tmdbId;  // Movie의 id를 그대로 사용
+    private Long contentId;
 
     @OneToOne
-    @MapsId  // Person의 id를 PK로 사용
-    @JoinColumn(name = "tmdb_id")
+    @MapsId
+    @JoinColumn(name = "content_id")
     private Person person;
 
     @Column(name = "biography", columnDefinition = "text")
