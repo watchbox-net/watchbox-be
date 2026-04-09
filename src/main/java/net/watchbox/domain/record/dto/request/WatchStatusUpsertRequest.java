@@ -11,7 +11,7 @@ import net.watchbox.domain.record.entity.WatchStatus;
 public class WatchStatusUpsertRequest {
     @NotNull
     @Schema(defaultValue = "550")
-    private Long contentId;
+    private Long tmdbId;
 
     @NotNull
     @Schema(defaultValue = "MOVIE")

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
+import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.box.VisibleType;
 
 @Getter
@@ -18,4 +19,8 @@ public class BoxCreateRequest {
 
     @Schema(description = "공개 여부", defaultValue = "PRIVATE")
     private VisibleType visibleType = VisibleType.PRIVATE;
+
+    @NotNull
+    @Schema(description = "박스 타입", defaultValue = "SHARED")
+    private BoxType boxType;
 }

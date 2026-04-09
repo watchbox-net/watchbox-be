@@ -1,7 +1,7 @@
 package net.watchbox.domain.record.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.repository.ContentRecordRepository;

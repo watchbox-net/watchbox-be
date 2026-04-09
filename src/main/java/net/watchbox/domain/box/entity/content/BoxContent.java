@@ -3,8 +3,8 @@ package net.watchbox.domain.box.entity.content;
 import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.box.entity.box.Box;
-import net.watchbox.domain.content.base.entity.MediaType;
-import net.watchbox.domain.content.base.entity.Content;
+import net.watchbox.domain.content.entity.MediaType;
+import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
@@ -23,7 +23,7 @@ public class BoxContent extends BaseTime {
     private Box box;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tmdb_id", nullable = false, unique = false)
+    @JoinColumn(name = "content_id", nullable = false)
     private Content content;
 
     @ManyToOne(fetch = FetchType.LAZY)

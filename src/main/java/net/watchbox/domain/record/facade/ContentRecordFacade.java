@@ -3,11 +3,11 @@ package net.watchbox.domain.record.facade;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.content.base.dto.list.ContentItem;
-import net.watchbox.domain.content.base.dto.list.ContentPageResponse;
-import net.watchbox.domain.content.base.entity.Content;
-import net.watchbox.domain.content.base.mapper.record.ContentRecordMapper;
-import net.watchbox.domain.content.base.service.ContentCommandService;
+import net.watchbox.domain.content.dto.list.ContentItem;
+import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.mapper.record.ContentRecordMapper;
+import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
@@ -46,7 +46,7 @@ public class ContentRecordFacade {
     @Transactional
     public ContentRecordResponse upsertWatchStatus(Member member, WatchStatusUpsertRequest request) {
         // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(),
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(),
                 request.getWatchMediaType().toMediaType());
 
         // ContentRecord 조회 or 생성
@@ -84,7 +84,7 @@ public class ContentRecordFacade {
     @Transactional
     public ContentRecordResponse upsertContentLike(Member member, ContentLikeUpsertRequest request) {
         // Content 조회 or 저장
-        Content content = contentCommandService.getOrSaveContentCascade(request.getContentId(), request.getMediaType());
+        Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(), request.getMediaType());
 
         // ContentRecord 조회 or 생성
         ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);

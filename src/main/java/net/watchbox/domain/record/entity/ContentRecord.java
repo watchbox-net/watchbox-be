@@ -2,8 +2,8 @@ package net.watchbox.domain.record.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.content.base.entity.Content;
-import net.watchbox.domain.content.base.entity.MediaType;
+import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.entity.BaseTime;
 
@@ -24,7 +24,7 @@ public class ContentRecord extends BaseTime {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tmdb_id", nullable = false)
+    @JoinColumn(name = "content_id", nullable = false)
     private Content content;
 
     @Enumerated(EnumType.STRING)

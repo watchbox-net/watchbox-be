@@ -3,7 +3,7 @@ package net.watchbox.global.dev.deprecated.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.content.movie.entity.Movie;
+import net.watchbox.domain.content.sub.movie.entity.Movie;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResultItem;
 import net.watchbox.global.tmdb.util.MovieGenre;
 
@@ -55,13 +55,13 @@ public class MovieResponse {
         }
 
         return MovieResponse.builder()
-                .id(item.getId().longValue())
+                .id(item.getId())
                 .title(item.getTitle())
                 .titleOriginal(item.getOriginalTitle())
                 .posterPath(item.getPosterPath())
                 .popularity(item.getPopularity())
                 .voteAverage(item.getVoteAverage())
-                .voteCount(item.getVoteCount().longValue())
+                .voteCount(item.getVoteCount())
                 .year(year)
                 .genres(genreNames)
                 .build();

@@ -3,7 +3,7 @@ package net.watchbox.global.dev.deprecated.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.content.tv.entity.Tv;
+import net.watchbox.domain.content.sub.tv.entity.Tv;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResultItem;
 import net.watchbox.global.tmdb.util.TvGenre;
 
