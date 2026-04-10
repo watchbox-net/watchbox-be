@@ -33,12 +33,13 @@ public class ContentBoxController {
         ));
     }
 
+    @Operation(summary = "컨텐츠 일괄 추가/삭제")
     @PostMapping
     public ResponseEntity<ApiResponse<ContentBoxUpdateResponse>> updateContentBoxes(
             @AuthenticationPrincipal Member member,
             @PathVariable MediaType mediaType,
             @PathVariable Long tmdbId,
-            ContentBoxDiffRequest request
+            @RequestBody ContentBoxDiffRequest request
     ){
         return ResponseEntity.ok(ApiResponse.success(
                 contentBoxFacade.updateContentBoxes(member, tmdbId, mediaType, request)

@@ -19,8 +19,6 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
 
     Long countByBox(Box box);
 
-    List<BoxContent> findAllByBox(Box box);
-
     boolean existsByBoxAndContent(Box box, Content content);
 
     boolean existsByPublisherAndBoxAndContent(Member publisher, Box box, Content content);
@@ -62,7 +60,10 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             @Param("tmdbId") Long tmdbId,
             @Param("mediaType") MediaType mediaType);
 
-    // 특정 Content가 포함된 박스 ID 목록 조회 (contentId)
-    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.contentId = :contentId")
-    List<Long> findBoxIdsByContentId(@Param("contentId") Long contentId);
+//    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.contentId = :contentId")
+//    List<Long> findBoxIdsByContentId(@Param("contentId") Long contentId);
+
+    // 특정 Content가 포함된 박스 ID 목록 조회
+    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content = :content")
+    List<Long> findBoxIdsByContent(@Param("content") Content content);
 }
