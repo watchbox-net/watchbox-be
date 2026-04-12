@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @ToString
-public class BoxResponse {
+public class BoxItem {
     private Long boxId;
     private String name;
     private String description;
@@ -21,8 +21,8 @@ public class BoxResponse {
     private List<BoxMemberResponse> memberList; // 공유박스에만 존재
 
     // 박스 생성/수정 응답
-    public static BoxResponse from(Box box) {
-        BoxResponse response = new BoxResponse();
+    public static BoxItem from(Box box) {
+        BoxItem response = new BoxItem();
         response.boxId = box.getBoxId();
         response.name = box.getName();
         response.description = box.getDescription();
@@ -32,8 +32,8 @@ public class BoxResponse {
     }
 
     // 박스 페이지 마이/공유 박스 응답
-    public static BoxResponse of(Box box, List<String> previewPosters){
-       BoxResponse response = new BoxResponse();
+    public static BoxItem of(Box box, List<String> previewPosters){
+       BoxItem response = new BoxItem();
        response.boxId = box.getBoxId();
        response.name = box.getName();
        response.description = box.getDescription();

@@ -32,14 +32,14 @@ public class BoxFacade {
     private final BoxContentCommandService  boxContentCommandService;
 
     @Transactional(readOnly = true)
-    public BoxResponse getBox(Member member, Long boxId) {
+    public BoxItem getBox(Member member, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         if(box.getBoxType().equals(BoxType.MY)){
             boxValidator.validateBoxOwner(box, member);
         }else{
             boxValidator.validateBoxMember(box, member);
         }
-        return BoxResponse.from(box);
+        return BoxItem.from(box);
     }
 
     @Transactional(readOnly = true)
@@ -58,14 +58,14 @@ public class BoxFacade {
         .toList();
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(boxList);
 
-        List<BoxResponse> boxResponseList = boxList.stream()
-                .map(box -> BoxResponse.of(box,
+        List<BoxItem> boxItemList = boxList.stream()
+                .map(box -> BoxItem.of(box,
                         posterMap.getOrDefault(box.getBoxId(), Collections.emptyList())))
                 .toList();
 
         return BoxPageResponse.builder()
-                .boxList(boxResponseList)
-                .boxCount(boxResponseList.size())
+                .boxItemList(boxItemList)
+                .totalCount((long) boxItemList.size())
                 .build();
     }
 

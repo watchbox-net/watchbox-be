@@ -24,7 +24,7 @@ public class BoxController {
     @Operation(summary = "박스 단일 조회", description = "박스 생성/수정 후 응답 <br>"
             + "응답에 포스터, 박스멤버 X")
     @GetMapping("/{boxId}")
-    public ResponseEntity<ApiResponse<BoxResponse>> getBox(
+    public ResponseEntity<ApiResponse<BoxItem>> getBox(
             @AuthenticationPrincipal Member member,
             @PathVariable Long boxId
     ) {
