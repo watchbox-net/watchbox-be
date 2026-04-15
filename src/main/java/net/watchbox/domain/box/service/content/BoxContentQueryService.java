@@ -6,6 +6,7 @@ import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
 import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,8 @@ public class BoxContentQueryService { // find로 전부바꾸기
                 ));
     }
 
-    public List<Long> getBoxIdsContainingContent(Content content) {
-        return boxContentRepository.findBoxIdsByContent(content);
+    public List<Long> getBoxIdsContainingContentForMember(Content content, Member member) {
+//        return boxContentRepository.findBoxIdsByContent(content);
+        return boxContentRepository.findBoxIdsByContentForMember(content, member);
     }
 }

@@ -16,7 +16,6 @@ public class MyBoxContentMapper {
         return boxContents.stream()
                 .map(bc -> ContentItem.builder()
                         .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
-                        .boxContentId(bc.getBoxContentId())
                         .memberRecord(null)
                         .build())
                 .toList();
@@ -27,7 +26,6 @@ public class MyBoxContentMapper {
         return boxContents.stream()
                 .map(bc -> ContentItem.builder()
                         .contentSummary(ContentSummaryMapper.fromContent(bc.getContent()))
-                        .boxContentId(bc.getBoxContentId())
                         .memberRecord(MemberRecord.from(recordMap.get(bc.getContent().getContentId())))
                         .build())
                 .toList();
