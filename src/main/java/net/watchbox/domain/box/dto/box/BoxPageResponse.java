@@ -10,6 +10,6 @@ import java.util.List;
 @ToString
 @Builder
 public class BoxPageResponse {
-    private List<BoxResponse> boxList;
-    private int boxCount;
+    private List<BoxItem> boxItemList;
+    private Long totalCount;
 }

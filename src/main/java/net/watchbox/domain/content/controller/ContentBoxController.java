@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ContentBoxController {
     private final ContentBoxFacade contentBoxFacade;
 
-    @Operation(summary = "사용자 모든 박스에 컨텐츠 포함 여부 조회")
+    @Operation(summary = "컨텐츠가 사용자 박스들에 저장되어있는지 유무 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentBoxSheetResponse>> getContentBoxSheet(
             @AuthenticationPrincipal Member member,
@@ -33,13 +33,16 @@ public class ContentBoxController {
         ));
     }
 
+    @Operation(summary = "컨텐츠를 사용자 박스들에 일괄 추가/삭제")
     @PostMapping
     public ResponseEntity<ApiResponse<ContentBoxUpdateResponse>> updateContentBoxes(
             @AuthenticationPrincipal Member member,
             @PathVariable MediaType mediaType,
             @PathVariable Long tmdbId,
-            ContentBoxDiffRequest request
+            @RequestBody ContentBoxDiffRequest request
     ){
-        return null;
+        return ResponseEntity.ok(ApiResponse.success(
+                contentBoxFacade.updateContentBoxes(member, tmdbId, mediaType, request)
+        ));
     }
 }

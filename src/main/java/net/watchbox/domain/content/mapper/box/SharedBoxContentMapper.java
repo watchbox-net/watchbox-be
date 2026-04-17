@@ -22,7 +22,6 @@ public class SharedBoxContentMapper {
                     BoxContent first = group.getFirst();  // 콘텐츠 정보는 첫번째 것 사용
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
-                            .boxContentId(first.getBoxContentId())
                             .memberRecord(null)
                             .publisherSummaryList(null)
                             .build();
@@ -43,7 +42,6 @@ public class SharedBoxContentMapper {
 
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
-                            .boxContentId(first.getBoxContentId())
                             .memberRecord(null)
                             .publisherSummaryList(publisherSummaries)
                             .build();
@@ -64,7 +62,6 @@ public class SharedBoxContentMapper {
 
                     return ContentItem.builder()
                             .contentSummary(ContentSummaryMapper.fromContent(first.getContent()))
-                            .boxContentId(first.getBoxContentId())
                             .memberRecord(MemberRecord.from(recordMap.get(first.getContent().getContentId())))
                             .publisherSummaryList(publisherSummaries)
                             .build();

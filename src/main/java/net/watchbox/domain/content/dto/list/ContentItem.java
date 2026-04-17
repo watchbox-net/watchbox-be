@@ -12,7 +12,9 @@ import java.util.List;
 public class ContentItem {
     private ContentSummary contentSummary;
     private MemberRecord memberRecord;
-    private List<PublisherSummary> publisherSummaryList;
-    private Long boxContentId;
-    private Long contentRecordId;
+
+//    private BoxMeta boxMeta;
+    private List<PublisherSummary> publisherSummaryList; // 공유 박스 컨텐츠 조회시에만 사용
+    private boolean hasAddedInbox; // 박스 포함 유무 (로그인 사용자 기준) | 사용처 - 상세 페이지, 홈화면, 박스에 추가할 컨텐츠 검색 페이지
+//    private Long boxContentId;
 }

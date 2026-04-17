@@ -65,6 +65,8 @@ public class ContentCommandService {
 
             // 2) Content의 하위 엔티티 저장
             saveSubContents(content, mediaType);
+
+            content.markAsSaved();
             return content;
         });
     }
@@ -134,7 +136,6 @@ public class ContentCommandService {
 
         movieRepository.save(movie);
         movieDetailRepository.save(movieDetail);
-        content.markAsSaved();
     }
 
     // TmdbTvSeriesDetailsResponse -> Tv, TvDetail 저장
@@ -185,7 +186,6 @@ public class ContentCommandService {
                 .build();
         tvRepository.save(tv);
         tvDetailRepository.save(tvDetail);
-        content.markAsSaved();
     }
 
     // TmdbPeopleDetailsResponse -> Person, PersonDetail 저장
@@ -220,7 +220,6 @@ public class ContentCommandService {
                 .build();
         personRepository.save(person);
         personDetailRepository.save(personDetail);
-        content.markAsSaved();
     }
 
     public void deleteContentCascade(Long tmdbId) {

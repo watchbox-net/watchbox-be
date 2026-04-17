@@ -26,10 +26,16 @@ public class SearchContentController {
      * 4. Person 검색
      */
 
+    /**
+     * 파라미터 분기
+     * ?contentRecord (내 컨텐츠 기록)
+     * ?hasBoxContent (박스 하나)
+     */
+
     @GetMapping("/multi")
     public ResponseEntity<ApiResponse<ContentPageResponse>> searchMultiList(
             @RequestParam String query,
-            @RequestParam Integer page
+            @RequestParam(defaultValue = "1") Integer page
     ) {
 
         return ResponseEntity.ok(
@@ -40,7 +46,7 @@ public class SearchContentController {
     @GetMapping("/movie")
     public ResponseEntity<ApiResponse<ContentPageResponse>> searchMovieList(
             @RequestParam String query,
-            @RequestParam Integer page
+            @RequestParam(defaultValue = "1") Integer page
     ) {
 
         return ResponseEntity.ok(
@@ -51,7 +57,7 @@ public class SearchContentController {
     @GetMapping("/tv")
     public ResponseEntity<ApiResponse<ContentPageResponse>> searchTvList(
             @RequestParam String query,
-            @RequestParam Integer page
+            @RequestParam(defaultValue = "1") Integer page
     ) {
 
         return ResponseEntity.ok(
@@ -62,7 +68,7 @@ public class SearchContentController {
     @GetMapping("/person")
     public ResponseEntity<ApiResponse<ContentPageResponse>> searchPersonList(
             @RequestParam String query,
-            @RequestParam Integer page
+            @RequestParam(defaultValue = "1") Integer page
     ) {
 
         return ResponseEntity.ok(

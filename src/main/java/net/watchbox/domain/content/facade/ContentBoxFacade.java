@@ -2,10 +2,15 @@ package net.watchbox.domain.content.facade;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.entity.box.Box;
+import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.service.box.BoxService;
+import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.box.service.validation.BoxValidator;
+import net.watchbox.domain.content.dto.box.ContentBoxDiffRequest;
 import net.watchbox.domain.content.dto.box.ContentBoxItem;
 import net.watchbox.domain.content.dto.box.ContentBoxSheetResponse;
+import net.watchbox.domain.content.dto.box.ContentBoxUpdateResponse;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.content.service.ContentQueryService;
@@ -13,11 +18,9 @@ import net.watchbox.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 
 import net.watchbox.domain.content.entity.Content;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +29,10 @@ public class ContentBoxFacade {
     private final ContentCommandService contentCommandService;
     private final BoxService boxService;
     private final BoxContentQueryService boxContentQueryService;
+    private final BoxContentCommandService boxContentCommandService;
+    private final BoxValidator boxValidator;
 
+    @Transactional(readOnly = true)
     public ContentBoxSheetResponse getContentBoxSheet(Member member, Long tmdbId, MediaType mediaType) {
         List<Box> boxList = boxService.getAllBoxesByMember(member);
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(boxList);
@@ -37,7 +43,7 @@ public class ContentBoxFacade {
         */
         Optional<Content> contentOpt = contentQueryService.findByTmdbIdAndMediaType(tmdbId, mediaType);
         List<Long> boxIdsWithContent = contentOpt
-                .map(content -> boxContentQueryService.getBoxIdsContainingContentById(content.getContentId()))
+                .map(content -> boxContentQueryService.getBoxIdsContainingContentForMember(content, member))
                 .orElse(Collections.emptyList());
 
         List<ContentBoxItem> contentBoxItemList = boxList.stream()
@@ -52,5 +58,41 @@ public class ContentBoxFacade {
                 .build();
     }
 
-    // contentbox 넣을때도 content getOrSave 동작
+    @Transactional
+    public ContentBoxUpdateResponse updateContentBoxes(Member member, Long tmdbId, MediaType mediaType, ContentBoxDiffRequest request) {
+        // 1. Content 확보 (DB에 없으면 TMDB에서 가져와 저장)
+        Content content = contentCommandService.getOrSaveContentCascade(tmdbId, mediaType);
+
+        // 2. addBoxIds 처리
+        List<Long> addedBoxIds = new ArrayList<>();
+        for (Long boxId : request.getAddBoxIds()) {
+            Box box = boxService.getByBoxIdOrElseThrow(boxId);
+            boxValidator.validateBoxContentAdder(box, member);       // 권한 검증
+            if (boxValidator.contentExistsInBox(box, content)) {     // 멱등성: 이미 있으면 skip
+                continue;
+            }
+            boxContentCommandService.addContentToBox(member, box, content);
+            addedBoxIds.add(boxId);
+        }
+
+        // 3. removeBoxIds 처리
+        List<Long> removedBoxIds = new ArrayList<>();
+        for (Long boxId : request.getRemoveBoxIds()) {
+            Box box = boxService.getByBoxIdOrElseThrow(boxId);
+            BoxContent boxContent = boxContentQueryService.getByBoxAndContentOrElseNull(box, content);
+            if (boxContent == null) continue;
+            boxValidator.validateBoxContentRemover(member, boxContent);  // 본인이 추가한 것만 삭제
+            boxContentCommandService.deleteContentFromBox(boxContent);
+            removedBoxIds.add(boxId);
+        }
+
+        // 4. 응답
+        return ContentBoxUpdateResponse.builder()
+                .memberId(member.getMemberId())
+                .contentId(content.getContentId())
+                .addedBoxIds(addedBoxIds)
+                .removedBoxIds(removedBoxIds)
+                .build();
+    }
+
 }

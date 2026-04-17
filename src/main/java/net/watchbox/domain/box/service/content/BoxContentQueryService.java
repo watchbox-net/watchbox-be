@@ -5,7 +5,8 @@ import net.watchbox.domain.box.repository.content.BoxPosterProjection;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
-import net.watchbox.domain.content.entity.MediaType;
+import net.watchbox.domain.content.entity.Content;
+import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,11 @@ public class BoxContentQueryService { // find로 전부바꾸기
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_CONTENT_NOT_FOUND, boxContentId));
     }
 
-
-    // 여러개의 공유 박스 ID로 공유 박스 컨텐츠 조회
-    public List<BoxContent> getSharedBoxContentsByIds(List<Long> sbcIds) {
-        return boxContentRepository.findAllById(sbcIds);
+    public BoxContent getByBoxAndContentOrElseNull(Box box, Content content) {
+        return boxContentRepository.findByBoxAndContent(box, content)
+                .orElse(null);
     }
+
 
     // BoxContent + Content
     public List<BoxContent> getMyBoxContentAllWithSubContent(Box box) {
@@ -54,11 +55,8 @@ public class BoxContentQueryService { // find로 전부바꾸기
                 ));
     }
 
-    public List<Long> getBoxIdsContainingContent(Long tmdbId, MediaType mediaType) {
-        return boxContentRepository.findBoxIdsByContentTmdbIdAndMediaType(tmdbId, mediaType);
-    }
-
-    public List<Long> getBoxIdsContainingContentById(Long contentId) {
-        return boxContentRepository.findBoxIdsByContentId(contentId);
+    public List<Long> getBoxIdsContainingContentForMember(Content content, Member member) {
+//        return boxContentRepository.findBoxIdsByContent(content);
+        return boxContentRepository.findBoxIdsByContentForMember(content, member);
     }
 }

@@ -13,7 +13,6 @@ public class ContentRecordMapper {
                 .map(record -> ContentItem.builder()
                         .contentSummary(ContentSummaryMapper.fromContent(record.getContent()))
                         .memberRecord(MemberRecord.from(record))
-                        .contentRecordId(record.getContentRecordId())
                         .build()
                 )
                 .toList();

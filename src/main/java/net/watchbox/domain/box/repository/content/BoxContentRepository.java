@@ -19,8 +19,6 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
 
     Long countByBox(Box box);
 
-    List<BoxContent> findAllByBox(Box box);
-
     boolean existsByBoxAndContent(Box box, Content content);
 
     boolean existsByPublisherAndBoxAndContent(Member publisher, Box box, Content content);
@@ -54,7 +52,7 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             "ORDER BY bc.box.boxId, bc.createdAt DESC")
     List<BoxPosterProjection> findRecentPostersByBoxes(@Param("boxes") List<Box> boxes);
 
-    // 특정 Content가 포함된 박스 ID 목록 조회 (tmdbId + mediaType)
+    // 특정 Content가 포함된 모든 박스 ID 목록 조회 (tmdbId + mediaType)
     @Query("SELECT bc.box.boxId FROM BoxContent bc " +
             "WHERE bc.content.tmdbId = :tmdbId " +
             "AND bc.content.mediaType = :mediaType")
@@ -62,7 +60,20 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             @Param("tmdbId") Long tmdbId,
             @Param("mediaType") MediaType mediaType);
 
-    // 특정 Content가 포함된 박스 ID 목록 조회 (contentId)
-    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.contentId = :contentId")
-    List<Long> findBoxIdsByContentId(@Param("contentId") Long contentId);
+//    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content.contentId = :contentId")
+//    List<Long> findBoxIdsByContentId(@Param("contentId") Long contentId);
+
+//    @Query("SELECT bc.box.boxId FROM BoxContent bc WHERE bc.content = :content")
+//    List<Long> findBoxIdsByContent(@Param("content") Content content);
+
+    // 특정 Content가 포함된 Member의 모든 박스 ID 목록 조회
+    // - 박스 컨텐츠에 저장되었다는 것은 Content가 저장되어 있는 상태이므로 tmdbId가 아닌 contentId로 조회
+    // - 공유 박스에서는 로그인한 유저가 추가한 컨텐츠만 포함으로 간주
+    @Query("SELECT bc.box.boxId FROM BoxContent bc " +
+            "WHERE bc.content = :content " +
+            "AND (bc.box.boxType = 'MY' " +
+            "     OR (bc.box.boxType = 'SHARED' AND bc.publisher = :member))")
+    List<Long> findBoxIdsByContentForMember(
+            @Param("content") Content content,
+            @Param("member") Member member);
 }
