@@ -34,5 +34,6 @@ public class ContentSummary { // 하나의 응답 클래스에 모든 변수 포
 
     // 인물 전용
     private String knownForDepartment;
+    private List<String> knownForList;
     private String profilePath;
 }
