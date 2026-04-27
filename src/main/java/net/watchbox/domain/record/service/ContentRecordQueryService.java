@@ -6,8 +6,9 @@ import net.watchbox.domain.content.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.dto.response.ContentRecordResponse;
+import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.repository.ContentRecordQueryRepository;
 import net.watchbox.domain.record.repository.ContentRecordRepository;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
@@ -22,6 +23,11 @@ import java.util.stream.Collectors;
 @Observed
 public class ContentRecordQueryService {
     private final ContentRecordRepository contentRecordRepository;
+    private final ContentRecordQueryRepository contentRecordQueryRepository;
+
+    public List<ContentRecord> getMyContentRecordList(Member member, ContentRecordQueryRequest request) {
+        return contentRecordQueryRepository.findMyContentRecordList(member, request.getSort(), request.getWatchRecordFilter());
+    }
 
     public ContentRecord getByContentRecordId(Long contentRecordId) {
         return contentRecordRepository.findById(contentRecordId)
@@ -57,11 +63,11 @@ public class ContentRecordQueryService {
         return contentRecordRepository.findLikedRecordsWithContent(member, true);
     }
 
-    public ContentRecordResponse getRecordInfo(Long recordId) {
-        ContentRecord contentRecord = contentRecordRepository.findById(recordId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
-        return ContentRecordResponse.from(contentRecord);
-    }
+//    public ContentRecordResponse getRecordInfo(Long recordId) {
+//        ContentRecord contentRecord = contentRecordRepository.findById(recordId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_RECORD_NOT_FOUND));
+//        return ContentRecordResponse.from(contentRecord);
+//    }
 
     // 로그인 사용자의 ContentRecord를 각 컨텐츠에 후처리로 병합
     public List<ContentItem> attachMemberRecord(List<ContentItem> items, Member member, MediaType mediaType) {

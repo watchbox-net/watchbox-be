@@ -10,6 +10,7 @@ import net.watchbox.domain.content.mapper.record.ContentRecordMapper;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
+import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -28,6 +29,13 @@ public class ContentRecordFacade {
     private final ContentRecordQueryService contentRecordQueryService;
     private final ContentRecordCommandService contentRecordCommandService;
     private final ContentCommandService contentCommandService;
+
+    @Transactional(readOnly = true)
+    public ContentPageResponse getMyRecordedContentPage(Member member, ContentRecordQueryRequest request) {
+        List<ContentRecord> contentRecordList = contentRecordQueryService.getMyContentRecordList(member, request);
+
+        return null;
+    }
 
     @Transactional(readOnly = true)
     public ContentPageResponse getWatchStatusList(Member member) {
@@ -106,5 +114,6 @@ public class ContentRecordFacade {
         contentRecordCommandService.deleteLiked(contentRecord);
 
     }
+
 
 }
