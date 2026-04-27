@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/records/status")
-@Tag(name = "WatchStatus", description = "시청 상태 API")
+@Tag(name = "ContentRecord - WatchStatus", description = "시청 상태 API")
 @Observed
 public class WatchStatusController {
     private final ContentRecordFacade contentRecordFacade;

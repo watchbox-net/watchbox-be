@@ -26,7 +26,7 @@ import java.util.List;
 @Observed
 public class ContentRecordFacade {
     private final ContentRecordQueryService contentRecordQueryService;
-    private final ContentRecordCommandService  contentRecordCommandService;
+    private final ContentRecordCommandService contentRecordCommandService;
     private final ContentCommandService contentCommandService;
 
     @Transactional(readOnly = true)

@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class DiscoverController {
     private final DiscoverFacade discoverFacade;
 
+//    @GetMapping("/home")
+
+
     @GetMapping("/popular/movies")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularMovies(
             @RequestParam(defaultValue = "1") Integer page,

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/records/likes")
-@Tag(name = "Liked", description = "좋아요 API")
+@Tag(name = "ContentRecord - Liked", description = "좋아요 API")
 public class LikedController {
     private final ContentRecordFacade contentRecordFacade;
     /**
