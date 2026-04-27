@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
@@ -39,7 +40,15 @@ public class BoxContentFacade {
     private final ContentRecordQueryService contentRecordQueryService;
 
     @Transactional(readOnly = true)
-    public ContentPageResponse getBoxContentPage(Member member, Long boxId) {
+    public ContentPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+
+
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public ContentPageResponse getBoxContentPageDeprecated(Member member, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 1. BoxContent 리스트 조회 (SubContent fetch join)
@@ -117,4 +126,6 @@ public class BoxContentFacade {
             log.info("Deleted SharedBoxContent with ID: {} from SharedBox ID: {}", boxContentId, boxId);
         }
     }
+
+
 }

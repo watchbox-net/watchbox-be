@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class ContentRecordController {
     private final ContentRecordFacade contentRecordFacade;
 
+    // ToDo: 무한스크롤
     @Operation(summary = "내 시청 기록 조회", description = "정렬 & 필터 & 무한스크롤 시청 기록 페이지 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentPageResponse>> getMyRecordedContentPage(
