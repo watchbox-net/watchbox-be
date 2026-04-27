@@ -1,6 +1,8 @@
 package net.watchbox.domain.box.service.content;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.repository.content.BoxContentQueryRepository;
 import net.watchbox.domain.box.repository.content.BoxPosterProjection;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
@@ -18,6 +20,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoxContentQueryService { // find로 전부바꾸기
     private final BoxContentRepository boxContentRepository;
+    private final BoxContentQueryRepository boxContentQueryRepository;
+
+    // BoxContent 동적 조회 (필터 + 정렬)
+    public List<BoxContent> getBoxContentList(Box box, Member member, BoxContentRecordQueryRequest request) {
+        return boxContentQueryRepository.findBoxContentList(box, member, request);
+    }
 
     public BoxContent getByBoxContentId(Long boxContentId) {
         return boxContentRepository.findById(boxContentId)
