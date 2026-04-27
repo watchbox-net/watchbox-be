@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
 import net.watchbox.domain.box.facade.content.BoxContentFacade;
-import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -25,16 +24,31 @@ import org.springframework.web.bind.annotation.*;
 public class BoxContentController {
     private final BoxContentFacade boxContentFacade;
 
-    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 최근순 (createdAt desc)")
-    @GetMapping
-    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
-            @AuthenticationPrincipal Member member,
-            @PathVariable("boxId") Long boxId
-    ) {
-        return ResponseEntity.ok(
-                ApiResponse.success(boxContentFacade.getBoxContentPage(member, boxId))
-        );
-    }
+//    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 최근순 (createdAt desc)")
+//    @GetMapping
+//    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
+//            @AuthenticationPrincipal Member member,
+//            @ParameterObject
+//            @ModelAttribute BoxContentRecordQueryRequest  request,
+//            @PathVariable("boxId") Long boxId,
+//            @RequestParam
+//
+//    ) {
+//        return ResponseEntity.ok(
+//                ApiResponse.success(boxContentFacade.getBoxContentPage(member, boxId))
+//        );
+//    }
+
+//    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 최근순 (createdAt desc)")
+//    @GetMapping
+//    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
+//            @AuthenticationPrincipal Member member,
+//            @PathVariable("boxId") Long boxId
+//    ) {
+//        return ResponseEntity.ok(
+//                ApiResponse.success(boxContentFacade.getBoxContentPage(member, boxId))
+//        );
+//    }
 
     @Operation(summary = "박스에 컨텐츠 추가")
     @ApiResponses(value = {

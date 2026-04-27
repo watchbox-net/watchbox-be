@@ -26,7 +26,7 @@ public class ContentRecordQueryService {
     private final ContentRecordQueryRepository contentRecordQueryRepository;
 
     public List<ContentRecord> getMyContentRecordList(Member member, ContentRecordQueryRequest request) {
-        return contentRecordQueryRepository.findMyContentRecordList(member, request.getSort(), request.getWatchRecordFilter());
+        return contentRecordQueryRepository.findMyContentRecordList(member, request);
     }
 
     public ContentRecord getByContentRecordId(Long contentRecordId) {

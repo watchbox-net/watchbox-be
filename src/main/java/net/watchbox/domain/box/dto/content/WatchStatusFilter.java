@@ -1,4 +1,4 @@
-package net.watchbox.domain.record.dto.request;
+package net.watchbox.domain.box.dto.content;
 
 import net.watchbox.domain.record.entity.WatchStatus;
 
