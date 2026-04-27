@@ -33,8 +33,12 @@ public class ContentRecordFacade {
     @Transactional(readOnly = true)
     public ContentPageResponse getMyRecordedContentPage(Member member, ContentRecordQueryRequest request) {
         List<ContentRecord> contentRecordList = contentRecordQueryService.getMyContentRecordList(member, request);
+        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecordList);
 
-        return null;
+        return ContentPageResponse.builder()
+                .contentItemList(contentItemList)
+                .totalCount((long) contentItemList.size())
+                .build();
     }
 
     @Transactional(readOnly = true)

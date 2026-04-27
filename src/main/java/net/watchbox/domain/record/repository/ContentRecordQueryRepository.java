@@ -24,6 +24,7 @@ public class ContentRecordQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<ContentRecord> findMyContentRecordList(Member member, SortOrder sortOrder, WatchRecordFilter watchRecordFilter) {
+        System.out.println("[DEBUG] sortOrder = " + sortOrder);
         QContentRecord contentRecord = QContentRecord.contentRecord;
         QContent content = QContent.content;
         QMovie movie = QMovie.movie;

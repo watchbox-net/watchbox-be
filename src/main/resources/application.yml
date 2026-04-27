@@ -38,6 +38,10 @@ spring:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth?prompt=select_account
 
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
+
 tmdb:
   api:
     key: ${TMDB_API_KEY}

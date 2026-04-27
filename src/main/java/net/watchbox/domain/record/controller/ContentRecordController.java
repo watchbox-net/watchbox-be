@@ -7,6 +7,7 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.facade.ContentRecordFacade;
 import net.watchbox.global.dto.response.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class ContentRecordController {
     @GetMapping
     public ResponseEntity<ApiResponse<ContentPageResponse>> getMyRecordedContentPage(
             @AuthenticationPrincipal Member member,
+            @ParameterObject
             @ModelAttribute ContentRecordQueryRequest request
 //            @Parameter(description = "정렬 기준", example = "RECENT_SAVED, RECENT_WATCHED, OLDEST_SAVED, OLDEST_WATCHED")
 //            @RequestParam(defaultValue = "RECENT_SAVED") SortOrder sort,
