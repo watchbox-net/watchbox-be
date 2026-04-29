@@ -1,7 +1,6 @@
 package net.watchbox.domain.content.service;
 
 import io.micrometer.observation.annotation.Observed;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,6 @@ import java.time.LocalDate;
 @Observed
 public class ContentCommandService {
     private final ContentRepository contentRepository;
-    private final EntityManager entityManager;
 
     private final MovieRepository movieRepository;
     private final MovieDetailRepository movieDetailRepository;

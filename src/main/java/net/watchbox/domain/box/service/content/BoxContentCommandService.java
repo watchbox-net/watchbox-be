@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class BoxContentCommandService {
     private final BoxContentRepository boxContentRepository;
 
-    // 박스 컨텐츠 추가
+    // 박스에 컨텐츠 추가
     public BoxContent addContentToBox(Member member, Box box, Content content) {
         BoxContent boxContent = boxContentRepository.save(BoxContent.builder()
                 .box(box)
@@ -27,25 +27,8 @@ public class BoxContentCommandService {
         return boxContent;
     }
 
-    // 마이 박스 컨텍츠 삭제
+    // 박스 컨텍츠 삭제
     public void deleteContentFromBox(BoxContent boxContent) {
-        boxContentRepository.delete(boxContent);
-    }
-
-    // 공유 박스에 컨텐츠 추가
-//    public BoxContent addContentToSharedBox(Member member, Box box, Content content) {
-//        BoxContent boxContent = BoxContent.builder()
-//                .box(box)
-//                .addedBy(member)
-//                .content(content)
-//                .build();
-//        boxContentRepository.save(boxContent);
-//    }
-
-
-
-    // 공유 박스 컨텐츠 삭제
-    public void deleteContentFromSharedBox(Member member, BoxContent boxContent) {
         boxContentRepository.delete(boxContent);
     }
 
