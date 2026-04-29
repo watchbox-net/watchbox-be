@@ -65,7 +65,6 @@ public class BoxContentQueryService { // find로 전부바꾸기
 
     // Content가 포함된 Member의 모든 박스 ID 목록 조회
     public List<Long> getBoxIdsContainingContentForMember(Member member, Content content) {
-//        return boxContentRepository.findBoxIdsByContent(content);
         return boxContentRepository.findBoxIdsByContentForMember(content, member);
     }
 
