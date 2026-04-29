@@ -63,8 +63,14 @@ public class BoxContentQueryService { // find로 전부바꾸기
                 ));
     }
 
-    public List<Long> getBoxIdsContainingContentForMember(Content content, Member member) {
+    // Content가 포함된 Member의 모든 박스 ID 목록 조회
+    public List<Long> getBoxIdsContainingContentForMember(Member member, Content content) {
 //        return boxContentRepository.findBoxIdsByContent(content);
         return boxContentRepository.findBoxIdsByContentForMember(content, member);
+    }
+
+    // Content가 멤버의 박스에 있는지 유무
+    public boolean existsBoxContainingContentForMember(Member member, Content content) {
+        return boxContentRepository.existsByPublisherAndContent(member, content);
     }
 }

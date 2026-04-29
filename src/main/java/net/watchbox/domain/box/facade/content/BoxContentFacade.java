@@ -39,6 +39,7 @@ public class BoxContentFacade {
     private final BoxValidator boxValidator;
     private final ContentRecordQueryService contentRecordQueryService;
 
+    // ToDo: 최적화 대상
     @Transactional(readOnly = true)
     public ContentPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
         // 1. 박스 조회 + 멤버 권한 검증

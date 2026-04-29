@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.dto.list.ContentItem;
+import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
@@ -42,9 +43,9 @@ public class ContentRecordQueryService {
         return contentRecordRepository.findByMemberAndContentIdIn(member, contentIds);
     }
 
-    public ContentRecord getByMemberIdAndTmdbIdOrElseNull(Long memberId, Long tmdbId, MediaType mediaType) {
-        return contentRecordRepository.findByMember_MemberIdAndContent_TmdbIdAndContent_MediaType(memberId, tmdbId, mediaType)
-                .orElse(null);
+    public ContentRecord getByMemberAndContent(Member member, Content content){
+        return contentRecordRepository.findByMemberAndContent(member, content)
+                .orElse(null); // 의도적 Null 반환 - 없을 경우 프론트에서 배당 안함
     }
 
     public long countLikedContentsByMember(Member member) {

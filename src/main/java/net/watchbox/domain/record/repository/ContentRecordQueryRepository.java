@@ -58,11 +58,11 @@ public class ContentRecordQueryRepository {
 
     private void applyWatchMediaTypeFetchJoin(JPAQuery<ContentRecord> query, QContent content, WatchMediaTypeFilter filter) {
         switch (filter) {
-            case MOVIE -> query.leftJoin(content.movie, QMovie.movie).fetchJoin();
-            case TV -> query.leftJoin(content.tv, QTv.tv).fetchJoin();
             case MOVIE_TV -> query
                     .leftJoin(content.movie, QMovie.movie).fetchJoin()
                     .leftJoin(content.tv, QTv.tv).fetchJoin();
+            case MOVIE -> query.leftJoin(content.movie, QMovie.movie).fetchJoin();
+            case TV -> query.leftJoin(content.tv, QTv.tv).fetchJoin();
         }
     }
 

@@ -71,14 +71,17 @@ public enum ErrorCode {
     /**
      * ContentRecord
      */
-    // ContentRecord 오류
     CONTENT_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "ContentRecord-404", "ContentRecord를 찾을 수 없습니다."),
     NOT_RECORD_MEMBER(HttpStatus.FORBIDDEN, "ContentRecord-403", "기록한 멤버가 아닙니다."),
 
     /**
-     * 공통
+     * 프론트엔드 오류
      */
-    PARAMETER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "PARAMETER-400", "잘못된 파라미터 입력입니다.");
+    PARAMETER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "FE-PARAMETER-400", "잘못된 파라미터 입력입니다.");
+
+    /**
+     * 백엔드 오류
+     */
 
 
     private final HttpStatus httpStatus;

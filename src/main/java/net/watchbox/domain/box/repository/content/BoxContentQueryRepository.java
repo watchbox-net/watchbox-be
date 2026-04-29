@@ -40,7 +40,7 @@ public class BoxContentQueryRepository {
         WatchStatusFilter watchStatusFilter = request.getWatchStatusFilter();
 
         // 정렬 (PERSON 모드에서 year 정렬 들어오면 RECENT_SAVED로 fallback)
-        SortOrder resolvedSort = resolveSortForMediaType(request.getSort(), mediaTypeFilter);
+        SortOrder resolvedSort = resolveSortForPerson(request.getSort(), mediaTypeFilter);
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForBoxContent(resolvedSort);
 
         // 필터
@@ -50,26 +50,27 @@ public class BoxContentQueryRepository {
                 .and(watchStatusCondition(watchStatusFilter));
 
         // 메인 쿼리
-        JPAQuery<BoxContent> query = jpaQueryFactory
+        JPAQuery<BoxContent> boxContentQuery = jpaQueryFactory
                 .selectFrom(boxContent)
                 .leftJoin(boxContent.content, content).fetchJoin()
                 .leftJoin(boxContent.publisher).fetchJoin();
 
         // MediaType 필터에 따라 SubContent fetch join 분기
-        applyMediaTypeFetchJoin(query, content, mediaTypeFilter);
+        applyMediaTypeFetchJoin(boxContentQuery, content, mediaTypeFilter);
 
         // ContentRecord LEFT JOIN (member 조건 ON 절) - WatchStatus 필터링용 (fetchJoin X)
-        query.leftJoin(contentRecord)
+        boxContentQuery.leftJoin(contentRecord)
                 .on(contentRecord.content.eq(content)
                         .and(contentRecord.member.eq(member)));
 
-        return query
+        return boxContentQuery
                 .where(conditions)
                 .orderBy(orderSpecifiers)
                 .fetch();
     }
 
-    private SortOrder resolveSortForMediaType(SortOrder sortOrder, ContentMediaTypeFilter filter) {
+    // 프론트에서 제약할거라 없어도 되긴함
+    private SortOrder resolveSortForPerson(SortOrder sortOrder, ContentMediaTypeFilter filter) {
         if (filter == ContentMediaTypeFilter.PERSON
                 && (sortOrder == SortOrder.RECENT_YEAR || sortOrder == SortOrder.OLDEST_YEAR)) {
             return SortOrder.RECENT_SAVED;
@@ -79,12 +80,12 @@ public class BoxContentQueryRepository {
 
     private void applyMediaTypeFetchJoin(JPAQuery<BoxContent> query, QContent content, ContentMediaTypeFilter filter) {
         switch (filter) {
-            case MOVIE -> query.leftJoin(content.movie, QMovie.movie).fetchJoin();
-            case TV -> query.leftJoin(content.tv, QTv.tv).fetchJoin();
-            case PERSON -> query.leftJoin(content.person, QPerson.person).fetchJoin();
             case MOVIE_TV -> query
                     .leftJoin(content.movie, QMovie.movie).fetchJoin()
                     .leftJoin(content.tv, QTv.tv).fetchJoin();
+            case MOVIE -> query.leftJoin(content.movie, QMovie.movie).fetchJoin();
+            case TV -> query.leftJoin(content.tv, QTv.tv).fetchJoin();
+            case PERSON -> query.leftJoin(content.person, QPerson.person).fetchJoin();
         }
     }
 
