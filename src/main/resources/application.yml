@@ -6,12 +6,13 @@ spring:
     name: watchbox-local
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         highlight_sql: true
+        generate_statistics: true
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -38,9 +39,9 @@ spring:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth?prompt=select_account
 
-logging:
-  level:
-    org.hibernate.orm.jdbc.bind: trace
+#logging:
+#  level:
+#    org.hibernate.orm.jdbc.bind: trace
 
 tmdb:
   api:

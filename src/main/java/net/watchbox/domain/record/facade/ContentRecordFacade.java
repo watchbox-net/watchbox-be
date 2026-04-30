@@ -32,6 +32,9 @@ public class ContentRecordFacade {
 
     @Transactional(readOnly = true)
     public ContentPageResponse getMyRecordedContentPage(Member member, ContentRecordQueryRequest request) {
+//        log.info("WatchMediaTypeFilter: {}, Sort: {}, WatchRecordFilter: {}",
+//                request.getWatchMediaTypeFilter(), request.getSort(), request.getWatchRecordFilter());
+
         List<ContentRecord> contentRecordList = contentRecordQueryService.getMyContentRecordList(member, request);
         List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecordList);
 
@@ -41,19 +44,18 @@ public class ContentRecordFacade {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public ContentPageResponse getWatchStatusList(Member member) {
-        log.debug("Login Member: {}", member.getMemberId());
-        // 시청 기록이 등록된 ContentRecord 리스트 조회
-        List<ContentRecord> contentRecords = contentRecordQueryService.getWatchRecordsWithContent(member);
-
-        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
-        return ContentPageResponse.builder()
-                .contentItemList(contentItemList)
-                .totalCount((long) contentItemList.size())
-                .build();
-
-    }
+//    @Transactional(readOnly = true)
+//    public ContentPageResponse getWatchStatusList(Member member) {
+//        log.debug("Login Member: {}", member.getMemberId());
+//        // 시청 기록이 등록된 ContentRecord 리스트 조회
+//        List<ContentRecord> contentRecords = contentRecordQueryService.getWatchRecordsWithContent(member);
+//
+//        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
+//        return ContentPageResponse.builder()
+//                .contentItemList(contentItemList)
+//                .totalCount((long) contentItemList.size())
+//                .build();
+//    }
 
     @Transactional
     public ContentRecordResponse upsertWatchStatus(Member member, WatchStatusUpsertRequest request) {

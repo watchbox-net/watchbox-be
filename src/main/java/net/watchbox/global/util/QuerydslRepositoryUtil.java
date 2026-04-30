@@ -4,8 +4,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.NumberExpression;
 import net.watchbox.domain.box.entity.content.QBoxContent;
-import net.watchbox.domain.content.sub.movie.entity.QMovie;
-import net.watchbox.domain.content.sub.tv.entity.QTv;
 import net.watchbox.domain.record.entity.QContentRecord;
 import net.watchbox.global.dto.request.SortOrder;
 
@@ -16,12 +14,16 @@ public class QuerydslRepositoryUtil {
     private QuerydslRepositoryUtil() {
     }
 
-    public static OrderSpecifier<?>[] getOrderSpecifiersBySort(SortOrder sortOrder) {
-        return buildOrderSpecifiers(sortOrder, QContentRecord.contentRecord.createdAt);
+    public static OrderSpecifier<?>[] getOrderSpecifiersBySort(
+            SortOrder sortOrder, NumberExpression<Integer> yearExpr
+    ) {
+        return buildOrderSpecifiers(sortOrder, QContentRecord.contentRecord.createdAt, yearExpr);
     }
 
-    public static OrderSpecifier<?>[] getOrderSpecifiersForBoxContent(SortOrder sortOrder) {
-        return buildOrderSpecifiers(sortOrder, QBoxContent.boxContent.createdAt);
+    public static OrderSpecifier<?>[] getOrderSpecifiersForBoxContent(
+            SortOrder sortOrder, NumberExpression<Integer> yearExpr
+    ) {
+        return buildOrderSpecifiers(sortOrder, QBoxContent.boxContent.createdAt, yearExpr);
     }
 
     /**
@@ -29,14 +31,14 @@ public class QuerydslRepositoryUtil {
      *
      * RECENT_YEAR, OLDEST_YEAR 사용 시 호출 측에서
      * 대상 엔티티 -> QContent -> QMovie / QTv 의 LEFT JOIN 이 선행되어야 함.
+     * yearExpr 은 호출 측의 mediaType 필터에 맞춰 join 된 Q엔티티만 참조하도록 구성해야 함
+     * (join 안 된 Q엔티티를 참조하면 implicit cross join 으로 결과가 비어버림).
      */
     private static OrderSpecifier<?>[] buildOrderSpecifiers(
             SortOrder sortOrder,
-            DateTimePath<LocalDateTime> createdAt
+            DateTimePath<LocalDateTime> createdAt,
+            NumberExpression<Integer> yearExpr
     ) {
-        NumberExpression<Integer> yearExpr =
-                QMovie.movie.year.coalesce(QTv.tv.year);
-
         return switch (sortOrder) {
             case RECENT_SAVED -> new OrderSpecifier<?>[]{
                     createdAt.desc()

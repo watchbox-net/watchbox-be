@@ -3,6 +3,7 @@ package net.watchbox.domain.box.repository.content;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,9 @@ public class BoxContentQueryRepository {
 
         // 정렬 (PERSON 모드에서 year 정렬 들어오면 RECENT_SAVED로 fallback)
         SortOrder resolvedSort = resolveSortForPerson(request.getSort(), mediaTypeFilter);
-        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForBoxContent(resolvedSort);
+        // year 정렬용 expression - 필터에 따라 join 된 Q엔티티만 참조해야 함
+        NumberExpression<Integer> yearExpr = yearExprFor(mediaTypeFilter);
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForBoxContent(resolvedSort, yearExpr);
 
         // 필터
         BooleanBuilder conditions = new BooleanBuilder()
@@ -67,6 +70,17 @@ public class BoxContentQueryRepository {
                 .where(conditions)
                 .orderBy(orderSpecifiers)
                 .fetch();
+    }
+
+    // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 year expression 반환
+    // PERSON 은 year 정렬 안 들어오므로 (resolveSortForPerson 에서 fallback) 더미로 movie.year 반환
+    private NumberExpression<Integer> yearExprFor(ContentMediaTypeFilter filter) {
+        return switch (filter) {
+            case MOVIE -> QMovie.movie.year;
+            case TV -> QTv.tv.year;
+            case MOVIE_TV -> QMovie.movie.year.coalesce(QTv.tv.year);
+            case PERSON -> QMovie.movie.year; // 사용 안 됨 (RECENT_SAVED 로 fallback)
+        };
     }
 
     // 프론트에서 제약할거라 없어도 되긴함

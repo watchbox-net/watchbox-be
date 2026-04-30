@@ -3,6 +3,7 @@ package net.watchbox.domain.record.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +30,13 @@ public class ContentRecordQueryRepository {
     public List<ContentRecord> findMyContentRecordList(Member member, ContentRecordQueryRequest request) {
         QContentRecord contentRecord = QContentRecord.contentRecord;
         QContent content = QContent.content;
-        QMovie movie = QMovie.movie;
-        QTv tv = QTv.tv;
-
-        // 정렬
-        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersBySort(request.getSort());
 
         // 필터
         WatchMediaTypeFilter watchMediaTypeFilter = request.getWatchMediaTypeFilter();
+
+        // 정렬 - year expression 은 필터에 따라 join 된 Q엔티티만 참조해야 함
+        NumberExpression<Integer> yearExpr = yearExprFor(watchMediaTypeFilter);
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersBySort(request.getSort(), yearExpr);
         BooleanBuilder conditions = new BooleanBuilder()
                 .and(contentRecord.member.eq(member))
                 .and(watchMediaTypeFilterCondition(watchMediaTypeFilter))
@@ -54,6 +54,15 @@ public class ContentRecordQueryRepository {
                 .where(conditions)
                 .orderBy(orderSpecifiers)
                 .fetch();
+    }
+
+    // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 year expression 반환
+    private NumberExpression<Integer> yearExprFor(WatchMediaTypeFilter filter) {
+        return switch (filter) {
+            case MOVIE -> QMovie.movie.year;
+            case TV -> QTv.tv.year;
+            case MOVIE_TV -> QMovie.movie.year.coalesce(QTv.tv.year);
+        };
     }
 
     private void applyWatchMediaTypeFetchJoin(JPAQuery<ContentRecord> query, QContent content, WatchMediaTypeFilter filter) {
