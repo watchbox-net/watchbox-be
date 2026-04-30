@@ -63,4 +63,15 @@ public class OauthAccountService {
                 .name(name)
                 .build());
     }
+
+    @Transactional
+    public OauthAccount createSampleAccount(Long id, String name, String email) {
+        return oauthAccountRepository.save(OauthAccount.builder()
+                .oauthProvider(OauthProvider.GOOGLE)
+                .accountId(id)
+                .email(email)
+                .oauthId("sample_id_" + id.toString())
+                .name(name)
+                .build());
+    }
 }
