@@ -20,6 +20,7 @@ public class ContentRecordCommandService {
                         ContentRecord.builder()
                                 .member(member)
                                 .content(content)
+                                .mediaType(content.getMediaType())
                                 .build()
                 ));
     }

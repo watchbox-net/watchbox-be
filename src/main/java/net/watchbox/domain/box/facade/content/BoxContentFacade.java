@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
@@ -38,8 +39,48 @@ public class BoxContentFacade {
     private final BoxValidator boxValidator;
     private final ContentRecordQueryService contentRecordQueryService;
 
+    // ToDo: 최적화 대상
     @Transactional(readOnly = true)
-    public ContentPageResponse getBoxContentPage(Member member, Long boxId) {
+    public ContentPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
+        log.info("ContentMediaTypeFilter: {}, Sort: {}, WatchStatusFilter: {}",
+                request.getContentMediaTypeFilter(), request.getSort(), request.getWatchStatusFilter());
+
+        // 1. 박스 조회 + 멤버 권한 검증
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+        boxValidator.validateBoxMember(box, member);
+
+        // 2. BoxContent 조회 (필터 + 정렬 적용, ContentRecord LEFT JOIN으로 watchStatus 필터링)
+        List<BoxContent> boxContents = boxContentQueryService.getBoxContentList(box, member, request);
+
+        if (boxContents.isEmpty()) {
+            return ContentPageResponse.empty();
+        }
+
+        // 3. 로그인 사용자의 ContentRecord 별도 조회 -> Map (contentId 기준)
+        List<Long> contentIds = boxContents.stream()
+                .map(bc -> bc.getContent().getContentId())
+                .distinct()
+                .toList();
+
+        Map<Long, ContentRecord> recordMap = contentRecordQueryService
+                .getByMemberAndContentIds(member, contentIds)
+                .stream()
+                .collect(Collectors.toMap(cr -> cr.getContent().getContentId(), cr -> cr));
+
+        // 4. 박스 타입에 따라 매퍼 분기 (공유 박스는 contentId 그룹핑 + publisherSummaryList)
+        List<ContentItem> contentItemList = box.getBoxType() == BoxType.MY
+                ? MyBoxContentMapper.toContentItems(boxContents, recordMap)
+                : SharedBoxContentMapper.toContentItemsWithPublisher(boxContents, recordMap);
+
+        // 5. 응답
+        return ContentPageResponse.builder()
+                .contentItemList(contentItemList)
+                .totalCount((long) contentItemList.size())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ContentPageResponse getBoxContentPageDeprecated(Member member, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 1. BoxContent 리스트 조회 (SubContent fetch join)
@@ -117,4 +158,6 @@ public class BoxContentFacade {
             log.info("Deleted SharedBoxContent with ID: {} from SharedBox ID: {}", boxContentId, boxId);
         }
     }
+
+
 }

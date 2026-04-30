@@ -13,4 +13,5 @@ public class ContentDetailResponse {
     private MediaType mediaType;
     private ContentInfo contentInfo;
     private MemberRecord memberRecord;
+    private boolean hasAddedInbox;
 }

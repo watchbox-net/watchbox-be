@@ -7,22 +7,25 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
+import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
+import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.facade.ContentRecordFacade;
 import net.watchbox.global.dto.response.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/records/likes")
-@Tag(name = "Liked", description = "좋아요 API")
-public class LikedController {
+@RequestMapping("/api/records")
+@Tag(name = "ContentRecord", description = "컨텐츠 기록 API")
+public class ContentRecordController {
     private final ContentRecordFacade contentRecordFacade;
+
     /**
      # 시청 상태
-     시청 상태 등록한 리스트 조회 @GetMapping("/status")
      시청 상태 등록/변경 @PostMapping("/status") body: { contentId, mediaType, watchStatus }
      시청 상태 삭제 @DeleteMapping("/status/{recordId}")
 
@@ -31,8 +34,9 @@ public class LikedController {
      좋아요 등록/변경 @PostMapping("/likes") body: { contentId, mediaType, watchStatus }
      좋아요 삭제 @DeleteMapping("/likes/{recordId}")
 
-     # 시청 상태 조회
+     # 시청 기록 조회
      시청 기록 단일 조회 @GetMapping("/{recordId}") -> DevController
+     시청 기록 조회
 
      ! 시청 상태 삭제 & 좋아요 기록 없음 -> 시청 기록 삭제
      ! 둘 중 어떤 기록을 남기든 DB에 해당 Content 없으면 새로 저장
@@ -40,10 +44,48 @@ public class LikedController {
      ! 좋아요는 MOVIE, TV, PERSON 모두 취급
      */
 
-    @Operation(summary = "좋아요 표시된 시청 기록 리스트 조회",
-            description = "좋아요는 시청 상태와 달리 PERSON도 포함하여 조회 <br>"+
-                    "좋아요만 포함, 싫어요는 미포함")
-    @GetMapping
+    // ToDo: 무한스크롤
+    @Operation(summary = "내 시청 기록 조회", description = "정렬 & 필터 & 무한스크롤 시청 기록 페이지 조회")
+    @GetMapping("/watch")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getMyRecordedContentPage(
+            @AuthenticationPrincipal Member member,
+            @ParameterObject
+            @ModelAttribute ContentRecordQueryRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                contentRecordFacade.getMyRecordedContentPage(member, request)
+        ));
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    @Operation(summary = "시청 상태 등록/변경", description = "WatchMediaType = {MOVIE, TV} <br>" +
+            "WatchStatus = {COMPLETED, WATCHING, PLANNED, PAUSED}")
+    @PostMapping("/watch/status")
+    public ResponseEntity<ApiResponse<ContentRecordResponse>> upsertWatchStatus(
+            @AuthenticationPrincipal Member member,
+            @RequestBody @Valid WatchStatusUpsertRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                contentRecordFacade.upsertWatchStatus(member, request))
+        );
+    }
+
+    @Operation(summary = "시청 상태 기록 삭제")
+    @DeleteMapping("/{recordId}/watch/status")
+    public ResponseEntity<ApiResponse<Void>> deleteWatchStatus(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long recordId
+    ) {
+        contentRecordFacade.deleteWatchStatus(member, recordId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    @Operation(summary = "좋아요 표시된 기록 리스트 조회",
+            description = "좋아요는 시청 기록과 달리 PERSON도 포함하여 조회 <br>" + "좋아요만 포함, 싫어요는 미포함")
+    @GetMapping("/likes")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getContentLikeList(
             @AuthenticationPrincipal Member member
 //            @RequestParam(value = "mediaType", required = false) String mediaType,
@@ -56,7 +98,7 @@ public class LikedController {
     }
 
     @Operation(summary = "좋아요 등록/변경")
-    @PostMapping
+    @PostMapping("/likes")
     public ResponseEntity<ApiResponse<ContentRecordResponse>> createContentLike(
             @AuthenticationPrincipal Member member,
             @RequestBody @Valid ContentLikeUpsertRequest request
@@ -68,7 +110,7 @@ public class LikedController {
 
     // 현재 미사용중
     @Operation(summary = "좋아요 삭제")
-    @DeleteMapping("/{recordId}")
+    @DeleteMapping("/{recordId}/likes")
     public ResponseEntity<ApiResponse<Void>> deleteContentLike(
             @AuthenticationPrincipal Member member,
             @PathVariable Long recordId

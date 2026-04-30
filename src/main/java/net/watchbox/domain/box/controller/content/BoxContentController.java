@@ -9,10 +9,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
 import net.watchbox.domain.box.facade.content.BoxContentFacade;
 import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,16 +27,30 @@ import org.springframework.web.bind.annotation.*;
 public class BoxContentController {
     private final BoxContentFacade boxContentFacade;
 
-    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 최근순 (createdAt desc)")
+    // ToDo: 무한스크롤
+    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 & 필터 & 무한스크롤 시청 기록 페이지 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
             @AuthenticationPrincipal Member member,
+            @ParameterObject
+            @ModelAttribute BoxContentRecordQueryRequest request,
             @PathVariable("boxId") Long boxId
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success(boxContentFacade.getBoxContentPage(member, boxId))
+                ApiResponse.success(boxContentFacade.getBoxContentPage(member, request, boxId))
         );
     }
+
+//    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 최근순 (createdAt desc)")
+//    @GetMapping
+//    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
+//            @AuthenticationPrincipal Member member,
+//            @PathVariable("boxId") Long boxId
+//    ) {
+//        return ResponseEntity.ok(
+//                ApiResponse.success(boxContentFacade.getBoxContentPage(member, boxId))
+//        );
+//    }
 
     @Operation(summary = "박스에 컨텐츠 추가")
     @ApiResponses(value = {
