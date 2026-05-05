@@ -1,9 +1,11 @@
 package net.watchbox.domain.content.facade;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.content.dto.detail.ContentInfo;
 import net.watchbox.domain.content.dto.detail.ContentDetailResponse;
 import net.watchbox.domain.content.dto.interaction.MemberRecord;
+import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.mapper.tmdb.TmdbContentDetailDtoMapper;
 import net.watchbox.domain.content.service.ContentQueryService;
@@ -16,6 +18,8 @@ import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class ContentDetailFacade {
@@ -25,6 +29,7 @@ public class ContentDetailFacade {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;
     private final TmdbPeopleService tmdbPeopleService;
+    private final BoxContentQueryService boxContentQueryService;
 
     @Transactional(readOnly = true)
     public ContentDetailResponse getContentDetail(MediaType mediaType, Long tmdbId, Member member) {
@@ -35,15 +40,32 @@ public class ContentDetailFacade {
                     case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(tmdbId));
                 };
 
-        ContentRecord contentRecord = member == null
-                ? null // 비로그인
-                : contentRecordQueryService.getByMemberIdAndTmdbIdOrElseNull(member.getMemberId(), tmdbId, mediaType); // 로그인
+       if(member==null) { // member 요청 없으면 사용자 메타 데이터 없이 반환
+           return ContentDetailResponse.builder()
+                   .mediaType(mediaType)
+                   .contentInfo(contentInfo)
+                   .build();
+       }
 
-        return ContentDetailResponse.builder()
-                .mediaType(mediaType)
-                .contentInfo(contentInfo)
-                .memberRecord(MemberRecord.from(contentRecord))
-                .build();
+       Optional<Content> contentOptional = contentQueryService.findByTmdbIdAndMediaType(tmdbId, mediaType);
+
+       if(contentOptional.isEmpty()) { // 저장된 Content 없으면 사용자 메타 데이터 없이 반환
+           return ContentDetailResponse.builder()
+                   .mediaType(mediaType)
+                   .contentInfo(contentInfo)
+                   .build();
+       }
+
+       Content content = contentOptional.get();
+       ContentRecord contentRecord = contentRecordQueryService.getByMemberAndContent(member, content);
+       boolean hasAddedInbox = boxContentQueryService.existsBoxContainingContentForMember(member, content);
+
+       return ContentDetailResponse.builder()
+               .mediaType(mediaType)
+               .contentInfo(contentInfo)
+               .memberRecord(MemberRecord.from(contentRecord))
+               .hasAddedInbox(hasAddedInbox)
+               .build();
     }
 
 //    @Transactional(readOnly = true)

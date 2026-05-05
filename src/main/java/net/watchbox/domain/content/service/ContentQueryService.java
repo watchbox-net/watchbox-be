@@ -24,42 +24,6 @@ public class ContentQueryService {
     private final PersonRepository personRepository;
     private final ContentRepository contentRepository;
 
-    public Optional<Content> findContentById(Long tmdbId) {
-        return contentRepository.findById(tmdbId);
-    }
-
-    // ============================== Content <- tmdbId ==============================
-    public Movie getMovieByTmdbIdOrThrow(Long tmdbId) {
-        return movieRepository.findByTmdbId(tmdbId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-    }
-
-    public Tv getTvByTmdbIdOrThrow(Long tmdbId) {
-        return tvRepository.findByTmdbId(tmdbId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TV_NOT_FOUND));
-    }
-
-    public Person getPersonByTmdbIdOrThrow(Long tmdbId) {
-        return personRepository.findByTmdbId(tmdbId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
-    }
-
-    // ============================== Content, ContentDetail <- Id ==============================
-    public Movie getMovieAndMovieDetailByIdOrThrow(Long tmdbId) {
-        return movieRepository.findWithDetailByTmdbId(tmdbId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-    }
-
-    public Tv getTvAndTvDetailByIdOrThrow(Long tmdbId) {
-        return tvRepository.findWithDetailByTmdbId(tmdbId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TV_NOT_FOUND));
-    }
-
-    public Person getPersonAndPersonDetailByIdOrThrow(Long tmdbId) {
-        return personRepository.findWithDetailByTmdbId(tmdbId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PERSON_NOT_FOUND));
-    }
-
     // ============================== Content Saved 여부 조회 ==============================
     public boolean isContentSaved(Long tmdbId, MediaType mediaType) {
         return contentRepository.existsByTmdbIdAndMediaType(tmdbId, mediaType);

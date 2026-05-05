@@ -10,6 +10,7 @@ import net.watchbox.domain.content.mapper.record.ContentRecordMapper;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
+import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
@@ -26,22 +27,35 @@ import java.util.List;
 @Observed
 public class ContentRecordFacade {
     private final ContentRecordQueryService contentRecordQueryService;
-    private final ContentRecordCommandService  contentRecordCommandService;
+    private final ContentRecordCommandService contentRecordCommandService;
     private final ContentCommandService contentCommandService;
 
     @Transactional(readOnly = true)
-    public ContentPageResponse getWatchStatusList(Member member) {
-        log.debug("Login Member: {}", member.getMemberId());
-        // 시청 기록이 등록된 ContentRecord 리스트 조회
-        List<ContentRecord> contentRecords = contentRecordQueryService.getWatchRecordsWithContent(member);
+    public ContentPageResponse getMyRecordedContentPage(Member member, ContentRecordQueryRequest request) {
+//        log.info("WatchMediaTypeFilter: {}, Sort: {}, WatchRecordFilter: {}",
+//                request.getWatchMediaTypeFilter(), request.getSort(), request.getWatchRecordFilter());
 
-        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
+        List<ContentRecord> contentRecordList = contentRecordQueryService.getMyContentRecordList(member, request);
+        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecordList);
+
         return ContentPageResponse.builder()
                 .contentItemList(contentItemList)
                 .totalCount((long) contentItemList.size())
                 .build();
-
     }
+
+//    @Transactional(readOnly = true)
+//    public ContentPageResponse getWatchStatusList(Member member) {
+//        log.debug("Login Member: {}", member.getMemberId());
+//        // 시청 기록이 등록된 ContentRecord 리스트 조회
+//        List<ContentRecord> contentRecords = contentRecordQueryService.getWatchRecordsWithContent(member);
+//
+//        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
+//        return ContentPageResponse.builder()
+//                .contentItemList(contentItemList)
+//                .totalCount((long) contentItemList.size())
+//                .build();
+//    }
 
     @Transactional
     public ContentRecordResponse upsertWatchStatus(Member member, WatchStatusUpsertRequest request) {
@@ -106,5 +120,6 @@ public class ContentRecordFacade {
         contentRecordCommandService.deleteLiked(contentRecord);
 
     }
+
 
 }

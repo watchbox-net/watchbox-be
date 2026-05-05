@@ -43,7 +43,7 @@ public class ContentBoxFacade {
         */
         Optional<Content> contentOpt = contentQueryService.findByTmdbIdAndMediaType(tmdbId, mediaType);
         List<Long> boxIdsWithContent = contentOpt
-                .map(content -> boxContentQueryService.getBoxIdsContainingContentForMember(content, member))
+                .map(content -> boxContentQueryService.getBoxIdsContainingContentForMember(member, content))
                 .orElse(Collections.emptyList());
 
         List<ContentBoxItem> contentBoxItemList = boxList.stream()

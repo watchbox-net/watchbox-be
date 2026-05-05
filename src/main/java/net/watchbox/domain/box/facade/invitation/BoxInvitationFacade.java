@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.Invitation.InvitationReceivedResponse;
 import net.watchbox.domain.box.dto.Invitation.InvitationSentResponse;
 import net.watchbox.domain.box.entity.box.Box;
-import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
@@ -34,7 +33,7 @@ public class BoxInvitationFacade {
 
     @Transactional
     public InvitationSentResponse inviteToBox(Member sender, Long boxId, Long receiverId) {
-        Member receiver = memberService.getByMemberId(receiverId);
+        Member receiver = memberService.getByMemberIdOrThrow(receiverId);
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 기존 박스 멤버인지 검증
