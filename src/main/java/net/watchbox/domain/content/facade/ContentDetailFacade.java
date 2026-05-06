@@ -35,9 +35,9 @@ public class ContentDetailFacade {
     public ContentDetailResponse getContentDetail(MediaType mediaType, Long tmdbId, Member member) {
         ContentInfo contentInfo =
                 switch (mediaType) {
-                    case MOVIE -> TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(tmdbId));
-                    case TV -> TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetails(tmdbId));
-                    case PERSON -> TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(tmdbId));
+                    case MOVIE -> fromMovieDetails(tmdbId);
+                    case TV -> fromTvDetails(tmdbId);
+                    case PERSON -> fromPersonDetails(tmdbId);
                 };
 
        if(member==null) { // member 요청 없으면 사용자 메타 데이터 없이 반환
@@ -66,6 +66,24 @@ public class ContentDetailFacade {
                .memberRecord(MemberRecord.from(contentRecord))
                .hasAddedInbox(hasAddedInbox)
                .build();
+    }
+
+    public ContentInfo fromMovieDetails(Long tmdbId) {
+        // API 1) Detail & ko-KR & credits,watch/providers,videos -> 출연진/제작진, 플랫폼, (비디오)
+        // API 2) Images & null
+        return TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(tmdbId));
+    }
+
+    public ContentInfo fromTvDetails(Long tmdbId) {
+        // API 1) Detail & ko-KR & aggregate_credits,watch/providers,videos -> 역대 출연진/제작진, 플랫폼, (비디오)
+        // API 2) Images & null
+        return TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetails(tmdbId));
+    }
+
+    public ContentInfo fromPersonDetails(Long tmdbId) {
+        // API 1) Detail & ko-KR & combined_credits,images -> 기본 정보, 작품, (이미지)
+        // API 2) Detail & null -> 영문 이름
+        return TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetails(tmdbId));
     }
 
 //    @Transactional(readOnly = true)

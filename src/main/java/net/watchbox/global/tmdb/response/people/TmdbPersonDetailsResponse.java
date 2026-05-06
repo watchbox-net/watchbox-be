@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbPeopleDetailsResponse {
+public class TmdbPersonDetailsResponse {
 
     private boolean adult;
 

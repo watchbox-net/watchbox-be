@@ -5,7 +5,7 @@ import net.watchbox.domain.content.dto.detail.PersonInfo;
 import net.watchbox.domain.content.dto.detail.TvInfo;
 import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
-import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
+import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.util.TmdbUtils;
 
@@ -43,7 +43,8 @@ public class TmdbContentDetailDtoMapper {
                 .nameOriginal(response.getOriginalName())
                 .posterPath(response.getPosterPath())
                 .popularity(response.getPopularity())
-                .year(TmdbUtils.extractYear(response.getFirstAirDate()))
+                .firstYear(TmdbUtils.extractYear(response.getFirstAirDate()))
+                .lastYear(TmdbUtils.extractYear(response.getLastAirDate()))
                 .genreList(response.getGenres().stream().map(TmdbGenreItem::getName).toList())
                 .overview(response.getOverview())
                 .backdropPath(response.getBackdropPath())
@@ -60,7 +61,7 @@ public class TmdbContentDetailDtoMapper {
                 .build();
     }
 
-    public static PersonInfo toPersonInfo(TmdbPeopleDetailsResponse response) {
+    public static PersonInfo toPersonInfo(TmdbPersonDetailsResponse response) {
         return PersonInfo.builder()
                 .tmdbId(response.getId())
                 .nameKo(response.getName())

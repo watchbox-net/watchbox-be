@@ -26,9 +26,10 @@ public final class TvInfo implements ContentInfo {
 
     private LocalDate firstAirDate;             // 첫 방영일
     private LocalDate lastAirDate;              // 마지막 방영일
-    private Long numberOfSeasons;               // 시즌 수
+    private Integer numberOfSeasons;               // 시즌 수
     private String originCountry;               // 국가
 //    private List<String> productionCompanyList;     // 제작사 : 보류
+
     private List<String> watchProviderList;     // 플랫폼 리스트
     private PersonCredit credit;                // 출연진, 제작진
     private List<String> backdropPathList;      // 배경 이미지 리스트
@@ -39,6 +40,7 @@ public final class TvInfo implements ContentInfo {
     private String originalLanguage;
     private Boolean adult;
     private Boolean video;
+    private Boolean inProduction; // 현재 제작/방영중
     private String status;
     private String type; // TV 프로그램 유형
     private String tagline;

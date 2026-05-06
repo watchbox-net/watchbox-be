@@ -14,6 +14,8 @@ import net.watchbox.domain.content.entity.MediaType;
 public class KnownFor {
     private Long knownForId; // TMDB ID
 
+    private Long title;
+
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 }

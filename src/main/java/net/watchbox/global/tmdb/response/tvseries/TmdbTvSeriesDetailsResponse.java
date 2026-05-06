@@ -33,7 +33,7 @@ public class TmdbTvSeriesDetailsResponse {
     private Long id;
 
     @JsonProperty("in_production")
-    private boolean inProduction; // ??
+    private boolean inProduction;
 
     @JsonProperty("last_air_date")
     private String lastAirDate;
@@ -71,18 +71,13 @@ public class TmdbTvSeriesDetailsResponse {
     @JsonProperty("vote_count")
     private Long voteCount;
 
-    //
-
-    @JsonProperty("episode_run_time")
-    private List<Integer> episodeRunTime;
-
     private List<String> languages;
 
     @JsonProperty("origin_country")
     private List<String> originCountry;
 
-    @JsonProperty("created_by")
-    private List<TmdbCreatedByItem> createdBy;
+//    @JsonProperty("created_by")
+//    private List<TmdbCreatedByItem> createdBy;
 
 //    @JsonProperty("last_episode_to_air")
 //    private Object lastEpisodeToAir;
@@ -90,16 +85,19 @@ public class TmdbTvSeriesDetailsResponse {
 //    @JsonProperty("next_episode_to_air")
 //    private Object nextEpisodeToAir;
 
-    private List<TmdbNetworkItem> networks;
+//    private List<TmdbNetworkItem> networks;
 
-    @JsonProperty("production_companies")
-    private List<TmdbProductionCompanyItem> productionCompanies;
-
-    @JsonProperty("production_countries")
-    private List<TmdbProductionCountryItem> productionCountries;
+//    @JsonProperty("production_companies")
+//    private List<TmdbProductionCompanyItem> productionCompanies;
+//
+//    @JsonProperty("production_countries")
+//    private List<TmdbProductionCountryItem> productionCountries;
 
     private List<TmdbSeasonItem> seasons;
 
-    @JsonProperty("spoken_languages")
-    private List<TmdbSpokenLanguageItem> spokenLanguages;
+//    @JsonProperty("spoken_languages")
+//    private List<TmdbSpokenLanguageItem> spokenLanguages;
+
+    /* append_to_response */
+
 }

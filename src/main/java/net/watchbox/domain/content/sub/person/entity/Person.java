@@ -5,6 +5,7 @@ import lombok.*;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.entity.BaseTime;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,14 +28,16 @@ public class Person extends BaseTime {
 
     private String nameKo;
     private String nameEn;
-    private String nameOriginal; // 이건 사실상 정확히 가져오기는 불가능, 영문이름으로만 표기해야할듯
+    private String nameOriginal;
     private String profilePath;
     private Department knownForDepartment;
     private Double popularity;
+    private LocalDate birthday;
+    private String placeOfBirth;
 
-    @ElementCollection
-    @CollectionTable(name = "known_for", joinColumns = @JoinColumn(name = "content_id"))
-    private List<KnownFor> knownFor; // Search 결과의 작품 리스트
+//    @ElementCollection
+//    @CollectionTable(name = "known_for", joinColumns = @JoinColumn(name = "content_id"))
+//    private List<KnownFor> knownFor; // Search 결과의 작품 리스트
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonDetail personDetail;
