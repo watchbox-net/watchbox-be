@@ -5,6 +5,7 @@ import lombok.*;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.entity.BaseTime;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,6 +34,7 @@ public class Movie extends BaseTime {
     private Double voteAverage;
     private Long voteCount;
     private Integer year; // 상영 연도
+    private LocalDate releaseDate;
 
     @ElementCollection
     @CollectionTable(name = "movie_genre_ids", joinColumns = @JoinColumn(name = "content_id"))

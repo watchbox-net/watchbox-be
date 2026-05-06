@@ -20,6 +20,7 @@ public class TmdbMoviesService {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
+                        .queryParam("append_to_response", "credits,videos,watch/providers")
                         .path("/movie/{movieId}")
                         .build(movieId))
                 .retrieve()

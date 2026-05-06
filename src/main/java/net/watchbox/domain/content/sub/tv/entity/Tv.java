@@ -5,6 +5,7 @@ import lombok.*;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.entity.BaseTime;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,6 +34,8 @@ public class Tv extends BaseTime {
     private Double voteAverage;
     private Long voteCount;
     private Integer year; // 처음 방영 연도
+    private LocalDate firstAirDate;
+    private LocalDate lastAirDate;
     private Integer numberOfSeasons;
 
     @ElementCollection

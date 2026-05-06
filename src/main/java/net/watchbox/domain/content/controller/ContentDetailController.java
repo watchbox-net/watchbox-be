@@ -32,18 +32,5 @@ public class ContentDetailController {
         return ResponseEntity.ok(ApiResponse.success(
                 contentDetailFacade.getContentDetail(mediaType, tmdbId, member)
         ));
-//        Long memberId = member != null ? member.getMemberId() : null;
-//        if(memberId == null) {
-//            log.info("memberId is null");
-//            return ResponseEntity.ok(ApiResponse.success(
-//                    contentFacade.getContentDetail(mediaType, tmdbId)
-//            ));
-//        }
-//
-//        log.info("memberId is {}", memberId);
-//        return ResponseEntity.ok(ApiResponse.success(
-////                contentFacade.getContentDetail(mediaType, tmdbId)
-//                contentFacade.getContentDetailWithRecord(memberId, mediaType, tmdbId)
-//        ));
     }
 }
