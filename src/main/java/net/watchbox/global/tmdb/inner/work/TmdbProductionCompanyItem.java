@@ -1,4 +1,4 @@
-package net.watchbox.global.tmdb.inner.title;
+package net.watchbox.global.tmdb.inner.work;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

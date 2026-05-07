@@ -4,10 +4,13 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.tmdb.client.TmdbClient;
+import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -103,10 +106,11 @@ public class TmdbSearchService {
     /**
      * Person
      * https://api.themoviedb.org/3/search/person
-     * 인물의 영문 이름과 원래 이름을 알기 위한 요청
+     * 인물의 영문 이름과 원래 이름을 알기 위한 요청.
+     * 검색 결과 중 tmdbId 가 일치하는 항목을 해당 인물로 특정하여 Optional로 반환.
      */
-    public TmdbSearchCommonResponse searchPersonExtraNames(String nameKo) {
-        return tmdbClient.baseWebClient()
+    public Optional<TmdbSearchResultItem> searchPersonExtraNames(String nameKo, Long tmdbId) {
+        TmdbSearchCommonResponse response = tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder, "en-US")
                         .path("/search/person")
@@ -116,6 +120,13 @@ public class TmdbSearchService {
                 .bodyToMono(TmdbSearchCommonResponse.class)
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
                 .block();
+
+        if (response == null || response.getResults() == null) {
+            return Optional.empty();
+        }
+        return response.getResults().stream()
+                .filter(r -> r.getId().equals(tmdbId))
+                .findFirst();
     }
 
 }

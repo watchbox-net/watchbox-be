@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
+import net.watchbox.global.tmdb.inner.work.TmdbGenreItem;
 import net.watchbox.global.tmdb.response.common.TmdbCreditsResponse;
 import net.watchbox.global.tmdb.response.common.TmdbVideosResponse;
 import net.watchbox.global.tmdb.response.common.TmdbWatchProvidersResponse;

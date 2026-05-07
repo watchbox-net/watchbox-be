@@ -27,11 +27,12 @@ public final class PersonInfo implements ContentInfo {
     private String biography;
 
     // --------- append_to_response ---------
-    private WorkCredit workCredit;      // 작품 정보
+    private WorkCredit workCredit;          // 작품 정보
+    private List<String> profilePathList;   // 인물 이미지 리스트
 
     // --------- 미사용 ---------
     private Double popularity;
-    private List<String> knownForList; // 변환 -> 작품 제목
+//    private List<String> knownForList; // 변환 -> 작품 제목
     private Integer gender;
     private LocalDate deathday;
     private String homepage;

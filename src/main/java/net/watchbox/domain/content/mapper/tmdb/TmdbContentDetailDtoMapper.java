@@ -12,8 +12,6 @@ import net.watchbox.global.tmdb.util.MovieGenre;
 import net.watchbox.global.tmdb.util.TmdbUtils;
 import net.watchbox.global.tmdb.util.TvGenre;
 
-import java.util.List;
-
 public class TmdbContentDetailDtoMapper {
 
     public static MovieInfo toMovieInfo(TmdbMoviesDetailsResponse detailsResponse, TmdbWorkImagesResponse imagesResponse) {
@@ -82,20 +80,26 @@ public class TmdbContentDetailDtoMapper {
                 .build();
     }
 
-    public static PersonInfo toPersonInfo(TmdbPersonDetailsResponse response) {
+    public static PersonInfo toPersonInfo(TmdbPersonDetailsResponse response, String nameEn, String nameOriginal) {
         return PersonInfo.builder()
                 .tmdbId(response.getId())
                 .nameKo(response.getName())
+                .nameOriginal(nameOriginal)
+                .nameEn(nameEn.equals(nameOriginal) ? null : nameEn) // 같으면 프론트에서 하나만 표기하도록
                 .profilePath(response.getProfilePath())
                 .knownForDepartment(Department.fromEnglishValue(response.getKnownForDepartment()))
-                .popularity(response.getPopularity())
-                .knownForList(List.of()) // TMDB Details API에 known_for 없음 - 추가 API 필요
                 .biography(response.getBiography())
-                .gender(response.getGender())
                 .birthday(TmdbUtils.extractDate(response.getBirthday()))
-                .deathday(TmdbUtils.extractDate(response.getDeathday()))
                 .placeOfBirth(response.getPlaceOfBirth())
+                // append_to_response
+                .workCredit(TmdbAppendToResponseConverter.toWorkCredit(response.getCombinedCredits()))
+                .profilePathList(TmdbAppendToResponseConverter.toProfilePathList(response.getImages()))
+                // 미사용 필드
+                .popularity(response.getPopularity())
+//                .knownForList(List.of()) // TMDB Details API에 known_for 없음 - 추가 API 필요
+                .gender(response.getGender())
                 .homepage(response.getHomepage())
+                .deathday(TmdbUtils.extractDate(response.getDeathday()))
                 .adult(response.isAdult())
                 .build();
     }

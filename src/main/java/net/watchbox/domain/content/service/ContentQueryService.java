@@ -9,11 +9,14 @@ import net.watchbox.domain.content.repository.ContentRepository;
 import net.watchbox.domain.content.sub.movie.repository.MovieRepository;
 import net.watchbox.domain.content.sub.person.repository.PersonRepository;
 import net.watchbox.domain.content.sub.tv.repository.TvRepository;
+import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
+import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
+import net.watchbox.global.tmdb.service.TmdbSearchService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,7 @@ public class ContentQueryService {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;
     private final TmdbPeopleService tmdbPeopleService;
+    private final TmdbSearchService tmdbSearchService;
 
     // ============================== Content Saved 여부 조회 ==============================
     public boolean isContentSaved(Long tmdbId, MediaType mediaType) {
@@ -58,9 +62,17 @@ public class ContentQueryService {
     }
 
     public ContentInfo fromPersonDetails(Long tmdbId) {
+        // API 1 응답을 API 2 요청에서 이용해야하므로 직렬로 요청해야한다.
         // (API 1) Details & ko-KR & combined_credits,images -> 기본 정보, 작품, (이미지)
+        TmdbPersonDetailsResponse detailsResponse = tmdbPeopleService.getPeopleDetailsWithCI(tmdbId);
+
         // (API 2) Search/Person & en-US & query=nameKo -> ID 일치에서 nameEn, nameOriginal 가져오기
-        // [고도화] (API 3) 대표작 뽑아내기
-        return TmdbContentDetailDtoMapper.toPersonInfo(tmdbPeopleService.getPeopleDetailsWithCI(tmdbId));
+        Optional<TmdbSearchResultItem> matched = tmdbSearchService.searchPersonExtraNames(detailsResponse.getName(), tmdbId);
+        String nameEn = matched.map(TmdbSearchResultItem::getName).orElse(null);
+        String nameOriginal = matched.map(TmdbSearchResultItem::getOriginalName).orElse(null);
+
+        // ToDo: [고도화] (API 3) 대표작 뽑아내기
+
+        return TmdbContentDetailDtoMapper.toPersonInfo(detailsResponse, nameEn, nameOriginal);
     }
 }

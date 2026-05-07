@@ -17,7 +17,6 @@ import net.watchbox.domain.content.sub.tv.repository.TvRepository;
 import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
-import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
@@ -90,17 +89,14 @@ public class ContentCommandService {
                 saveTvContent(content, response);
             }
             case PERSON -> {
+                // API 1 응답을 API 2 요청에서 이용해야하므로 직렬로 요청해야한다.
                 // (API 1) Detail & ko-KR -> 기본 정보
                 TmdbPersonDetailsResponse detailsResponse = tmdbPeopleService.getPeopleDetails(content.getTmdbId());
 
-                // 앞의 API 응답을 이용해야하므로 직렬로 요청해야한다.
                 // (API 2) Search/Person & en-US & query=nameKo -> ID 일치에서 nameEn, nameOriginal 가져오기
-                TmdbSearchCommonResponse searchResponse = tmdbSearchService.searchPersonExtraNames(detailsResponse.getName());
-                Optional<TmdbSearchResultItem> matched = searchResponse.getResults().stream()
-                        .filter(r -> r.getId().equals(content.getTmdbId()))
-                        .findFirst();
-                String nameEn = matched.map(r -> r.getName()).orElse(null);
-                String nameOriginal = matched.map(r -> r.getOriginalName()).orElse(null);
+                Optional<TmdbSearchResultItem> matched = tmdbSearchService.searchPersonExtraNames(detailsResponse.getName(), content.getTmdbId());
+                String nameEn = matched.map(TmdbSearchResultItem::getName).orElse(null);
+                String nameOriginal = matched.map(TmdbSearchResultItem::getOriginalName).orElse(null);
 
                 savePersonContent(content, detailsResponse, nameEn, nameOriginal);
             }

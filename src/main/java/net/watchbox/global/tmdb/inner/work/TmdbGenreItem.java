@@ -1,4 +1,4 @@
-package net.watchbox.global.tmdb.inner.title;
+package net.watchbox.global.tmdb.inner.work;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
