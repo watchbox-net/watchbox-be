@@ -25,16 +25,16 @@ public class ContentDetailMapper {
 
                 .overview(movieDetail.getOverview())
                 .backdropPath(movieDetail.getBackdropPath())
-                .originalLanguage(movieDetail.getOriginalLanguage())
+//                .originalLanguage(movieDetail.getOriginalLanguage())
                 .releaseDate(movieDetail.getReleaseDate())
-                .adult(movieDetail.getAdult())
-                .video(movieDetail.getVideo())
-                .status(movieDetail.getStatus())
+//                .adult(movieDetail.getAdult())
+//                .video(movieDetail.getVideo())
+//                .status(movieDetail.getStatus())
                 .runtime(movieDetail.getRuntime())
-                .tagline(movieDetail.getTagline())
-                .homepage(movieDetail.getHomepage())
-                .budget(movieDetail.getBudget())
-                .revenue(movieDetail.getRevenue())
+//                .tagline(movieDetail.getTagline())
+//                .homepage(movieDetail.getHomepage())
+//                .budget(movieDetail.getBudget())
+//                .revenue(movieDetail.getRevenue())
                 .build();
     }
 
@@ -46,7 +46,8 @@ public class ContentDetailMapper {
                 .nameKo(tv.getNameKo())
                 .nameOriginal(tv.getNameOriginal())
                 .posterPath(tv.getPosterPath())
-                .year(tv.getYear())
+                .firstYear(tv.getFirstAirDate().getYear())
+                .lastYear(tv.getLastAirDate().getYear())
                 .genreList(MovieGenre.mapGenreIdListToKorean(tv.getGenreIds()))
 
                 .overview(tvDetail.getOverview())
@@ -68,7 +69,6 @@ public class ContentDetailMapper {
     }
 
     public static PersonInfo fromPerson(Person person) {
-        PersonDetail personDetail = person.getPersonDetail();
         return PersonInfo.builder()
                 .contentId(person.getContent().getContentId())
                 .tmdbId(person.getTmdbId())
@@ -77,14 +77,8 @@ public class ContentDetailMapper {
                 .profilePath(person.getProfilePath())
                 .knownForDepartment(person.getKnownForDepartment())
                 .popularity(person.getPopularity())
-
-                .biography(personDetail.getBiography())
-                .gender(personDetail.getGender())
-                .birthday(personDetail.getBirthday())
-                .deathday(personDetail.getDeathday())
-                .placeOfBirth(personDetail.getPlaceOfBirth())
-                .homepage(personDetail.getHomepage())
-                .adult(personDetail.getAdult())
+                .birthday(person.getBirthday())
+                .placeOfBirth(person.getPlaceOfBirth())
                 .build();
     }
 }

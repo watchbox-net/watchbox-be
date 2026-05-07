@@ -3,6 +3,7 @@ package net.watchbox.domain.content.mapper.tmdb;
 import net.watchbox.domain.content.dto.detail.MovieInfo;
 import net.watchbox.domain.content.dto.detail.PersonInfo;
 import net.watchbox.domain.content.dto.detail.TvInfo;
+import net.watchbox.domain.content.sub.person.entity.Department;
 import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
@@ -24,16 +25,22 @@ public class TmdbContentDetailDtoMapper {
                 .genreList(detailsResponse.getGenres().stream().map(TmdbGenreItem::getName).toList())
                 .overview(detailsResponse.getOverview())
                 .backdropPath(detailsResponse.getBackdropPath())
-                .originalLanguage(detailsResponse.getOriginalLanguage())
                 .releaseDate(TmdbUtils.extractDate(detailsResponse.getReleaseDate()))
-                .adult(detailsResponse.isAdult())
-                .video(detailsResponse.isVideo())
-                .status(detailsResponse.getStatus())
+                .originCountry(detailsResponse.getOriginCountry().stream().findFirst().orElse(null))
                 .runtime(detailsResponse.getRuntime() != null ? detailsResponse.getRuntime().intValue() : null)
-                .tagline(detailsResponse.getTagline())
-                .homepage(detailsResponse.getHomepage())
-                .budget(detailsResponse.getBudget())
-                .revenue(detailsResponse.getRevenue())
+                // append_to_response
+                .personCredit(TmdbAppendToResponseConverter.toPersonCredit(detailsResponse.getCredits()))
+                .watchProviderList(TmdbAppendToResponseConverter.toWatchProviderList(detailsResponse.getWatchProviders()))
+                .backdropPathList(TmdbAppendToResponseConverter.toBackdropPathList(imagesResponse))
+//                .video(detailsResponse.isVideo())
+                // 미사용 필드
+//                .originalLanguage(detailsResponse.getOriginalLanguage())
+//                .adult(detailsResponse.isAdult())
+//                .status(detailsResponse.getStatus())
+//                .tagline(detailsResponse.getTagline())
+//                .homepage(detailsResponse.getHomepage())
+//                .budget(detailsResponse.getBudget())
+//                .revenue(detailsResponse.getRevenue())
                 .build();
     }
 
@@ -46,6 +53,7 @@ public class TmdbContentDetailDtoMapper {
                 .popularity(response.getPopularity())
                 .firstYear(TmdbUtils.extractYear(response.getFirstAirDate()))
                 .lastYear(TmdbUtils.extractYear(response.getLastAirDate()))
+                .originCountry(response.getOriginCountry().stream().findFirst().orElse(null))
                 .genreList(response.getGenres().stream().map(TmdbGenreItem::getName).toList())
                 .overview(response.getOverview())
                 .backdropPath(response.getBackdropPath())
@@ -67,7 +75,7 @@ public class TmdbContentDetailDtoMapper {
                 .tmdbId(response.getId())
                 .nameKo(response.getName())
                 .profilePath(response.getProfilePath())
-                .knownForDepartment(response.getKnownForDepartment())
+                .knownForDepartment(Department.fromEnglishValue(response.getKnownForDepartment()))
                 .popularity(response.getPopularity())
                 .knownForList(List.of()) // TMDB Details API에 known_for 없음 - 추가 API 필요
                 .biography(response.getBiography())

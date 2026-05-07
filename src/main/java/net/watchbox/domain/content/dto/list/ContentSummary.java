@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import net.watchbox.domain.content.entity.MediaType;
+import net.watchbox.domain.content.sub.person.entity.Department;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class ContentSummary { // 하나의 응답 클래스에 모든 변수 포
     private String nameOriginal;
 
     // 인물 전용
-    private String knownForDepartment;
+    private Department knownForDepartment;
     private List<String> knownForList;
     private String profilePath;
 }

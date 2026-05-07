@@ -3,6 +3,7 @@ package net.watchbox.global.dev.deprecated.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import net.watchbox.domain.content.sub.person.entity.Department;
 import net.watchbox.domain.content.sub.person.entity.KnownFor;
 import net.watchbox.domain.content.sub.person.entity.Person;
 
@@ -17,9 +18,9 @@ public class PersonResponse {
     private String nameEn;
     private String nameOriginal;
     private String profilePath;
-    private String knownForDepartment;
+    private Department knownForDepartment;
     private Double popularity;
-    private List<KnownFor> knownFor;
+//    private List<KnownFor> knownFor;
 
     public static PersonResponse from(Person person){
         return PersonResponse.builder()
@@ -30,7 +31,7 @@ public class PersonResponse {
                 .profilePath(person.getProfilePath())
                 .knownForDepartment(person.getKnownForDepartment())
                 .popularity(person.getPopularity())
-                .knownFor(person.getKnownFor())
+//                .knownFor(person.getKnownFor())
                 .build();
     }
 }

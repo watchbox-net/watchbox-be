@@ -24,10 +24,6 @@ import java.util.Optional;
 public class ContentDetailFacade {
     private final ContentQueryService contentQueryService;
     private final ContentRecordQueryService contentRecordQueryService;
-
-    private final TmdbMoviesService tmdbMoviesService;
-    private final TmdbTvSeriesService tmdbTvSeriesService;
-    private final TmdbPeopleService tmdbPeopleService;
     private final BoxContentQueryService boxContentQueryService;
 
     @Transactional(readOnly = true)

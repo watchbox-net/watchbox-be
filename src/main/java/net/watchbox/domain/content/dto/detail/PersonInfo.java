@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import net.watchbox.domain.content.dto.detail.credit.work.WorkCredit;
+import net.watchbox.domain.content.sub.person.entity.Department;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +23,7 @@ public final class PersonInfo implements ContentInfo {
     private LocalDate birthday;         // 생년월일
     private Integer age;                // 나이 (생년월일로 계산)
     private String placeOfBirth;        // 출생지
-    private String knownForDepartment;  // 주요 활동 분야 (Acting, Directing 등)
+    private Department knownForDepartment;  // 주요 활동 분야 (Acting, Directing 등)
     private String biography;
 
     // --------- append_to_response ---------

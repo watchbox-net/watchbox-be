@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents/{mediaType}/{tmdbId}")
-@Tag(name = "Content Detail", description = "컨텐츠 상세 조회 API")
+@Tag(name = "ContentDetail", description = "컨텐츠 상세 조회 API")
 public class ContentDetailController {
     private final ContentDetailFacade contentDetailFacade;
 
