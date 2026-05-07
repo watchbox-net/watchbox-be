@@ -1,15 +1,20 @@
 package net.watchbox.domain.content.mapper.tmdb;
 
+import net.watchbox.domain.content.dto.detail.credit.person.AggregatePersonCredit;
 import net.watchbox.domain.content.dto.detail.credit.person.Cast;
 import net.watchbox.domain.content.dto.detail.credit.person.Crew;
 import net.watchbox.domain.content.dto.detail.credit.person.PersonCredit;
 import net.watchbox.domain.content.sub.person.entity.Department;
-import net.watchbox.global.tmdb.inner.credit.TmdbCastItem;
-import net.watchbox.global.tmdb.inner.credit.TmdbCrewItem;
+import net.watchbox.global.tmdb.inner.credit.movie.TmdbCastItem;
+import net.watchbox.global.tmdb.inner.credit.movie.TmdbCrewItem;
+import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCastItem;
+import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCastRoleItem;
+import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCrewItem;
 import net.watchbox.global.tmdb.inner.image.TmdbImageItem;
 import net.watchbox.global.tmdb.inner.watchprovider.TmdbCountryProviders;
 import net.watchbox.global.tmdb.inner.watchprovider.TmdbWatchProviderItem;
-import net.watchbox.global.tmdb.response.common.TmdbPersonCreditsResponse;
+import net.watchbox.global.tmdb.response.common.TmdbAggregateCreditsResponse;
+import net.watchbox.global.tmdb.response.common.TmdbCreditsResponse;
 import net.watchbox.global.tmdb.response.common.TmdbWatchProvidersResponse;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 
@@ -29,10 +34,10 @@ public class TmdbAppendToResponseConverter {
     }
 
     /**
-     * Movie credits → PersonCredit.
+     * Movie credits → Credit.
      * cast/crew 가 null 이면 빈 리스트로 처리.
      */
-    public static PersonCredit toPersonCredit(TmdbPersonCreditsResponse credits) {
+    public static PersonCredit toPersonCredit(TmdbCreditsResponse credits) {
         if (credits == null) {
             return PersonCredit.builder()
                     .castList(List.of())
@@ -94,6 +99,91 @@ public class TmdbAppendToResponseConverter {
         // 한 인물이 작품에서 여러 부서를 겸한 경우(예: 감독+각본) 모두 보존
         List<Department> departmentList = sameIdGroup.stream()
                 .map(TmdbCrewItem::getDepartment)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        return Crew.builder()
+                .tmdbId(first.getId())
+                .profilePath(first.getProfilePath())
+                .name(first.getName())
+                .nameOriginal(first.getOriginalName())
+                .knownForDepartment(Department.fromEnglishValue(first.getKnownForDepartment()))
+                .departmentList(departmentList)
+                .build();
+    }
+
+    /**
+     * TV 시리즈 aggregate_credits → AggregatePersonCredit.
+     * cast/crew 가 null 이면 빈 리스트로 처리.
+     * 영화 credits 와 달리 시즌별 누적 데이터라 한 인물이 여러 캐릭터/직무를 가질 수 있음.
+     */
+    public static AggregatePersonCredit toAggregatePersonCredit(TmdbAggregateCreditsResponse credits) {
+        if (credits == null) {
+            return AggregatePersonCredit.builder()
+                    .castList(List.of())
+                    .crewList(List.of())
+                    .totalCount(0L)
+                    .castCount(0L)
+                    .crewCount(0L)
+                    .build();
+        }
+
+        List<Cast> castList = credits.getCast() == null ? List.of()
+                : credits.getCast().stream().map(TmdbAppendToResponseConverter::toCastFromAggregate).toList();
+        List<Crew> crewList = credits.getCrew() == null ? List.of()
+                : groupAggregateCrewByPerson(credits.getCrew());
+
+        long castCount = castList.size();
+        long crewCount = crewList.size();
+
+        return AggregatePersonCredit.builder()
+                .castList(castList)
+                .crewList(crewList)
+                .totalCount(castCount + crewCount)
+                .castCount(castCount)
+                .crewCount(crewCount)
+                .build();
+    }
+
+    private static Cast toCastFromAggregate(TmdbAggregateCastItem item) {
+        // 한 인물이 시리즈 내 여러 역할을 맡은 경우(시즌별 다른 캐릭터, 어린 시절 역 등) 구분자로 합침
+        String character = item.getRoles() == null ? null
+                : item.getRoles().stream()
+                        .map(TmdbAggregateCastRoleItem::getCharacter)
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.joining(", "));
+        return Cast.builder()
+                .tmdbId(item.getId())
+                .profilePath(item.getProfilePath())
+                .name(item.getName())
+                .nameOriginal(item.getOriginalName())
+                .knownForDepartment(Department.fromEnglishValue(item.getKnownForDepartment()))
+                .character(character)
+                .order(item.getOrder() != null ? item.getOrder().longValue() : null)
+                .build();
+    }
+
+    /**
+     * aggregate crew 응답을 인물 단위로 그룹핑.
+     * TMDB 가 같은 인물이라도 부서가 다르면 별도 row 로 보내므로 (예: 감독+제작) 인물 단위로 합침.
+     */
+    private static List<Crew> groupAggregateCrewByPerson(List<TmdbAggregateCrewItem> rawCrewList) {
+        return rawCrewList.stream()
+                .collect(Collectors.groupingBy(
+                        TmdbAggregateCrewItem::getId,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ))
+                .values().stream()
+                .map(TmdbAppendToResponseConverter::toCrewFromAggregate)
+                .toList();
+    }
+
+    private static Crew toCrewFromAggregate(List<TmdbAggregateCrewItem> sameIdGroup) {
+        TmdbAggregateCrewItem first = sameIdGroup.get(0);
+        List<Department> departmentList = sameIdGroup.stream()
+                .map(TmdbAggregateCrewItem::getDepartment)
                 .filter(Objects::nonNull)
                 .distinct()
                 .toList();

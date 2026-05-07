@@ -1,14 +1,17 @@
-package net.watchbox.global.tmdb.inner.credit;
+package net.watchbox.global.tmdb.inner.credit.tv;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbCastItem {
+public class TmdbAggregateCastItem {
+
     private boolean adult;
 
     private Integer gender;
@@ -32,13 +35,11 @@ public class TmdbCastItem {
     @JsonProperty("profile_path")
     private String profilePath;
 
-    @JsonProperty("cast_id")
-    private Long castId;
+    /** 시리즈 내에서 한 배우가 맡은 역할 목록 (시즌별로 캐릭터가 다를 수 있음) */
+    private List<TmdbAggregateCastRoleItem> roles;
 
-    private String character;
-
-    @JsonProperty("credit_id")
-    private String creditId;
+    @JsonProperty("total_episode_count")
+    private Integer totalEpisodeCount;
 
     private Integer order;
 }

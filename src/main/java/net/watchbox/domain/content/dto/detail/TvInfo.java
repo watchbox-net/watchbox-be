@@ -3,7 +3,7 @@ package net.watchbox.domain.content.dto.detail;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.content.dto.detail.credit.person.PersonCredit;
+import net.watchbox.domain.content.dto.detail.credit.person.AggregatePersonCredit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,23 +32,21 @@ public final class TvInfo implements ContentInfo {
 
     // --------- append_to_response ---------
     private List<String> watchProviderList;     // 플랫폼 리스트
-    private PersonCredit personCredit;                // 출연진, 제작진
+    private AggregatePersonCredit personCredit;       // 출연진, 제작진 (시즌별 누적)
     private List<String> backdropPathList;      // 배경 이미지 리스트
     // videos
 
     // --------- 미사용 ---------
     private Double popularity;
-    private String originalLanguage;
-    private Boolean adult;
-    private Boolean video;
     private Boolean inProduction; // 현재 제작/방영중
     private String status;
-    private String type; // TV 프로그램 유형
     private String tagline;
-    private String homepage;
-    private Long budget;  // 제작비 (USD)
-    private Long revenue;  // 수익 (USD)
-    private Integer numberOfEpisodes;
+//    private String originalLanguage;
+//    private String type; // TV 프로그램 유형
+//    private String homepage;
+//    private Long budget;  // 제작비 (USD)
+//    private Long revenue;  // 수익 (USD)
+//    private Integer numberOfEpisodes;
 
     // 변환
 //    private List<String> productionCountryList; // "['US', 'KR']"

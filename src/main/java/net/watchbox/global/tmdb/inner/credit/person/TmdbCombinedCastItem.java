@@ -1,21 +1,23 @@
-package net.watchbox.global.tmdb.inner.credit;
+package net.watchbox.global.tmdb.inner.credit.person;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.watchbox.domain.content.sub.person.entity.Department;
 
 import java.util.List;
 
 /**
- * Person combined_credits 의 crew 항목.
+ * Person combined_credits 의 cast 항목.
  * 영화/TV 가 한 배열에 섞여서 옴 -> media_type 으로 구별.
+ *
+ * - mediaType = "movie" 일 때는 title/originalTitle/releaseDate/video 사용
+ * - mediaType = "tv"    일 때는 name/originalName/firstAirDate/originCountry/episodeCount/firstCreditAirDate 사용
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbCombinedCrewItem {
+public class TmdbCombinedCastItem {
 
     /** "movie" 또는 "tv" */
     @JsonProperty("media_type")
@@ -77,13 +79,13 @@ public class TmdbCombinedCrewItem {
     @JsonProperty("first_credit_air_date")
     private String firstCreditAirDate;
 
-    // ===== 제작 정보 =====
+    // ===== 출연 정보 =====
+    private String character;
+
     @JsonProperty("credit_id")
     private String creditId;
 
-    private Department department;
-
-    private String job;
+    private Integer order;
 
     // ===== Helper =====
     public boolean isMovie() {

@@ -29,7 +29,7 @@ public class ContentSummaryMapper {
                 .voteAverage(ConvertUtils.roundVoteAverage(movie.getVoteAverage()))
                 .voteCount(movie.getVoteCount())
                 .year(movie.getYear())
-                .genreList(MovieGenre.mapGenreIdListToKorean(movie.getGenreIds()))
+                .genreList(MovieGenre.mapSummaryGenreIdListToKorean(movie.getGenreIds()))
                 .title(movie.getTitleKo())
                 .titleOriginal(movie.getTitleOriginal())
                 .build();
@@ -45,7 +45,7 @@ public class ContentSummaryMapper {
                 .voteAverage(ConvertUtils.roundVoteAverage(tv.getVoteAverage()))
                 .voteCount(tv.getVoteCount())
                 .year(tv.getYear())
-                .genreList(TvGenre.mapGenreIdListToKorean(tv.getGenreIds()))
+                .genreList(TvGenre.mapSummaryGenreIdListToKorean(tv.getGenreIds()))
                 .name(tv.getNameKo())
                 .nameOriginal(tv.getNameOriginal())
                 .build();

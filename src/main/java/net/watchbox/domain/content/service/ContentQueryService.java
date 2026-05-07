@@ -11,6 +11,7 @@ import net.watchbox.domain.content.sub.person.repository.PersonRepository;
 import net.watchbox.domain.content.sub.tv.repository.TvRepository;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
+import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
@@ -41,17 +42,19 @@ public class ContentQueryService {
 
     public ContentInfo fromMovieDetails(Long tmdbId) {
         // (API 1) Details & ko-KR & credits,watch/providers,videos -> 출연진/제작진, 플랫폼, (비디오)
-        TmdbMoviesDetailsResponse detailResponse = tmdbMoviesService.getMovieDetailsWithCVP(tmdbId);
+        TmdbMoviesDetailsResponse detailsResponse = tmdbMoviesService.getMovieDetailsWithCVP(tmdbId);
         // (API 2) Images & null
         TmdbWorkImagesResponse imagesResponse = tmdbMoviesService.getMovieImages(tmdbId);
 
-        return TmdbContentDetailDtoMapper.toMovieInfo(detailResponse, imagesResponse);
+        return TmdbContentDetailDtoMapper.toMovieInfo(detailsResponse, imagesResponse);
     }
 
     public ContentInfo fromTvDetails(Long tmdbId) {
         // (API 1) Details & ko-KR & aggregate_credits,watch/providers,videos -> 역대 출연진/제작진, 플랫폼, (비디오)
+        TmdbTvSeriesDetailsResponse detailsResponse = tmdbTvSeriesService.getTvSeriesDetailsWithCVP(tmdbId);
         // (API 2) Images & null
-        return TmdbContentDetailDtoMapper.toTvInfo(tmdbTvSeriesService.getTvSeriesDetailsWithCVP(tmdbId));
+        TmdbWorkImagesResponse imagesResponse = tmdbTvSeriesService.getTvSeriesImages(tmdbId);
+        return TmdbContentDetailDtoMapper.toTvInfo(detailsResponse, imagesResponse);
     }
 
     public ContentInfo fromPersonDetails(Long tmdbId) {

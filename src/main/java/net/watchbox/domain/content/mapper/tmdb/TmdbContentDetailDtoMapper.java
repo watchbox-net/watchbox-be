@@ -4,12 +4,13 @@ import net.watchbox.domain.content.dto.detail.MovieInfo;
 import net.watchbox.domain.content.dto.detail.PersonInfo;
 import net.watchbox.domain.content.dto.detail.TvInfo;
 import net.watchbox.domain.content.sub.person.entity.Department;
-import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
+import net.watchbox.global.tmdb.util.MovieGenre;
 import net.watchbox.global.tmdb.util.TmdbUtils;
+import net.watchbox.global.tmdb.util.TvGenre;
 
 import java.util.List;
 
@@ -22,7 +23,10 @@ public class TmdbContentDetailDtoMapper {
                 .titleOriginal(detailsResponse.getOriginalTitle())
                 .posterPath(detailsResponse.getPosterPath())
                 .year(TmdbUtils.extractYear(detailsResponse.getReleaseDate()))
-                .genreList(detailsResponse.getGenres().stream().map(TmdbGenreItem::getName).toList())
+                .genreList(MovieGenre.mapDetailGenreIdListToKorean(
+                        detailsResponse.getGenres().stream()
+                                .map(g -> g.getId().intValue())
+                                .toList()))
                 .overview(detailsResponse.getOverview())
                 .backdropPath(detailsResponse.getBackdropPath())
                 .releaseDate(TmdbUtils.extractDate(detailsResponse.getReleaseDate()))
@@ -34,39 +38,47 @@ public class TmdbContentDetailDtoMapper {
                 .backdropPathList(TmdbAppendToResponseConverter.toBackdropPathList(imagesResponse))
 //                .video(detailsResponse.isVideo())
                 // 미사용 필드
+                .popularity(detailsResponse.getPopularity())
+                .status(detailsResponse.getStatus())
+                .tagline(detailsResponse.getTagline())
 //                .originalLanguage(detailsResponse.getOriginalLanguage())
-//                .adult(detailsResponse.isAdult())
-//                .status(detailsResponse.getStatus())
-//                .tagline(detailsResponse.getTagline())
 //                .homepage(detailsResponse.getHomepage())
 //                .budget(detailsResponse.getBudget())
 //                .revenue(detailsResponse.getRevenue())
                 .build();
     }
 
-    public static TvInfo toTvInfo(TmdbTvSeriesDetailsResponse response) {
+    public static TvInfo toTvInfo(TmdbTvSeriesDetailsResponse detailsResponse, TmdbWorkImagesResponse imagesResponse) {
         return TvInfo.builder()
-                .tmdbId(response.getId())
-                .nameKo(response.getName())
-                .nameOriginal(response.getOriginalName())
-                .posterPath(response.getPosterPath())
-                .popularity(response.getPopularity())
-                .firstYear(TmdbUtils.extractYear(response.getFirstAirDate()))
-                .lastYear(TmdbUtils.extractYear(response.getLastAirDate()))
-                .originCountry(response.getOriginCountry().stream().findFirst().orElse(null))
-                .genreList(response.getGenres().stream().map(TmdbGenreItem::getName).toList())
-                .overview(response.getOverview())
-                .backdropPath(response.getBackdropPath())
-                .originalLanguage(response.getOriginalLanguage())
-                .firstAirDate(TmdbUtils.extractDate(response.getFirstAirDate()))
-                .adult(response.isAdult())
-                .status(response.getStatus())
-                .type(response.getType())
-                .tagline(response.getTagline())
-                .homepage(response.getHomepage())
-                .numberOfEpisodes(response.getNumberOfEpisodes())
-                .numberOfSeasons(response.getNumberOfSeasons())
-                .lastAirDate(TmdbUtils.extractDate(response.getLastAirDate()))
+                .tmdbId(detailsResponse.getId())
+                .nameKo(detailsResponse.getName())
+                .nameOriginal(detailsResponse.getOriginalName())
+                .posterPath(detailsResponse.getPosterPath())
+                .firstYear(TmdbUtils.extractYear(detailsResponse.getFirstAirDate()))
+                .lastYear(TmdbUtils.extractYear(detailsResponse.getLastAirDate()))
+                .originCountry(detailsResponse.getOriginCountry().stream().findFirst().orElse(null))
+                .genreList(TvGenre.mapDetailGenreIdListToKorean(
+                        detailsResponse.getGenres().stream()
+                                .map(g -> g.getId().intValue())
+                                .toList()))
+                .overview(detailsResponse.getOverview())
+                .backdropPath(detailsResponse.getBackdropPath())
+                .firstAirDate(TmdbUtils.extractDate(detailsResponse.getFirstAirDate()))
+                .lastAirDate(TmdbUtils.extractDate(detailsResponse.getLastAirDate()))
+                .numberOfSeasons(detailsResponse.getNumberOfSeasons())
+                .inProduction(detailsResponse.isInProduction())
+                // append_to_response
+                .personCredit(TmdbAppendToResponseConverter.toAggregatePersonCredit(detailsResponse.getAggregateCredits()))
+                .watchProviderList(TmdbAppendToResponseConverter.toWatchProviderList(detailsResponse.getWatchProviders()))
+                .backdropPathList(TmdbAppendToResponseConverter.toBackdropPathList(imagesResponse))
+                // 미사용 필드
+                .popularity(detailsResponse.getPopularity())
+                .status(detailsResponse.getStatus())
+                .tagline(detailsResponse.getTagline())
+//                .originalLanguage(response.getOriginalLanguage())
+//                .type(response.getType())
+//                .homepage(response.getHomepage())
+//                .numberOfEpisodes(response.getNumberOfEpisodes())
                 .build();
     }
 

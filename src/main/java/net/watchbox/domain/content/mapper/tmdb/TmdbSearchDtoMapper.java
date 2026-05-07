@@ -48,7 +48,7 @@ public class TmdbSearchDtoMapper {
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
                 .year(Integer.parseInt(item.getReleaseDate().substring(0, 4)))
-                .genreList(MovieGenre.mapGenreIdListToKorean(item.getGenreIds()))
+                .genreList(MovieGenre.mapSummaryGenreIdListToKorean(item.getGenreIds()))
                 .title(item.getTitle())
                 .titleOriginal(item.getOriginalTitle())
                 .build();
@@ -63,7 +63,7 @@ public class TmdbSearchDtoMapper {
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
                 .year(Integer.parseInt(item.getFirstAirDate().substring(0, 4)))
-                .genreList(TvGenre.mapGenreIdListToKorean(item.getGenreIds()))
+                .genreList(TvGenre.mapSummaryGenreIdListToKorean(item.getGenreIds()))
                 .name(item.getName())
                 .nameOriginal(item.getOriginalName())
                 .build();

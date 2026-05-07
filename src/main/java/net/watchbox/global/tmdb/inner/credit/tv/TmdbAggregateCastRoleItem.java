@@ -1,4 +1,4 @@
-package net.watchbox.global.tmdb.inner.credit;
+package net.watchbox.global.tmdb.inner.credit.tv;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbCrewJobItem {
+public class TmdbAggregateCastRoleItem {
 
     @JsonProperty("credit_id")
     private String creditId;
 
-    private String job;
+    private String character;
 
     @JsonProperty("episode_count")
     private Integer episodeCount;

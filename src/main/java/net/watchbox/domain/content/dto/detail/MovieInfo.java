@@ -35,11 +35,10 @@ public final class MovieInfo implements ContentInfo { // 상세 페이지 순서
     // videos
 
     // --------- 미사용 ---------
+    private String status;
+    private String tagline;
+    private Double popularity;
 //    private String originalLanguage;
-//    private Boolean adult;
-//    private Boolean video;
-//    private String status;
-//    private String tagline;
 //    private String homepage;
 //    private Long budget;
 //    private Long revenue;

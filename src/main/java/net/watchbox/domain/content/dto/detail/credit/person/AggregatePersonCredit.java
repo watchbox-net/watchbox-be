@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Builder
 @ToString
-public class AggregateCredit {
+public class AggregatePersonCredit {
     private List<Cast> castList;
     private List<Crew> crewList;
     private Long totalCount;

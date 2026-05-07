@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
-import net.watchbox.global.tmdb.response.common.TmdbPersonCreditsResponse;
+import net.watchbox.global.tmdb.response.common.TmdbCreditsResponse;
 import net.watchbox.global.tmdb.response.common.TmdbVideosResponse;
 import net.watchbox.global.tmdb.response.common.TmdbWatchProvidersResponse;
 
@@ -83,7 +83,7 @@ public class TmdbMoviesDetailsResponse {
     /**
      * append_to_response
      */
-    private TmdbPersonCreditsResponse credits;
+    private TmdbCreditsResponse credits;
 
     private TmdbVideosResponse videos;
 

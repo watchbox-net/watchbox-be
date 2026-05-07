@@ -1,4 +1,4 @@
-package net.watchbox.global.tmdb.inner.credit;
+package net.watchbox.global.tmdb.inner.credit.tv;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -6,10 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.watchbox.domain.content.sub.person.entity.Department;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbCrewItem {
+public class TmdbAggregateCrewItem {
+
     private boolean adult;
 
     private Integer gender;
@@ -33,10 +36,11 @@ public class TmdbCrewItem {
     @JsonProperty("profile_path")
     private String profilePath;
 
-    @JsonProperty("credit_id")
-    private String creditId;
+    /** 시리즈 내에서 한 스태프가 맡은 직무 목록 (한 부서에서 여러 job 가능) */
+    private List<TmdbAggregateCrewJobItem> jobs;
 
     private Department department;
 
-    private String job;
+    @JsonProperty("total_episode_count")
+    private Integer totalEpisodeCount;
 }

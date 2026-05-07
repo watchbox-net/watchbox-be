@@ -3,8 +3,8 @@ package net.watchbox.global.tmdb.response.common;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.watchbox.global.tmdb.inner.credit.TmdbAggregateCastItem;
-import net.watchbox.global.tmdb.inner.credit.TmdbAggregateCrewItem;
+import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCastItem;
+import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCrewItem;
 
 import java.util.List;
 
@@ -15,9 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TmdbAggregateCreditsResponse {
-
+public class TmdbAggregateCreditsResponse { // TV 시리즈에서의 인물 Credit (시즌별 누적)
     private List<TmdbAggregateCastItem> cast;
-
     private List<TmdbAggregateCrewItem> crew;
 }

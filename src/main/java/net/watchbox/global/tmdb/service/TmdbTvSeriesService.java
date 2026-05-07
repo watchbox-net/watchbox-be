@@ -38,7 +38,7 @@ public class TmdbTvSeriesService {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
-                        .queryParam("append_to_response", "credits,videos,watch/providers")
+                        .queryParam("append_to_response", "aggregate_credits,videos,watch/providers")
                         .path("/tv/{seriesId}")
                         .build(seriesId))
                 .retrieve()

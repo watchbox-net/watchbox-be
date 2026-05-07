@@ -6,7 +6,6 @@ import net.watchbox.domain.content.dto.detail.TvInfo;
 import net.watchbox.domain.content.sub.movie.entity.Movie;
 import net.watchbox.domain.content.sub.movie.entity.MovieDetail;
 import net.watchbox.domain.content.sub.person.entity.Person;
-import net.watchbox.domain.content.sub.person.entity.PersonDetail;
 import net.watchbox.domain.content.sub.tv.entity.Tv;
 import net.watchbox.domain.content.sub.tv.entity.TvDetail;
 import net.watchbox.global.tmdb.util.MovieGenre;
@@ -21,7 +20,7 @@ public class ContentDetailMapper {
                 .titleOriginal(movie.getTitleOriginal())
                 .posterPath(movie.getPosterPath())
                 .year(movie.getYear())
-                .genreList(MovieGenre.mapGenreIdListToKorean(movie.getGenreIds()))
+                .genreList(MovieGenre.mapSummaryGenreIdListToKorean(movie.getGenreIds()))
 
                 .overview(movieDetail.getOverview())
                 .backdropPath(movieDetail.getBackdropPath())
@@ -48,21 +47,21 @@ public class ContentDetailMapper {
                 .posterPath(tv.getPosterPath())
                 .firstYear(tv.getFirstAirDate().getYear())
                 .lastYear(tv.getLastAirDate().getYear())
-                .genreList(MovieGenre.mapGenreIdListToKorean(tv.getGenreIds()))
+                .genreList(MovieGenre.mapSummaryGenreIdListToKorean(tv.getGenreIds()))
 
                 .overview(tvDetail.getOverview())
                 .backdropPath(tvDetail.getBackdropPath())
-                .originalLanguage(tvDetail.getOriginalLanguage())
+//                .originalLanguage(tvDetail.getOriginalLanguage())
                 .firstAirDate(tvDetail.getFirstAirDate())
-                .adult(tvDetail.getAdult())
-                .video(tvDetail.getVideo())
+//                .adult(tvDetail.getAdult())
+//                .video(tvDetail.getVideo())
                 .status(tvDetail.getStatus())
-                .type(tvDetail.getType())
+//                .type(tvDetail.getType())
                 .tagline(tvDetail.getTagline())
-                .homepage(tvDetail.getHomepage())
-                .budget(tvDetail.getBudget())
-                .revenue(tvDetail.getRevenue())
-                .numberOfEpisodes(tvDetail.getNumberOfEpisodes())
+//                .homepage(tvDetail.getHomepage())
+//                .budget(tvDetail.getBudget())
+//                .revenue(tvDetail.getRevenue())
+//                .numberOfEpisodes(tvDetail.getNumberOfEpisodes())
                 .numberOfSeasons(tvDetail.getNumberOfSeasons())
                 .lastAirDate(tvDetail.getLastAirDate())
                 .build();

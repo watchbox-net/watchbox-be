@@ -59,15 +59,30 @@ public enum MovieGenre {
 
     /**
      * 장르 ID 리스트를 한글명으로 매핑
-     * 최대 3개까지만 반환
+     * 최대 3개까지만 반환 (목록 페이지용)
      */
-    public static List<String> mapGenreIdListToKorean(List<Integer> genreIds) {
+    public static List<String> mapSummaryGenreIdListToKorean(List<Integer> genreIds) {
         if (genreIds == null || genreIds.isEmpty()) {
             return List.of();
         }
 
         return genreIds.stream()
                 .limit(3)
+                .map(MovieGenre::getKoreanNameById)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    /**
+     * 장르 ID 리스트를 한글명으로 매핑
+     * 제한 없이 모두 반환 (상세 페이지용)
+     */
+    public static List<String> mapDetailGenreIdListToKorean(List<Integer> genreIds) {
+        if (genreIds == null || genreIds.isEmpty()) {
+            return List.of();
+        }
+
+        return genreIds.stream()
                 .map(MovieGenre::getKoreanNameById)
                 .filter(Objects::nonNull)
                 .toList();
