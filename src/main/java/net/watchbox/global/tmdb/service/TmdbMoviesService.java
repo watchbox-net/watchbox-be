@@ -16,7 +16,23 @@ public class TmdbMoviesService {
     /**
      * Details
      * https://api.themoviedb.org/3/movie/{movie_id}
-     * 상세 페이지에 필요한 정보들 요청
+     * DB 저장에 필요한 정보 요청
+     */
+    public TmdbMoviesDetailsResponse getMovieDetails(Long movieId) {
+        return tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
+                        .path("/movie/{movieId}")
+                        .build(movieId))
+                .retrieve()
+                .bodyToMono(TmdbMoviesDetailsResponse.class)
+                .block();
+    }
+
+    /**
+     * Details
+     * https://api.themoviedb.org/3/movie/{movie_id}
+     * 상세 페이지에 필요한 정보 요청
      */
     public TmdbMoviesDetailsResponse getMovieDetailsWithCVP(Long movieId) {
         return tmdbClient.baseWebClient()
@@ -35,7 +51,7 @@ public class TmdbMoviesService {
      * https://api.themoviedb.org/3/movie/{movie_id}/images
      * language=null 영화 이미지 요청
      */
-    public TmdbWorkImagesResponse getMovieDetailsWithImages(Long movieId) {
+    public TmdbWorkImagesResponse getMovieImages(Long movieId) {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder, "null")

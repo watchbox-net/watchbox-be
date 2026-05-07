@@ -28,8 +28,9 @@ public final class MovieInfo implements ContentInfo { // 상세 페이지 순서
     private String originCountry;               // 국가
 //    private List<String> productionCompanyList;     // 제작사 : 보류
 
+    // --------- append_to_response ---------
     private List<String> watchProviderList;     // 플랫폼 리스트
-    private PersonCredit credit;                // 출연진, 제작진
+    private PersonCredit personCredit;          // 출연진, 제작진
     private List<String> backdropPathList;      // 배경 이미지 리스트
     // videos
 

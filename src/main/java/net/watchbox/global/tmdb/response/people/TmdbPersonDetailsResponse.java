@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.watchbox.global.tmdb.response.common.TmdbCombinedCreditsResponse;
 import net.watchbox.global.tmdb.response.common.TmdbPersonImagesResponse;
 
 import java.util.List;
@@ -49,4 +50,7 @@ public class TmdbPersonDetailsResponse {
      * append_to_response
      */
     private TmdbPersonImagesResponse images;
+
+    @JsonProperty("combined_credits")
+    private TmdbCombinedCreditsResponse combinedCredits;
 }

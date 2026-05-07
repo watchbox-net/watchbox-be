@@ -14,17 +14,21 @@ import net.watchbox.domain.content.sub.person.entity.Person;
 import net.watchbox.domain.content.sub.person.repository.PersonRepository;
 import net.watchbox.domain.content.sub.tv.entity.Tv;
 import net.watchbox.domain.content.sub.tv.repository.TvRepository;
+import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
+import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
+import net.watchbox.global.tmdb.service.TmdbSearchService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
 import net.watchbox.global.tmdb.util.Country;
 import net.watchbox.global.tmdb.util.TmdbUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +45,7 @@ public class ContentCommandService {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;
     private final TmdbPeopleService tmdbPeopleService;
+    private final TmdbSearchService tmdbSearchService;
 
     /**
      * Content DB 존재 여부 확인하여 조회 or 저장
@@ -75,10 +80,9 @@ public class ContentCommandService {
     }
 
     public void saveSubContents(Content content, MediaType mediaType) {
-        // 타입별로 해당 상세 정보 요청 받아와서 저장
         switch (mediaType) {
             case MOVIE -> {
-                TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetailsWithCVP(content.getTmdbId());
+                TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetails(content.getTmdbId());
                 saveMovieContent(content, response);
             }
             case TV -> {
@@ -86,14 +90,25 @@ public class ContentCommandService {
                 saveTvContent(content, response);
             }
             case PERSON -> {
-                TmdbPersonDetailsResponse response = tmdbPeopleService.getPeopleDetails(content.getTmdbId());
-                savePersonContent(content, response);
+                // (API 1) Detail & ko-KR -> 기본 정보
+                TmdbPersonDetailsResponse detailsResponse = tmdbPeopleService.getPeopleDetails(content.getTmdbId());
+
+                // 앞의 API 응답을 이용해야하므로 직렬로 요청해야한다.
+                // (API 2) Search/Person & en-US & query=nameKo -> ID 일치에서 nameEn, nameOriginal 가져오기
+                TmdbSearchCommonResponse searchResponse = tmdbSearchService.searchPersonExtraNames(detailsResponse.getName());
+                Optional<TmdbSearchResultItem> matched = searchResponse.getResults().stream()
+                        .filter(r -> r.getId().equals(content.getTmdbId()))
+                        .findFirst();
+                String nameEn = matched.map(r -> r.getName()).orElse(null);
+                String nameOriginal = matched.map(r -> r.getOriginalName()).orElse(null);
+
+                savePersonContent(content, detailsResponse, nameEn, nameOriginal);
             }
         }
     }
 
-    // TmdbMovieDetailsResponse -> Movie, MovieDetail 저장
     public void saveMovieContent(Content content, TmdbMoviesDetailsResponse tmdbMovieDetail) {
+
         Movie movie = Movie.builder()
                 .tmdbId(content.getTmdbId())
                 .content(content)
@@ -111,27 +126,8 @@ public class ContentCommandService {
                 .genreIds(tmdbMovieDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
                 .build();
         movieRepository.save(movie);
-
-//        MovieDetail movieDetail = MovieDetail.builder()
-//                .movie(movie)
-//                .overview(tmdbMovieDetail.getOverview())
-//                .backdropPath(tmdbMovieDetail.getBackdropPath())
-//                .originalLanguage(tmdbMovieDetail.getOriginalLanguage())
-//                .releaseDate(LocalDate.parse(tmdbMovieDetail.getReleaseDate()))
-//                .adult(tmdbMovieDetail.isAdult())
-//                .video(tmdbMovieDetail.isVideo())  // 추후 매핑 로직 추가 필요
-//                .status(tmdbMovieDetail.getStatus())
-//                .runtime(tmdbMovieDetail.getRuntime().intValue())
-//                .tagline(tmdbMovieDetail.getTagline())
-//                .homepage(tmdbMovieDetail.getHomepage())
-//                .imdbId(tmdbMovieDetail.getImdbId())
-//                .budget(tmdbMovieDetail.getBudget())
-//                .revenue(tmdbMovieDetail.getRevenue())
-//                .build();
-//        movieDetailRepository.save(movieDetail);
     }
 
-    // TmdbTvSeriesDetailsResponse -> Tv, TvDetail 저장
     public void saveTvContent(Content content, TmdbTvSeriesDetailsResponse tmdbTvSeriesDetail) {
         Tv tv = Tv.builder()
                 .tmdbId(content.getTmdbId())
@@ -152,52 +148,15 @@ public class ContentCommandService {
                 .genreIds(tmdbTvSeriesDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
                 .build();
         tvRepository.save(tv);
-
-//        TvDetail tvDetail = TvDetail.builder()
-//                .tv(tv)
-//                .overview(tmdbTvSeriesDetail.getOverview())
-//                .backdropPath(tmdbTvSeriesDetail.getBackdropPath())
-//                .originalLanguage(tmdbTvSeriesDetail.getOriginalLanguage())
-//                .firstAirDate(LocalDate.parse(tmdbTvSeriesDetail.getFirstAirDate()))
-//                .lastAirDate(LocalDate.parse(tmdbTvSeriesDetail.getLastAirDate()))
-////                .inProduction(tmdbTvSeriesDetail.isInProduction())
-//                .numberOfEpisodes(tmdbTvSeriesDetail.getNumberOfEpisodes())
-//                .numberOfSeasons(tmdbTvSeriesDetail.getNumberOfSeasons())
-//                .status(tmdbTvSeriesDetail.getStatus())
-//                .tagline(tmdbTvSeriesDetail.getTagline())
-//                .homepage(tmdbTvSeriesDetail.getHomepage())
-//                //
-//                .originCountries(
-//                        tmdbTvSeriesDetail.getOriginCountry().stream()
-//                                .map(c -> "\"" + c + "\"")
-//                                .toList().toString()
-//                )
-//                .productionCompanies(
-//                        tmdbTvSeriesDetail.getGenres().stream()
-//                                .map(g -> "{\"id\":" + g.getId() + ",\"name\":\"" + g.getName() + "\"}")
-//                                .toList().toString()
-//                )
-//                .spokenLanguages(
-//                        tmdbTvSeriesDetail.getGenres().stream()
-//                                .map(g -> "{\"iso_639_1\":\"" + g.getId() + "\",\"name\":\"" + g.getName() + "\"}")
-//                                .toList().toString()
-//                )
-//                .build();
-//        tvDetailRepository.save(tvDetail);
     }
 
-    // TmdbPeopleDetailsResponse -> Person, PersonDetail 저장
-    public void savePersonContent(Content content, TmdbPersonDetailsResponse tmdbPersonDetail) {
-        // (API 1) Detail & ko-KR
-        // (API 2) Search/Person & en-US & query=nameKo
-        //  -> ID 일치에서 nameEn, nameOriginal 가져오기
-        // [고도화] (API 3) 대표작 뽑아내기
+    public void savePersonContent(Content content, TmdbPersonDetailsResponse tmdbPersonDetail, String nameEn, String nameOriginal) {
         Person person = Person.builder()
                 .tmdbId(content.getTmdbId())
                 .content(content)
                 .nameKo(tmdbPersonDetail.getName())
-//                .nameEn(tmdbPersonDetail.getName()) // en-US 데이터 추가 요청 필요
-//                .nameOriginal(tmdbPersonDetail.getOriginalName()) //
+                .nameEn(nameEn)
+                .nameOriginal(nameOriginal)
                 .profilePath(tmdbPersonDetail.getProfilePath())
                 .knownForDepartment(Department.fromEnglishValue(tmdbPersonDetail.getKnownForDepartment()))
                 .popularity(tmdbPersonDetail.getPopularity())
@@ -206,26 +165,6 @@ public class ContentCommandService {
                 .placeOfBirth(tmdbPersonDetail.getPlaceOfBirth())
                 .build();
         personRepository.save(person);
-//        PersonDetail personDetail = PersonDetail.builder()
-//                .person(person)
-//                .biography(tmdbPersonDetail.getBiography())
-//                .birthday(tmdbPersonDetail.getBirthday() == null ? null :
-//                        LocalDate.parse(tmdbPersonDetail.getBirthday()))
-//                .deathday(tmdbPersonDetail.getDeathday() == null ? null :
-//                        LocalDate.parse(tmdbPersonDetail.getDeathday()))
-//                .placeOfBirth(tmdbPersonDetail.getPlaceOfBirth())
-//                .homepage(tmdbPersonDetail.getHomepage())
-//                .imdbId(tmdbPersonDetail.getImdbId())
-//                .gender(tmdbPersonDetail.getGender())
-//                .knownForDepartment(tmdbPersonDetail.getKnownForDepartment())
-//                .adult(tmdbPersonDetail.isAdult())
-//                .alsoKnownAs(
-//                        tmdbPersonDetail.getAlsoKnownAs().stream()
-//                                .map(name -> "\"" + name + "\"")
-//                                .toList().toString()
-//                )
-//                .build();
-//        personDetailRepository.save(personDetail);
     }
 
     public void deleteContentCascade(Long tmdbId) {

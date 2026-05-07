@@ -4,6 +4,7 @@ import net.watchbox.domain.content.dto.detail.MovieInfo;
 import net.watchbox.domain.content.dto.detail.PersonInfo;
 import net.watchbox.domain.content.dto.detail.TvInfo;
 import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
+import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
@@ -13,26 +14,26 @@ import java.util.List;
 
 public class TmdbContentDetailDtoMapper {
 
-    public static MovieInfo toMovieInfo(TmdbMoviesDetailsResponse response) {
+    public static MovieInfo toMovieInfo(TmdbMoviesDetailsResponse detailsResponse, TmdbWorkImagesResponse imagesResponse) {
         return MovieInfo.builder()
-                .tmdbId(response.getId())
-                .titleKo(response.getTitle())
-                .titleOriginal(response.getOriginalTitle())
-                .posterPath(response.getPosterPath())
-                .year(TmdbUtils.extractYear(response.getReleaseDate()))
-                .genreList(response.getGenres().stream().map(TmdbGenreItem::getName).toList())
-                .overview(response.getOverview())
-                .backdropPath(response.getBackdropPath())
-                .originalLanguage(response.getOriginalLanguage())
-                .releaseDate(TmdbUtils.extractDate(response.getReleaseDate()))
-                .adult(response.isAdult())
-                .video(response.isVideo())
-                .status(response.getStatus())
-                .runtime(response.getRuntime() != null ? response.getRuntime().intValue() : null)
-                .tagline(response.getTagline())
-                .homepage(response.getHomepage())
-                .budget(response.getBudget())
-                .revenue(response.getRevenue())
+                .tmdbId(detailsResponse.getId())
+                .titleKo(detailsResponse.getTitle())
+                .titleOriginal(detailsResponse.getOriginalTitle())
+                .posterPath(detailsResponse.getPosterPath())
+                .year(TmdbUtils.extractYear(detailsResponse.getReleaseDate()))
+                .genreList(detailsResponse.getGenres().stream().map(TmdbGenreItem::getName).toList())
+                .overview(detailsResponse.getOverview())
+                .backdropPath(detailsResponse.getBackdropPath())
+                .originalLanguage(detailsResponse.getOriginalLanguage())
+                .releaseDate(TmdbUtils.extractDate(detailsResponse.getReleaseDate()))
+                .adult(detailsResponse.isAdult())
+                .video(detailsResponse.isVideo())
+                .status(detailsResponse.getStatus())
+                .runtime(detailsResponse.getRuntime() != null ? detailsResponse.getRuntime().intValue() : null)
+                .tagline(detailsResponse.getTagline())
+                .homepage(detailsResponse.getHomepage())
+                .budget(detailsResponse.getBudget())
+                .revenue(detailsResponse.getRevenue())
                 .build();
     }
 

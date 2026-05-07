@@ -23,10 +23,10 @@ public final class PersonInfo implements ContentInfo {
     private Integer age;                // 나이 (생년월일로 계산)
     private String placeOfBirth;        // 출생지
     private String knownForDepartment;  // 주요 활동 분야 (Acting, Directing 등)
-
-    private WorkCredit credit;    // 작품 정보
-
     private String biography;
+
+    // --------- append_to_response ---------
+    private WorkCredit workCredit;      // 작품 정보
 
     // --------- 미사용 ---------
     private Double popularity;

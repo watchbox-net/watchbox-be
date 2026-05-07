@@ -54,7 +54,7 @@ public class DevTmdbDetailsController {
     public ResponseEntity<TmdbPersonDetailsResponse> fetchTmdbPeopleDetails(
             @PathVariable Long tmdbId
     ) {
-        return ResponseEntity.ok(tmdbPeopleService.getPeopleDetails(tmdbId));
+        return ResponseEntity.ok(tmdbPeopleService.getPeopleDetailsWithCI(tmdbId));
     }
 
     //
