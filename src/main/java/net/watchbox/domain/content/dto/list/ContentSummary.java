@@ -21,20 +21,22 @@ public class ContentSummary { // 하나의 응답 클래스에 모든 변수 포
     private String posterPath;
     private Double voteAverage;
     private Long voteCount;
-    private Integer year;
-//    private String overview;
     private List<String> genreList;
 
     // 영화 전용
     private String title; // titleKo
     private String titleOriginal;
+    private Integer releaseYear;
 
     // TV, 인물 공통
     private String name; // nameKo
     private String nameOriginal;
+    private Integer firstAirYear;
+    private Integer lastAirYear;
 
     // 인물 전용
     private Department knownForDepartment;
-    private List<String> knownForList;
     private String profilePath;
+//    private List<String> knownForList; // ToDo
+//    private Integer birthYear; // 검색 API로 안나옴
 }

@@ -1,4 +1,4 @@
-package net.watchbox.global.tmdb.util;
+package net.watchbox.domain.content.sub.movie.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

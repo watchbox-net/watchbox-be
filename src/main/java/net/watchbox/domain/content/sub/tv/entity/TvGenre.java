@@ -1,4 +1,4 @@
-package net.watchbox.global.tmdb.util;
+package net.watchbox.domain.content.sub.tv.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,7 +56,7 @@ public enum TvGenre {
 
     /**
      * 장르 ID 리스트를 한글명으로 매핑
-     * 최대 3개까지만 반환 (목록 페이지용)
+     * 최대 2개까지만 반환 (목록 페이지용)
      * "액션·어드벤처" 같이 합성된 장르는 가운뎃점으로 분리해서 평탄화 후 3개로 제한
      */
     public static List<String> mapSummaryGenreIdListToKorean(List<Integer> genreIds) {
@@ -69,7 +69,7 @@ public enum TvGenre {
                 .map(TvGenre::getNameById)
                 .filter(Objects::nonNull)
                 .flatMap(name -> Arrays.stream(name.split("·")))  // 그 다음에 split
-                .limit(3)  // 콤마로 나눈 후의 결과에서 3개만
+                .limit(2)  // 콤마로 나눈 후의 결과 개수
                 .toList();
     }
 

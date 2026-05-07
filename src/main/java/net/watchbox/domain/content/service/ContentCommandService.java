@@ -23,7 +23,6 @@ import net.watchbox.global.tmdb.service.TmdbPeopleService;
 import net.watchbox.global.tmdb.service.TmdbSearchService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
 import net.watchbox.global.tmdb.util.Country;
-import net.watchbox.global.tmdb.util.TmdbUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -104,8 +103,7 @@ public class ContentCommandService {
     }
 
     public void saveMovieContent(Content content, TmdbMoviesDetailsResponse tmdbMovieDetail) {
-
-        Movie movie = Movie.builder()
+        movieRepository.save(Movie.builder()
                 .tmdbId(content.getTmdbId())
                 .content(content)
                 .titleKo(tmdbMovieDetail.getTitle())
@@ -115,39 +113,35 @@ public class ContentCommandService {
                 .popularity(tmdbMovieDetail.getPopularity())
                 .voteAverage(tmdbMovieDetail.getVoteAverage())
                 .voteCount(tmdbMovieDetail.getVoteCount())
-                .year(TmdbUtils.extractYear(tmdbMovieDetail.getReleaseDate()))
                 .releaseDate(LocalDate.parse(tmdbMovieDetail.getReleaseDate()))
                 .originCountry(tmdbMovieDetail.getOriginCountry().isEmpty() ? null :
                         Country.fromCode(tmdbMovieDetail.getOriginCountry().get(0)))
                 .genreIds(tmdbMovieDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
-                .build();
-        movieRepository.save(movie);
+                .build());
     }
 
     public void saveTvContent(Content content, TmdbTvSeriesDetailsResponse tmdbTvSeriesDetail) {
-        Tv tv = Tv.builder()
+        tvRepository.save(Tv.builder()
                 .tmdbId(content.getTmdbId())
                 .content(content)
                 .nameKo(tmdbTvSeriesDetail.getName())
-//                .nameEn(tmdbTvSeriesDetail.getOriginalName()) // en-US 데이터 추가 요청 필요
+//                .nameEn(tmdbTvSeriesDetail.getOriginalName()) // ToDo: en-US 데이터 추가 요청 필요
                 .nameOriginal(tmdbTvSeriesDetail.getOriginalName())
                 .posterPath(tmdbTvSeriesDetail.getPosterPath())
                 .popularity(tmdbTvSeriesDetail.getPopularity())
                 .voteAverage(tmdbTvSeriesDetail.getVoteAverage())
                 .voteCount(tmdbTvSeriesDetail.getVoteCount())
-                .year(TmdbUtils.extractYear(tmdbTvSeriesDetail.getFirstAirDate()))
                 .firstAirDate(LocalDate.parse(tmdbTvSeriesDetail.getFirstAirDate()))
                 .lastAirDate(LocalDate.parse(tmdbTvSeriesDetail.getLastAirDate()))
                 .numberOfSeasons(tmdbTvSeriesDetail.getNumberOfSeasons())
                 .originCountry(tmdbTvSeriesDetail.getOriginCountry().isEmpty() ? null :
                         Country.fromCode(tmdbTvSeriesDetail.getOriginCountry().get(0)))
                 .genreIds(tmdbTvSeriesDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
-                .build();
-        tvRepository.save(tv);
+                .build());
     }
 
     public void savePersonContent(Content content, TmdbPersonDetailsResponse tmdbPersonDetail, String nameEn, String nameOriginal) {
-        Person person = Person.builder()
+        personRepository.save(Person.builder()
                 .tmdbId(content.getTmdbId())
                 .content(content)
                 .nameKo(tmdbPersonDetail.getName())
@@ -159,8 +153,7 @@ public class ContentCommandService {
                 .birthday(tmdbPersonDetail.getBirthday() == null ? null :
                         LocalDate.parse(tmdbPersonDetail.getBirthday()))
                 .placeOfBirth(tmdbPersonDetail.getPlaceOfBirth())
-                .build();
-        personRepository.save(person);
+                .build());
     }
 
     public void deleteContentCascade(Long tmdbId) {

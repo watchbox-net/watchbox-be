@@ -7,8 +7,9 @@ import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.search.SearchType;
 import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
-import net.watchbox.global.tmdb.util.MovieGenre;
-import net.watchbox.global.tmdb.util.TvGenre;
+import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
+import net.watchbox.domain.content.sub.tv.entity.TvGenre;
+import net.watchbox.global.tmdb.util.TmdbUtils;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class TmdbSearchDtoMapper {
                 .posterPath(item.getPosterPath())
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
-                .year(Integer.parseInt(item.getReleaseDate().substring(0, 4)))
+                .releaseYear(TmdbUtils.extractYear(item.getReleaseDate()))
                 .genreList(MovieGenre.mapSummaryGenreIdListToKorean(item.getGenreIds()))
                 .title(item.getTitle())
                 .titleOriginal(item.getOriginalTitle())
@@ -62,7 +63,8 @@ public class TmdbSearchDtoMapper {
                 .posterPath(item.getPosterPath())
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
-                .year(Integer.parseInt(item.getFirstAirDate().substring(0, 4)))
+                .firstAirYear(TmdbUtils.extractYear(item.getFirstAirDate()))
+                .lastAirYear(TmdbUtils.extractYear(item.getLastAirDate()))
                 .genreList(TvGenre.mapSummaryGenreIdListToKorean(item.getGenreIds()))
                 .name(item.getName())
                 .nameOriginal(item.getOriginalName())

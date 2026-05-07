@@ -38,6 +38,9 @@ public class TmdbSearchResultItem {
     @JsonProperty("first_air_date")
     private String firstAirDate; // TV
 
+    @JsonProperty("last_air_date")
+    private String lastAirDate; // TV
+
     @JsonProperty("vote_average")
     private Double voteAverage;
 

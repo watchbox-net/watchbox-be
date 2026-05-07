@@ -6,8 +6,8 @@ import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.sub.movie.entity.Movie;
 import net.watchbox.domain.content.sub.person.entity.Person;
 import net.watchbox.domain.content.sub.tv.entity.Tv;
-import net.watchbox.global.tmdb.util.MovieGenre;
-import net.watchbox.global.tmdb.util.TvGenre;
+import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
+import net.watchbox.domain.content.sub.tv.entity.TvGenre;
 import net.watchbox.global.util.ConvertUtils;
 
 public class ContentSummaryMapper {
@@ -28,7 +28,7 @@ public class ContentSummaryMapper {
                 .posterPath(movie.getPosterPath())
                 .voteAverage(ConvertUtils.roundVoteAverage(movie.getVoteAverage()))
                 .voteCount(movie.getVoteCount())
-                .year(movie.getYear())
+                .releaseYear(movie.getReleaseDate().getYear())
                 .genreList(MovieGenre.mapSummaryGenreIdListToKorean(movie.getGenreIds()))
                 .title(movie.getTitleKo())
                 .titleOriginal(movie.getTitleOriginal())
@@ -44,7 +44,8 @@ public class ContentSummaryMapper {
                 .posterPath(tv.getPosterPath())
                 .voteAverage(ConvertUtils.roundVoteAverage(tv.getVoteAverage()))
                 .voteCount(tv.getVoteCount())
-                .year(tv.getYear())
+                .firstAirYear(tv.getFirstAirDate().getYear())
+                .lastAirYear(tv.getLastAirDate().getYear())
                 .genreList(TvGenre.mapSummaryGenreIdListToKorean(tv.getGenreIds()))
                 .name(tv.getNameKo())
                 .nameOriginal(tv.getNameOriginal())

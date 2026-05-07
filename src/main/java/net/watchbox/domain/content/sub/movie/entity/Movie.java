@@ -34,7 +34,7 @@ public class Movie extends BaseTime {
     private Double popularity;
     private Double voteAverage;
     private Long voteCount;
-    private Integer year; // 상영 연도
+//    private Integer year; // 개봉 연도
     private LocalDate releaseDate;
     private Country originCountry;
 

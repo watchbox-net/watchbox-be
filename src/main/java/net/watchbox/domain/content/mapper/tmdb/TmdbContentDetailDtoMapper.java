@@ -8,9 +8,9 @@ import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
-import net.watchbox.global.tmdb.util.MovieGenre;
+import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
 import net.watchbox.global.tmdb.util.TmdbUtils;
-import net.watchbox.global.tmdb.util.TvGenre;
+import net.watchbox.domain.content.sub.tv.entity.TvGenre;
 
 public class TmdbContentDetailDtoMapper {
 

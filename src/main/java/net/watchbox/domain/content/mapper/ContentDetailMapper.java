@@ -8,7 +8,7 @@
 //import net.watchbox.domain.content.sub.person.entity.Person;
 //import net.watchbox.domain.content.sub.tv.entity.Tv;
 //import net.watchbox.domain.content.sub.tv.entity.TvDetail;
-//import net.watchbox.global.tmdb.util.MovieGenre;
+//import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
 //
 //public class ContentDetailMapper {
 //    public static MovieInfo fromMovie(Movie movie) {

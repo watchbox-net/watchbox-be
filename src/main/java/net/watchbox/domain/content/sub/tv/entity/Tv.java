@@ -34,7 +34,7 @@ public class Tv extends BaseTime {
     private Double popularity;
     private Double voteAverage;
     private Long voteCount;
-    private Integer year; // 처음 방영 연도
+//    private Integer year; // 처음 방영 연도
     private LocalDate firstAirDate;
     private LocalDate lastAirDate;
     private Integer numberOfSeasons;
