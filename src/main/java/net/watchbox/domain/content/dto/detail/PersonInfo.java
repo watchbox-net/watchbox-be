@@ -36,5 +36,5 @@ public final class PersonInfo implements ContentInfo {
     private Integer gender;
     private LocalDate deathday;
     private String homepage;
-    private Boolean adult;
+//    private Boolean adult;
 }

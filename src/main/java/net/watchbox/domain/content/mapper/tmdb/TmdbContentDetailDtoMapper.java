@@ -100,7 +100,7 @@ public class TmdbContentDetailDtoMapper {
                 .gender(response.getGender())
                 .homepage(response.getHomepage())
                 .deathday(TmdbUtils.extractDate(response.getDeathday()))
-                .adult(response.isAdult())
+//                .adult(response.isAdult())
                 .build();
     }
 
