@@ -13,14 +13,14 @@ public class TmdbPeopleService {
     private final TmdbClient tmdbClient;
 
     /**
-     * Details Get 요청
-     * @person_id
-     * 150242
+     * Details
+     * https://api.themoviedb.org/3/person/{person_id}
      */
     public TmdbPersonDetailsResponse getPeopleDetails(Long personId) {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
+                        .queryParam("append_to_response", "combined_credits,images")
                         .path("/person/{personId}")
                         .build(personId))
                 .retrieve()

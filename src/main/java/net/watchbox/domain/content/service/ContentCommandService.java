@@ -78,7 +78,7 @@ public class ContentCommandService {
         // 타입별로 해당 상세 정보 요청 받아와서 저장
         switch (mediaType) {
             case MOVIE -> {
-                TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetails(content.getTmdbId());
+                TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetailsWithCVP(content.getTmdbId());
                 saveMovieContent(content, response);
             }
             case TV -> {

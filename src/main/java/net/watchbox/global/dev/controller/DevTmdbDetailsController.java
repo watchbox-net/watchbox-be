@@ -32,7 +32,7 @@ public class DevTmdbDetailsController {
     public ResponseEntity<TmdbMoviesDetailsResponse> fetchTmdbMovieDetails(
             @PathVariable Long tmdbId
     ) {
-        return ResponseEntity.ok(tmdbMoviesService.getMovieDetails(tmdbId));
+        return ResponseEntity.ok(tmdbMoviesService.getMovieDetailsWithCVP(tmdbId));
     }
 
     /**

@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.watchbox.global.tmdb.response.common.TmdbPersonImagesResponse;
+
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TmdbPersonDetailsResponse {
-
     private boolean adult;
 
     private String biography;
@@ -43,4 +44,9 @@ public class TmdbPersonDetailsResponse {
 
     @JsonProperty("also_known_as")
     private List<String> alsoKnownAs;
+
+    /**
+     * append_to_response
+     */
+    private TmdbPersonImagesResponse images;
 }

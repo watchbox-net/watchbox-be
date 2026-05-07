@@ -11,6 +11,9 @@ import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
 import net.watchbox.global.tmdb.inner.title.TmdbProductionCompanyItem;
 import net.watchbox.global.tmdb.inner.title.TmdbProductionCountryItem;
 import net.watchbox.global.tmdb.inner.title.TmdbSpokenLanguageItem;
+import net.watchbox.global.tmdb.response.common.TmdbAggregateCreditsResponse;
+import net.watchbox.global.tmdb.response.common.TmdbVideosResponse;
+import net.watchbox.global.tmdb.response.common.TmdbWatchProvidersResponse;
 
 import java.util.List;
 
@@ -98,6 +101,14 @@ public class TmdbTvSeriesDetailsResponse {
 //    @JsonProperty("spoken_languages")
 //    private List<TmdbSpokenLanguageItem> spokenLanguages;
 
-    /* append_to_response */
+    /**
+     * append_to_response
+     */
+    @JsonProperty("aggregate_credits")
+    private TmdbAggregateCreditsResponse aggregateCredits;
 
+    private TmdbVideosResponse videos;
+
+    @JsonProperty("watch/providers")
+    private TmdbWatchProvidersResponse watchProviders;
 }

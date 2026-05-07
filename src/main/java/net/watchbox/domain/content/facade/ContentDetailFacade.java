@@ -71,7 +71,7 @@ public class ContentDetailFacade {
     public ContentInfo fromMovieDetails(Long tmdbId) {
         // API 1) Detail & ko-KR & credits,watch/providers,videos -> 출연진/제작진, 플랫폼, (비디오)
         // API 2) Images & null
-        return TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetails(tmdbId));
+        return TmdbContentDetailDtoMapper.toMovieInfo(tmdbMoviesService.getMovieDetailsWithCVP(tmdbId));
     }
 
     public ContentInfo fromTvDetails(Long tmdbId) {
