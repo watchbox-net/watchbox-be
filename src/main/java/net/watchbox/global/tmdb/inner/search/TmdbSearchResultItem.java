@@ -38,8 +38,8 @@ public class TmdbSearchResultItem {
     @JsonProperty("first_air_date")
     private String firstAirDate; // TV
 
-    @JsonProperty("last_air_date")
-    private String lastAirDate; // TV
+//    @JsonProperty("last_air_date")
+//    private String lastAirDate; // 검색 API에는 안 나옴
 
     @JsonProperty("vote_average")
     private Double voteAverage;
@@ -54,4 +54,7 @@ public class TmdbSearchResultItem {
 
     @JsonProperty("original_language")
     private String originalLanguage;
+
+    @JsonProperty("known_for_department")
+    private String knownForDepartment;
 }

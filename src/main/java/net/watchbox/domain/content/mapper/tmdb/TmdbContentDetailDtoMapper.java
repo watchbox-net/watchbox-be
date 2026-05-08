@@ -94,6 +94,7 @@ public class TmdbContentDetailDtoMapper {
                 // append_to_response
                 .workCredit(TmdbAppendToResponseConverter.toWorkCredit(response.getCombinedCredits()))
                 .profilePathList(TmdbAppendToResponseConverter.toProfilePathList(response.getImages()))
+                .age(TmdbUtils.calculateAge(response.getBirthday(), response.getDeathday()))
                 // 미사용 필드
                 .popularity(response.getPopularity())
 //                .knownForList(List.of()) // TMDB Details API에 known_for 없음 - 추가 API 필요
