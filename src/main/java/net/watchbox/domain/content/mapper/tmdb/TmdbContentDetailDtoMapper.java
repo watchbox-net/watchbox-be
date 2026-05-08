@@ -9,6 +9,7 @@ import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
+import net.watchbox.global.tmdb.util.Country;
 import net.watchbox.global.tmdb.util.TmdbUtils;
 import net.watchbox.domain.content.sub.tv.entity.TvGenre;
 
@@ -28,7 +29,8 @@ public class TmdbContentDetailDtoMapper {
                 .overview(detailsResponse.getOverview())
                 .backdropPath(detailsResponse.getBackdropPath())
                 .releaseDate(TmdbUtils.extractDate(detailsResponse.getReleaseDate()))
-                .originCountry(detailsResponse.getOriginCountry().stream().findFirst().orElse(null))
+                .originCountry(detailsResponse.getOriginCountry().stream().findFirst()
+                        .map(Country::getKoreanByCode).orElse(null))
                 .runtime(detailsResponse.getRuntime() != null ? detailsResponse.getRuntime().intValue() : null)
                 // append_to_response
                 .personCredit(TmdbAppendToResponseConverter.toPersonCredit(detailsResponse.getCredits()))
@@ -54,7 +56,8 @@ public class TmdbContentDetailDtoMapper {
                 .posterPath(detailsResponse.getPosterPath())
                 .firstYear(TmdbUtils.extractYear(detailsResponse.getFirstAirDate()))
                 .lastYear(TmdbUtils.extractYear(detailsResponse.getLastAirDate()))
-                .originCountry(detailsResponse.getOriginCountry().stream().findFirst().orElse(null))
+                .originCountry(detailsResponse.getOriginCountry().stream().findFirst()
+                        .map(Country::getKoreanByCode).orElse(null))
                 .genreList(TvGenre.mapDetailGenreIdListToKorean(
                         detailsResponse.getGenres().stream()
                                 .map(g -> g.getId().intValue())

@@ -93,6 +93,7 @@ public class TmdbAppendToResponseConverter {
      * crew 응답을 인물 단위로 그룹핑.
      * 같은 인물이 여러 부서/직무로 등장하는 경우(감독+제작 등)를 한 row 로 합쳐 jobList 로 표현.
      * 등장 순서(LinkedHashMap)는 TMDB 가 보내준 순서를 그대로 유지.
+     * 단, 감독(DIRECTING) 부서를 가진 인물은 stable sort 로 맨 앞에 배치.
      */
     private static List<Crew> groupCrewByPerson(List<TmdbCrewItem> rawCrewList) {
         return rawCrewList.stream()
@@ -103,6 +104,8 @@ public class TmdbAppendToResponseConverter {
                 ))
                 .values().stream()
                 .map(TmdbAppendToResponseConverter::toCrew)
+                .sorted(Comparator.comparingInt(crew ->
+                        crew.getDepartmentList().contains(Department.DIRECTING) ? 0 : 1))
                 .toList();
     }
 
@@ -179,6 +182,7 @@ public class TmdbAppendToResponseConverter {
     /**
      * aggregate crew 응답을 인물 단위로 그룹핑.
      * TMDB 가 같은 인물이라도 부서가 다르면 별도 row 로 보내므로 (예: 감독+제작) 인물 단위로 합침.
+     * 감독(DIRECTING) 부서를 가진 인물은 stable sort 로 맨 앞에 배치.
      */
     private static List<Crew> groupAggregateCrewByPerson(List<TmdbAggregateCrewItem> rawCrewList) {
         return rawCrewList.stream()
@@ -189,6 +193,8 @@ public class TmdbAppendToResponseConverter {
                 ))
                 .values().stream()
                 .map(TmdbAppendToResponseConverter::toCrewFromAggregate)
+                .sorted(Comparator.comparingInt(crew ->
+                        crew.getDepartmentList().contains(Department.DIRECTING) ? 0 : 1))
                 .toList();
     }
 
