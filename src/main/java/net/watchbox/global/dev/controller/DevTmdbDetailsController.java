@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
-import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
+import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
@@ -32,7 +32,7 @@ public class DevTmdbDetailsController {
     public ResponseEntity<TmdbMoviesDetailsResponse> fetchTmdbMovieDetails(
             @PathVariable Long tmdbId
     ) {
-        return ResponseEntity.ok(tmdbMoviesService.getMovieDetails(tmdbId));
+        return ResponseEntity.ok(tmdbMoviesService.getMovieDetailsWithCVP(tmdbId));
     }
 
     /**
@@ -51,10 +51,10 @@ public class DevTmdbDetailsController {
      * 150242
      */
     @GetMapping("/people/details/{tmdbId}")
-    public ResponseEntity<TmdbPeopleDetailsResponse> fetchTmdbPeopleDetails(
+    public ResponseEntity<TmdbPersonDetailsResponse> fetchTmdbPeopleDetails(
             @PathVariable Long tmdbId
     ) {
-        return ResponseEntity.ok(tmdbPeopleService.getPeopleDetails(tmdbId));
+        return ResponseEntity.ok(tmdbPeopleService.getPeopleDetailsWithCI(tmdbId));
     }
 
     //

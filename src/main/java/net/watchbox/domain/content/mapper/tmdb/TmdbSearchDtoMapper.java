@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.content.dto.list.ContentSummary;
 import net.watchbox.domain.content.entity.MediaType;
+import net.watchbox.domain.content.sub.person.entity.Department;
 import net.watchbox.domain.search.SearchType;
 import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
-import net.watchbox.global.tmdb.util.MovieGenre;
-import net.watchbox.global.tmdb.util.TvGenre;
+import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
+import net.watchbox.domain.content.sub.tv.entity.TvGenre;
+import net.watchbox.global.tmdb.util.TmdbUtils;
 
 import java.util.List;
 
@@ -47,8 +49,8 @@ public class TmdbSearchDtoMapper {
                 .posterPath(item.getPosterPath())
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
-                .year(Integer.parseInt(item.getReleaseDate().substring(0, 4)))
-                .genreList(MovieGenre.mapGenreIdListToKorean(item.getGenreIds()))
+                .releaseYear(TmdbUtils.extractYear(item.getReleaseDate()))
+                .genreList(MovieGenre.mapSummaryGenreIdListToKorean(item.getGenreIds()))
                 .title(item.getTitle())
                 .titleOriginal(item.getOriginalTitle())
                 .build();
@@ -62,8 +64,9 @@ public class TmdbSearchDtoMapper {
                 .posterPath(item.getPosterPath())
                 .voteAverage(item.getVoteAverage())
                 .voteCount(item.getVoteCount())
-                .year(Integer.parseInt(item.getFirstAirDate().substring(0, 4)))
-                .genreList(TvGenre.mapGenreIdListToKorean(item.getGenreIds()))
+                .firstAirYear(TmdbUtils.extractYear(item.getFirstAirDate()))
+//                .lastAirYear(TmdbUtils.extractYear(item.getLastAirDate()))
+                .genreList(TvGenre.mapSummaryGenreIdListToKorean(item.getGenreIds()))
                 .name(item.getName())
                 .nameOriginal(item.getOriginalName())
                 .build();
@@ -77,7 +80,7 @@ public class TmdbSearchDtoMapper {
                 .profilePath(item.getProfilePath())
                 .name(item.getName())
                 .nameOriginal(item.getOriginalName())
-//                .knownForDepartment(item.getKnownForDepartment()) 없나?
+                .knownForDepartment(Department.fromEnglishValue(item.getKnownForDepartment()))
                 .build();
     }
 }

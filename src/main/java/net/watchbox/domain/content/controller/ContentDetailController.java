@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents/{mediaType}/{tmdbId}")
-@Tag(name = "Content Detail", description = "컨텐츠 상세 조회 API")
+@Tag(name = "ContentDetail", description = "컨텐츠 상세 조회 API")
 public class ContentDetailController {
     private final ContentDetailFacade contentDetailFacade;
 
@@ -32,18 +32,5 @@ public class ContentDetailController {
         return ResponseEntity.ok(ApiResponse.success(
                 contentDetailFacade.getContentDetail(mediaType, tmdbId, member)
         ));
-//        Long memberId = member != null ? member.getMemberId() : null;
-//        if(memberId == null) {
-//            log.info("memberId is null");
-//            return ResponseEntity.ok(ApiResponse.success(
-//                    contentFacade.getContentDetail(mediaType, tmdbId)
-//            ));
-//        }
-//
-//        log.info("memberId is {}", memberId);
-//        return ResponseEntity.ok(ApiResponse.success(
-////                contentFacade.getContentDetail(mediaType, tmdbId)
-//                contentFacade.getContentDetailWithRecord(memberId, mediaType, tmdbId)
-//        ));
     }
 }

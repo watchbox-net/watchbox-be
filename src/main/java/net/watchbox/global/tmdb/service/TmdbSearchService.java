@@ -4,10 +4,13 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.tmdb.client.TmdbClient;
+import net.watchbox.global.tmdb.inner.search.TmdbSearchResultItem;
 import net.watchbox.global.tmdb.response.search.TmdbSearchCommonResponse;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,11 +20,9 @@ public class TmdbSearchService {
     private final TmdbClient tmdbClient;
 
     /**
-     * Multi Get 요청
-     * @query 검색어
-     * @include_adult 성인 컨텐츠 포함 여부
-     * @language 언어
-     * @page 페이지 번호
+     * Multi
+     * https://api.themoviedb.org/3/search/multi
+     * 검색 페이지에 필요한 정보 요청
      */
     public TmdbSearchCommonResponse searchMulti(String query, Integer page) {
         return tmdbClient.baseWebClient()
@@ -35,18 +36,13 @@ public class TmdbSearchService {
                 .retrieve() // 응답 받기
                 .bodyToMono(TmdbSearchCommonResponse.class) // 응답을 Mono로 변환
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
-                .block(); // 블로킹 호출로 결과 반환
+                .block();
     }
 
     /**
-     * Movie Get 요청
-     * @query 검색어
-     * @include_adult 성인 컨텐츠 포함 여부
-     * @language 언어
-     * @primary_release_year 출시 년도
-     * @page 페이지 번호
-     * @region 지역 코드
-     * @year 검색 년도
+     * Movie
+     * https://api.themoviedb.org/3/search/movie
+     * 검색 페이지에 필요한 정보 요청
      */
     public TmdbSearchCommonResponse searchMovie(String query, Integer page) {
 
@@ -63,17 +59,13 @@ public class TmdbSearchService {
                 .bodyToMono(TmdbSearchCommonResponse.class)
 //                .map(this::convertToSearchListResponse)
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
-                .block(); // 블로킹 호출로 결과 반환
+                .block();
     }
 
     /**
-     * TV Get 요청
-     * @query 검색어
-     * @first_air_date_year 출시 년도
-     * @include_adult 성인 컨텐츠 포함 여부
-     * @language 언어
-     * @page 페이지 번호
-     * @year 검색 년도
+     * TV
+     * https://api.themoviedb.org/3/search/tv
+     * 검색 페이지에 필요한 정보 요청
      */
     public TmdbSearchCommonResponse searchTv(String query, Integer page) {
         return tmdbClient.baseWebClient()
@@ -88,15 +80,13 @@ public class TmdbSearchService {
                 .retrieve()
                 .bodyToMono(TmdbSearchCommonResponse.class)
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
-                .block(); // 블로킹 호출로 결과 반환
+                .block();
     }
 
     /**
-     * Person Get 요청
-     * @query 검색어
-     * @include_adult 성인 컨텐츠 포함 여부
-     * @language 언어
-     * @page 페이지 번호
+     * Person
+     * https://api.themoviedb.org/3/search/person
+     * 검색 페이지에 필요한 정보 요청
      */
     public TmdbSearchCommonResponse searchPerson(String query, Integer page) {
         return tmdbClient.baseWebClient()
@@ -110,7 +100,33 @@ public class TmdbSearchService {
                 .retrieve()
                 .bodyToMono(TmdbSearchCommonResponse.class)
                 .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
-                .block(); // 블로킹 호출로 결과 반환
+                .block();
+    }
+
+    /**
+     * Person
+     * https://api.themoviedb.org/3/search/person
+     * 인물의 영문 이름과 원래 이름을 알기 위한 요청.
+     * 검색 결과 중 tmdbId 가 일치하는 항목을 해당 인물로 특정하여 Optional로 반환.
+     */
+    public Optional<TmdbSearchResultItem> searchPersonExtraNames(String nameKo, Long tmdbId) {
+        TmdbSearchCommonResponse response = tmdbClient.baseWebClient()
+                .get()
+                .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder, "en-US")
+                        .path("/search/person")
+                        .queryParam("query", nameKo)
+                        .build())
+                .retrieve()
+                .bodyToMono(TmdbSearchCommonResponse.class)
+                .onErrorMap(error -> new CustomException(ErrorCode.TMDB_SEARCH_BAD_GATEWAY)) // 예외 처리
+                .block();
+
+        if (response == null || response.getResults() == null) {
+            return Optional.empty();
+        }
+        return response.getResults().stream()
+                .filter(r -> r.getId().equals(tmdbId))
+                .findFirst();
     }
 
 }

@@ -1,0 +1,3 @@
+append_to_response 공통 응답
+단독 API로 준비된 섹션이기도 하다
+ex - Images, Videos, Credits, Watch Providers..

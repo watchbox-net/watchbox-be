@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.entity.BaseTime;
+import net.watchbox.global.tmdb.util.Country;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,8 +34,11 @@ public class Tv extends BaseTime {
     private Double popularity;
     private Double voteAverage;
     private Long voteCount;
-    private Integer year; // 처음 방영 연도
+//    private Integer year; // 처음 방영 연도
+    private LocalDate firstAirDate;
+    private LocalDate lastAirDate;
     private Integer numberOfSeasons;
+    private Country originCountry;
 
     @ElementCollection
     @CollectionTable(name = "tv_genre_ids", joinColumns = @JoinColumn(name = "content_id"))

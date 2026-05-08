@@ -13,7 +13,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
     private final TmdbClient tmdbClient;
 
     /**
-     * Popular Get 요청
+     * Popular
      */
     public TmdbMovieListsResponse getPopularMovieLists(Integer page) {
         return tmdbClient.baseWebClient()
@@ -29,7 +29,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
     }
 
     /**
-     * Top Rated Get 요청
+     * Top Rated
      */
     public TmdbMovieListsResponse getTopRatedMovieLists(Integer page) {
         return tmdbClient.baseWebClient()
@@ -45,7 +45,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
     }
 
     /**
-     * Now Playing Get 요청
+     * Now Playing
      */
     public TmdbMovieListsResponse getNowPlayingMovieLists(Integer page) {
         return tmdbClient.baseWebClient()
