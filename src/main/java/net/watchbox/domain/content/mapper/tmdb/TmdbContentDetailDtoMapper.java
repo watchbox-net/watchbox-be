@@ -3,78 +3,108 @@ package net.watchbox.domain.content.mapper.tmdb;
 import net.watchbox.domain.content.dto.detail.MovieInfo;
 import net.watchbox.domain.content.dto.detail.PersonInfo;
 import net.watchbox.domain.content.dto.detail.TvInfo;
-import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
+import net.watchbox.domain.content.sub.person.entity.Department;
+import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
-import net.watchbox.global.tmdb.response.people.TmdbPeopleDetailsResponse;
+import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
+import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
+import net.watchbox.global.tmdb.util.Country;
 import net.watchbox.global.tmdb.util.TmdbUtils;
-
-import java.util.List;
+import net.watchbox.domain.content.sub.tv.entity.TvGenre;
 
 public class TmdbContentDetailDtoMapper {
 
-    public static MovieInfo toMovieInfo(TmdbMoviesDetailsResponse response) {
+    public static MovieInfo toMovieInfo(TmdbMoviesDetailsResponse detailsResponse, TmdbWorkImagesResponse imagesResponse) {
         return MovieInfo.builder()
-                .tmdbId(response.getId())
-                .titleKo(response.getTitle())
-                .titleOriginal(response.getOriginalTitle())
-                .posterPath(response.getPosterPath())
-                .year(TmdbUtils.extractYear(response.getReleaseDate()))
-                .genreList(response.getGenres().stream().map(TmdbGenreItem::getName).toList())
-                .overview(response.getOverview())
-                .backdropPath(response.getBackdropPath())
-                .originalLanguage(response.getOriginalLanguage())
-                .releaseDate(TmdbUtils.extractDate(response.getReleaseDate()))
-                .adult(response.isAdult())
-                .video(response.isVideo())
-                .status(response.getStatus())
-                .runtime(response.getRuntime() != null ? response.getRuntime().intValue() : null)
-                .tagline(response.getTagline())
-                .homepage(response.getHomepage())
-                .budget(response.getBudget())
-                .revenue(response.getRevenue())
+                .tmdbId(detailsResponse.getId())
+                .titleKo(detailsResponse.getTitle())
+                .titleOriginal(detailsResponse.getOriginalTitle())
+                .posterPath(detailsResponse.getPosterPath())
+                .year(TmdbUtils.extractYear(detailsResponse.getReleaseDate()))
+                .genreList(MovieGenre.mapDetailGenreIdListToKorean(
+                        detailsResponse.getGenres().stream()
+                                .map(g -> g.getId().intValue())
+                                .toList()))
+                .overview(detailsResponse.getOverview())
+                .backdropPath(detailsResponse.getBackdropPath())
+                .releaseDate(TmdbUtils.extractDate(detailsResponse.getReleaseDate()))
+                .originCountry(detailsResponse.getOriginCountry().stream().findFirst()
+                        .map(Country::getKoreanByCode).orElse(null))
+                .runtime(detailsResponse.getRuntime() != null ? detailsResponse.getRuntime().intValue() : null)
+                // append_to_response
+                .personCredit(TmdbAppendToResponseConverter.toPersonCredit(detailsResponse.getCredits()))
+                .watchProviderList(TmdbAppendToResponseConverter.toWatchProviderList(detailsResponse.getWatchProviders()))
+                .backdropPathList(TmdbAppendToResponseConverter.toBackdropPathList(imagesResponse))
+//                .video(detailsResponse.isVideo())
+                // 미사용 필드
+                .popularity(detailsResponse.getPopularity())
+                .status(detailsResponse.getStatus())
+                .tagline(detailsResponse.getTagline())
+//                .originalLanguage(detailsResponse.getOriginalLanguage())
+//                .homepage(detailsResponse.getHomepage())
+//                .budget(detailsResponse.getBudget())
+//                .revenue(detailsResponse.getRevenue())
                 .build();
     }
 
-    public static TvInfo toTvInfo(TmdbTvSeriesDetailsResponse response) {
+    public static TvInfo toTvInfo(TmdbTvSeriesDetailsResponse detailsResponse, TmdbWorkImagesResponse imagesResponse) {
         return TvInfo.builder()
-                .tmdbId(response.getId())
-                .nameKo(response.getName())
-                .nameOriginal(response.getOriginalName())
-                .posterPath(response.getPosterPath())
-                .popularity(response.getPopularity())
-                .year(TmdbUtils.extractYear(response.getFirstAirDate()))
-                .genreList(response.getGenres().stream().map(TmdbGenreItem::getName).toList())
-                .overview(response.getOverview())
-                .backdropPath(response.getBackdropPath())
-                .originalLanguage(response.getOriginalLanguage())
-                .firstAirDate(TmdbUtils.extractDate(response.getFirstAirDate()))
-                .adult(response.isAdult())
-                .status(response.getStatus())
-                .type(response.getType())
-                .tagline(response.getTagline())
-                .homepage(response.getHomepage())
-                .numberOfEpisodes(response.getNumberOfEpisodes())
-                .numberOfSeasons(response.getNumberOfSeasons())
-                .lastAirDate(TmdbUtils.extractDate(response.getLastAirDate()))
+                .tmdbId(detailsResponse.getId())
+                .nameKo(detailsResponse.getName())
+                .nameOriginal(detailsResponse.getOriginalName())
+                .posterPath(detailsResponse.getPosterPath())
+                .firstYear(TmdbUtils.extractYear(detailsResponse.getFirstAirDate()))
+                .lastYear(TmdbUtils.extractYear(detailsResponse.getLastAirDate()))
+                .originCountry(detailsResponse.getOriginCountry().stream().findFirst()
+                        .map(Country::getKoreanByCode).orElse(null))
+                .genreList(TvGenre.mapDetailGenreIdListToKorean(
+                        detailsResponse.getGenres().stream()
+                                .map(g -> g.getId().intValue())
+                                .toList()))
+                .overview(detailsResponse.getOverview())
+                .backdropPath(detailsResponse.getBackdropPath())
+                .firstAirDate(TmdbUtils.extractDate(detailsResponse.getFirstAirDate()))
+                .lastAirDate(TmdbUtils.extractDate(detailsResponse.getLastAirDate()))
+                .numberOfSeasons(detailsResponse.getNumberOfSeasons())
+                .inProduction(detailsResponse.isInProduction())
+                // append_to_response
+                .personCredit(TmdbAppendToResponseConverter.toAggregatePersonCredit(detailsResponse.getAggregateCredits()))
+                .watchProviderList(TmdbAppendToResponseConverter.toWatchProviderList(detailsResponse.getWatchProviders()))
+                .backdropPathList(TmdbAppendToResponseConverter.toBackdropPathList(imagesResponse))
+                // 미사용 필드
+                .popularity(detailsResponse.getPopularity())
+                .status(detailsResponse.getStatus())
+                .tagline(detailsResponse.getTagline())
+//                .originalLanguage(response.getOriginalLanguage())
+//                .type(response.getType())
+//                .homepage(response.getHomepage())
+//                .numberOfEpisodes(response.getNumberOfEpisodes())
                 .build();
     }
 
-    public static PersonInfo toPersonInfo(TmdbPeopleDetailsResponse response) {
+    public static PersonInfo toPersonInfo(TmdbPersonDetailsResponse response, String nameEn, String nameOriginal) {
         return PersonInfo.builder()
                 .tmdbId(response.getId())
                 .nameKo(response.getName())
+                .nameOriginal(nameOriginal)
+                .nameEn(nameEn.equals(nameOriginal) ? null : nameEn) // 같으면 프론트에서 하나만 표기하도록
                 .profilePath(response.getProfilePath())
-                .knownForDepartment(response.getKnownForDepartment())
-                .popularity(response.getPopularity())
-                .knownForList(List.of()) // TMDB Details API에 known_for 없음 - 추가 API 필요
+                .knownForDepartment(Department.fromEnglishValue(response.getKnownForDepartment()))
                 .biography(response.getBiography())
-                .gender(response.getGender())
                 .birthday(TmdbUtils.extractDate(response.getBirthday()))
-                .deathday(TmdbUtils.extractDate(response.getDeathday()))
                 .placeOfBirth(response.getPlaceOfBirth())
+                // append_to_response
+                .workCredit(TmdbAppendToResponseConverter.toWorkCredit(response.getCombinedCredits()))
+                .profilePathList(TmdbAppendToResponseConverter.toProfilePathList(response.getImages()))
+                .age(TmdbUtils.calculateAge(response.getBirthday(), response.getDeathday()))
+                // 미사용 필드
+                .popularity(response.getPopularity())
+//                .knownForList(List.of()) // TMDB Details API에 known_for 없음 - 추가 API 필요
+                .gender(response.getGender())
                 .homepage(response.getHomepage())
-                .adult(response.isAdult())
+                .deathday(TmdbUtils.extractDate(response.getDeathday()))
+//                .adult(response.isAdult())
                 .build();
     }
 

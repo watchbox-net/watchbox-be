@@ -14,7 +14,7 @@ public class TmdbTrendingService { // TRENDING
     private final TmdbClient tmdbClient;
 
     /**
-     * Movies Get 요청
+     * Movies
      * @time_window (day, week)
      */
     public TmdbMovieListsResponse getTrendingMovies(String timeWindow, Integer page) {
@@ -30,7 +30,7 @@ public class TmdbTrendingService { // TRENDING
     }
 
     /**
-     * TV Get 요청
+     * TV
      * @time_window (day, week)
      */
     public TmdbTvSeriesListsResponse getTrendingTv(String timeWindow, Integer page) {

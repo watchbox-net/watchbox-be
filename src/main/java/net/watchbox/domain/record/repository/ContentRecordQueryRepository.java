@@ -3,7 +3,8 @@ package net.watchbox.domain.record.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.DateExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.entity.QContentRecord;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static net.watchbox.global.util.QuerydslRepositoryUtil.getOrderSpecifiersBySort;
@@ -34,9 +36,9 @@ public class ContentRecordQueryRepository {
         // 필터
         WatchMediaTypeFilter watchMediaTypeFilter = request.getWatchMediaTypeFilter();
 
-        // 정렬 - year expression 은 필터에 따라 join 된 Q엔티티만 참조해야 함
-        NumberExpression<Integer> yearExpr = yearExprFor(watchMediaTypeFilter);
-        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersBySort(request.getSort(), yearExpr);
+        // 정렬 - date expression 은 필터에 따라 join 된 Q엔티티만 참조해야 함
+        DateExpression<LocalDate> dateExpr = dateExprFor(watchMediaTypeFilter);
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersBySort(request.getSort(), dateExpr);
         BooleanBuilder conditions = new BooleanBuilder()
                 .and(contentRecord.member.eq(member))
                 .and(watchMediaTypeFilterCondition(watchMediaTypeFilter))
@@ -56,12 +58,14 @@ public class ContentRecordQueryRepository {
                 .fetch();
     }
 
-    // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 year expression 반환
-    private NumberExpression<Integer> yearExprFor(WatchMediaTypeFilter filter) {
+    // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 date expression 반환
+    // Movie.releaseDate / Tv.firstAirDate 기준으로 연월일까지 정확히 정렬
+    private DateExpression<LocalDate> dateExprFor(WatchMediaTypeFilter filter) {
         return switch (filter) {
-            case MOVIE -> QMovie.movie.year;
-            case TV -> QTv.tv.year;
-            case MOVIE_TV -> QMovie.movie.year.coalesce(QTv.tv.year);
+            case MOVIE -> QMovie.movie.releaseDate;
+            case TV -> QTv.tv.firstAirDate;
+            case MOVIE_TV -> Expressions.asDate(
+                    QMovie.movie.releaseDate.coalesce(QTv.tv.firstAirDate));
         };
     }
 

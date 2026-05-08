@@ -13,7 +13,7 @@ public class TmdbTvSeriesListsService { // TV SERIES LISTS
     private final TmdbClient tmdbClient;
 
     /**
-     * Popular List Get 요청
+     * Popular List
      */
     public TmdbTvSeriesListsResponse getPopularTvSeriesLists(Integer page) {
         return tmdbClient.baseWebClient()
@@ -28,7 +28,7 @@ public class TmdbTvSeriesListsService { // TV SERIES LISTS
     }
 
     /**
-     * Top Rated Get 요청
+     * Top Rated
      */
     public TmdbTvSeriesListsResponse getTopRatedTvSeriesLists(Integer page) {
         return tmdbClient.baseWebClient()
@@ -43,7 +43,7 @@ public class TmdbTvSeriesListsService { // TV SERIES LISTS
     }
 
     /**
-     * On The Air Get 요청
+     * On The Air
      */
     public TmdbTvSeriesListsResponse getOnTheAirTvSeriesLists(Integer page) {
         return tmdbClient.baseWebClient()

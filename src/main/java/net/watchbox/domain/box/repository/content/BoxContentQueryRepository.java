@@ -3,7 +3,8 @@ package net.watchbox.domain.box.repository.content;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.DateExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import net.watchbox.domain.record.entity.QContentRecord;
 import net.watchbox.global.dto.request.SortOrder;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static net.watchbox.global.util.QuerydslRepositoryUtil.getOrderSpecifiersForBoxContent;
@@ -40,11 +42,11 @@ public class BoxContentQueryRepository {
         ContentMediaTypeFilter mediaTypeFilter = request.getContentMediaTypeFilter();
         WatchStatusFilter watchStatusFilter = request.getWatchStatusFilter();
 
-        // 정렬 (PERSON 모드에서 year 정렬 들어오면 RECENT_SAVED로 fallback)
+        // 정렬 (PERSON 모드에서 date 정렬 들어오면 RECENT_SAVED로 fallback)
         SortOrder resolvedSort = resolveSortForPerson(request.getSort(), mediaTypeFilter);
-        // year 정렬용 expression - 필터에 따라 join 된 Q엔티티만 참조해야 함
-        NumberExpression<Integer> yearExpr = yearExprFor(mediaTypeFilter);
-        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForBoxContent(resolvedSort, yearExpr);
+        // date 정렬용 expression - 필터에 따라 join 된 Q엔티티만 참조해야 함
+        DateExpression<LocalDate> dateExpr = dateExprFor(mediaTypeFilter);
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForBoxContent(resolvedSort, dateExpr);
 
         // 필터
         BooleanBuilder conditions = new BooleanBuilder()
@@ -72,14 +74,16 @@ public class BoxContentQueryRepository {
                 .fetch();
     }
 
-    // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 year expression 반환
-    // PERSON 은 year 정렬 안 들어오므로 (resolveSortForPerson 에서 fallback) 더미로 movie.year 반환
-    private NumberExpression<Integer> yearExprFor(ContentMediaTypeFilter filter) {
+    // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 date expression 반환
+    // Movie.releaseDate / Tv.firstAirDate 기준으로 연월일까지 정확히 정렬
+    // PERSON 은 date 정렬 안 들어오므로 (resolveSortForPerson 에서 fallback) 더미로 movie.releaseDate 반환
+    private DateExpression<LocalDate> dateExprFor(ContentMediaTypeFilter filter) {
         return switch (filter) {
-            case MOVIE -> QMovie.movie.year;
-            case TV -> QTv.tv.year;
-            case MOVIE_TV -> QMovie.movie.year.coalesce(QTv.tv.year);
-            case PERSON -> QMovie.movie.year; // 사용 안 됨 (RECENT_SAVED 로 fallback)
+            case MOVIE -> QMovie.movie.releaseDate;
+            case TV -> QTv.tv.firstAirDate;
+            case MOVIE_TV -> Expressions.asDate(
+                    QMovie.movie.releaseDate.coalesce(QTv.tv.firstAirDate));
+            case PERSON -> QMovie.movie.releaseDate; // 사용 안 됨 (RECENT_SAVED 로 fallback)
         };
     }
 

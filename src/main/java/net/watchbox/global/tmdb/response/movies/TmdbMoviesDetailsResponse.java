@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.watchbox.global.tmdb.inner.title.TmdbGenreItem;
-import net.watchbox.global.tmdb.inner.title.TmdbProductionCompanyItem;
-import net.watchbox.global.tmdb.inner.title.TmdbProductionCountryItem;
-import net.watchbox.global.tmdb.inner.title.TmdbSpokenLanguageItem;
+import net.watchbox.global.tmdb.inner.work.TmdbGenreItem;
+import net.watchbox.global.tmdb.response.common.TmdbCreditsResponse;
+import net.watchbox.global.tmdb.response.common.TmdbVideosResponse;
+import net.watchbox.global.tmdb.response.common.TmdbWatchProvidersResponse;
 
 import java.util.List;
 
@@ -33,6 +33,9 @@ public class TmdbMoviesDetailsResponse {
 
     @JsonProperty("imdb_id")
     private String imdbId;
+
+    @JsonProperty("origin_country")
+    private List<String> originCountry;
 
     @JsonProperty("original_language")
     private String originalLanguage;
@@ -68,12 +71,22 @@ public class TmdbMoviesDetailsResponse {
     @JsonProperty("vote_count")
     private Long voteCount;
 
-    @JsonProperty("production_companies")
-    private List<TmdbProductionCompanyItem> productionCompanies;
+//    @JsonProperty("production_companies")
+//    private List<TmdbProductionCompanyItem> productionCompanies;
+//
+//    @JsonProperty("production_countries")
+//    private List<TmdbProductionCountryItem> productionCountries;
+//
+//    @JsonProperty("spoken_languages")
+//    private List<TmdbSpokenLanguageItem> spokenLanguages;
 
-    @JsonProperty("production_countries")
-    private List<TmdbProductionCountryItem> productionCountries;
+    /**
+     * append_to_response
+     */
+    private TmdbCreditsResponse credits;
 
-    @JsonProperty("spoken_languages")
-    private List<TmdbSpokenLanguageItem> spokenLanguages;
+    private TmdbVideosResponse videos;
+
+    @JsonProperty("watch/providers")
+    private TmdbWatchProvidersResponse watchProviders;
 }

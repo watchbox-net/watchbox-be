@@ -1,5 +1,9 @@
 server:
   port: 9000
+#  compression:
+#    enabled: true
+#    mime-types: application/json
+#    min-response-size: 2048
 
 spring:
   application:
@@ -12,7 +16,7 @@ spring:
     properties:
       hibernate:
         highlight_sql: true
-        generate_statistics: true
+        generate_statistics: false
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

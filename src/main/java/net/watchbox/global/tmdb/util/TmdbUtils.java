@@ -23,4 +23,10 @@ public final class TmdbUtils {
         return path != null ? IMAGE_URL + path : null;
     }
 
+    public static Integer calculateAge(String birthday, String deathday) {
+        if (birthday == null || birthday.isBlank()) return null;
+        LocalDate birthDate = LocalDate.parse(birthday);
+        LocalDate endDate = (deathday != null && !deathday.isBlank()) ? LocalDate.parse(deathday) : LocalDate.now();
+        return endDate.getYear() - birthDate.getYear() - (endDate.getDayOfYear() < birthDate.getDayOfYear() ? 1 : 0);
+    }
 }

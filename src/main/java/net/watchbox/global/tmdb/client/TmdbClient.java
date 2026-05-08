@@ -25,6 +25,12 @@ public class TmdbClient {
                 .queryParam("language", "ko-KR");
     }
 
+    public UriBuilder addCommonParams(UriBuilder uriBuilder, String language) {
+        return uriBuilder
+                .queryParam("api_key", tmdbProperties.getApi().getKey())
+                .queryParam("language", language);
+    }
+
     /**
      * 이미지 전체 URL 생성
      */

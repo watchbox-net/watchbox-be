@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.entity.BaseTime;
+import net.watchbox.global.tmdb.util.Country;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,7 +34,9 @@ public class Movie extends BaseTime {
     private Double popularity;
     private Double voteAverage;
     private Long voteCount;
-    private Integer year; // 상영 연도
+//    private Integer year; // 개봉 연도
+    private LocalDate releaseDate;
+    private Country originCountry;
 
     @ElementCollection
     @CollectionTable(name = "movie_genre_ids", joinColumns = @JoinColumn(name = "content_id"))
