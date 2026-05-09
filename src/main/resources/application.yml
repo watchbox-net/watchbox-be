@@ -51,6 +51,7 @@ tmdb:
   api:
     key: ${TMDB_API_KEY}
     base-url: https://api.themoviedb.org/3
+    include_adult: true
   image-url: https://image.tmdb.org/t/p/w500
 
 url:

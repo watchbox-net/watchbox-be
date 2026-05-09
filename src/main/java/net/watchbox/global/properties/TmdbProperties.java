@@ -18,5 +18,6 @@ public class TmdbProperties {
     public static class Api {
         private String key;
         private String baseUrl;
+        private boolean includeAdult;
     }
 }

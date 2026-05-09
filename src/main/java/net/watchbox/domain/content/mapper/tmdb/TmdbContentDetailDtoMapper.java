@@ -88,7 +88,7 @@ public class TmdbContentDetailDtoMapper {
                 .tmdbId(response.getId())
                 .nameKo(response.getName())
                 .nameOriginal(nameOriginal)
-                .nameEn(nameEn.equals(nameOriginal) ? null : nameEn) // 같으면 프론트에서 하나만 표기하도록
+                .nameEn(nameEn == null || nameEn.equals(nameOriginal) ? null : nameEn) // null 이거나 nameOriginal 과 같으면 null
                 .profilePath(response.getProfilePath())
                 .knownForDepartment(Department.fromEnglishValue(response.getKnownForDepartment()))
                 .biography(response.getBiography())
