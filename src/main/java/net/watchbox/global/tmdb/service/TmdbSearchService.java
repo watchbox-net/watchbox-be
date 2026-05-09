@@ -31,7 +31,6 @@ public class TmdbSearchService {
                         .path("/search/multi")
                         .queryParam("query",query)
                         .queryParam("page", page)
-                        .queryParam("include_adult", true)
                         .build())
                 .retrieve() // 응답 받기
                 .bodyToMono(TmdbSearchCommonResponse.class) // 응답을 Mono로 변환
@@ -52,7 +51,6 @@ public class TmdbSearchService {
                         .path("/search/movie")
                         .queryParam("query",query)
                         .queryParam("page", page)
-                        .queryParam("include_adult", true)
                         // primary_release_year, region, year 등 추가 가능
                         .build())
                 .retrieve()
@@ -74,7 +72,6 @@ public class TmdbSearchService {
                         .path("/search/tv")
                         .queryParam("query", query)
                         .queryParam("page", page)
-                        .queryParam("include_adult", true)
                         // first_air_date_year, year 등 추가 가능
                         .build())
                 .retrieve()
@@ -95,7 +92,6 @@ public class TmdbSearchService {
                         .path("/search/person")
                         .queryParam("query", query)
                         .queryParam("page", page)
-                        .queryParam("include_adult", true)
                         .build())
                 .retrieve()
                 .bodyToMono(TmdbSearchCommonResponse.class)

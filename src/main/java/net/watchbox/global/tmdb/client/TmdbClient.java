@@ -22,13 +22,15 @@ public class TmdbClient {
     public UriBuilder addCommonParams(UriBuilder uriBuilder) {
         return uriBuilder
                 .queryParam("api_key", tmdbProperties.getApi().getKey())
-                .queryParam("language", "ko-KR");
+                .queryParam("language", "ko-KR")
+                .queryParam("include_adult", tmdbProperties.getApi().isIncludeAdult());
     }
 
     public UriBuilder addCommonParams(UriBuilder uriBuilder, String language) {
         return uriBuilder
                 .queryParam("api_key", tmdbProperties.getApi().getKey())
-                .queryParam("language", language);
+                .queryParam("language", language)
+                .queryParam("include_adult", tmdbProperties.getApi().isIncludeAdult());
     }
 
     /**
