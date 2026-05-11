@@ -8,7 +8,7 @@ env:
 
 jobs:
   build-and-deploy:
-    runs-on: [self-hosted, dev, backend]
+    runs-on: [self-hosted, dev]
 
     steps:
       - name: Git Checkout
