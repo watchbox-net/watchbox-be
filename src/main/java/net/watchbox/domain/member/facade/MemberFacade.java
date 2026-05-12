@@ -2,10 +2,13 @@ package net.watchbox.domain.member.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.box.entity.box.Box;
+import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.invitation.BoxInvitationService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
+import net.watchbox.domain.auth.service.TokenService;
 import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
 import net.watchbox.domain.member.dto.response.MemberStatsResponse;
 import net.watchbox.domain.member.dto.response.MyPageResponse;
@@ -32,6 +35,7 @@ public class MemberFacade {
     private final BoxService boxService;
     private final BoxContentCommandService boxContentCommandService;
     private final BoxInvitationService boxInvitationService;
+    private final TokenService tokenService;
 
     @Transactional(readOnly = true)
     public MemberSearchPageResponse searchMemberListWithSharedStatus(String keyword, Long boxId) {
@@ -85,9 +89,18 @@ public class MemberFacade {
         // SharedBox의 모든 BoxContent 삭제
         boxContentCommandService.deleteAllSharedBoxContentByMember(member);
 
-        // 2인 이상의 SharedBox에서 Owner일 경우 Owner 권한 넘겨주기 (가장 오래된 BoxMember에게)
+        // 2인 이상의 SharedBox에서 Owner일 경우 Owner 권한 넘겨주기 (가장 오래된 Editor 권한의 BoxMember)
+        List<Box> sharedBoxes = boxService.getAllSharedBoxListByOwner(member);
+        for (Box box : sharedBoxes) {
+            boxMemberService.findOldestEditorExcludingMember(box, member)
+                    .ifPresent(newOwner -> {
+                        box.changeOwner(newOwner.getMember());
+                        newOwner.changeRole(BoxMemberRole.OWNER);
+                    });
+        }
 
         // RefreshToken 삭제
+        tokenService.logout(member.getMemberId());
 
         // ToDO: 이메일로 탈퇴 회원 정보 보내기
     }

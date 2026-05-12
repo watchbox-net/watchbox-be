@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.box.BoxCreateRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
-import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.repository.member.BoxMemberRepository;
 import net.watchbox.domain.box.repository.box.BoxRepository;
 import net.watchbox.domain.member.entity.Member;
@@ -34,6 +33,10 @@ public class BoxService {
 
     public List<Box> getAllMyBoxListByOwner(Member owner) {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);
+    }
+
+    public List<Box> getAllSharedBoxListByOwner(Member owner) {
+        return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.SHARED);
     }
 
     @Transactional

@@ -8,9 +8,12 @@ import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.repository.member.BoxMemberRepository;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.entity.BaseTime;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,13 @@ public class BoxMemberService {
 
     public long countByMember(Member member) {
         return boxMemberRepository.countByMember(member);
+    }
+
+    public Optional<BoxMember> findOldestEditorExcludingMember(Box box, Member excluded) {
+        return boxMemberRepository.findAllByBox(box).stream()
+                .filter(bm -> bm.getRole() == BoxMemberRole.EDITOR)
+                .filter(bm -> !bm.getMember().getMemberId().equals(excluded.getMemberId()))
+                .min(Comparator.comparing(BaseTime::getCreatedAt));
     }
 
     @Transactional

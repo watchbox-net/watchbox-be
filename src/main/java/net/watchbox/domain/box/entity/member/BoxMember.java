@@ -26,4 +26,8 @@ public class BoxMember extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     private BoxMemberRole role;
+
+    public void changeRole(BoxMemberRole role) {
+        this.role = role;
+    }
 }
