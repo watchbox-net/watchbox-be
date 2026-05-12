@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.auth.entity.OauthProvider;
 import net.watchbox.domain.auth.repository.OauthAccountRepository;
+import net.watchbox.domain.member.entity.Member;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -73,5 +74,10 @@ public class OauthAccountService {
                 .oauthId("sample_id_" + id.toString())
                 .name(name)
                 .build());
+    }
+
+    @Transactional
+    public void deleteByMember(Member member) {
+        oauthAccountRepository.delete(member.getOauthAccount());
     }
 }

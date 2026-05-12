@@ -39,6 +39,4 @@ public class AuthController {
         tokenService.logout(member.getMemberId());
         return ResponseEntity.ok(ApiResponse.success());
     }
-
-    // ToDO: 회원탈퇴
 }

@@ -1,6 +1,7 @@
 package net.watchbox.domain.box.repository.content;
 
 import net.watchbox.domain.box.entity.box.Box;
+import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.entity.MediaType;
@@ -76,4 +77,6 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
     List<Long> findBoxIdsByContentForMember(
             @Param("content") Content content,
             @Param("member") Member member);
+
+    void deleteAllByPublisherAndBox_BoxType(Member member, BoxType boxType);
 }

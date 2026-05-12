@@ -5,6 +5,7 @@ import net.watchbox.domain.box.dto.box.BoxCreateRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.member.BoxMember;
+import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.repository.member.BoxMemberRepository;
 import net.watchbox.domain.box.repository.box.BoxRepository;
 import net.watchbox.domain.member.entity.Member;
@@ -36,19 +37,21 @@ public class BoxService {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);
     }
 
-    public List<Box> getAllSharedBoxListByMember(Member member){
-        return boxMemberRepository.findWithSharedBoxByMember(member)
-                .stream()
-                .map(BoxMember::getBox)
-                .toList();
+    public List<Box> getAllSharedBoxListByOwner(Member owner) {
+        return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.SHARED);
     }
 
     @Transactional
     public void createInitialMyBox(Member member) {
-        boxRepository.save(Box.builder()
+        Box box = boxRepository.save(Box.builder()
                 .name("나의 박스")
                 .boxType(BoxType.MY)
                 .owner(member)
+                .build());
+        boxMemberRepository.save(BoxMember.builder()
+                .box(box)
+                .member(member)
+                .role(BoxMemberRole.OWNER)
                 .build());
     }
 
@@ -67,6 +70,11 @@ public class BoxService {
     @Transactional
     public void deleteBox(Box box) {
         boxRepository.delete(box);
+    }
+
+    @Transactional
+    public void deleteAllMyBoxes(Member member) {
+        boxRepository.deleteAllByOwnerAndBoxType(member, BoxType.MY);
     }
 
 }

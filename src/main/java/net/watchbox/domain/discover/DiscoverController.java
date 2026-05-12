@@ -1,6 +1,7 @@
 package net.watchbox.domain.discover;
 
 import io.micrometer.observation.annotation.Observed;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.list.ContentPageResponse;
@@ -24,6 +25,7 @@ public class DiscoverController {
 //    @GetMapping("/home")
 
 
+    @Operation(summary = "전세계 인기 영화")
     @GetMapping("/popular/movies")
     public ResponseEntity<ApiResponse<ContentPageResponse>> getPopularMovies(
             @RequestParam(defaultValue = "1") Integer page,

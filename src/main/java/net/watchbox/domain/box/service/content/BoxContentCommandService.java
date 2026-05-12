@@ -3,6 +3,7 @@ package net.watchbox.domain.box.service.content;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.entity.box.Box;
+import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
 import net.watchbox.domain.content.entity.Content;
@@ -36,6 +37,9 @@ public class BoxContentCommandService {
         boxContentRepository.deleteAllByBox(box);
     }
 
+    public void deleteAllSharedBoxContentByMember(Member member) {
+        boxContentRepository.deleteAllByPublisherAndBox_BoxType(member, BoxType.SHARED);
+    }
 
 //    // 해당 멤버로 이미 추가된 컨텐츠인지 확인
 //    public boolean existsInSharedBox(Member member, Box box, Content content) {

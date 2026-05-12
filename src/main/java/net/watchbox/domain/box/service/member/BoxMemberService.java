@@ -8,9 +8,12 @@ import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.repository.member.BoxMemberRepository;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.entity.BaseTime;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,31 +33,38 @@ public class BoxMemberService {
         return boxMemberRepository.countByMember(member);
     }
 
+    public Optional<BoxMember> findOldestEditorExcludingMember(Box box, Member excluded) {
+        return boxMemberRepository.findAllByBox(box).stream()
+                .filter(bm -> bm.getRole() == BoxMemberRole.EDITOR)
+                .filter(bm -> !bm.getMember().getMemberId().equals(excluded.getMemberId()))
+                .min(Comparator.comparing(BaseTime::getCreatedAt));
+    }
+
     @Transactional
     public void addOwnerToBox(Member member, Box box) {
-        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+        boxMemberRepository.save(BoxMember.builder()
                 .box(box)
                 .member(member)
                 .role(BoxMemberRole.OWNER)
-                .build()));
+                .build());
     }
 
     @Transactional
     public void addEditorToBox(Member member, Box box) {
-        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+        boxMemberRepository.save(BoxMember.builder()
                 .box(box)
                 .member(member)
                 .role(BoxMemberRole.EDITOR)
-                .build()));
+                .build());
     }
 
     @Transactional
     public void addViewerToBox(Member member, Box box) {
-        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+        boxMemberRepository.save(BoxMember.builder()
                 .box(box)
                 .member(member)
                 .role(BoxMemberRole.VIEWER)
-                .build()));
+                .build());
     }
 
 //    public void validateBoxContentAdder(Box box, Member member) {

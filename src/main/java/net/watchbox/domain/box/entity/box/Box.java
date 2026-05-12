@@ -50,6 +50,10 @@ public class Box extends BaseTime {
         this.lastContentAddedAt = lastContentAddedAt;
     }
 
+    public void changeOwner(Member newOwner) {
+        this.owner = newOwner;
+    }
+
     public void update(String name, String description, VisibleType visibleType) {
         if (name != null && !name.isEmpty()) {
             this.name = name;
