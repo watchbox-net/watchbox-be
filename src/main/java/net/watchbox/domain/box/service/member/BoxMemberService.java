@@ -42,29 +42,29 @@ public class BoxMemberService {
 
     @Transactional
     public void addOwnerToBox(Member member, Box box) {
-        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+        boxMemberRepository.save(BoxMember.builder()
                 .box(box)
                 .member(member)
                 .role(BoxMemberRole.OWNER)
-                .build()));
+                .build());
     }
 
     @Transactional
     public void addEditorToBox(Member member, Box box) {
-        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+        boxMemberRepository.save(BoxMember.builder()
                 .box(box)
                 .member(member)
                 .role(BoxMemberRole.EDITOR)
-                .build()));
+                .build());
     }
 
     @Transactional
     public void addViewerToBox(Member member, Box box) {
-        boxMemberRepository.save(boxMemberRepository.save(BoxMember.builder()
+        boxMemberRepository.save(BoxMember.builder()
                 .box(box)
                 .member(member)
                 .role(BoxMemberRole.VIEWER)
-                .build()));
+                .build());
     }
 
 //    public void validateBoxContentAdder(Box box, Member member) {

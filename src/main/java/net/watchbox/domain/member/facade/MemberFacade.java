@@ -2,11 +2,11 @@ package net.watchbox.domain.member.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.auth.service.OauthAccountService;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
-import net.watchbox.domain.box.service.invitation.BoxInvitationService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.auth.service.TokenService;
 import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
@@ -34,8 +34,8 @@ public class MemberFacade {
     private final ContentRecordQueryService contentRecordQueryService;
     private final BoxService boxService;
     private final BoxContentCommandService boxContentCommandService;
-    private final BoxInvitationService boxInvitationService;
     private final TokenService tokenService;
+    private final OauthAccountService oauthAccountService;
 
     @Transactional(readOnly = true)
     public MemberSearchPageResponse searchMemberListWithSharedStatus(String keyword, Long boxId) {
@@ -75,12 +75,11 @@ public class MemberFacade {
 
     @Transactional
     public void deleteMember(Member member) {
-        /* cascade 설정으로 자동 삭제
+        /* Member 삭제시 cascade 설정으로 자동 삭제
         ContentRecord — 시청 기록 (member.contentRecords, REMOVE)
         BoxMember — 박스 멤버십 (member.boxMembers, ALL) — 본인이 owner인 박스의 BoxMember도 Box→BoxMember cascade로 연쇄 삭제
         BoxInvitation (보낸/받은) — sender/receiver, REMOVE
         BoxJoinRequest (보낸) — sender, REMOVE
-        OauthAccount — Member에서 @OneToOne으로 참조 (OauthAccount 쪽 cascade는 역방향이라 별도 처리 필요)
         */
 
         // MyBox 모두 삭제
@@ -101,6 +100,12 @@ public class MemberFacade {
 
         // RefreshToken 삭제
         tokenService.logout(member.getMemberId());
+
+        // Member 및 연관된 엔티티들 삭제
+        memberService.deleteMember(member);
+
+        // OauthAccount 삭제
+        oauthAccountService.deleteByMember(member);
 
         // ToDO: 이메일로 탈퇴 회원 정보 보내기
     }

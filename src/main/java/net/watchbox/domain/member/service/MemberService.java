@@ -103,4 +103,8 @@ public class MemberService {
         return !memberRepository.existsByNickname(nickname);
     }
 
+    @Transactional
+    public void deleteMember(Member member) {
+        memberRepository.delete(member);
+    }
 }

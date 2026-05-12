@@ -58,6 +58,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
          * 최초 가입시
          * 1. Member 생성
          * 2. MyBox 생성
+         * 3. BoxMember Owner 생성
          */
         Member member;
         if(memberService.notExistsByOauthAccount(oauthAccount)) {
