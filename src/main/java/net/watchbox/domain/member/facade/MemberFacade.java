@@ -3,6 +3,7 @@ package net.watchbox.domain.member.facade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.service.box.BoxService;
+import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.invitation.BoxInvitationService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
@@ -29,6 +30,7 @@ public class MemberFacade {
     private final BoxMemberService boxMemberService;
     private final ContentRecordQueryService contentRecordQueryService;
     private final BoxService boxService;
+    private final BoxContentCommandService boxContentCommandService;
     private final BoxInvitationService boxInvitationService;
 
     @Transactional(readOnly = true)
@@ -65,5 +67,28 @@ public class MemberFacade {
     @Transactional
     public ProfileResponse updateProfile(Member member, ProfileUpdateRequest request) {
         return ProfileResponse.from(memberService.updateProfile(member, request));
+    }
+
+    @Transactional
+    public void deleteMember(Member member) {
+        /* cascade 설정으로 자동 삭제
+        ContentRecord — 시청 기록 (member.contentRecords, REMOVE)
+        BoxMember — 박스 멤버십 (member.boxMembers, ALL) — 본인이 owner인 박스의 BoxMember도 Box→BoxMember cascade로 연쇄 삭제
+        BoxInvitation (보낸/받은) — sender/receiver, REMOVE
+        BoxJoinRequest (보낸) — sender, REMOVE
+        OauthAccount — Member에서 @OneToOne으로 참조 (OauthAccount 쪽 cascade는 역방향이라 별도 처리 필요)
+        */
+
+        // MyBox 모두 삭제
+        boxService.deleteAllMyBoxes(member);
+
+        // SharedBox의 모든 BoxContent 삭제
+        boxContentCommandService.deleteAllSharedBoxContentByMember(member);
+
+        // 2인 이상의 SharedBox에서 Owner일 경우 Owner 권한 넘겨주기 (가장 오래된 BoxMember에게)
+
+        // RefreshToken 삭제
+
+        // ToDO: 이메일로 탈퇴 회원 정보 보내기
     }
 }

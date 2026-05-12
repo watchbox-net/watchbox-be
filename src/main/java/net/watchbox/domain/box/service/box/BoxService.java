@@ -36,13 +36,6 @@ public class BoxService {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);
     }
 
-    public List<Box> getAllSharedBoxListByMember(Member member){
-        return boxMemberRepository.findWithSharedBoxByMember(member)
-                .stream()
-                .map(BoxMember::getBox)
-                .toList();
-    }
-
     @Transactional
     public void createInitialMyBox(Member member) {
         boxRepository.save(Box.builder()
@@ -67,6 +60,11 @@ public class BoxService {
     @Transactional
     public void deleteBox(Box box) {
         boxRepository.delete(box);
+    }
+
+    @Transactional
+    public void deleteAllMyBoxes(Member member) {
+        boxRepository.deleteAllByOwnerAndBoxType(member, BoxType.MY);
     }
 
 }

@@ -55,4 +55,11 @@ public class MemberController {
         );
     }
 
+    @DeleteMapping("/me")
+    public ResponseEntity<ApiResponse> deleteMember(
+            @AuthenticationPrincipal Member member
+    ){
+        memberFacade.deleteMember(member);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
 }

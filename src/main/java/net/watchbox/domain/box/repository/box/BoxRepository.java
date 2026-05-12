@@ -29,6 +29,8 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
             "    SELECT 1 FROM BoxMember bm2 WHERE bm2.box = b AND bm2.member = :member))")
     List<Box> findAllBoxesByMember(@Param("member") Member member);
 
+    void deleteAllByOwnerAndBoxType(Member member, BoxType boxType);
+
     /*
      SELECT b.*
      FROM box b
