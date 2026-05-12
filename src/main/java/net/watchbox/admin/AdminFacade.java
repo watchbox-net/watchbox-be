@@ -11,10 +11,13 @@ import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.service.ContentCommandService;
+import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.service.ContentRecordCommandService;
+import net.watchbox.global.dto.response.exception.CustomException;
+import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,13 +33,16 @@ public class AdminFacade {
     private final ContentRecordCommandService contentRecordCommandService;
 
     @Transactional
-    public void createSampleMember(Long id, String name, String email) {
-        if(id >= -5){ // -1 ~ -5 는 테스트 계정
-            throw new IllegalArgumentException("샘플 계정 ID는 음수여야 합니다.");
+    public ProfileResponse createSampleMember(String nickname, String email) {
+        if(!memberService.isNicknameAvailable(nickname)){
+            throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
-        memberService.isNicknameAvailable(name);
-        OauthAccount oauthAccount = oauthAccountService.createSampleAccount(id, name, email);
-        memberService.createMember(oauthAccount);
+        if(!memberService.isEmailAvailable(email)){
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+        OauthAccount oauthAccount = oauthAccountService.createSampleAccount(nickname, email);
+        Member member = memberService.createMember(oauthAccount);
+        return ProfileResponse.from(member);
     }
 
     @Transactional

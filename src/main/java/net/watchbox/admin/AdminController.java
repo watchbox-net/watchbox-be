@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.admin.dto.TmdbContentItem;
 import net.watchbox.admin.dto.TmdbWatchStatusItem;
+import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,17 +24,17 @@ public class AdminController {
 
     @Operation(summary = "샘플 계정 생성")
     @PostMapping("/members/sample")
-    public ResponseEntity<ApiResponse<Void>> createSampleMember(
-            @RequestParam Long id,
-            @RequestParam String name,
+    public ResponseEntity<ApiResponse<ProfileResponse>> createSampleMember(
+            @RequestParam String nickname,
             @RequestParam String email
     ) {
-        adminFacade.createSampleMember(id, name, email);
-        return null;
+        return ResponseEntity.ok(
+                ApiResponse.success(adminFacade.createSampleMember(nickname, email))
+        );
     }
 
     @Operation(summary = "해당 멤버를 Owner로 Box 생성")
-    @PostMapping("/members/{memberId}/boxes")
+    @PostMapping("/members/{nickname}/boxes")
     public ResponseEntity<ApiResponse<Void>> createBox(
             @PathVariable Long memberId,
             @RequestParam String boxName

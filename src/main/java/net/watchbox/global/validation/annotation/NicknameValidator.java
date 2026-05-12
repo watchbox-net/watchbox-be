@@ -10,7 +10,7 @@ public class NicknameValidator implements ConstraintValidator<ValidNickname, Str
     // 금지어 목록 (실제로는 DB나 설정 파일에서 관리)
     private static final String[] FORBIDDEN_WORDS = {
             "관리자", "admin", "운영자", "시스템", "TMDB", "WatchBox",
-            "운영", "관리", "마스터", "CEO", "CTO", "CFO",
+            "운영", "관리", "마스터", "CEO", "CTO", "CFO", "sample",
             "Master", "Owner", "Editor", "Root"
     };
 
