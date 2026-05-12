@@ -40,6 +40,11 @@ public class AdminFacade {
     }
 
     @Transactional
+    public void createBox(Long memberId, String boxName) {
+
+    }
+
+    @Transactional
     public void batchAddContentsToBox(Long memberId, Long boxId, List<TmdbContentItem> request) {
         Member member = memberService.getByMemberIdOrThrow(memberId);
         Box box = boxService.getByBoxIdOrElseThrow(boxId);

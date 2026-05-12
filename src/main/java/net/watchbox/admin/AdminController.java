@@ -32,6 +32,16 @@ public class AdminController {
         return null;
     }
 
+    @Operation(summary = "해당 멤버를 Owner로 Box 생성")
+    @PostMapping("/members/{memberId}/boxes")
+    public ResponseEntity<ApiResponse<Void>> createBox(
+            @PathVariable Long memberId,
+            @RequestParam String boxName
+    ) {
+        adminFacade.createBox(memberId, boxName);
+        return null;
+    }
+
     @Operation(summary = "멤버에 대해 Content 리스트 일괄 Box에 추가", description = "WatchMediaType = {MOVIE, TV}")
     @PostMapping("/members/{memberId}/boxes/{boxId}/contents/batch")
     public ResponseEntity<ApiResponse<Void>> batchAddContentsToBox(
