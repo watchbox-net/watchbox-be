@@ -22,7 +22,7 @@ public class TokenService {
 
     @Transactional
     public void logout(Long memberId) {
-        refreshTokenRepository.deleteByMemberId(memberId);
+        refreshTokenRepository.deleteById(memberId);
     }
 
     // 액세스 토큰 발급(by 리프레시 토큰)

@@ -1,23 +1,18 @@
 package net.watchbox.domain.auth.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.annotation.Id;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
-@Entity
+@RedisHash(value = "refreshToken", timeToLive = 3600 * 2) // 2시간
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "refresh_token_id", updatable = false)
-    private Long refreshTokenId;
+    private Long memberId; // memberId 자체를 키로 사용 (한 멤버당 1토큰)
 
-    @Column(name = "member_id", nullable = false, unique = true)
-    private Long memberId;
-
-    @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
 
     public RefreshToken update(String newRefreshToken){
