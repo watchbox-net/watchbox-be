@@ -103,6 +103,10 @@ public class MemberService {
         return !memberRepository.existsByNickname(nickname);
     }
 
+    public boolean isEmailAvailable(String email) {
+        return !memberRepository.existsByEmail(email);
+    }
+
     @Transactional
     public void deleteMember(Member member) {
         memberRepository.delete(member);

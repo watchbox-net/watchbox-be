@@ -3,12 +3,15 @@ package net.watchbox.global.config;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.global.auth.admin.AdminAuthFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import net.watchbox.global.auth.jwt.TokenAuthenticationFilter;
 import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
 import net.watchbox.global.auth.oauth.OAuth2UserCustomService;
+import net.watchbox.global.properties.AdminProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -31,6 +34,7 @@ public class WebSecurityConfig {
 
     private final MemberService memberService;
     private final BoxService boxService;
+    private final AdminProperties adminProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -40,6 +44,7 @@ public class WebSecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable) // 클라이언트 측에서 로그아웃을 처리하는 대신에 인증 서버에 로그아웃 요청을 전달하여 세션을 종료하고 토큰을 무효화한다.
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(adminAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers(
@@ -67,6 +72,19 @@ public class WebSecurityConfig {
                         )
                 )
                 .build();
+    }
+
+    @Bean
+    public AdminAuthFilter adminAuthFilter() {
+        return new AdminAuthFilter(adminProperties);
+    }
+
+    // Security 체인 외부에서의 자동 등록 비활성화 (이중 실행 방지)
+    @Bean
+    public FilterRegistrationBean<AdminAuthFilter> adminAuthFilterRegistration(AdminAuthFilter filter) {
+        FilterRegistrationBean<AdminAuthFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     @Bean

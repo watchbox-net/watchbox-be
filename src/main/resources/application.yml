@@ -59,6 +59,9 @@ url:
   oauth-callback: ${URL_OAUTH_CALLBACK:http://localhost:4000/api/auth/callback}
 #  backend:  ${URL_BACKEND:http://localhost:9000}
 
+admin:
+  api-key: ${ADMIN_API_KEY:admin}
+
 jwt:
   issuer: ${JWT_ISSUER:abc}
   secret_key: ${JWT_SECRET_KEY:abcdefgh1234567890}

@@ -66,13 +66,12 @@ public class OauthAccountService {
     }
 
     @Transactional
-    public OauthAccount createSampleAccount(Long id, String name, String email) {
+    public OauthAccount createSampleAccount(String nickname, String email) {
         return oauthAccountRepository.save(OauthAccount.builder()
                 .oauthProvider(OauthProvider.GOOGLE)
-                .accountId(id)
                 .email(email)
-                .oauthId("sample_id_" + id.toString())
-                .name(name)
+                .oauthId(nickname)
+                .name(nickname)
                 .build());
     }
 
