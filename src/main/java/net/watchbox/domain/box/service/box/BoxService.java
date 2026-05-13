@@ -56,10 +56,10 @@ public class BoxService {
     }
 
     @Transactional
-    public Box createBox(Member member, BoxCreateRequest request, BoxType boxType) {
+    public Box createBox(Member member, BoxCreateRequest request) {
         return boxRepository.save(Box.builder()
                 .name(request.getName())
-                .boxType(boxType)
+                .boxType(request.getBoxType())
                 .description(request.getDescription())
                 .visibleType(request.getVisibleType())
                 .owner(member)

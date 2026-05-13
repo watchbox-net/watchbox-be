@@ -68,7 +68,7 @@ public class ContentBoxFacade {
         for (Long boxId : request.getAddBoxIds()) {
             Box box = boxService.getByBoxIdOrElseThrow(boxId);
             boxValidator.validateBoxContentAdder(box, member);       // 권한 검증
-            if (boxValidator.contentExistsInBox(box, content)) {     // 멱등성: 이미 있으면 skip
+            if (boxValidator.contentExistsInBox(box, content)) {     // 이미 있으면 skip
                 continue;
             }
             boxContentCommandService.addContentToBox(member, box, content);

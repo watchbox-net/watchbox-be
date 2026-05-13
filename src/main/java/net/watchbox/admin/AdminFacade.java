@@ -6,6 +6,8 @@ import net.watchbox.admin.dto.TmdbContentItem;
 import net.watchbox.admin.dto.TmdbWatchStatusItem;
 import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.auth.service.OauthAccountService;
+import net.watchbox.domain.box.dto.box.BoxCreateRequest;
+import net.watchbox.domain.box.dto.box.BoxCreateResponse;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
@@ -46,8 +48,10 @@ public class AdminFacade {
     }
 
     @Transactional
-    public void createBox(Long memberId, String boxName) {
-
+    public BoxCreateResponse createBox(Long memberId, BoxCreateRequest request) {
+        Member member = memberService.getByMemberIdOrThrow(memberId);
+        Box box = boxService.createBox(member, request);
+        return BoxCreateResponse.from(box);
     }
 
     @Transactional

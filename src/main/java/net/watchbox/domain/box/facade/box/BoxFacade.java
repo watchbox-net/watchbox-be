@@ -71,7 +71,7 @@ public class BoxFacade {
 
     @Transactional
     public BoxCreateResponse createBox(Member member, BoxCreateRequest request) {
-        Box box = boxService.createBox(member, request, request.getBoxType());
+        Box box = boxService.createBox(member, request);
         boxMemberService.addOwnerToBox(member, box);
         return BoxCreateResponse.from(box);
     }
