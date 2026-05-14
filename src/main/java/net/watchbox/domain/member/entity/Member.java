@@ -32,9 +32,14 @@ public class Member implements UserDetails {
     @JoinColumn(name = "oauth_account_id", nullable = false)
     private OauthAccount oauthAccount;
 
+    @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
     private String nickname;
+
     private String profileImage;
+
     private String password;
 
     @CreatedDate

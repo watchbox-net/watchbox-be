@@ -52,12 +52,19 @@ public class MemberService {
 
     public Member createMember(OauthAccount oauthAccount) {
         String nickname = generateNickname();
-        Member member = Member.builder()
+        return memberRepository.save(Member.builder()
                 .email(oauthAccount.getEmail())
                 .oauthAccount(oauthAccount)
                 .nickname(nickname)
-                .build();
-        return memberRepository.save(member);
+                .build());
+    }
+
+    public Member createSampleMember(OauthAccount oauthAccount, String nickname) {
+        return memberRepository.save(Member.builder()
+                .email(oauthAccount.getEmail())
+                .oauthAccount(oauthAccount)
+                .nickname(nickname)
+                .build());
     }
 
     public Member getByOauthAccount(OauthAccount oauthAccount) {
@@ -67,6 +74,11 @@ public class MemberService {
 
     public Member getByMemberIdOrThrow(Long memberId) {
         return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public Member getByNicknameOrThrow(String nickname) {
+        return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
@@ -91,7 +103,7 @@ public class MemberService {
     @Transactional
     public Member updateProfile(Member member, ProfileUpdateRequest request) {
             if (request.getNickname() != null && !request.getNickname().isBlank()) {
-                if (!member.getNickname().equals(request.getNickname()) && isNicknameAvailable(request.getNickname())) {
+                if (existsByNickname(request.getNickname())) {
                     throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
                 }
                 member.updateNickname(request.getNickname());
@@ -99,16 +111,17 @@ public class MemberService {
             return memberRepository.save(member);
     }
 
-    public boolean isNicknameAvailable(String nickname) {
-        return !memberRepository.existsByNickname(nickname);
+    public boolean existsByNickname(String nickname) {
+        return memberRepository.existsByNickname(nickname);
     }
 
-    public boolean isEmailAvailable(String email) {
-        return !memberRepository.existsByEmail(email);
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
     }
 
     @Transactional
     public void deleteMember(Member member) {
         memberRepository.delete(member);
     }
+
 }

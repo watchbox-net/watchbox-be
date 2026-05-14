@@ -54,9 +54,13 @@ public enum ErrorCode {
     TMDB_SEARCH_NULL_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "TMDB-SEARCH-500", "TMDB 검색 응답 null"),
 
     /**
+     * OauthAccount
+     */
+    NAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "OauthAccount-409", "이미 존재하는 이름입니다."),
+
+    /**
      * Member
      */
-    // Member 오류
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER-404", "Member를 찾을 수 없습니다."),
     REQUEST_UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "MEMBER-401", "요청 권한이 없는 사용자입니다."),
     NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER-409", "이미 존재하는 닉네임입니다."),

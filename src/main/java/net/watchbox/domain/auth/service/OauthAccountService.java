@@ -70,7 +70,7 @@ public class OauthAccountService {
         return oauthAccountRepository.save(OauthAccount.builder()
                 .oauthProvider(OauthProvider.GOOGLE)
                 .email(email)
-                .oauthId(nickname)
+                .oauthId("oauth_"+nickname)
                 .name(nickname)
                 .build());
     }
@@ -78,5 +78,9 @@ public class OauthAccountService {
     @Transactional
     public void deleteByMember(Member member) {
         oauthAccountRepository.delete(member.getOauthAccount());
+    }
+
+    public boolean existsByName(String name) {
+        return oauthAccountRepository.existsByName(name);
     }
 }

@@ -1,9 +1,9 @@
-package net.watchbox.admin;
+package net.watchbox.application.admin;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.admin.dto.TmdbContentItem;
-import net.watchbox.admin.dto.TmdbWatchStatusItem;
+import net.watchbox.application.admin.dto.TmdbContentItem;
+import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
 import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.auth.service.OauthAccountService;
 import net.watchbox.domain.box.dto.box.BoxCreateRequest;
@@ -35,28 +35,33 @@ public class AdminFacade {
     private final ContentRecordCommandService contentRecordCommandService;
 
     @Transactional
-    public ProfileResponse createSampleMember(String nickname, String email) {
-        if(!memberService.isNicknameAvailable(nickname)){
+    public ProfileResponse createSampleMember(String name, String nickname, String email) {
+        if(oauthAccountService.existsByName(name)) {
+            throw new CustomException(ErrorCode.NAME_ALREADY_EXISTS);
+        }
+        if(memberService.existsByNickname(nickname)){
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
-        if(!memberService.isEmailAvailable(email)){
+        if(memberService.existsByEmail(email)){
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
-        OauthAccount oauthAccount = oauthAccountService.createSampleAccount(nickname, email);
-        Member member = memberService.createMember(oauthAccount);
+
+        OauthAccount oauthAccount = oauthAccountService.createSampleAccount(name, email);
+        Member member = memberService.createSampleMember(oauthAccount, nickname);
+        boxService.createInitialMyBox(member);
         return ProfileResponse.from(member);
     }
 
     @Transactional
-    public BoxCreateResponse createBox(Long memberId, BoxCreateRequest request) {
-        Member member = memberService.getByMemberIdOrThrow(memberId);
+    public BoxCreateResponse createBox(String nickname, BoxCreateRequest request) {
+        Member member = memberService.getByNicknameOrThrow(nickname);
         Box box = boxService.createBox(member, request);
         return BoxCreateResponse.from(box);
     }
 
     @Transactional
-    public void batchAddContentsToBox(Long memberId, Long boxId, List<TmdbContentItem> request) {
-        Member member = memberService.getByMemberIdOrThrow(memberId);
+    public void batchAddContentsToBox(String nickname, Long boxId, List<TmdbContentItem> request) {
+        Member member = memberService.getByNicknameOrThrow(nickname);
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         for(TmdbContentItem item : request) {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.mediaType());
@@ -65,8 +70,8 @@ public class AdminFacade {
     }
 
     @Transactional
-    public void batchUpsertWatchStatus(Long memberId, List<TmdbWatchStatusItem> request) {
-        Member member = memberService.getByMemberIdOrThrow(memberId);
+    public void batchUpsertWatchStatus(String nickname, List<TmdbWatchStatusItem> request) {
+        Member member = memberService.getByNicknameOrThrow(nickname);
         for(TmdbWatchStatusItem item : request) {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.watchMediaType().toMediaType());
             // ContentRecord 조회 or 생성
