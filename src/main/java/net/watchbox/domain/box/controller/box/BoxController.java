@@ -33,7 +33,7 @@ public class BoxController {
         ));
     }
 
-    @Operation(summary = "박스 리스트 조회", description = "박스 페이지 응답 <br>"
+    @Operation(summary = "박스 페이지 조회", description = "박스 페이지 응답 <br>"
             + "모든 마이 박스 + 내가 속한 모든 공유 박스 조회 <br>"
             + "응답에 포스터, 박스멤버 O <br>"
             + "정렬은 일단 최신 업데이트순")

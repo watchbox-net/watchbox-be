@@ -82,6 +82,10 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
+    public Member getByNameOrThrow(String name) {
+        return memberRepository.findByOauthAccount_Name(name);
+    }
+
     public ProfileResponse getProfile(Member member) {
         return ProfileResponse.from(member);
     }

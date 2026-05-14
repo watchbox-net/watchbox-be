@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberFacade memberFacade;
 
-    @Operation(summary = "멤버 검색 API", description = "검색어와 공유박스ID로 멤버 리스트 조회 <br>" +
+    @Operation(summary = "멤버 검색", description = "검색어와 공유박스ID로 멤버 리스트 조회 <br>" +
             "박스 멤버 상태 포함")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<MemberSearchPageResponse>> searchMemberList(
@@ -34,7 +34,7 @@ public class MemberController {
         );
     }
 
-    @Operation(summary = "프로필 수정 API", description = "닉네임(2~12글자) 수정")
+    @Operation(summary = "프로필 수정", description = "닉네임(2~12글자) 수정")
     @PatchMapping("/profile")
     public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
             @AuthenticationPrincipal Member member,
@@ -45,7 +45,7 @@ public class MemberController {
         );
     }
 
-    @Operation(summary = "마이 페이지 조회 API", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
+    @Operation(summary = "마이 페이지 조회", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
     @GetMapping("/mypage")
     public ResponseEntity<ApiResponse<MyPageResponse>> getMyPage(
             @AuthenticationPrincipal Member member
@@ -55,6 +55,7 @@ public class MemberController {
         );
     }
 
+    @Operation(summary = "회원 탈퇴")
     @DeleteMapping("/me")
     public ResponseEntity<ApiResponse> deleteMember(
             @AuthenticationPrincipal Member member

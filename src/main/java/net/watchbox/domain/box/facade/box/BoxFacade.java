@@ -44,13 +44,6 @@ public class BoxFacade {
 
     @Transactional(readOnly = true)
     public BoxPageResponse getBoxPage(Member member) {
-//        List<Box> myBoxList = boxService.getAllMyBoxListByOwner(member);
-//        List<Box> sharedBoxList = boxService.getAllSharedBoxListByMember(member);
-//        List<Box> boxList = Stream.concat(
-//                myBoxList.stream(),
-//                sharedBoxList.stream()
-//        )
-
         List<Box> boxList = boxService.getAllBoxesByMember(member).stream()
         // lastContentAddedAt 기준 내림차순 정렬, null은 가장 맨 앞으로 (null 때문에 Java에서 정렬)
         .sorted(Comparator.comparing(Box::getLastContentAddedAt,

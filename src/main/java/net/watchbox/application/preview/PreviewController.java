@@ -1,10 +1,24 @@
 package net.watchbox.application.preview;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.box.dto.box.BoxPageResponse;
+import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.facade.box.BoxFacade;
+import net.watchbox.domain.box.facade.content.BoxContentFacade;
+import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.member.dto.response.MyPageResponse;
+import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.member.facade.MemberFacade;
+import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
+import net.watchbox.domain.record.facade.ContentRecordFacade;
+import net.watchbox.global.dto.response.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -12,7 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/preview")
 @Tag(name = "Preview", description = "샘플 화면 API")
 public class PreviewController {
-    private final PreviewFacade previewFacade;
+    private final static String SAMPLE_NAME = "sample1";
+    private final MemberService memberService;
+
+    private final BoxFacade boxFacade;
+    private final BoxContentFacade boxContentFacade;
+    private final ContentRecordFacade contentRecordFacade;
+    private final MemberFacade memberFacade;
 
     /**
      * Preview 페이지 대상
@@ -21,4 +41,46 @@ public class PreviewController {
      * 3. 시청 기록 페이지
      * 4. 마이 페이지
      */
+    @Operation(summary = "Preview 박스 페이지 조회")
+    @GetMapping("/boxes")
+    public ResponseEntity<ApiResponse<BoxPageResponse>> getBoxPage() {
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        return ResponseEntity.ok(ApiResponse.success(
+                boxFacade.getBoxPage(member)
+        ));
+    }
+
+    @Operation(summary = "Preview 박스 컨텐츠 페이지 조회")
+    @GetMapping("/boxes/{boxId}/contents")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
+            @ParameterObject
+            @ModelAttribute BoxContentRecordQueryRequest request,
+            @PathVariable("boxId") Long boxId
+    ) {
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        return ResponseEntity.ok(
+                ApiResponse.success(boxContentFacade.getBoxContentPage(member, request, boxId))
+        );
+    }
+
+    @Operation(summary = "Preview 시청 기록 조회")
+    @GetMapping("/records/watch")
+    public ResponseEntity<ApiResponse<ContentPageResponse>> getMyRecordedContentPage(
+            @ParameterObject
+            @ModelAttribute ContentRecordQueryRequest request
+    ) {
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        return ResponseEntity.ok(ApiResponse.success(
+                contentRecordFacade.getMyRecordedContentPage(member, request)
+        ));
+    }
+
+    @Operation(summary = "Preview 마이 페이지 조회", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
+    @GetMapping("/members/mypage")
+    public ResponseEntity<ApiResponse<MyPageResponse>> getMyPage(){
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        return ResponseEntity.ok(
+                ApiResponse.success(memberFacade.getMyPage(member))
+        );
+    }
 }

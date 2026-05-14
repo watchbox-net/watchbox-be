@@ -42,8 +42,8 @@ public class BoxContentFacade {
     // ToDo: 최적화 대상
     @Transactional(readOnly = true)
     public ContentPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
-        log.info("ContentMediaTypeFilter: {}, Sort: {}, WatchStatusFilter: {}",
-                request.getContentMediaTypeFilter(), request.getSort(), request.getWatchStatusFilter());
+//        log.info("ContentMediaTypeFilter: {}, Sort: {}, WatchStatusFilter: {}",
+//                request.getContentMediaTypeFilter(), request.getSort(), request.getWatchStatusFilter());
 
         // 1. 박스 조회 + 멤버 권한 검증
         Box box = boxService.getByBoxIdOrElseThrow(boxId);

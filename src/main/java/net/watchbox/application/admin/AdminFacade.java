@@ -66,6 +66,11 @@ public class AdminFacade {
         for(TmdbContentItem item : request) {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.mediaType());
             boxContentCommandService.addContentToBox(member, box, content);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -78,6 +83,11 @@ public class AdminFacade {
             ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
             // WatchStatus 업데이트
             contentRecord.updateWatchStatus(item.watchStatus());
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
