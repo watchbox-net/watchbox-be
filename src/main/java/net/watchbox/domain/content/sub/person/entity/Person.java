@@ -39,7 +39,7 @@ public class Person extends BaseTime {
 //    @CollectionTable(name = "known_for", joinColumns = @JoinColumn(name = "content_id"))
 //    private List<KnownFor> knownFor; // Search 결과의 작품 리스트
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private PersonDetail personDetail;
+//    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private PersonDetail personDetail;
 
 }

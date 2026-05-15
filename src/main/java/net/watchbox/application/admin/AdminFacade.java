@@ -13,6 +13,7 @@ import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
+import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
@@ -30,17 +31,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AdminFacade {
-    private final static long SLEEP_TIME = 300;
+    private final static long SLEEP_TIME = 100;
 
     private final OauthAccountService oauthAccountService;
     private final MemberService memberService;
     private final BoxService boxService;
+    private final BoxValidator boxValidator;
     private final ContentCommandService contentCommandService;
     private final BoxContentCommandService boxContentCommandService;
     private final ContentRecordCommandService contentRecordCommandService;
 
     @Transactional
-    public ProfileResponse createSampleMember(String name, String nickname, String email) {
+    public ProfileResponse createSampleMember(String name, String nickname) {
+        String email = name + "@example.com";
         if(oauthAccountService.existsByName(name)) {
             throw new CustomException(ErrorCode.NAME_ALREADY_EXISTS);
         }
@@ -64,12 +67,12 @@ public class AdminFacade {
         return BoxCreateResponse.from(box);
     }
 
-    @Transactional
     public void batchAddContentsToBox(String nickname, Long boxId, List<TmdbContentItem> request) {
         Member member = memberService.getByNicknameOrThrow(nickname);
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         for(TmdbContentItem item : request) {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.mediaType());
+            if(boxValidator.contentExistsInBoxByMember(member, box, content)) continue;
             BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
             try {
                 Thread.sleep(SLEEP_TIME);
@@ -81,7 +84,6 @@ public class AdminFacade {
         }
     }
 
-    @Transactional
     public void batchUpsertWatchStatus(String nickname, List<TmdbWatchStatusItem> request) {
         Member member = memberService.getByNicknameOrThrow(nickname);
         for(TmdbWatchStatusItem item : request) {
@@ -97,6 +99,18 @@ public class AdminFacade {
             }
             log.info("Upserted watch status - tmdbId: {}, mediaType: {}, watchStatus: {}, contentRecordId: {}",
                     item.tmdbId(), item.watchMediaType(), item.watchStatus(), contentRecord.getContentRecordId());
+        }
+    }
+
+    public void saveContents(List<TmdbContentItem> request) {
+        for(TmdbContentItem item : request) {
+            contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.mediaType());
+            try {
+                Thread.sleep(SLEEP_TIME + 200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            log.info("Saved sub content - tmdbId: {}, mediaType: {}", item.tmdbId(), item.mediaType());
         }
     }
 }

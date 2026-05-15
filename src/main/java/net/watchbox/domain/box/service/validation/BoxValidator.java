@@ -77,13 +77,13 @@ public class BoxValidator {
     }
 
     // 해당 멤버로 이미 추가된 컨텐츠인지 확인
-    public boolean contentExistsInSharedBox(Member member, Box box, Content content) {
+    public boolean contentExistsInBoxByMember(Member member, Box box, Content content) {
         return boxContentRepository.existsByPublisherAndBoxAndContent(member, box, content);
     }
 
     // 해당 멤버로 이미 추가된 컨텐츠인지 검증
     public void validateContentNotInSharedBox(Member member, Box box, Content content) {
-        if(contentExistsInSharedBox(member, box, content)) {
+        if(contentExistsInBoxByMember(member, box, content)) {
             throw new CustomException(CONTENT_ALREADY_IN_BOX, member.getMemberId());
         }
     }

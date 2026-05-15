@@ -45,6 +45,6 @@ public class Tv extends BaseTime {
     @Column(name = "genre_id")
     private List<Integer> genreIds;
 
-    @OneToOne(mappedBy = "tv", cascade = CascadeType.ALL, orphanRemoval = true)
-    private TvDetail tvDetail;
+//    @OneToOne(mappedBy = "tv", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private TvDetail tvDetail;
 }

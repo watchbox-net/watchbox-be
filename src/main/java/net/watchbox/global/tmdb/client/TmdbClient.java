@@ -1,11 +1,17 @@
 package net.watchbox.global.tmdb.client;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.watchbox.global.dto.response.exception.CustomException;
+import net.watchbox.global.dto.response.exception.ErrorCode;
 import net.watchbox.global.properties.TmdbProperties;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
+import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TmdbClient {
@@ -15,6 +21,18 @@ public class TmdbClient {
     public WebClient baseWebClient() {
         return webClientBuilder
                 .baseUrl(tmdbProperties.getApi().getBaseUrl())
+                // 4xx/5xx 응답을 CustomException 으로 변환 (모든 TMDB 호출에 공통 적용)
+                .defaultStatusHandler(HttpStatusCode::isError, response -> {
+                    int status = response.statusCode().value();
+                    log.warn("TMDB API error: status={}", status);
+                    if (status == 404) {
+                        return Mono.error(new CustomException(ErrorCode.TMDB_RESOURCE_NOT_FOUND));
+                    }
+                    if (response.statusCode().is4xxClientError()) {
+                        return Mono.error(new CustomException(ErrorCode.TMDB_CLIENT_ERROR));
+                    }
+                    return Mono.error(new CustomException(ErrorCode.TMDB_SERVER_ERROR));
+                })
                 .build();
     }
 

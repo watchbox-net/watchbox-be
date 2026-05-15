@@ -38,11 +38,10 @@ public class AdminController {
     @PostMapping("/members/sample")
     public ResponseEntity<ApiResponse<ProfileResponse>> createSampleMember(
             @RequestParam String name,
-            @RequestParam String nickname,
-            @RequestParam String email
+            @RequestParam String nickname
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success(adminFacade.createSampleMember(name, nickname, email))
+                ApiResponse.success(adminFacade.createSampleMember(name, nickname))
         );
     }
 
@@ -68,7 +67,7 @@ public class AdminController {
         return null;
     }
 
-    @Operation(summary = "시청 기록에 {Content x WatchStatus} 리스트 시청 상태 Upsert",
+    @Operation(summary = "시청 기록에 리스트 시청 상태 Upsert",
             description = "WatchMediaType = {MOVIE, TV} <br>" + "WatchStatus = {COMPLETED, WATCHING, PLANNED, PAUSED}")
     @PostMapping("/members/{nickname}/records/watch-status/batch")
     public ResponseEntity<ApiResponse<Void>> batchUpsertWatchStatus(
@@ -76,6 +75,15 @@ public class AdminController {
             @RequestBody List<@Valid TmdbWatchStatusItem> request
     ) {
         adminFacade.batchUpsertWatchStatus(nickname, request);
+        return null;
+    }
+
+    @Operation(summary = "TMDB 컨텐츠 데이터 일괄 저장")
+    @PostMapping("/contents/save")
+    public ResponseEntity<ApiResponse<Void>> saveContents(
+            @RequestBody List<@Valid TmdbContentItem> request
+    ){
+        adminFacade.saveContents(request);
         return null;
     }
 

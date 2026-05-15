@@ -78,6 +78,7 @@ public class ContentCommandService {
     }
 
     public void saveSubContents(Content content, MediaType mediaType) {
+        log.info("Trying saving sub content for tmdbId: {}, mediaType: {}", content.getTmdbId(), mediaType);
         switch (mediaType) {
             case MOVIE -> {
                 TmdbMoviesDetailsResponse response = tmdbMoviesService.getMovieDetails(content.getTmdbId());

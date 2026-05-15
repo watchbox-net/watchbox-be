@@ -1,6 +1,5 @@
 package net.watchbox.global.dev.controller;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +19,23 @@ public class DevAccountController {
     private final TokenService tokenService;
     private final MemberRepository memberRepository;
 
-    @GetMapping("/login/{accountId}")
-    public DevTokenResponse login(
+    @GetMapping("/login/id/{accountId}")
+    public DevTokenResponse loginById(
             @PathVariable Long accountId
     ) {
         Member member = memberRepository.findById(accountId).orElseThrow();
+
+        String refreshToken = tokenService.createNewRefreshToken(member);
+        String accessToken = tokenService.createNewAccessToken(member, refreshToken);
+
+        return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
+    }
+
+    @GetMapping("/login/nickname/{nickname}")
+    public DevTokenResponse loginByNickname(
+            @PathVariable String nickname
+    ) {
+        Member member = memberRepository.findByNickname(nickname).orElseThrow();
 
         String refreshToken = tokenService.createNewRefreshToken(member);
         String accessToken = tokenService.createNewAccessToken(member, refreshToken);

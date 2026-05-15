@@ -53,6 +53,11 @@ public enum ErrorCode {
     TMDB_SEARCH_BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "TMDB-SEARCH-502", "TMDB 검색 응답 오류"),
     TMDB_SEARCH_NULL_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "TMDB-SEARCH-500", "TMDB 검색 응답 null"),
 
+    // TMDB 공통 오류
+    TMDB_RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "TMDB-404", "TMDB에서 해당 리소스를 찾을 수 없습니다."),
+    TMDB_CLIENT_ERROR(HttpStatus.BAD_REQUEST, "TMDB-4XX", "TMDB API 요청 오류"),
+    TMDB_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "TMDB-5XX", "TMDB API 서버 오류"),
+
     /**
      * OauthAccount
      */
