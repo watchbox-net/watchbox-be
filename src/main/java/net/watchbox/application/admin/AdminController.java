@@ -10,11 +10,15 @@ import net.watchbox.domain.box.dto.box.BoxCreateRequest;
 import net.watchbox.domain.box.dto.box.BoxCreateResponse;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.global.dto.response.ApiResponse;
+import net.watchbox.global.dto.response.exception.ErrorDetail;
+import net.watchbox.global.properties.AdminProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,24 +30,13 @@ public class AdminController {
 
     /**
      * 샘플 계정 데이터 확보 시나리오
-     * 1. 계정 생성 - 샘플 멤버 3명
+     * 1. (SQL) 계정 생성 - 샘플 OauthAccount + Member 3명
      * 2. 박스 생성 - 메인 샘플 멤버 개인/공유 박스 몇개 생성 - 개인 박스 2개, 공유 박스 4개
      * 3. (SQL) 박스 초대 - 공유 박스들에 다른 멤버 2명 초대
      * 4. (SQL) 박스 초대 수락 - 다른 멤버들의 박스 초대 {수락, 거절, 대기} 골고루
      * 5. 박스 컨텐츠 추가 - 개인/공유 박스 모두 추가, 빈 박스도 포함 - 영화/시리즈/인물 골고루
      * 6. (SQL) 시청 기록 추가
      */
-
-    @Operation(summary = "샘플 멤버 생성", description = "OauthAccount, Member 생성")
-    @PostMapping("/members/sample")
-    public ResponseEntity<ApiResponse<ProfileResponse>> createSampleMember(
-            @RequestParam String name,
-            @RequestParam String nickname
-    ) {
-        return ResponseEntity.ok(
-                ApiResponse.success(adminFacade.createSampleMember(name, nickname))
-        );
-    }
 
     @Operation(summary = "닉네임의 멤버를 Owner로 Box 생성")
     @PostMapping("/members/{nickname}/boxes")
@@ -87,4 +80,15 @@ public class AdminController {
         return null;
     }
 
+    // ==
+    @Operation(summary = "샘플 OauthAccount + Member + Box + BoxMember 생성", description = "OauthAccount, Member 생성")
+    @PostMapping("/members/sample")
+    public ResponseEntity<ApiResponse<ProfileResponse>> createSampleMember(
+            @RequestParam String name,
+            @RequestParam String nickname
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(adminFacade.createSampleMember(name, nickname))
+        );
+    }
 }
