@@ -19,8 +19,13 @@ public class SwaggerConfig {
                 .name("Authorization")
                 .scheme("bearer")
                 .bearerFormat("JWT");
+        SecurityScheme adminKey = new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.HEADER)
+                .name("X-Admin-Key");
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("Bearer Token");
+                .addList("Bearer Token")
+                .addList("Admin Key");
 
         Info info = new Info()
                 .title("WatchBox" + " API 명세서")
@@ -29,7 +34,9 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(info)
-                .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
+                .components(new Components()
+                        .addSecuritySchemes("Bearer Token", apiKey)
+                        .addSecuritySchemes("Admin Key", adminKey))
                 .addSecurityItem(securityRequirement)
                 .addServersItem(new Server().url("/"));
 //                .tags(List.of(

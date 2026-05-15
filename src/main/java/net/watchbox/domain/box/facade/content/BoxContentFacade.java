@@ -42,8 +42,8 @@ public class BoxContentFacade {
     // ToDo: 최적화 대상
     @Transactional(readOnly = true)
     public ContentPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
-        log.info("ContentMediaTypeFilter: {}, Sort: {}, WatchStatusFilter: {}",
-                request.getContentMediaTypeFilter(), request.getSort(), request.getWatchStatusFilter());
+//        log.info("ContentMediaTypeFilter: {}, Sort: {}, WatchStatusFilter: {}",
+//                request.getContentMediaTypeFilter(), request.getSort(), request.getWatchStatusFilter());
 
         // 1. 박스 조회 + 멤버 권한 검증
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
@@ -126,7 +126,7 @@ public class BoxContentFacade {
         // Content 조회 or 저장
         Content content = contentCommandService.getOrSaveContentCascade(request.getTmdbId(), request.getMediaType());
 
-        // 박스에 이미 존재하는지 검증
+        // 박스에 이미 존재하는지 검증 -> 중복이면 예외
         if (box.getBoxType().equals(BoxType.MY)) { // 마이 박스에 이미 존재하는지 검증
             boxValidator.validateContentNotInBox(box, content);
         } else { // 해당 멤버로 이미 추가된 컨텐츠인지 검증

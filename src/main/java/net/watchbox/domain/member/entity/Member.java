@@ -33,8 +33,12 @@ public class Member implements UserDetails {
     private OauthAccount oauthAccount;
 
     private String email;
+
+    @Column(unique = true)
     private String nickname;
+
     private String profileImage;
+
     private String password;
 
     @CreatedDate

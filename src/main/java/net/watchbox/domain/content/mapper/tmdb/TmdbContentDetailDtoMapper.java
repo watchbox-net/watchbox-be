@@ -3,13 +3,13 @@ package net.watchbox.domain.content.mapper.tmdb;
 import net.watchbox.domain.content.dto.detail.MovieInfo;
 import net.watchbox.domain.content.dto.detail.PersonInfo;
 import net.watchbox.domain.content.dto.detail.TvInfo;
-import net.watchbox.domain.content.sub.person.entity.Department;
+import net.watchbox.global.tmdb.configuration.Department;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import net.watchbox.global.tmdb.response.people.TmdbPersonDetailsResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.domain.content.sub.movie.entity.MovieGenre;
-import net.watchbox.global.tmdb.util.Country;
+import net.watchbox.global.tmdb.configuration.Country;
 import net.watchbox.global.tmdb.util.TmdbUtils;
 import net.watchbox.domain.content.sub.tv.entity.TvGenre;
 

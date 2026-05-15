@@ -12,6 +12,8 @@ import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.dto.response.exception.CustomException;
+import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,13 +46,6 @@ public class BoxFacade {
 
     @Transactional(readOnly = true)
     public BoxPageResponse getBoxPage(Member member) {
-//        List<Box> myBoxList = boxService.getAllMyBoxListByOwner(member);
-//        List<Box> sharedBoxList = boxService.getAllSharedBoxListByMember(member);
-//        List<Box> boxList = Stream.concat(
-//                myBoxList.stream(),
-//                sharedBoxList.stream()
-//        )
-
         List<Box> boxList = boxService.getAllBoxesByMember(member).stream()
         // lastContentAddedAt 기준 내림차순 정렬, null은 가장 맨 앞으로 (null 때문에 Java에서 정렬)
         .sorted(Comparator.comparing(Box::getLastContentAddedAt,
@@ -71,7 +66,7 @@ public class BoxFacade {
 
     @Transactional
     public BoxCreateResponse createBox(Member member, BoxCreateRequest request) {
-        Box box = boxService.createBox(member, request, request.getBoxType());
+        Box box = boxService.createBox(member, request);
         boxMemberService.addOwnerToBox(member, box);
         return BoxCreateResponse.from(box);
     }
@@ -92,6 +87,12 @@ public class BoxFacade {
     public void deleteBox(Member member, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxOwner(box, member);
+
+        // 박스는 최소 1개 유지 (마지막 마이 박스 삭제 금지)
+        if (boxService.countMyBoxByOwner(member) <= 1) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_MY_BOX);
+        }
+
         boxContentCommandService.deleteAllByBox(box);
         boxService.deleteBox(box); // BoxMember 포함
 

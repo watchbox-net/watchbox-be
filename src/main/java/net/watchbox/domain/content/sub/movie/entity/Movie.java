@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.entity.BaseTime;
-import net.watchbox.global.tmdb.util.Country;
+import net.watchbox.global.tmdb.configuration.Country;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -43,6 +43,6 @@ public class Movie extends BaseTime {
     @Column(name = "genre_id")
     private List<Integer> genreIds;
 
-    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private MovieDetail movieDetail;
+//    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private MovieDetail movieDetail;
 }

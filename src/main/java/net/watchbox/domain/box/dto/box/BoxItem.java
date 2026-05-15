@@ -31,7 +31,7 @@ public class BoxItem {
         return response;
     }
 
-    // 박스 페이지 마이/공유 박스 응답
+    // 박스 페이지 박스 응답
     public static BoxItem of(Box box, List<String> previewPosters){
        BoxItem response = new BoxItem();
        response.boxId = box.getBoxId();

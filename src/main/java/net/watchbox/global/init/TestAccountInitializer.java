@@ -1,4 +1,4 @@
-package net.watchbox.global.dev.init;
+package net.watchbox.global.init;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

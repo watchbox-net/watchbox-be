@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import net.watchbox.domain.content.dto.detail.credit.work.WorkCredit;
-import net.watchbox.domain.content.sub.person.entity.Department;
+import net.watchbox.global.tmdb.configuration.Department;
 
 import java.time.LocalDate;
 import java.util.List;

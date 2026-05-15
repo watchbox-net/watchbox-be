@@ -16,6 +16,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByNickname(String nickname);
 
+    Member findByOauthAccount_Name(String name);
+
     List<Member> findByNicknameContainingIgnoreCase(String query);
 
     @Query("""
@@ -35,4 +37,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     );
 
     boolean existsByNickname(String nickname);
+
+    boolean existsByEmail(String email);
+
+
 }

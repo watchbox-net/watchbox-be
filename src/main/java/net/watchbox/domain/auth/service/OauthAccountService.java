@@ -66,18 +66,21 @@ public class OauthAccountService {
     }
 
     @Transactional
-    public OauthAccount createSampleAccount(Long id, String name, String email) {
+    public OauthAccount createSampleAccount(String nickname, String email) {
         return oauthAccountRepository.save(OauthAccount.builder()
                 .oauthProvider(OauthProvider.GOOGLE)
-                .accountId(id)
                 .email(email)
-                .oauthId("sample_id_" + id.toString())
-                .name(name)
+                .oauthId("oauth_"+nickname)
+                .name(nickname)
                 .build());
     }
 
     @Transactional
     public void deleteByMember(Member member) {
         oauthAccountRepository.delete(member.getOauthAccount());
+    }
+
+    public boolean existsByName(String name) {
+        return oauthAccountRepository.existsByName(name);
     }
 }

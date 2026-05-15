@@ -1,4 +1,4 @@
-package net.watchbox.admin.dto;
+package net.watchbox.application.admin.dto;
 
 import jakarta.validation.constraints.NotNull;
 import net.watchbox.domain.content.entity.MediaType;

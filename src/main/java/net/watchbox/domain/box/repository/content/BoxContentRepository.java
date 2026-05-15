@@ -79,4 +79,6 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
             @Param("member") Member member);
 
     void deleteAllByPublisherAndBox_BoxType(Member member, BoxType boxType);
+
+    void deleteAllByPublisher(Member member);
 }

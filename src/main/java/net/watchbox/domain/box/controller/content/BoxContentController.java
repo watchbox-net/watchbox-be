@@ -28,7 +28,7 @@ public class BoxContentController {
     private final BoxContentFacade boxContentFacade;
 
     // ToDo: 무한스크롤
-    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 & 필터 & 무한스크롤 시청 기록 페이지 조회")
+    @Operation(summary = "박스 컨텐츠 페이지 조회", description = "정렬 & 필터 & 무한스크롤 시청 기록 페이지 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
             @AuthenticationPrincipal Member member,

@@ -1,4 +1,4 @@
-package net.watchbox.domain.content.sub.person.entity;
+package net.watchbox.global.tmdb.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface OauthAccountRepository extends JpaRepository<OauthAccount, Long> {
     Optional<OauthAccount> findByOauthId(String oauthId);
+
+    boolean existsByName(String name);
 }
