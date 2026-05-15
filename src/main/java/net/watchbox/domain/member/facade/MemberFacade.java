@@ -82,11 +82,11 @@ public class MemberFacade {
         BoxJoinRequest (보낸) — sender, REMOVE
         */
 
+        // 모든 BoxContent 삭제
+        boxContentCommandService.deleteAllBoxContentByMember(member);
+
         // MyBox 모두 삭제
         boxService.deleteAllMyBoxes(member);
-
-        // SharedBox의 모든 BoxContent 삭제
-        boxContentCommandService.deleteAllSharedBoxContentByMember(member);
 
         // 2인 이상의 SharedBox에서 Owner일 경우 Owner 권한 넘겨주기 (가장 오래된 Editor 권한의 BoxMember)
         List<Box> sharedBoxes = boxService.getAllSharedBoxListByOwner(member);
