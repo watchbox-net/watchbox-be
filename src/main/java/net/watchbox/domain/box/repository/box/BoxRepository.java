@@ -15,6 +15,8 @@ import java.util.List;
 public interface BoxRepository extends JpaRepository<Box, Long> {
     List<Box> findAllByOwnerAndBoxType(Member owner, BoxType boxType);
 
+    long countByOwnerAndBoxType(Member owner, BoxType boxType);
+
     /**
      * JPQL 마이 박스 + 공유 박스 통합 조회
      * - 마이 박스: owner = member AND boxType = MY

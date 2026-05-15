@@ -38,6 +38,10 @@ public class BoxService {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.MY);
     }
 
+    public long countMyBoxByOwner(Member owner) {
+        return boxRepository.countByOwnerAndBoxType(owner, BoxType.MY);
+    }
+
     public List<Box> getAllSharedBoxListByOwner(Member owner) {
         return boxRepository.findAllByOwnerAndBoxType(owner, BoxType.SHARED);
     }

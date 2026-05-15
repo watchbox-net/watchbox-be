@@ -28,6 +28,7 @@ public enum ErrorCode {
      */
     // Box 공통 오류
     BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-404", "요청한 박스를 찾을 수 없습니다."),
+    CANNOT_DELETE_LAST_MY_BOX(HttpStatus.CONFLICT, "BOX-409", "마지막 박스는 삭제할 수 없습니다."),
     BOX_CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "BOX-CONTENT-404", "요청한 박스 컨텐츠를 찾을 수 없습니다."),
     BOX_CONTENT_ALREADY_IN_BOX(HttpStatus.CONFLICT, "BOX-CONTENT-409", "이미 박스에 추가된 컨텐츠입니다."),
     INSUFFICIENT_BOX_CONTENT_EDIT_PERMISSION(HttpStatus.FORBIDDEN, "BOX-CONTENT-403", "박스 컨텐츠 편집 권한이 없습니다."),

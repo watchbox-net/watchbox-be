@@ -12,6 +12,8 @@ import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.dto.response.exception.CustomException;
+import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +87,12 @@ public class BoxFacade {
     public void deleteBox(Member member, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxOwner(box, member);
+
+        // 박스는 최소 1개 유지 (마지막 마이 박스 삭제 금지)
+        if (boxService.countMyBoxByOwner(member) <= 1) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_LAST_MY_BOX);
+        }
+
         boxContentCommandService.deleteAllByBox(box);
         boxService.deleteBox(box); // BoxMember 포함
 
