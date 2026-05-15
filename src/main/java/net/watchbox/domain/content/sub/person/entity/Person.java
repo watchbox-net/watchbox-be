@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.entity.BaseTime;
+import net.watchbox.global.tmdb.configuration.Department;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

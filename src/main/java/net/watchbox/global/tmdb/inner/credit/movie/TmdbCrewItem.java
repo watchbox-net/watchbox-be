@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.watchbox.domain.content.sub.person.entity.Department;
+import net.watchbox.global.tmdb.configuration.Department;
 
 @Data
 @NoArgsConstructor

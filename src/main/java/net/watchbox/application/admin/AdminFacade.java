@@ -2,6 +2,7 @@ package net.watchbox.application.admin;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.watchbox.application.admin.dto.TmdbContentItem;
 import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
 import net.watchbox.domain.auth.entity.OauthAccount;
@@ -9,6 +10,7 @@ import net.watchbox.domain.auth.service.OauthAccountService;
 import net.watchbox.domain.box.dto.box.BoxCreateRequest;
 import net.watchbox.domain.box.dto.box.BoxCreateResponse;
 import net.watchbox.domain.box.entity.box.Box;
+import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.content.entity.Content;
@@ -26,8 +28,9 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AdminFacade {
-    private final static long SLEEP_TIME = 200;
+    private final static long SLEEP_TIME = 300;
 
     private final OauthAccountService oauthAccountService;
     private final MemberService memberService;
@@ -67,12 +70,14 @@ public class AdminFacade {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         for(TmdbContentItem item : request) {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.mediaType());
-            boxContentCommandService.addContentToBox(member, box, content);
+            BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            log.info("Added content to box - tmdbId: {}, mediaType: {}, boxId: {}, boxContentId: {}, ",
+                    item.tmdbId(), item.mediaType(), box.getBoxId(), boxContent.getBoxContentId());
         }
     }
 
@@ -90,6 +95,8 @@ public class AdminFacade {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            log.info("Upserted watch status - tmdbId: {}, mediaType: {}, watchStatus: {}, contentRecordId: {}",
+                    item.tmdbId(), item.watchMediaType(), item.watchStatus(), contentRecord.getContentRecordId());
         }
     }
 }

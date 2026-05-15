@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import net.watchbox.domain.content.sub.person.entity.Department;
+import net.watchbox.global.tmdb.configuration.Department;
 
 import java.util.List;
 

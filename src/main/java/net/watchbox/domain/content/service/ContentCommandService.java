@@ -9,7 +9,7 @@ import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.repository.ContentRepository;
 import net.watchbox.domain.content.sub.movie.entity.Movie;
 import net.watchbox.domain.content.sub.movie.repository.MovieRepository;
-import net.watchbox.domain.content.sub.person.entity.Department;
+import net.watchbox.global.tmdb.configuration.Department;
 import net.watchbox.domain.content.sub.person.entity.Person;
 import net.watchbox.domain.content.sub.person.repository.PersonRepository;
 import net.watchbox.domain.content.sub.tv.entity.Tv;
@@ -22,10 +22,10 @@ import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
 import net.watchbox.global.tmdb.service.TmdbSearchService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
-import net.watchbox.global.tmdb.util.Country;
+import net.watchbox.global.tmdb.configuration.Country;
+import net.watchbox.global.tmdb.util.TmdbUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -113,7 +113,7 @@ public class ContentCommandService {
                 .popularity(tmdbMovieDetail.getPopularity())
                 .voteAverage(tmdbMovieDetail.getVoteAverage())
                 .voteCount(tmdbMovieDetail.getVoteCount())
-                .releaseDate(LocalDate.parse(tmdbMovieDetail.getReleaseDate()))
+                .releaseDate(TmdbUtils.extractDate(tmdbMovieDetail.getReleaseDate()))
                 .originCountry(tmdbMovieDetail.getOriginCountry().isEmpty() ? null :
                         Country.fromCode(tmdbMovieDetail.getOriginCountry().get(0)))
                 .genreIds(tmdbMovieDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
@@ -131,8 +131,8 @@ public class ContentCommandService {
                 .popularity(tmdbTvSeriesDetail.getPopularity())
                 .voteAverage(tmdbTvSeriesDetail.getVoteAverage())
                 .voteCount(tmdbTvSeriesDetail.getVoteCount())
-                .firstAirDate(LocalDate.parse(tmdbTvSeriesDetail.getFirstAirDate()))
-                .lastAirDate(LocalDate.parse(tmdbTvSeriesDetail.getLastAirDate()))
+                .firstAirDate(TmdbUtils.extractDate(tmdbTvSeriesDetail.getFirstAirDate()))
+                .lastAirDate(TmdbUtils.extractDate(tmdbTvSeriesDetail.getLastAirDate()))
                 .numberOfSeasons(tmdbTvSeriesDetail.getNumberOfSeasons())
                 .originCountry(tmdbTvSeriesDetail.getOriginCountry().isEmpty() ? null :
                         Country.fromCode(tmdbTvSeriesDetail.getOriginCountry().get(0)))
@@ -150,8 +150,7 @@ public class ContentCommandService {
                 .profilePath(tmdbPersonDetail.getProfilePath())
                 .knownForDepartment(Department.fromEnglishValue(tmdbPersonDetail.getKnownForDepartment()))
                 .popularity(tmdbPersonDetail.getPopularity())
-                .birthday(tmdbPersonDetail.getBirthday() == null ? null :
-                        LocalDate.parse(tmdbPersonDetail.getBirthday()))
+                .birthday(TmdbUtils.extractDate(tmdbPersonDetail.getBirthday()))
                 .placeOfBirth(tmdbPersonDetail.getPlaceOfBirth())
                 .build());
     }
