@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.box.BoxCreateRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
+import net.watchbox.domain.box.entity.box.VisibleType;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.repository.member.BoxMemberRepository;
@@ -47,6 +48,7 @@ public class BoxService {
                 .name("나의 박스")
                 .boxType(BoxType.MY)
                 .owner(member)
+                .visibleType(VisibleType.PRIVATE)
                 .build());
         boxMemberRepository.save(BoxMember.builder()
                 .box(box)
@@ -65,7 +67,6 @@ public class BoxService {
                 .owner(member)
                 .build());
     }
-
 
     @Transactional
     public void deleteBox(Box box) {
