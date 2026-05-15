@@ -79,7 +79,7 @@ public class MemberService {
 
     public Member getByNicknameOrThrow(String nickname) {
         return memberRepository.findByNickname(nickname)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND, nickname));
     }
 
     public Member getByNameOrThrow(String name) {

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/preview")
 @Tag(name = "Preview", description = "샘플 화면 API")
 public class PreviewController {
-    private final static String SAMPLE_NAME = "sample1";
+    private final static String SAMPLE_NICKNAME = "해달";
     private final MemberService memberService;
 
     private final BoxFacade boxFacade;
@@ -44,7 +44,7 @@ public class PreviewController {
     @Operation(summary = "Preview 박스 페이지 조회")
     @GetMapping("/boxes")
     public ResponseEntity<ApiResponse<BoxPageResponse>> getBoxPage() {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(ApiResponse.success(
                 boxFacade.getBoxPage(member)
         ));
@@ -57,7 +57,7 @@ public class PreviewController {
             @ModelAttribute BoxContentRecordQueryRequest request,
             @PathVariable("boxId") Long boxId
     ) {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(
                 ApiResponse.success(boxContentFacade.getBoxContentPage(member, request, boxId))
         );
@@ -69,7 +69,7 @@ public class PreviewController {
             @ParameterObject
             @ModelAttribute ContentRecordQueryRequest request
     ) {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(ApiResponse.success(
                 contentRecordFacade.getMyRecordedContentPage(member, request)
         ));
@@ -78,7 +78,7 @@ public class PreviewController {
     @Operation(summary = "Preview 마이 페이지 조회", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
     @GetMapping("/members/mypage")
     public ResponseEntity<ApiResponse<MyPageResponse>> getMyPage(){
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NAME);
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(
                 ApiResponse.success(memberFacade.getMyPage(member))
         );
