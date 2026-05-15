@@ -27,6 +27,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AdminFacade {
+    private final static long SLEEP_TIME = 200;
+
     private final OauthAccountService oauthAccountService;
     private final MemberService memberService;
     private final BoxService boxService;
@@ -67,7 +69,7 @@ public class AdminFacade {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.mediaType());
             boxContentCommandService.addContentToBox(member, box, content);
             try {
-                Thread.sleep(100);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -84,7 +86,7 @@ public class AdminFacade {
             // WatchStatus 업데이트
             contentRecord.updateWatchStatus(item.watchStatus());
             try {
-                Thread.sleep(100);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

@@ -46,7 +46,7 @@ public class AdminController {
         );
     }
 
-    @Operation(summary = "해당 멤버를 Owner로 Box 생성")
+    @Operation(summary = "닉네임의 멤버를 Owner로 Box 생성")
     @PostMapping("/members/{nickname}/boxes")
     public ResponseEntity<ApiResponse<BoxCreateResponse>> createBox(
             @PathVariable String nickname,
@@ -57,7 +57,7 @@ public class AdminController {
         );
     }
 
-    @Operation(summary = "멤버에 대해 Content 리스트 일괄 Box에 추가", description = "WatchMediaType = {MOVIE, TV}")
+    @Operation(summary = "박스에 Content 리스트 일괄 추가", description = "WatchMediaType = {MOVIE, TV}")
     @PostMapping("/members/{nickname}/boxes/{boxId}/contents/batch")
     public ResponseEntity<ApiResponse<Void>> batchAddContentsToBox(
             @PathVariable String nickname,
@@ -68,7 +68,7 @@ public class AdminController {
         return null;
     }
 
-    @Operation(summary = "멤버에 대해 {Content x WatchStatus} 리스트 시청 상태 Upsert",
+    @Operation(summary = "시청 기록에 {Content x WatchStatus} 리스트 시청 상태 Upsert",
             description = "WatchMediaType = {MOVIE, TV} <br>" + "WatchStatus = {COMPLETED, WATCHING, PLANNED, PAUSED}")
     @PostMapping("/members/{nickname}/records/watch-status/batch")
     public ResponseEntity<ApiResponse<Void>> batchUpsertWatchStatus(
