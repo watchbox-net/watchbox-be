@@ -34,7 +34,7 @@ public class ContentRecordQueryService {
         return contentRecordQueryRepository.findMyContentRecordList(member, request, cursor, size);
     }
 
-    public long countByMember(Member member) {
+    public Long countByMember(Member member) {
         return contentRecordRepository.countByMember(member);
     }
 

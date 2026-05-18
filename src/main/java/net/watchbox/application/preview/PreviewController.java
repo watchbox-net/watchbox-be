@@ -4,11 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.box.BoxPageResponse;
+import net.watchbox.domain.box.dto.content.BoxContentCountResponse;
 import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
 import net.watchbox.domain.box.facade.box.BoxFacade;
 import net.watchbox.domain.box.facade.content.BoxContentFacade;
 import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
-import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.dto.response.MyPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.facade.MemberFacade;
@@ -54,7 +54,7 @@ public class PreviewController {
 
     @Operation(summary = "Preview 박스 컨텐츠 페이지 조회")
     @GetMapping("/boxes/{boxId}/contents")
-    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
+    public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getBoxContentPage(
             @ParameterObject
             @ModelAttribute BoxContentRecordQueryRequest request,
             @PathVariable("boxId") Long boxId
@@ -62,6 +62,17 @@ public class PreviewController {
         Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(
                 ApiResponse.success(boxContentFacade.getBoxContentPage(member, request, boxId))
+        );
+    }
+
+    @Operation(summary = "Preview 박스 컨텐츠 총 개수 조회")
+    @GetMapping("/boxes/{boxId}/contents/count")
+    public ResponseEntity<ApiResponse<BoxContentCountResponse>> getBoxContentCount(
+            @PathVariable("boxId") Long boxId
+    ) {
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        return ResponseEntity.ok(
+                ApiResponse.success(boxContentFacade.getBoxContentCount(member, boxId))
         );
     }
 

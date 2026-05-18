@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ContentRecordCountResponse {
-    private long totalCount;
+    private Long totalCount;
 
-    public static ContentRecordCountResponse of(long totalCount) {
+    public static ContentRecordCountResponse of(Long totalCount) {
         return ContentRecordCountResponse.builder()
                 .totalCount(totalCount)
                 .build();

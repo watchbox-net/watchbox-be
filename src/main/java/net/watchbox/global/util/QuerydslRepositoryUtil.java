@@ -62,11 +62,26 @@ public class QuerydslRepositoryUtil {
             BoxContentSortOrder sortOrder, DateExpression<LocalDate> dateExpr
     ) {
         QBoxContent bc = QBoxContent.boxContent;
+        // 모든 정렬에 PK tie-breaker 추가 - 동일 값에서 페이지 경계 안정성 확보 (커서 페이지네이션 필수)
         return switch (sortOrder) {
-            case RECENT_SAVED -> new OrderSpecifier<?>[]{ bc.createdAt.desc() };
-            case OLDEST_SAVED -> new OrderSpecifier<?>[]{ bc.createdAt.asc() };
-            case RECENT_YEAR  -> new OrderSpecifier<?>[]{ dateExpr.desc(), bc.createdAt.desc() };
-            case OLDEST_YEAR  -> new OrderSpecifier<?>[]{ dateExpr.asc(),  bc.createdAt.desc() };
+            case RECENT_SAVED -> new OrderSpecifier<?>[]{
+                    bc.createdAt.desc(),
+                    bc.boxContentId.desc()
+            };
+            case OLDEST_SAVED -> new OrderSpecifier<?>[]{
+                    bc.createdAt.asc(),
+                    bc.boxContentId.asc()
+            };
+            case RECENT_YEAR -> new OrderSpecifier<?>[]{
+                    dateExpr.desc(),
+                    bc.createdAt.desc(),
+                    bc.boxContentId.desc()
+            };
+            case OLDEST_YEAR -> new OrderSpecifier<?>[]{
+                    dateExpr.asc(),
+                    bc.createdAt.desc(),
+                    bc.boxContentId.desc()
+            };
         };
     }
 }
