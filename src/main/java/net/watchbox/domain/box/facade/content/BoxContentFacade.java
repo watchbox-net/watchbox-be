@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.BoxContentCountResponse;
 import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
+import net.watchbox.domain.box.repository.content.BoxContentCursorBuilder;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
+import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.entity.Content;
@@ -21,6 +24,8 @@ import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.service.ContentRecordQueryService;
+import net.watchbox.global.constants.AppConstants;
+import net.watchbox.global.util.CursorCodec;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,26 +43,27 @@ public class BoxContentFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
     private final ContentRecordQueryService contentRecordQueryService;
+    private final CursorCodec cursorCodec;
 
-    // ToDo: 최적화 대상
     @Transactional(readOnly = true)
-    public ContentPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
-//        log.info("ContentMediaTypeFilter: {}, Sort: {}, WatchStatusFilter: {}",
-//                request.getContentMediaTypeFilter(), request.getSort(), request.getWatchStatusFilter());
-
+    public ContentCursorPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
         // 1. 박스 조회 + 멤버 권한 검증
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxMember(box, member);
 
-        // 2. BoxContent 조회 (필터 + 정렬 적용, ContentRecord LEFT JOIN으로 watchStatus 필터링)
-        List<BoxContent> boxContents = boxContentQueryService.getBoxContentList(box, member, request);
+        // 2. BoxContent 조회 (필터 + 정렬 + 커서, PAGE_SIZE+1 개)
+        List<BoxContent> fetched = boxContentQueryService.getBoxContentList(box, member, request, AppConstants.PAGE_SIZE);
 
-        if (boxContents.isEmpty()) {
-            return ContentPageResponse.empty();
+        if (fetched.isEmpty()) {
+            return ContentCursorPageResponse.empty();
         }
 
-        // 3. 로그인 사용자의 ContentRecord 별도 조회 -> Map (contentId 기준)
-        List<Long> contentIds = boxContents.stream()
+        // 3. hasNext 판단 + page slice
+        boolean hasNext = fetched.size() > AppConstants.PAGE_SIZE;
+        List<BoxContent> page = hasNext ? fetched.subList(0, AppConstants.PAGE_SIZE) : fetched;
+
+        // 4. 로그인 사용자의 ContentRecord 별도 조회 -> Map (contentId 기준)
+        List<Long> contentIds = page.stream()
                 .map(bc -> bc.getContent().getContentId())
                 .distinct()
                 .toList();
@@ -67,16 +73,28 @@ public class BoxContentFacade {
                 .stream()
                 .collect(Collectors.toMap(cr -> cr.getContent().getContentId(), cr -> cr));
 
-        // 4. 박스 타입에 따라 매퍼 분기 (공유 박스는 contentId 그룹핑 + publisherSummaryList)
+        // 5. 박스 타입에 따라 매퍼 분기 (공유 박스는 contentId 그룹핑 + publisherSummaryList)
         List<ContentItem> contentItemList = box.getBoxType() == BoxType.MY
-                ? MyBoxContentMapper.toContentItems(boxContents, recordMap)
-                : SharedBoxContentMapper.toContentItemsWithPublisher(boxContents, recordMap);
+                ? MyBoxContentMapper.toContentItems(page, recordMap)
+                : SharedBoxContentMapper.toContentItemsWithPublisher(page, recordMap);
 
-        // 5. 응답
-        return ContentPageResponse.builder()
+        // 6. nextCursor 인코딩
+        String nextCursor = hasNext
+                ? cursorCodec.encode(BoxContentCursorBuilder.build(page.get(page.size() - 1), request))
+                : null;
+
+        return ContentCursorPageResponse.builder()
                 .contentItemList(contentItemList)
-                .totalCount((long) contentItemList.size())
+                .nextCursor(nextCursor)
+                .hasNext(hasNext)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public BoxContentCountResponse getBoxContentCount(Member member, Long boxId) {
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+        boxValidator.validateBoxMember(box, member);
+        return BoxContentCountResponse.of(boxContentQueryService.countByBox(box));
     }
 
     @Transactional(readOnly = true)

@@ -88,7 +88,8 @@ public enum ErrorCode {
     /**
      * 프론트엔드 오류
      */
-    PARAMETER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "FE-PARAMETER-400", "잘못된 파라미터 입력입니다.");
+    PARAMETER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "FE-PARAMETER-400", "잘못된 파라미터 입력입니다."),
+    INVALID_CURSOR(HttpStatus.BAD_REQUEST, "CURSOR-400", "잘못된 cursor 입니다.");
 
     /**
      * 백엔드 오류

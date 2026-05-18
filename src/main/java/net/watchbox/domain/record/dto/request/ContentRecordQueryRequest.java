@@ -19,4 +19,7 @@ public class ContentRecordQueryRequest {
 
     @Schema(description = "시청 기록", defaultValue = "ALL")
     private WatchRecordFilter watchRecordFilter =  WatchRecordFilter.ALL;
+
+    @Schema(description = "커서 - 첫 페이지는 null, 이후 응답의 nextCursor 사용")
+    private String cursor;
 }
