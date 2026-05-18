@@ -3,22 +3,29 @@ package net.watchbox.domain.record.facade;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.content.dto.list.ContentItem;
-import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.mapper.record.ContentRecordMapper;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
+import net.watchbox.domain.record.dto.request.ContentRecordSortOrder;
+import net.watchbox.domain.record.dto.request.WatchMediaTypeFilter;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
+import net.watchbox.domain.record.dto.response.ContentRecordCountResponse;
 import net.watchbox.domain.record.dto.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.service.ContentRecordCommandService;
 import net.watchbox.domain.record.service.ContentRecordQueryService;
+import net.watchbox.global.constants.AppConstants;
+import net.watchbox.global.dto.CursorPayload;
+import net.watchbox.global.util.CursorCodec;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -29,19 +36,67 @@ public class ContentRecordFacade {
     private final ContentRecordQueryService contentRecordQueryService;
     private final ContentRecordCommandService contentRecordCommandService;
     private final ContentCommandService contentCommandService;
+    private final CursorCodec cursorCodec;
 
     @Transactional(readOnly = true)
-    public ContentPageResponse getMyRecordedContentPage(Member member, ContentRecordQueryRequest request) {
-//        log.info("WatchMediaTypeFilter: {}, Sort: {}, WatchRecordFilter: {}",
-//                request.getWatchMediaTypeFilter(), request.getSort(), request.getWatchRecordFilter());
+    public ContentCursorPageResponse getMyRecordedContentPage(Member member, ContentRecordQueryRequest request) {
+        // AppConstants.PAGE_SIZE+1 개를 받음 - hasNext 판단용
+        List<ContentRecord> fetched = contentRecordQueryService.getMyContentRecordList(member, request, AppConstants.PAGE_SIZE);
 
-        List<ContentRecord> contentRecordList = contentRecordQueryService.getMyContentRecordList(member, request);
-        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecordList);
+        boolean hasNext = fetched.size() > AppConstants.PAGE_SIZE;
+        List<ContentRecord> page = hasNext ? fetched.subList(0, AppConstants.PAGE_SIZE) : fetched;
 
-        return ContentPageResponse.builder()
+        String nextCursor = hasNext
+                ? cursorCodec.encode(buildCursor(page.get(page.size() - 1), request))
+                : null;
+
+        List<ContentItem> contentItemList = ContentRecordMapper.toContentItems(page);
+
+        return ContentCursorPageResponse.builder()
                 .contentItemList(contentItemList)
-                .totalCount((long) contentItemList.size())
+                .nextCursor(nextCursor)
+                .hasNext(hasNext)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ContentRecordCountResponse getMyContentRecordCount(Member member) {
+        return ContentRecordCountResponse.of(contentRecordQueryService.countByMember(member));
+    }
+
+    /**
+     * 마지막 row 의 정렬 키 값 추출 → CursorPayload 생성.
+     * 정렬 종류에 따라 필요한 필드만 채움.
+     */
+    private CursorPayload buildCursor(ContentRecord last, ContentRecordQueryRequest request) {
+        ContentRecordSortOrder sort = request.getSort();
+        Long id = last.getContentRecordId();
+        java.time.LocalDateTime modifiedAt = last.getModifiedAt();
+
+        return switch (sort) {
+            case RECENT_UPDATED, OLDEST_UPDATED -> CursorPayload.of(modifiedAt, id);
+            case RECENT_YEAR, OLDEST_YEAR -> {
+                LocalDate date = extractDate(last, request.getWatchMediaTypeFilter());
+                yield CursorPayload.of(date, modifiedAt, id);
+            }
+        };
+    }
+
+    /**
+     * Movie.releaseDate / Tv.firstAirDate 중 해당 row 의 값 추출.
+     */
+    private LocalDate extractDate(ContentRecord record, WatchMediaTypeFilter filter) {
+        Content content = record.getContent();
+        if (filter == WatchMediaTypeFilter.MOVIE) {
+            return content.getMovie() != null ? content.getMovie().getReleaseDate() : null;
+        }
+        if (filter == WatchMediaTypeFilter.TV) {
+            return content.getTv() != null ? content.getTv().getFirstAirDate() : null;
+        }
+        // MOVIE_TV: 해당 row 의 mediaType 에 맞춰 선택
+        if (content.getMovie() != null) return content.getMovie().getReleaseDate();
+        if (content.getTv() != null) return content.getTv().getFirstAirDate();
+        return null;
     }
 
 //    @Transactional(readOnly = true)
@@ -81,18 +136,6 @@ public class ContentRecordFacade {
 
         // WatchStatus 삭제
         contentRecordCommandService.deleteWatchStatus(contentRecord);
-    }
-
-    @Transactional(readOnly = true)
-    public ContentPageResponse getContentLikeList(Member member) {
-        // 시청 기록 중에 좋아요 상태가 true인 것들만 조회
-        List<ContentRecord> contentRecords = contentRecordQueryService.getLikedRecordsWithContent(member);
-
-        List<ContentItem> contentItemList =  ContentRecordMapper.toContentItems(contentRecords);
-        return ContentPageResponse.builder()
-                .contentItemList(contentItemList)
-                .totalCount((long) contentItemList.size())
-                .build();
     }
 
     @Transactional

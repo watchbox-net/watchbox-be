@@ -3,6 +3,7 @@ package net.watchbox.global.tmdb.util;
 import java.time.LocalDate;
 
 public final class TmdbUtils {
+    public static final int TMDB_MAX_RETRY = 3;
     private static final String IMAGE_URL = "https://image.tmdb.org/t/p/w500";
 
     public static Integer extractYear(String date) {

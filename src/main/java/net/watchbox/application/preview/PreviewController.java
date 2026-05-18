@@ -7,12 +7,14 @@ import net.watchbox.domain.box.dto.box.BoxPageResponse;
 import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
 import net.watchbox.domain.box.facade.box.BoxFacade;
 import net.watchbox.domain.box.facade.content.BoxContentFacade;
+import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.member.dto.response.MyPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.facade.MemberFacade;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
+import net.watchbox.domain.record.dto.response.ContentRecordCountResponse;
 import net.watchbox.domain.record.facade.ContentRecordFacade;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springdoc.core.annotations.ParameterObject;
@@ -65,13 +67,22 @@ public class PreviewController {
 
     @Operation(summary = "Preview 시청 기록 조회")
     @GetMapping("/records/watch")
-    public ResponseEntity<ApiResponse<ContentPageResponse>> getMyRecordedContentPage(
+    public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getMyRecordedContentPage(
             @ParameterObject
             @ModelAttribute ContentRecordQueryRequest request
     ) {
         Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(ApiResponse.success(
                 contentRecordFacade.getMyRecordedContentPage(member, request)
+        ));
+    }
+
+    @Operation(summary = "Preview 시청 기록 총 개수 조회")
+    @GetMapping("/records/watch/count")
+    public ResponseEntity<ApiResponse<ContentRecordCountResponse>> getMyContentRecordCount() {
+        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        return ResponseEntity.ok(ApiResponse.success(
+                contentRecordFacade.getMyContentRecordCount(member)
         ));
     }
 

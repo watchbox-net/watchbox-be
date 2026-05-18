@@ -27,11 +27,26 @@ public class QuerydslRepositoryUtil {
             ContentRecordSortOrder sortOrder, DateExpression<LocalDate> dateExpr
     ) {
         QContentRecord cr = QContentRecord.contentRecord;
+        // 모든 정렬에 PK tie-breaker 추가 - 동일 값에서 페이지 경계 안정성 확보 (커서 페이지네이션 필수)
         return switch (sortOrder) {
-            case RECENT_UPDATED -> new OrderSpecifier<?>[]{ cr.modifiedAt.desc() };
-            case OLDEST_UPDATED -> new OrderSpecifier<?>[]{ cr.modifiedAt.asc() };
-            case RECENT_YEAR  -> new OrderSpecifier<?>[]{ dateExpr.desc(), cr.modifiedAt.desc() };
-            case OLDEST_YEAR  -> new OrderSpecifier<?>[]{ dateExpr.asc(),  cr.modifiedAt.desc() };
+            case RECENT_UPDATED -> new OrderSpecifier<?>[]{
+                    cr.modifiedAt.desc(),
+                    cr.contentRecordId.desc()
+            };
+            case OLDEST_UPDATED -> new OrderSpecifier<?>[]{
+                    cr.modifiedAt.asc(),
+                    cr.contentRecordId.asc()
+            };
+            case RECENT_YEAR -> new OrderSpecifier<?>[]{
+                    dateExpr.desc(),
+                    cr.modifiedAt.desc(),
+                    cr.contentRecordId.desc()
+            };
+            case OLDEST_YEAR -> new OrderSpecifier<?>[]{
+                    dateExpr.asc(),
+                    cr.modifiedAt.desc(),
+                    cr.contentRecordId.desc()
+            };
         };
     }
 

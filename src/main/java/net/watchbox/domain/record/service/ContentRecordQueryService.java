@@ -11,8 +11,10 @@ import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.repository.ContentRecordQueryRepository;
 import net.watchbox.domain.record.repository.ContentRecordRepository;
+import net.watchbox.global.dto.CursorPayload;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
+import net.watchbox.global.util.CursorCodec;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +27,15 @@ import java.util.stream.Collectors;
 public class ContentRecordQueryService {
     private final ContentRecordRepository contentRecordRepository;
     private final ContentRecordQueryRepository contentRecordQueryRepository;
+    private final CursorCodec cursorCodec;
 
-    public List<ContentRecord> getMyContentRecordList(Member member, ContentRecordQueryRequest request) {
-        return contentRecordQueryRepository.findMyContentRecordList(member, request);
+    public List<ContentRecord> getMyContentRecordList(Member member, ContentRecordQueryRequest request, int size) {
+        CursorPayload cursor = cursorCodec.decode(request.getCursor()); // null 이면 첫 페이지
+        return contentRecordQueryRepository.findMyContentRecordList(member, request, cursor, size);
+    }
+
+    public long countByMember(Member member) {
+        return contentRecordRepository.countByMember(member);
     }
 
     public ContentRecord getByContentRecordId(Long contentRecordId) {
@@ -58,10 +66,6 @@ public class ContentRecordQueryService {
 
     public List<ContentRecord> getWatchRecordsWithContent(Member member) {
         return contentRecordRepository.findWatchRecordsWithContent(member);
-    }
-
-    public List<ContentRecord> getLikedRecordsWithContent(Member member) {
-        return contentRecordRepository.findLikedRecordsWithContent(member, true);
     }
 
 //    public ContentRecordResponse getRecordInfo(Long recordId) {
