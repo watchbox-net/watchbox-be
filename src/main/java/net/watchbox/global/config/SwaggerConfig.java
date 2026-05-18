@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -55,5 +56,33 @@ public class SwaggerConfig {
 //                        new Tag().name("HealthCheck"),
 //                        new Tag().name("DevWatchRecord")
 //                ));
+    }
+
+    /**
+     * Swagger description 에 API 개수 노출 customizer.
+     * - Dev 컨트롤러는 제외 ("/dev/" path prefix 또는 "Dev" 로 시작하는 tag 기준)
+     * - 운영 API 와 Dev API 를 분리해서 카운트
+     */
+    @Bean
+    public OpenApiCustomizer apiCountCustomizer() {
+        return openApi -> {
+            long productionApis = openApi.getPaths().entrySet().stream()
+                    .filter(entry -> !entry.getKey().startsWith("/dev/"))
+                    .flatMap(entry -> entry.getValue().readOperations().stream())
+                    .filter(op -> op.getTags() == null
+                            || op.getTags().stream().noneMatch(t -> t.startsWith("Dev")))
+                    .count();
+
+            long devApis = openApi.getPaths().entrySet().stream()
+                    .filter(entry -> entry.getKey().startsWith("/dev/"))
+                    .flatMap(entry -> entry.getValue().readOperations().stream())
+                    .count();
+
+            String original = openApi.getInfo().getDescription();
+            openApi.getInfo().setDescription(
+                    (original == null ? "" : original)
+                            + String.format("%n%n**운영 API: %d개**  /  Dev(hidden 제외): %d개", productionApis, devApis)
+            );
+        };
     }
 }
