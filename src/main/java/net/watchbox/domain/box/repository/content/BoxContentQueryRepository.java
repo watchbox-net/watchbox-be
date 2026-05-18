@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.dto.content.BoxContentSortOrder;
 import net.watchbox.domain.box.dto.content.ContentMediaTypeFilter;
 import net.watchbox.domain.box.dto.content.WatchStatusFilter;
 import net.watchbox.domain.box.entity.box.Box;
@@ -21,7 +22,6 @@ import net.watchbox.domain.content.sub.person.entity.QPerson;
 import net.watchbox.domain.content.sub.tv.entity.QTv;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.QContentRecord;
-import net.watchbox.global.dto.request.SortOrder;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -42,9 +42,9 @@ public class BoxContentQueryRepository {
         ContentMediaTypeFilter mediaTypeFilter = request.getContentMediaTypeFilter();
         WatchStatusFilter watchStatusFilter = request.getWatchStatusFilter();
 
-        // 정렬 (PERSON 모드에서 date 정렬 들어오면 RECENT_SAVED로 fallback)
-        SortOrder resolvedSort = resolveSortForPerson(request.getSort(), mediaTypeFilter);
-        // date 정렬용 expression - 필터에 따라 join 된 Q엔티티만 참조해야 함
+        // 정렬 (PERSON 모드에서 YEAR 정렬 들어오면 RECENT_SAVED 로 fallback)
+        BoxContentSortOrder resolvedSort = resolveSortForPerson(request.getSort(), mediaTypeFilter);
+        // YEAR 정렬용 date expression - 필터에 따라 join 된 Q엔티티만 참조해야 함
         DateExpression<LocalDate> dateExpr = dateExprFor(mediaTypeFilter);
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForBoxContent(resolvedSort, dateExpr);
 
@@ -76,7 +76,7 @@ public class BoxContentQueryRepository {
 
     // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 date expression 반환
     // Movie.releaseDate / Tv.firstAirDate 기준으로 연월일까지 정확히 정렬
-    // PERSON 은 date 정렬 안 들어오므로 (resolveSortForPerson 에서 fallback) 더미로 movie.releaseDate 반환
+    // PERSON 은 YEAR 정렬 안 들어오므로 (resolveSortForPerson 에서 fallback) 더미로 movie.releaseDate 반환
     private DateExpression<LocalDate> dateExprFor(ContentMediaTypeFilter filter) {
         return switch (filter) {
             case MOVIE -> QMovie.movie.releaseDate;
@@ -87,11 +87,11 @@ public class BoxContentQueryRepository {
         };
     }
 
-    // 프론트에서 제약할거라 없어도 되긴함
-    private SortOrder resolveSortForPerson(SortOrder sortOrder, ContentMediaTypeFilter filter) {
+    // PERSON 필터에 YEAR 정렬 들어오면 RECENT_SAVED 로 fallback (프론트에서 막아도 방어용)
+    private BoxContentSortOrder resolveSortForPerson(BoxContentSortOrder sortOrder, ContentMediaTypeFilter filter) {
         if (filter == ContentMediaTypeFilter.PERSON
-                && (sortOrder == SortOrder.RECENT_YEAR || sortOrder == SortOrder.OLDEST_YEAR)) {
-            return SortOrder.RECENT_SAVED;
+                && (sortOrder == BoxContentSortOrder.RECENT_YEAR || sortOrder == BoxContentSortOrder.OLDEST_YEAR)) {
+            return BoxContentSortOrder.RECENT_SAVED;
         }
         return sortOrder;
     }

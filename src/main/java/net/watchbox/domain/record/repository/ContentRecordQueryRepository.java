@@ -22,7 +22,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-import static net.watchbox.global.util.QuerydslRepositoryUtil.getOrderSpecifiersBySort;
+import static net.watchbox.global.util.QuerydslRepositoryUtil.getOrderSpecifiersForContentRecord;
 
 @RequiredArgsConstructor
 @Repository
@@ -38,7 +38,7 @@ public class ContentRecordQueryRepository {
 
         // 정렬 - date expression 은 필터에 따라 join 된 Q엔티티만 참조해야 함
         DateExpression<LocalDate> dateExpr = dateExprFor(watchMediaTypeFilter);
-        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersBySort(request.getSort(), dateExpr);
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForContentRecord(request.getSort(), dateExpr);
         BooleanBuilder conditions = new BooleanBuilder()
                 .and(contentRecord.member.eq(member))
                 .and(watchMediaTypeFilterCondition(watchMediaTypeFilter))

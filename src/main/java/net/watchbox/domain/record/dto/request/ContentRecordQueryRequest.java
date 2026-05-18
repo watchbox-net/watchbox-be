@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import net.watchbox.global.dto.request.SortOrder;
 
 @Getter
 @Setter
@@ -16,7 +15,7 @@ public class ContentRecordQueryRequest {
     private WatchMediaTypeFilter watchMediaTypeFilter = WatchMediaTypeFilter.MOVIE_TV;
 
     @Schema(description = "정렬 기준", defaultValue = "RECENT_SAVED")
-    private SortOrder sort = SortOrder.RECENT_SAVED;
+    private ContentRecordSortOrder sort = ContentRecordSortOrder.RECENT_UPDATED;
 
     @Schema(description = "시청 기록", defaultValue = "ALL")
     private WatchRecordFilter watchRecordFilter =  WatchRecordFilter.ALL;
