@@ -9,9 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
 import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.BoxContentCountResponse;
 import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
 import net.watchbox.domain.box.facade.content.BoxContentFacade;
-import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springdoc.core.annotations.ParameterObject;
@@ -27,10 +28,9 @@ import org.springframework.web.bind.annotation.*;
 public class BoxContentController {
     private final BoxContentFacade boxContentFacade;
 
-    // ToDo: 무한스크롤
-    @Operation(summary = "박스 컨텐츠 페이지 조회", description = "정렬 & 필터 & 무한스크롤 시청 기록 페이지 조회")
+    @Operation(summary = "박스 컨텐츠 페이지 조회", description = "정렬 & 필터 & 커서 기반 무한스크롤 박스 컨텐츠 페이지 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
+    public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getBoxContentPage(
             @AuthenticationPrincipal Member member,
             @ParameterObject
             @ModelAttribute BoxContentRecordQueryRequest request,
@@ -38,6 +38,17 @@ public class BoxContentController {
     ) {
         return ResponseEntity.ok(
                 ApiResponse.success(boxContentFacade.getBoxContentPage(member, request, boxId))
+        );
+    }
+
+    @Operation(summary = "박스 컨텐츠 총 개수 조회")
+    @GetMapping("/count")
+    public ResponseEntity<ApiResponse<BoxContentCountResponse>> getBoxContentCount(
+            @AuthenticationPrincipal Member member,
+            @PathVariable("boxId") Long boxId
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(boxContentFacade.getBoxContentCount(member, boxId))
         );
     }
 

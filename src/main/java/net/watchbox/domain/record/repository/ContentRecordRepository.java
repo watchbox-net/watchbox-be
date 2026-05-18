@@ -28,14 +28,6 @@ public interface ContentRecordRepository extends JpaRepository<ContentRecord, Lo
             "WHERE cr.member = :member AND cr.watchStatus IS NOT NULL")
     List<ContentRecord> findWatchRecordsWithContent(@Param("member") Member member);
 
-    @Query("SELECT cr FROM ContentRecord cr " +
-            "JOIN FETCH cr.content c " +
-            "LEFT JOIN FETCH c.movie " +
-            "LEFT JOIN FETCH c.tv " +
-            "LEFT JOIN FETCH c.person " +
-            "WHERE cr.member = :member AND cr.liked = :liked")
-    List<ContentRecord> findLikedRecordsWithContent(@Param("member") Member member, @Param("liked") Boolean liked);
-
 //    @Query("SELECT cr FROM ContentRecord cr JOIN FETCH cr.content WHERE cr.member = :member AND cr.content.tmdbId IN :tmdbIds")
 //    List<ContentRecord> findContentRecordsByMemberAndContentIdIn(@Param("member") Member member, @Param("tmdbIds") List<Long> tmdbIds);
 
@@ -55,6 +47,8 @@ public interface ContentRecordRepository extends JpaRepository<ContentRecord, Lo
     List<ContentRecord> findByMemberAndContentIdIn(
             @Param("member") Member member,
             @Param("contentIds") List<Long> contentIds);
+
+    long countByMember(Member member);
 
     long countByMemberAndLikedTrue(Member member);
 

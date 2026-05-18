@@ -9,8 +9,10 @@ import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.repository.content.BoxContentRepository;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.dto.CursorPayload;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
+import net.watchbox.global.util.CursorCodec;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,10 +23,16 @@ import java.util.stream.Collectors;
 public class BoxContentQueryService { // find로 전부바꾸기
     private final BoxContentRepository boxContentRepository;
     private final BoxContentQueryRepository boxContentQueryRepository;
+    private final CursorCodec cursorCodec;
 
-    // BoxContent 동적 조회 (필터 + 정렬)
-    public List<BoxContent> getBoxContentList(Box box, Member member, BoxContentRecordQueryRequest request) {
-        return boxContentQueryRepository.findBoxContentList(box, member, request);
+    // BoxContent 동적 조회 (필터 + 정렬 + 커서 페이지네이션)
+    public List<BoxContent> getBoxContentList(Box box, Member member, BoxContentRecordQueryRequest request, int size) {
+        CursorPayload cursor = cursorCodec.decode(request.getCursor()); // null 이면 첫 페이지
+        return boxContentQueryRepository.findBoxContentList(box, member, request, cursor, size);
+    }
+
+    public Long countByBox(Box box) {
+        return boxContentRepository.countByBox(box);
     }
 
     public BoxContent getByBoxContentId(Long boxContentId) {

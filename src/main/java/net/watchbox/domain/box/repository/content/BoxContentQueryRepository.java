@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.dto.content.BoxContentSortOrder;
 import net.watchbox.domain.box.dto.content.ContentMediaTypeFilter;
 import net.watchbox.domain.box.dto.content.WatchStatusFilter;
 import net.watchbox.domain.box.entity.box.Box;
@@ -21,7 +22,7 @@ import net.watchbox.domain.content.sub.person.entity.QPerson;
 import net.watchbox.domain.content.sub.tv.entity.QTv;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.QContentRecord;
-import net.watchbox.global.dto.request.SortOrder;
+import net.watchbox.global.dto.CursorPayload;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -34,7 +35,12 @@ import static net.watchbox.global.util.QuerydslRepositoryUtil.getOrderSpecifiers
 public class BoxContentQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<BoxContent> findBoxContentList(Box box, Member member, BoxContentRecordQueryRequest request) {
+    /**
+     * 커서 페이지네이션 - size + 1 개를 가져와서 hasNext 판단은 호출 측에서.
+     */
+    public List<BoxContent> findBoxContentList(
+            Box box, Member member, BoxContentRecordQueryRequest request, CursorPayload cursor, int size
+    ) {
         QBoxContent boxContent = QBoxContent.boxContent;
         QContent content = QContent.content;
         QContentRecord contentRecord = QContentRecord.contentRecord;
@@ -42,17 +48,18 @@ public class BoxContentQueryRepository {
         ContentMediaTypeFilter mediaTypeFilter = request.getContentMediaTypeFilter();
         WatchStatusFilter watchStatusFilter = request.getWatchStatusFilter();
 
-        // 정렬 (PERSON 모드에서 date 정렬 들어오면 RECENT_SAVED로 fallback)
-        SortOrder resolvedSort = resolveSortForPerson(request.getSort(), mediaTypeFilter);
-        // date 정렬용 expression - 필터에 따라 join 된 Q엔티티만 참조해야 함
+        // 정렬 (PERSON 모드에서 YEAR 정렬 들어오면 RECENT_SAVED 로 fallback)
+        BoxContentSortOrder resolvedSort = resolveSortForPerson(request.getSort(), mediaTypeFilter);
+        // YEAR 정렬용 date expression - 필터에 따라 join 된 Q엔티티만 참조해야 함
         DateExpression<LocalDate> dateExpr = dateExprFor(mediaTypeFilter);
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiersForBoxContent(resolvedSort, dateExpr);
 
-        // 필터
+        // 필터 + cursor 조건 (cursor null 이면 무시됨)
         BooleanBuilder conditions = new BooleanBuilder()
                 .and(boxContent.box.eq(box))
                 .and(mediaTypeCondition(mediaTypeFilter))
-                .and(watchStatusCondition(watchStatusFilter));
+                .and(watchStatusCondition(watchStatusFilter))
+                .and(cursorCondition(resolvedSort, dateExpr, cursor));
 
         // 메인 쿼리
         JPAQuery<BoxContent> boxContentQuery = jpaQueryFactory
@@ -71,12 +78,55 @@ public class BoxContentQueryRepository {
         return boxContentQuery
                 .where(conditions)
                 .orderBy(orderSpecifiers)
+                .limit(size + 1L) // hasNext 판단용 +1
                 .fetch();
+    }
+
+    /**
+     * 정렬 종류에 맞춘 cursor where 조건 빌더.
+     * 정렬 튜플 비교를 SQL 로 풀어서 작성 (date, createdAt, id).
+     * cursor null 이면 null 반환 (첫 페이지).
+     */
+    private BooleanExpression cursorCondition(
+            BoxContentSortOrder sort, DateExpression<LocalDate> dateExpr, CursorPayload cursor
+    ) {
+        if (cursor == null) return null;
+        QBoxContent bc = QBoxContent.boxContent;
+
+        return switch (sort) {
+            // (createdAt, id) < (cursor.dateTime, cursor.id)
+            case RECENT_SAVED -> bc.createdAt.lt(cursor.dateTime())
+                    .or(bc.createdAt.eq(cursor.dateTime())
+                            .and(bc.boxContentId.lt(cursor.id())));
+
+            // (createdAt, id) > (cursor.dateTime, cursor.id)
+            case OLDEST_SAVED -> bc.createdAt.gt(cursor.dateTime())
+                    .or(bc.createdAt.eq(cursor.dateTime())
+                            .and(bc.boxContentId.gt(cursor.id())));
+
+            // (date, createdAt, id) < (cursor.date, cursor.dateTime, cursor.id)
+            case RECENT_YEAR -> dateExpr.lt(cursor.date())
+                    .or(dateExpr.eq(cursor.date())
+                            .and(bc.createdAt.lt(cursor.dateTime())))
+                    .or(dateExpr.eq(cursor.date())
+                            .and(bc.createdAt.eq(cursor.dateTime()))
+                            .and(bc.boxContentId.lt(cursor.id())));
+
+            // OLDEST_YEAR: date ASC, createdAt DESC, id DESC (혼합 방향)
+            // date > cursor.date  OR  (date == cursor.date AND createdAt < cursor.dateTime)
+            //                     OR  (date == cursor.date AND createdAt == cursor.dateTime AND id < cursor.id)
+            case OLDEST_YEAR -> dateExpr.gt(cursor.date())
+                    .or(dateExpr.eq(cursor.date())
+                            .and(bc.createdAt.lt(cursor.dateTime())))
+                    .or(dateExpr.eq(cursor.date())
+                            .and(bc.createdAt.eq(cursor.dateTime()))
+                            .and(bc.boxContentId.lt(cursor.id())));
+        };
     }
 
     // mediaType 필터에 따라 join 된 Q엔티티만 참조하는 date expression 반환
     // Movie.releaseDate / Tv.firstAirDate 기준으로 연월일까지 정확히 정렬
-    // PERSON 은 date 정렬 안 들어오므로 (resolveSortForPerson 에서 fallback) 더미로 movie.releaseDate 반환
+    // PERSON 은 YEAR 정렬 안 들어오므로 (resolveSortForPerson 에서 fallback) 더미로 movie.releaseDate 반환
     private DateExpression<LocalDate> dateExprFor(ContentMediaTypeFilter filter) {
         return switch (filter) {
             case MOVIE -> QMovie.movie.releaseDate;
@@ -87,11 +137,11 @@ public class BoxContentQueryRepository {
         };
     }
 
-    // 프론트에서 제약할거라 없어도 되긴함
-    private SortOrder resolveSortForPerson(SortOrder sortOrder, ContentMediaTypeFilter filter) {
+    // PERSON 필터에 YEAR 정렬 들어오면 RECENT_SAVED 로 fallback (프론트에서 막아도 방어용)
+    private BoxContentSortOrder resolveSortForPerson(BoxContentSortOrder sortOrder, ContentMediaTypeFilter filter) {
         if (filter == ContentMediaTypeFilter.PERSON
-                && (sortOrder == SortOrder.RECENT_YEAR || sortOrder == SortOrder.OLDEST_YEAR)) {
-            return SortOrder.RECENT_SAVED;
+                && (sortOrder == BoxContentSortOrder.RECENT_YEAR || sortOrder == BoxContentSortOrder.OLDEST_YEAR)) {
+            return BoxContentSortOrder.RECENT_SAVED;
         }
         return sortOrder;
     }
