@@ -45,7 +45,7 @@ public class ContentRecordController {
      ! 좋아요는 MOVIE, TV, PERSON 모두 취급
      */
 
-    @Operation(summary = "내 시청 기록 조회", description = "정렬 & 필터 & 커서 기반 무한스크롤 시청 기록 페이지 조회")
+    @Operation(summary = "시청 기록 조회", description = "정렬 & 필터 & 커서 기반 무한스크롤 시청 기록 페이지 조회")
     @GetMapping("/watch")
     public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getMyRecordedContentPage(
             @AuthenticationPrincipal Member member,
@@ -57,7 +57,7 @@ public class ContentRecordController {
         ));
     }
 
-    @Operation(summary = "내 시청 기록 총 개수 조회")
+    @Operation(summary = "시청 기록 총 개수 조회")
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<ContentRecordCountResponse>> getMyContentRecordCount(
             @AuthenticationPrincipal Member member
