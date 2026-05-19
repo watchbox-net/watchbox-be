@@ -24,6 +24,20 @@ spring:
     username: root
     password: 95206326
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+#      password: ${REDIS_PASSWORD:}      # 로컬 dev 는 비워두기, 운영은 환경변수
+      database: 0                        # Redis DB 인덱스 (0~15), 기본 0
+      client-type: lettuce
+      timeout: 2s                        # 명령 실행 timeout (중요)
+      connect-timeout: 2s                # 커넥션 연결 timeout
+      lettuce:
+        pool:
+          enabled: false                 # Lettuce 는 공유 커넥션 사용, 기본 비활성화
+        shutdown-timeout: 100ms          # 종료 시 대기
+
   web:
     resources:
       add-mappings: false # 정적 리소스 자동 매핑 비활성화하여 예외(NoHandlerFoundException) 발생시키기 위함
@@ -86,7 +100,3 @@ management:
   otlp:
     tracing:
       endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318/v1/traces}
-
-redis:
-  host: ${REDIS_HOST:localhost}
-  port: 6379

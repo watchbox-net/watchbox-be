@@ -10,10 +10,10 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
-    @Value("${redis.host}")
+    @Value("${spring.data.redis.host}")
     private String host;
 
-    @Value("${redis.port}")
+    @Value("${spring.data.redis.port}")
     private int port;
 
     @Bean // Lettuce - 토큰 저장, 캐싱에 사용
