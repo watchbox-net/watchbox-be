@@ -7,10 +7,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Duration;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -29,6 +33,7 @@ public class HealthCheck {
 
     private final DataSource dataSource;
     private final RedisConnectionFactory redisConnectionFactory;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Operation(summary = "서버 헬스체크")
     @GetMapping
@@ -93,6 +98,44 @@ public class HealthCheck {
         } catch (Exception e) {
             log.warn("Redis health check failed", e);
             body.put("status", DISCONNECTED);
+            body.put("error", e.getMessage());
+            body.put("checkedAt", ZonedDateTime.now());
+            return ResponseEntity.status(503).body(body);
+        }
+    }
+
+    @Operation(summary = "Redis 읽기/쓰기 동작 헬스체크",
+            description = "임시 키에 값 SET → GET 으로 일치 확인 → DEL 로 정리. PING 보다 강한 검증.")
+    @GetMapping("/infra/redis/rw")
+    public ResponseEntity<Map<String, Object>> redisReadWriteCheck() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        String key = "healthcheck:rw:" + UUID.randomUUID();
+        String expected = "ok-" + System.currentTimeMillis();
+
+        try {
+            // SET (10초 TTL - 만료로 자동 정리되더라도 안전)
+            stringRedisTemplate.opsForValue().set(key, expected, Duration.ofSeconds(10));
+
+            // GET
+            String actual = stringRedisTemplate.opsForValue().get(key);
+
+            // DEL (즉시 정리)
+            Boolean deleted = stringRedisTemplate.delete(key);
+
+            boolean ok = expected.equals(actual);
+            body.put("status", ok ? CONNECTED : DISCONNECTED);
+            body.put("key", key);
+            body.put("expected", expected);
+            body.put("actual", actual);
+            body.put("deleted", deleted);
+            body.put("checkedAt", ZonedDateTime.now());
+            return ok
+                    ? ResponseEntity.ok(body)
+                    : ResponseEntity.status(503).body(body);
+        } catch (Exception e) {
+            log.warn("Redis R/W health check failed", e);
+            body.put("status", DISCONNECTED);
+            body.put("key", key);
             body.put("error", e.getMessage());
             body.put("checkedAt", ZonedDateTime.now());
             return ResponseEntity.status(503).body(body);
