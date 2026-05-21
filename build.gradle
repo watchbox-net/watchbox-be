@@ -54,9 +54,9 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-otlp'
     // Spring Boot 전용 OTel 스타터
     implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.10.0'
+    // Tracing (Micrometer Tracing + OTel)
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
 
-//    // Tracing (Micrometer Tracing + OTel)
-//    implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
 //    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'           // OTLP exporter (Collector로 전송)
 //    // Logs — OTel Logback appender
 //    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.10.0-alpha'
