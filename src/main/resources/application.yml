@@ -132,5 +132,10 @@ management:
         http.server.requests: true         # latency 히스토그램 (p95/p99 계산용)
       percentiles:
         http.server.requests: 0.5, 0.95, 0.99
+    enable:
+      jvm: true
+      lettuce: true
+      hikaricp: true
+      kafka: true
     tags:
       application: ${spring.application.name}

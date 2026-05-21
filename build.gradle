@@ -50,13 +50,16 @@ dependencies {
 
     // Actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    // Tracing (Micrometer Tracing + OTel)
-    implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
-    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'           // OTLP exporter (Collector로 전송)
-    // Metrics — OTLP push
+    // Micrometer → OTLP push (Redis/MySQL/Kafka/HikariCP/JVM 메트릭)
     implementation 'io.micrometer:micrometer-registry-otlp'
-    // Logs — OTel Logback appender
-    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.10.0-alpha'
+    // Spring Boot 전용 OTel 스타터
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.10.0-alpha'
+
+//    // Tracing (Micrometer Tracing + OTel)
+//    implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
+//    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'           // OTLP exporter (Collector로 전송)
+//    // Logs — OTel Logback appender
+//    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.10.0-alpha'
 
     // QueryDSL
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
