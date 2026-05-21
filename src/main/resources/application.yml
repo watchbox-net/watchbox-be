@@ -7,7 +7,7 @@ server:
 
 spring:
   application:
-    name: watchbox-local
+    name: watchbox-spring
 
   jpa:
     show-sql: false
@@ -20,9 +20,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
-    username: root
-    password: 95206326
+    url: ${DB_URL:jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:95206326}
 
   data:
     redis:
@@ -91,12 +91,46 @@ springdoc:
     tags-sorter: alpha
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info               # actuator UI 만 (prometheus 안 씀 — OTel push)
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+
+  opentelemetry:
+    resource-attributes:
+      service.namespace: watchbox
+      deployment.environment: ${SPRING_PROFILES_ACTIVE:local}
+
+  # Trace
   tracing:
     enabled: ${TRACING_ACTIVATED:false}
     sampling:
-      probability: 1.0  # local, dev: 전체 요청 트레이싱
+      probability: ${TRACING_SAMPLE_RATIO:1.0}
     propagation:
       type: w3c
+
+  # OTLP exporter — trace + metric 둘 다 같은 base URL 사용
   otlp:
     tracing:
-      endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318/v1/traces}
+      endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/traces
+    metrics:
+      export:
+        enabled: ${METRICS_ACTIVATED:false}
+        url: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/metrics
+        step: 30s                          # 30초마다 push
+        aggregation-temporality: cumulative # Prometheus 호환
+
+  # Micrometer 메트릭 설정
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true         # latency 히스토그램 (p95/p99 계산용)
+      percentiles:
+        http.server.requests: 0.5, 0.95, 0.99
+    tags:
+      application: ${spring.application.name}
