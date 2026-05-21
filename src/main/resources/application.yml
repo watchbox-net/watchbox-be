@@ -17,6 +17,7 @@ spring:
       hibernate:
         highlight_sql: true
         generate_statistics: false
+    open-in-view: false
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
