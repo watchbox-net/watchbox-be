@@ -1,8 +1,9 @@
-package net.watchbox.domain.box.dto.box;
+package net.watchbox.domain.box.dto.box.response;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import net.watchbox.domain.box.dto.box.BoxItem;
 
 import java.util.List;
 

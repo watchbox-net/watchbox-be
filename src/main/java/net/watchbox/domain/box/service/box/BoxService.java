@@ -1,7 +1,7 @@
 package net.watchbox.domain.box.service.box;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.box.BoxCreateRequest;
+import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.box.VisibleType;

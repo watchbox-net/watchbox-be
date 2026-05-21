@@ -2,9 +2,9 @@ package net.watchbox.global.util;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.DateExpression;
-import net.watchbox.domain.box.dto.content.BoxContentSortOrder;
+import net.watchbox.domain.box.dto.content.type.BoxContentSortOrder;
 import net.watchbox.domain.box.entity.content.QBoxContent;
-import net.watchbox.domain.record.dto.request.ContentRecordSortOrder;
+import net.watchbox.domain.record.dto.type.ContentRecordSortOrder;
 import net.watchbox.domain.record.entity.QContentRecord;
 
 import java.time.LocalDate;

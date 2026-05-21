@@ -6,19 +6,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.application.admin.dto.TmdbContentItem;
 import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
-import net.watchbox.domain.box.dto.box.BoxCreateRequest;
-import net.watchbox.domain.box.dto.box.BoxCreateResponse;
+import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
+import net.watchbox.domain.box.dto.box.response.BoxCreateResponse;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.global.dto.response.ApiResponse;
-import net.watchbox.global.dto.response.exception.ErrorDetail;
-import net.watchbox.global.properties.AdminProperties;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController

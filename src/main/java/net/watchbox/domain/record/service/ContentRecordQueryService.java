@@ -7,6 +7,7 @@ import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.repository.ContentRecordQueryRepository;
@@ -36,6 +37,11 @@ public class ContentRecordQueryService {
 
     public Long countByMember(Member member) {
         return contentRecordRepository.countByMember(member);
+    }
+
+    public Long countMyContentRecord(Member member, ContentRecordCountRequest request) {
+        return contentRecordQueryRepository.countMyContentRecord(
+                member, request);
     }
 
     public ContentRecord getByContentRecordId(Long contentRecordId) {

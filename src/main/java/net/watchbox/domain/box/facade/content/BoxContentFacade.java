@@ -2,10 +2,11 @@ package net.watchbox.domain.box.facade.content;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
-import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
-import net.watchbox.domain.box.dto.content.BoxContentCountResponse;
-import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentAddRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentCountRequest;
+import net.watchbox.domain.box.dto.content.response.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.response.BoxContentCountResponse;
+import net.watchbox.domain.box.dto.content.request.BoxContentQueryRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
@@ -46,7 +47,7 @@ public class BoxContentFacade {
     private final CursorCodec cursorCodec;
 
     @Transactional(readOnly = true)
-    public ContentCursorPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
+    public ContentCursorPageResponse getBoxContentPage(Member member, BoxContentQueryRequest request, Long boxId) {
         // 1. 박스 조회 + 멤버 권한 검증
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxMember(box, member);
@@ -91,10 +92,10 @@ public class BoxContentFacade {
     }
 
     @Transactional(readOnly = true)
-    public BoxContentCountResponse getBoxContentCount(Member member, Long boxId) {
+    public BoxContentCountResponse getBoxContentCount(Member member, BoxContentCountRequest request, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxMember(box, member);
-        return BoxContentCountResponse.of(boxContentQueryService.countByBox(box));
+        return BoxContentCountResponse.of(boxContentQueryService.countBoxContent(box, member, request));
     }
 
     @Transactional(readOnly = true)

@@ -1,16 +1,19 @@
-package net.watchbox.domain.box.dto.content;
+package net.watchbox.domain.box.dto.content.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import net.watchbox.domain.box.dto.content.type.BoxContentSortOrder;
+import net.watchbox.domain.box.dto.content.type.ContentMediaTypeFilter;
+import net.watchbox.domain.box.dto.content.type.WatchStatusFilter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class BoxContentRecordQueryRequest {
+public class BoxContentQueryRequest {
     @Schema(description = "컨텐츠 미디어 타입", defaultValue = "MOVIE_TV")
     private ContentMediaTypeFilter contentMediaTypeFilter = ContentMediaTypeFilter.MOVIE_TV;
 

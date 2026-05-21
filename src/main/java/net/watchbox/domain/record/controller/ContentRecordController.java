@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
+import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordCountResponse;
@@ -60,10 +61,12 @@ public class ContentRecordController {
     @Operation(summary = "시청 기록 총 개수 조회")
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<ContentRecordCountResponse>> getMyContentRecordCount(
-            @AuthenticationPrincipal Member member
-    ) {
+            @AuthenticationPrincipal Member member,
+            @ParameterObject
+            @ModelAttribute ContentRecordCountRequest request
+            ) {
         return ResponseEntity.ok(ApiResponse.success(
-                contentRecordFacade.getMyContentRecordCount(member)
+                contentRecordFacade.getMyContentRecordCount(member, request)
         ));
     }
 

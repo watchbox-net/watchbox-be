@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
+import net.watchbox.domain.record.dto.type.WatchMediaType;
 import net.watchbox.domain.record.entity.WatchStatus;
 
 @Getter

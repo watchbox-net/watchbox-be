@@ -3,8 +3,8 @@ package net.watchbox.domain.record.repository;
 import lombok.NoArgsConstructor;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
-import net.watchbox.domain.record.dto.request.ContentRecordSortOrder;
-import net.watchbox.domain.record.dto.request.WatchMediaTypeFilter;
+import net.watchbox.domain.record.dto.type.ContentRecordSortOrder;
+import net.watchbox.domain.record.dto.type.WatchMediaTypeFilter;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.global.dto.CursorPayload;
 

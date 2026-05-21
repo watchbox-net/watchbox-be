@@ -8,10 +8,11 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
-import net.watchbox.domain.box.dto.content.BoxContentSortOrder;
-import net.watchbox.domain.box.dto.content.ContentMediaTypeFilter;
-import net.watchbox.domain.box.dto.content.WatchStatusFilter;
+import net.watchbox.domain.box.dto.content.request.BoxContentCountRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentQueryRequest;
+import net.watchbox.domain.box.dto.content.type.BoxContentSortOrder;
+import net.watchbox.domain.box.dto.content.type.ContentMediaTypeFilter;
+import net.watchbox.domain.box.dto.content.type.WatchStatusFilter;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.entity.content.QBoxContent;
@@ -39,7 +40,7 @@ public class BoxContentQueryRepository {
      * 커서 페이지네이션 - size + 1 개를 가져와서 hasNext 판단은 호출 측에서.
      */
     public List<BoxContent> findBoxContentList(
-            Box box, Member member, BoxContentRecordQueryRequest request, CursorPayload cursor, int size
+            Box box, Member member, BoxContentQueryRequest request, CursorPayload cursor, int size
     ) {
         QBoxContent boxContent = QBoxContent.boxContent;
         QContent content = QContent.content;
@@ -80,6 +81,35 @@ public class BoxContentQueryRepository {
                 .orderBy(orderSpecifiers)
                 .limit(size + 1L) // hasNext 판단용 +1
                 .fetch();
+    }
+
+    /**
+     * 박스 + 미디어타입 필터 + 시청상태 필터 적용한 BoxContent 총 개수.
+     * 정렬/페이징 없이 필터 조건만 적용. WatchStatus 필터링용 ContentRecord LEFT JOIN 만 필요.
+     */
+    public Long countBoxContent(
+            Box box, Member member, BoxContentCountRequest request
+    ) {
+        QBoxContent boxContent = QBoxContent.boxContent;
+        QContent content = QContent.content;
+        QContentRecord contentRecord = QContentRecord.contentRecord;
+
+        BooleanBuilder conditions = new BooleanBuilder()
+                .and(boxContent.box.eq(box))
+                .and(mediaTypeCondition(request.getContentMediaTypeFilter()))
+                .and(watchStatusCondition(request.getWatchStatusFilter()));
+
+        Long count = jpaQueryFactory
+                .select(boxContent.count())
+                .from(boxContent)
+                .leftJoin(boxContent.content, content)
+                .leftJoin(contentRecord)
+                .on(contentRecord.content.eq(content)
+                        .and(contentRecord.member.eq(member)))
+                .where(conditions)
+                .fetchOne();
+
+        return count != null ? count : 0L;
     }
 
     /**

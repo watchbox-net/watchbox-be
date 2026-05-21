@@ -1,9 +1,9 @@
 package net.watchbox.domain.box.repository.content;
 
 import lombok.NoArgsConstructor;
-import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
-import net.watchbox.domain.box.dto.content.BoxContentSortOrder;
-import net.watchbox.domain.box.dto.content.ContentMediaTypeFilter;
+import net.watchbox.domain.box.dto.content.request.BoxContentQueryRequest;
+import net.watchbox.domain.box.dto.content.type.BoxContentSortOrder;
+import net.watchbox.domain.box.dto.content.type.ContentMediaTypeFilter;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.global.dto.CursorPayload;
@@ -24,7 +24,7 @@ public final class BoxContentCursorBuilder {
      * 정렬 종류에 따라 필요한 필드만 채움.
      * PERSON 필터 + YEAR 정렬은 RECENT_SAVED 로 fallback 되므로 SAVED 와 동일 처리.
      */
-    public static CursorPayload build(BoxContent last, BoxContentRecordQueryRequest request) {
+    public static CursorPayload build(BoxContent last, BoxContentQueryRequest request) {
         BoxContentSortOrder sort = request.getSort();
         ContentMediaTypeFilter filter = request.getContentMediaTypeFilter();
         Long id = last.getBoxContentId();

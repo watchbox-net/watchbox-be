@@ -1,7 +1,8 @@
 package net.watchbox.domain.box.service.content;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentCountRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentQueryRequest;
 import net.watchbox.domain.box.repository.content.BoxContentQueryRepository;
 import net.watchbox.domain.box.repository.content.BoxPosterProjection;
 import net.watchbox.domain.box.entity.box.Box;
@@ -26,13 +27,18 @@ public class BoxContentQueryService { // find로 전부바꾸기
     private final CursorCodec cursorCodec;
 
     // BoxContent 동적 조회 (필터 + 정렬 + 커서 페이지네이션)
-    public List<BoxContent> getBoxContentList(Box box, Member member, BoxContentRecordQueryRequest request, int size) {
+    public List<BoxContent> getBoxContentList(Box box, Member member, BoxContentQueryRequest request, int size) {
         CursorPayload cursor = cursorCodec.decode(request.getCursor()); // null 이면 첫 페이지
         return boxContentQueryRepository.findBoxContentList(box, member, request, cursor, size);
     }
 
     public Long countByBox(Box box) {
         return boxContentRepository.countByBox(box);
+    }
+
+    public Long countBoxContent(Box box, Member member, BoxContentCountRequest request) {
+        return boxContentQueryRepository.countBoxContent(
+                box, member, request);
     }
 
     public BoxContent getByBoxContentId(Long boxContentId) {

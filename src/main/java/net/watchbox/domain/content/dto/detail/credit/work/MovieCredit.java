@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import net.watchbox.global.tmdb.configuration.Department;
-import net.watchbox.domain.record.dto.request.WatchMediaType;
+import net.watchbox.domain.record.dto.type.WatchMediaType;
 
 import java.time.LocalDate;
 

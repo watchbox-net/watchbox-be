@@ -7,10 +7,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
-import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
-import net.watchbox.domain.box.dto.content.BoxContentCountResponse;
-import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentAddRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentCountRequest;
+import net.watchbox.domain.box.dto.content.response.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.response.BoxContentCountResponse;
+import net.watchbox.domain.box.dto.content.request.BoxContentQueryRequest;
 import net.watchbox.domain.box.facade.content.BoxContentFacade;
 import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.member.entity.Member;
@@ -33,7 +34,7 @@ public class BoxContentController {
     public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getBoxContentPage(
             @AuthenticationPrincipal Member member,
             @ParameterObject
-            @ModelAttribute BoxContentRecordQueryRequest request,
+            @ModelAttribute BoxContentQueryRequest request,
             @PathVariable("boxId") Long boxId
     ) {
         return ResponseEntity.ok(
@@ -45,10 +46,12 @@ public class BoxContentController {
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<BoxContentCountResponse>> getBoxContentCount(
             @AuthenticationPrincipal Member member,
+            @ParameterObject
+            @ModelAttribute BoxContentCountRequest request,
             @PathVariable("boxId") Long boxId
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success(boxContentFacade.getBoxContentCount(member, boxId))
+                ApiResponse.success(boxContentFacade.getBoxContentCount(member, request, boxId))
         );
     }
 

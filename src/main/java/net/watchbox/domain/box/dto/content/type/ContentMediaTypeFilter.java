@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.dto.content;
+package net.watchbox.domain.box.dto.content.type;
 
 public enum ContentMediaTypeFilter {
     MOVIE_TV,

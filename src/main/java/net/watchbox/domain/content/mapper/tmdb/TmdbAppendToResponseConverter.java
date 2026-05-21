@@ -10,7 +10,7 @@ import net.watchbox.domain.content.dto.detail.credit.work.MovieCredit;
 import net.watchbox.domain.content.dto.detail.credit.work.TvCredit;
 import net.watchbox.domain.content.dto.detail.credit.work.WorkCredit;
 import net.watchbox.global.tmdb.configuration.Department;
-import net.watchbox.domain.record.dto.request.WatchMediaType;
+import net.watchbox.domain.record.dto.type.WatchMediaType;
 import net.watchbox.global.tmdb.inner.credit.movie.TmdbCastItem;
 import net.watchbox.global.tmdb.inner.credit.movie.TmdbCrewItem;
 import net.watchbox.global.tmdb.inner.credit.person.TmdbCombinedCastItem;

@@ -10,6 +10,7 @@ import net.watchbox.domain.content.mapper.record.ContentRecordMapper;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
+import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordCountResponse;
@@ -57,8 +58,8 @@ public class ContentRecordFacade {
     }
 
     @Transactional(readOnly = true)
-    public ContentRecordCountResponse getMyContentRecordCount(Member member) {
-        return ContentRecordCountResponse.of(contentRecordQueryService.countByMember(member));
+    public ContentRecordCountResponse getMyContentRecordCount(Member member, ContentRecordCountRequest request) {
+        return ContentRecordCountResponse.of(contentRecordQueryService.countMyContentRecord(member, request));
     }
 
 //    @Transactional(readOnly = true)

@@ -1,4 +1,4 @@
-package net.watchbox.domain.record.dto.request;
+package net.watchbox.domain.record.dto.type;
 
 import net.watchbox.domain.content.entity.MediaType;
 
