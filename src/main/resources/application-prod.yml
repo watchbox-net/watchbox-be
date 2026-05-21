@@ -1,6 +1,11 @@
 server:
   port: 8080
 
+logging:
+  level:
+    root: WARN
+    net.watchbox: INFO
+
 jwt:
   refresh_token_expiry: 30d
   access_token_expiry: 30m

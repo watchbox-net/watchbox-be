@@ -5,6 +5,11 @@ server:
 #    mime-types: application/json
 #    min-response-size: 2048
 
+logging:
+  level:
+    root: INFO
+    net.watchbox: INFO
+
 spring:
   application:
     name: watchbox-spring
