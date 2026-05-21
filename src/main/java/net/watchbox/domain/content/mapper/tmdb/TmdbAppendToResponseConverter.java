@@ -13,8 +13,6 @@ import net.watchbox.global.tmdb.configuration.Department;
 import net.watchbox.domain.record.dto.type.WatchMediaType;
 import net.watchbox.global.tmdb.inner.credit.movie.TmdbCastItem;
 import net.watchbox.global.tmdb.inner.credit.movie.TmdbCrewItem;
-import net.watchbox.global.tmdb.inner.credit.person.TmdbCombinedCastItem;
-import net.watchbox.global.tmdb.inner.credit.person.TmdbCombinedCrewItem;
 import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCastItem;
 import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCastRoleItem;
 import net.watchbox.global.tmdb.inner.credit.tv.TmdbAggregateCrewItem;
@@ -29,10 +27,12 @@ import net.watchbox.global.tmdb.response.common.TmdbWatchProvidersResponse;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.util.TmdbUtils;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -217,10 +217,8 @@ public class TmdbAppendToResponseConverter {
 
     /**
      * Person combined_credits → WorkCredit.
-     * cast/crew 모두 합쳐 하나의 리스트로 만들고, 최신 날짜순(내림차순) 정렬.
-     * - mediaType=movie  → MovieCredit (releaseDate 기준 정렬)
-     * - mediaType=tv     → TvCredit    (firstAirDate 기준 정렬)
-     * - 날짜 없는 항목(미공개작 등)은 맨 뒤로 밀림.
+     * cast/crew 모두 합치고 (tmdbId, mediaType) 기준으로 그룹핑 — 같은 작품에 출연+제작 동시 등장하면 1 row.
+     * 최신 날짜순(내림차순) 정렬, 날짜 없는 항목(미공개작 등)은 맨 뒤로 밀림.
      */
     public static WorkCredit toWorkCredit(TmdbCombinedCreditsResponse credits) {
         if (credits == null) {
@@ -230,15 +228,53 @@ public class TmdbAppendToResponseConverter {
                     .build();
         }
 
-        Stream<CombinedCredit> castStream = credits.getCast() == null ? Stream.empty()
-                : credits.getCast().stream().map(TmdbAppendToResponseConverter::toCombinedCreditFromCast);
-        Stream<CombinedCredit> crewStream = credits.getCrew() == null ? Stream.empty()
-                : credits.getCrew().stream().map(TmdbAppendToResponseConverter::toCombinedCreditFromCrew);
+        // 1. cast/crew 모두 동일한 raw 구조로 통일
+        Stream<RawCredit> castRaw = credits.getCast() == null ? Stream.empty()
+                : credits.getCast().stream().map(item -> {
+                    boolean isMovie = item.isMovie();
+                    String dateStr = isMovie ? item.getReleaseDate() : item.getFirstAirDate();
+                    return new RawCredit(
+                            item.getId(),
+                            isMovie ? WatchMediaType.MOVIE : WatchMediaType.TV,
+                            item.getPosterPath(),
+                            isMovie ? item.getTitle() : item.getName(),
+                            CreditRole.CAST, item.getCharacter(), null,
+                            TmdbUtils.extractYear(dateStr),
+                            TmdbUtils.extractDate(dateStr),
+                            item.getPopularity()
+                    );
+                });
 
-        List<CombinedCredit> combinedCreditList = Stream.concat(castStream, crewStream)
+        Stream<RawCredit> crewRaw = credits.getCrew() == null ? Stream.empty()
+                : credits.getCrew().stream().map(item -> {
+                    boolean isMovie = item.isMovie();
+                    String dateStr = isMovie ? item.getReleaseDate() : item.getFirstAirDate();
+                    return new RawCredit(
+                            item.getId(),
+                            isMovie ? WatchMediaType.MOVIE : WatchMediaType.TV,
+                            item.getPosterPath(),
+                            isMovie ? item.getTitle() : item.getName(),
+                            CreditRole.CREW, null, item.getDepartment(),
+                            TmdbUtils.extractYear(dateStr),
+                            TmdbUtils.extractDate(dateStr),
+                            item.getPopularity()
+                    );
+                });
+
+        // 2. (tmdbId + mediaType) 기준 그룹핑 — 같은 작품 합치기
+        Map<WorkKey, List<RawCredit>> grouped = Stream.concat(castRaw, crewRaw)
+                .collect(Collectors.groupingBy(
+                        r -> new WorkKey(r.tmdbId(), r.mediaType()),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+        // 3. 그룹별로 합쳐서 CombinedCredit 빌드 + 최신 날짜순 정렬
+        List<CombinedCredit> combinedCreditList = grouped.values().stream()
+                .map(TmdbAppendToResponseConverter::mergeWorkGroup)
                 .sorted(Comparator.comparing(
                         CombinedCredit::getSortDate,
-                        Comparator.nullsLast(Comparator.reverseOrder())  // 최신순, null 뒤로
+                        Comparator.nullsLast(Comparator.reverseOrder())
                 ))
                 .toList();
 
@@ -248,61 +284,64 @@ public class TmdbAppendToResponseConverter {
                 .build();
     }
 
-    /** combined_credits.cast 항목 → MovieCredit / TvCredit (mediaType 으로 분기) */
-    private static CombinedCredit toCombinedCreditFromCast(TmdbCombinedCastItem item) {
-        if (item.isMovie()) {
+    /** 같은 (tmdbId, mediaType) 작품 그룹을 하나의 CombinedCredit 로 머지 */
+    private static CombinedCredit mergeWorkGroup(List<RawCredit> group) {
+        RawCredit first = group.get(0);
+        List<CreditRole> roles = group.stream()
+                .map(RawCredit::role).distinct().toList();
+        String character = group.stream()
+                .map(RawCredit::character)
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
+        List<Department> departments = group.stream()
+                .map(RawCredit::department)
+                .filter(Objects::nonNull)
+                .distinct().toList();
+
+        if (first.mediaType() == WatchMediaType.MOVIE) {
             return MovieCredit.builder()
-                    .tmdbId(item.getId())
+                    .tmdbId(first.tmdbId())
                     .watchMediaType(WatchMediaType.MOVIE)
-                    .posterPath(item.getPosterPath())
-                    .title(item.getTitle())
-                    .creditRole(CreditRole.CAST)
-                    .character(item.getCharacter())
-                    .year(TmdbUtils.extractYear(item.getReleaseDate()))
-                    .releaseDate(TmdbUtils.extractDate(item.getReleaseDate()))
-                    .popularity(item.getPopularity())
+                    .posterPath(first.posterPath())
+                    .title(first.workName())
+                    .creditRoleList(roles)
+                    .character(character)
+                    .departmentList(departments)
+                    .year(first.year())
+                    .releaseDate(first.sortDate())
+                    .popularity(first.popularity())
                     .build();
         }
         return TvCredit.builder()
-                .tmdbId(item.getId())
+                .tmdbId(first.tmdbId())
                 .watchMediaType(WatchMediaType.TV)
-                .posterPath(item.getPosterPath())
-                .name(item.getName())
-                .creditRole(CreditRole.CAST)
-                .character(item.getCharacter())
-                .year(TmdbUtils.extractYear(item.getFirstAirDate()))
-                .firstAirDate(TmdbUtils.extractDate(item.getFirstAirDate()))
-                .popularity(item.getPopularity())
+                .posterPath(first.posterPath())
+                .name(first.workName())
+                .creditRoleList(roles)
+                .character(character)
+                .departmentList(departments)
+                .year(first.year())
+                .firstAirDate(first.sortDate())
+                .popularity(first.popularity())
                 .build();
     }
 
-    /** combined_credits.crew 항목 → MovieCredit / TvCredit (mediaType 으로 분기) */
-    private static CombinedCredit toCombinedCreditFromCrew(TmdbCombinedCrewItem item) {
-        if (item.isMovie()) {
-            return MovieCredit.builder()
-                    .tmdbId(item.getId())
-                    .watchMediaType(WatchMediaType.MOVIE)
-                    .posterPath(item.getPosterPath())
-                    .title(item.getTitle())
-                    .creditRole(CreditRole.CREW)
-                    .department(item.getDepartment())
-                    .year(TmdbUtils.extractYear(item.getReleaseDate()))
-                    .releaseDate(TmdbUtils.extractDate(item.getReleaseDate()))
-                    .popularity(item.getPopularity())
-                    .build();
-        }
-        return TvCredit.builder()
-                .tmdbId(item.getId())
-                .watchMediaType(WatchMediaType.TV)
-                .posterPath(item.getPosterPath())
-                .name(item.getName())
-                .creditRole(CreditRole.CREW)
-                .department(item.getDepartment())
-                .year(TmdbUtils.extractYear(item.getFirstAirDate()))
-                .firstAirDate(TmdbUtils.extractDate(item.getFirstAirDate()))
-                .popularity(item.getPopularity())
-                .build();
-    }
+    /** 그룹핑용 내부 키 — tmdbId 만으로는 movie/tv 충돌 가능하므로 mediaType 도 포함 */
+    private record WorkKey(Long tmdbId, WatchMediaType mediaType) {}
+
+    /** cast/crew 항목을 동일 구조로 정규화한 중간 표현 */
+    private record RawCredit(
+            Long tmdbId,
+            WatchMediaType mediaType,
+            String posterPath,
+            String workName,       // movie.title 또는 tv.name
+            CreditRole role,
+            String character,      // cast 일 때만
+            Department department, // crew 일 때만
+            Integer year,
+            LocalDate sortDate,
+            Double popularity
+    ) {}
 
     /**
      * WatchProviders → 한국(KR) 기준 provider 이름 리스트.
