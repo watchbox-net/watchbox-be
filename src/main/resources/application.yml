@@ -125,6 +125,8 @@ management:
 
   # OTLP exporter — trace + metric 둘 다 같은 base URL 사용
   otlp:
+#    logging: 추가하기
+#      endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/traces
     tracing:
       endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/traces
     metrics:
