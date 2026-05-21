@@ -53,7 +53,7 @@ dependencies {
     // Micrometer → OTLP push (Redis/MySQL/Kafka/HikariCP/JVM 메트릭)
     implementation 'io.micrometer:micrometer-registry-otlp'
     // Spring Boot 전용 OTel 스타터
-    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.10.0-alpha'
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.28.1'
 
 //    // Tracing (Micrometer Tracing + OTel)
 //    implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
