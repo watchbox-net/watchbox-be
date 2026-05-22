@@ -37,7 +37,7 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: 6379
-#      password: ${REDIS_PASSWORD:}      # 로컬 dev 는 비워두기, 운영은 환경변수
+      #      password: ${REDIS_PASSWORD:}      # 로컬 dev 는 비워두기, 운영은 환경변수
       database: 0                        # Redis DB 인덱스 (0~15), 기본 0
       client-type: lettuce
       timeout: 2s                        # 명령 실행 timeout (중요)
@@ -88,8 +88,8 @@ admin:
 jwt:
   issuer: ${JWT_ISSUER:abc}
   secret_key: ${JWT_SECRET_KEY:abcdefgh1234567890}
-  refresh_token_expiry: 7d
-  access_token_expiry: 20h
+  refresh_token_expiry: ${ACCESS_TOKEN_EXPIRY:900} # 15분 (900초)
+  access_token_expiry: ${REFRESH_TOKEN_EXPIRY:604800} # 7일 (604800초)
 
 springdoc:
   api-docs:
