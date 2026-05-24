@@ -91,7 +91,7 @@ public class AdminFacade {
             // ContentRecord 조회 or 생성
             ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
             // WatchStatus 업데이트
-            contentRecord.updateWatchStatus(item.watchStatus());
+            contentRecordCommandService.upsertWatchStatus(contentRecord, item.watchStatus());
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {

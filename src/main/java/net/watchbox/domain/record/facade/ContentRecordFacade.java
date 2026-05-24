@@ -85,7 +85,7 @@ public class ContentRecordFacade {
         ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
 
         // WatchStatus 업데이트
-        contentRecord.updateWatchStatus(request.getWatchStatus());
+        contentRecordCommandService.upsertWatchStatus(contentRecord, request.getWatchStatus());
 
         return ContentRecordResponse.from(contentRecord);
     }

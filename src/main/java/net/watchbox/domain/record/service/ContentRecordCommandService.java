@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.entity.WatchStatus;
 import net.watchbox.domain.record.repository.ContentRecordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,11 @@ public class ContentRecordCommandService {
                                 .mediaType(content.getMediaType())
                                 .build()
                 ));
+    }
+
+    public void upsertWatchStatus(ContentRecord contentRecord, WatchStatus watchStatus) {
+        contentRecord.updateWatchStatus(watchStatus);
+        contentRecordRepository.save(contentRecord);
     }
 
     public void deleteWatchStatus(ContentRecord contentRecord) {
