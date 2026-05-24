@@ -98,10 +98,10 @@ public class MemberService {
 //                .build();
 //    }
 
-    // MemberService - 조회만
-    public List<MemberInvitationProjection> searchMembersForBoxInvitation(String query, Long boxId) {
+    // MemberService - 조회만 (본인은 결과에서 제외)
+    public List<MemberInvitationProjection> searchMembersForBoxInvitation(String query, Long boxId, Long excludeMemberId) {
         String formattedQuery = query.trim();
-        return memberRepository.findMembersWithInvitationStatus(formattedQuery, boxId);
+        return memberRepository.findMembersWithInvitationStatus(formattedQuery, boxId, excludeMemberId);
     }
 
     @Transactional

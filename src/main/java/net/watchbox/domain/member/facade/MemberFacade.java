@@ -38,8 +38,8 @@ public class MemberFacade {
     private final OauthAccountService oauthAccountService;
 
     @Transactional(readOnly = true)
-    public MemberSearchPageResponse searchMemberListWithSharedStatus(String keyword, Long boxId) {
-        List<MemberSearchResponse> memberSearchResponseList  = memberService.searchMembersForBoxInvitation(keyword, boxId)
+    public MemberSearchPageResponse searchMemberListWithSharedStatus(Member member, String keyword, Long boxId) {
+        List<MemberSearchResponse> memberSearchResponseList  = memberService.searchMembersForBoxInvitation(keyword, boxId, member.getMemberId())
                 .stream()
                 .map(p -> MemberSearchResponse.builder()
                         .memberId(p.getMemberId())
