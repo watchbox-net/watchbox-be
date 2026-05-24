@@ -59,7 +59,7 @@ public class ContentRecordController {
     }
 
     @Operation(summary = "시청 기록 총 개수 조회")
-    @GetMapping("/count")
+    @GetMapping("/watch/count")
     public ResponseEntity<ApiResponse<ContentRecordCountResponse>> getMyContentRecordCount(
             @AuthenticationPrincipal Member member,
             @ParameterObject
