@@ -6,6 +6,7 @@ import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.admin.AdminAuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import net.watchbox.global.auth.jwt.PublicPaths;
 import net.watchbox.global.auth.jwt.TokenAuthenticationFilter;
 import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.global.auth.jwt.TokenProvider;
@@ -49,10 +50,10 @@ public class WebSecurityConfig {
                 .addFilterBefore(adminAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(
-//                        ).permitAll()
-//                        .anyRequest().authenticated())
-                        .anyRequest().permitAll()) // 일단 전체 오픈 ToDo: 인증 필수/제외할 엔드포인트 설정
+                        .requestMatchers(PublicPaths.antPatterns()).permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
+                )
                 .oauth2Login(oauth2 -> oauth2
                                 // Authorization 요청과 관련된 상태 저장 | (url 기본값: /oauth2/authorization/{registrationId})
                                 .authorizationEndpoint(authorizationEndpoint

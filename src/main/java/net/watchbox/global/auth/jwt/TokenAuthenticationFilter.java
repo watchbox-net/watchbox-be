@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 // 이 필터는 액세스 토큰값이 담긴 Authorization 헤더값을 가져온 뒤 액세스 토큰이 유효하다면 인증 정보를 설정한다.
 @RequiredArgsConstructor
@@ -25,16 +24,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer";
 
-    // 토큰 검증을 스킵하는 경로 접두사 (인증 불필요 API)
-    private static final List<String> SKIP_PREFIXES = List.of(
-            "/api/preview/",
-            "/api/auth/refresh",
-            "/dev/",
-            "/api/admin/"
-    );
-
     private boolean isSkipPath(String path) {
-        return SKIP_PREFIXES.stream().anyMatch(path::startsWith);
+        return PublicPaths.SKIP_TOKEN_PREFIXES.stream().anyMatch(path::startsWith);
     }
 
     @Override
