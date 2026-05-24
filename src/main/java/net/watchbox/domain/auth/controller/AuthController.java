@@ -2,6 +2,7 @@ package net.watchbox.domain.auth.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.auth.service.TokenService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Auth", description = "인증 API")
+@Slf4j
 public class AuthController {
     private final TokenProvider tokenProvider;
     private final TokenService tokenService;
@@ -26,6 +28,7 @@ public class AuthController {
     // 리프레시 토큰으로 액세스 토큰 갱신
     @PostMapping("/refresh")
     public ResponseEntity<TokenRefreshResponse> createNewAccessToken(@RequestBody TokenRefreshRequest request){
+        log.info("Received token refresh request for refreshToken: {}", request.getRefreshToken());
         Long tokenMemberId = tokenProvider.getMemberId(request.getRefreshToken());
         Member member = memberService.getByMemberIdOrThrow(tokenMemberId);
 

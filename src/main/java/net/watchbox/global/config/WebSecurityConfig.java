@@ -1,5 +1,6 @@
 package net.watchbox.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.service.MemberService;
@@ -29,6 +30,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final TokenProvider tokenProvider;
+    private final ObjectMapper objectMapper;
     private final OAuth2UserCustomService oAuth2UserCustomService;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -89,7 +91,7 @@ public class WebSecurityConfig {
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(tokenProvider);
+        return new TokenAuthenticationFilter(tokenProvider, objectMapper);
     }
 
     @Bean

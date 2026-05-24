@@ -86,6 +86,12 @@ public enum ErrorCode {
     NOT_RECORD_MEMBER(HttpStatus.FORBIDDEN, "ContentRecord-403", "기록한 멤버가 아닙니다."),
 
     /**
+     * 인증
+     */
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-401", "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-401", "액세스 토큰이 만료되었습니다."),
+
+    /**
      * 프론트엔드 오류
      */
     PARAMETER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "FE-PARAMETER-400", "잘못된 파라미터 입력입니다."),
