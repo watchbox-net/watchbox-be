@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.dto.content;
+package net.watchbox.domain.box.dto.content.request;
 
 import lombok.Getter;
 import lombok.ToString;

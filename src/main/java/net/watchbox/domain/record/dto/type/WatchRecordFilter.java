@@ -1,18 +1,18 @@
-package net.watchbox.domain.box.dto.content;
+package net.watchbox.domain.record.dto.type;
 
 import net.watchbox.domain.record.entity.WatchStatus;
 
-public enum WatchStatusFilter {
+public enum WatchRecordFilter {
     ALL(null),
     COMPLETED(WatchStatus.COMPLETED),
     WATCHING(WatchStatus.WATCHING),
     PLANNED(WatchStatus.PLANNED),
     PAUSED(WatchStatus.PAUSED),
-    NONE(null);
+    LIKED(null);
 
     private final WatchStatus watchStatus;
 
-    WatchStatusFilter(WatchStatus watchStatus) {
+    WatchRecordFilter(WatchStatus watchStatus) {
         this.watchStatus = watchStatus;
     }
 

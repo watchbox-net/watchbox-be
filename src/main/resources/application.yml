@@ -5,9 +5,17 @@ server:
 #    mime-types: application/json
 #    min-response-size: 2048
 
+logging:
+  level:
+    root: INFO
+    net.watchbox: INFO
+
 spring:
   application:
-    name: watchbox-local
+    name: watchbox-spring
+
+  profiles:
+    default: ${SPRING_PROFILES_ACTIVE:local}
 
   jpa:
     show-sql: false
@@ -17,12 +25,27 @@ spring:
       hibernate:
         highlight_sql: true
         generate_statistics: false
+    open-in-view: false
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
-    username: root
-    password: 95206326
+    url: ${DB_URL:jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:95206326}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+      #      password: ${REDIS_PASSWORD:}      # 로컬 dev 는 비워두기, 운영은 환경변수
+      database: 0                        # Redis DB 인덱스 (0~15), 기본 0
+      client-type: lettuce
+      timeout: 2s                        # 명령 실행 timeout (중요)
+      connect-timeout: 2s                # 커넥션 연결 timeout
+      lettuce:
+        pool:
+          enabled: false                 # Lettuce 는 공유 커넥션 사용, 기본 비활성화
+        shutdown-timeout: 100ms          # 종료 시 대기
 
   web:
     resources:
@@ -65,8 +88,8 @@ admin:
 jwt:
   issuer: ${JWT_ISSUER:abc}
   secret_key: ${JWT_SECRET_KEY:abcdefgh1234567890}
-  refresh_token_expiry: 7d
-  access_token_expiry: 20h
+  access_token_expiry: ${ACCESS_TOKEN_EXPIRY:10}s # 15분 (900초)
+  refresh_token_expiry: ${REFRESH_TOKEN_EXPIRY:604800}s # 7일 (604800초)
 
 springdoc:
   api-docs:
@@ -77,12 +100,51 @@ springdoc:
     tags-sorter: alpha
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info               # actuator UI 만 (prometheus 안 씀 — OTel push)
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+
+  opentelemetry:
+    resource-attributes:
+      service.namespace: watchbox
+      deployment.environment: ${SPRING_PROFILES_ACTIVE:local}
+
+  # Trace
   tracing:
     enabled: ${TRACING_ACTIVATED:false}
     sampling:
-      probability: 1.0  # local, dev: 전체 요청 트레이싱
+      probability: ${TRACING_SAMPLE_RATIO:1.0}
     propagation:
       type: w3c
+
+  # OTLP exporter — trace + metric 둘 다 같은 base URL 사용
   otlp:
     tracing:
-      endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318/v1/traces}
+      endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/traces
+    metrics:
+      export:
+        enabled: ${METRICS_ACTIVATED:false}
+        url: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/metrics
+        step: 30s                          # 30초마다 push
+        aggregation-temporality: cumulative # Prometheus 호환
+
+  # Micrometer 메트릭 설정
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true         # latency 히스토그램 (p95/p99 계산용)
+      percentiles:
+        http.server.requests: 0.5, 0.95, 0.99
+    enable:
+      jvm: true
+      lettuce: true
+      hikaricp: true
+      kafka: true
+    tags:
+      application: ${spring.application.name}

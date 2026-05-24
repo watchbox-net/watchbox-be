@@ -6,9 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import net.watchbox.global.tmdb.configuration.Department;
-import net.watchbox.domain.record.dto.request.WatchMediaType;
+import net.watchbox.domain.record.dto.type.WatchMediaType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
@@ -22,9 +23,9 @@ public final class MovieCredit implements CombinedCredit {
     private String posterPath;
     private String title;
 
-    private CreditRole creditRole;             // CAST | CREW
+    private List<CreditRole> creditRoleList;   // [CAST] / [CREW] / [CAST, CREW]
     private String character;                  // CAST 일 때만
-    private Department department;             // CREW 일 때만
+    private List<Department> departmentList;   // CREW 일 때 부서들 (감독+제작+각본 등)
 
     private Integer year;
     private LocalDate releaseDate;

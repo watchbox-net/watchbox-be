@@ -1,7 +1,7 @@
 package net.watchbox.domain.box.service.box;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.box.BoxCreateRequest;
+import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.box.VisibleType;
@@ -15,6 +15,7 @@ import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -69,6 +70,7 @@ public class BoxService {
                 .description(request.getDescription())
                 .visibleType(request.getVisibleType())
                 .owner(member)
+                .lastContentAddedAt(LocalDateTime.now())
                 .build());
     }
 

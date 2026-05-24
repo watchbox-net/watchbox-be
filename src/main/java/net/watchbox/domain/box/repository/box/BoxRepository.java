@@ -28,7 +28,8 @@ public interface BoxRepository extends JpaRepository<Box, Long> {
             "LEFT JOIN FETCH bm.member " +
             "WHERE (b.owner = :member AND b.boxType = 'MY') " +
             "OR (b.boxType = 'SHARED' AND EXISTS (" +
-            "    SELECT 1 FROM BoxMember bm2 WHERE bm2.box = b AND bm2.member = :member))")
+            "    SELECT 1 FROM BoxMember bm2 WHERE bm2.box = b AND bm2.member = :member)) " +
+            "ORDER BY b.lastContentAddedAt DESC NULLS LAST")
     List<Box> findAllBoxesByMember(@Param("member") Member member);
 
     void deleteAllByOwnerAndBoxType(Member member, BoxType boxType);

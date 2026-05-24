@@ -1,4 +1,4 @@
-package net.watchbox.domain.record.dto.request;
+package net.watchbox.domain.record.dto.type;
 
 public enum ContentRecordSortOrder {
     RECENT_UPDATED, OLDEST_UPDATED, // modifiedAt 기준

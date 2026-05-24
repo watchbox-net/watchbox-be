@@ -2,14 +2,15 @@ package net.watchbox.domain.box.facade.content;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.box.dto.content.BoxContentAddRequest;
-import net.watchbox.domain.box.dto.content.BoxContentAddResponse;
-import net.watchbox.domain.box.dto.content.BoxContentCountResponse;
-import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentAddRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentCountRequest;
+import net.watchbox.domain.box.dto.content.response.BoxContentAddResponse;
+import net.watchbox.domain.box.dto.content.response.BoxContentCountResponse;
+import net.watchbox.domain.box.dto.content.request.BoxContentQueryRequest;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.entity.content.BoxContent;
-import net.watchbox.domain.box.repository.content.BoxContentCursorBuilder;
+import net.watchbox.domain.box.repository.content.BoxContentPage;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
@@ -46,24 +47,20 @@ public class BoxContentFacade {
     private final CursorCodec cursorCodec;
 
     @Transactional(readOnly = true)
-    public ContentCursorPageResponse getBoxContentPage(Member member, BoxContentRecordQueryRequest request, Long boxId) {
+    public ContentCursorPageResponse getBoxContentPage(Member member, BoxContentQueryRequest request, Long boxId) {
         // 1. 박스 조회 + 멤버 권한 검증
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxMember(box, member);
 
-        // 2. BoxContent 조회 (필터 + 정렬 + 커서, PAGE_SIZE+1 개)
-        List<BoxContent> fetched = boxContentQueryService.getBoxContentList(box, member, request, AppConstants.PAGE_SIZE);
+        // 2. BoxContent 페이지 조회 (content_id 단위 페이지네이션 — 같은 content 의 모든 publisher 가 한 페이지에 포함)
+        BoxContentPage page = boxContentQueryService.getBoxContentPage(box, member, request, AppConstants.PAGE_SIZE);
 
-        if (fetched.isEmpty()) {
+        if (page.boxContents().isEmpty()) {
             return ContentCursorPageResponse.empty();
         }
 
-        // 3. hasNext 판단 + page slice
-        boolean hasNext = fetched.size() > AppConstants.PAGE_SIZE;
-        List<BoxContent> page = hasNext ? fetched.subList(0, AppConstants.PAGE_SIZE) : fetched;
-
-        // 4. 로그인 사용자의 ContentRecord 별도 조회 -> Map (contentId 기준)
-        List<Long> contentIds = page.stream()
+        // 3. 로그인 사용자의 ContentRecord 별도 조회 -> Map (contentId 기준)
+        List<Long> contentIds = page.boxContents().stream()
                 .map(bc -> bc.getContent().getContentId())
                 .distinct()
                 .toList();
@@ -73,28 +70,28 @@ public class BoxContentFacade {
                 .stream()
                 .collect(Collectors.toMap(cr -> cr.getContent().getContentId(), cr -> cr));
 
-        // 5. 박스 타입에 따라 매퍼 분기 (공유 박스는 contentId 그룹핑 + publisherSummaryList)
+        // 4. 박스 타입에 따라 매퍼 분기 (공유 박스는 contentId 그룹핑 + publisherSummaryList)
         List<ContentItem> contentItemList = box.getBoxType() == BoxType.MY
-                ? MyBoxContentMapper.toContentItems(page, recordMap)
-                : SharedBoxContentMapper.toContentItemsWithPublisher(page, recordMap);
+                ? MyBoxContentMapper.toContentItems(page.boxContents(), recordMap)
+                : SharedBoxContentMapper.toContentItemsWithPublisher(page.boxContents(), recordMap);
 
-        // 6. nextCursor 인코딩
-        String nextCursor = hasNext
-                ? cursorCodec.encode(BoxContentCursorBuilder.build(page.get(page.size() - 1), request))
+        // 5. nextCursor 인코딩
+        String nextCursor = page.nextCursor() != null
+                ? cursorCodec.encode(page.nextCursor())
                 : null;
 
         return ContentCursorPageResponse.builder()
                 .contentItemList(contentItemList)
                 .nextCursor(nextCursor)
-                .hasNext(hasNext)
+                .hasNext(page.hasNext())
                 .build();
     }
 
     @Transactional(readOnly = true)
-    public BoxContentCountResponse getBoxContentCount(Member member, Long boxId) {
+    public BoxContentCountResponse getBoxContentCount(Member member, BoxContentCountRequest request, Long boxId) {
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         boxValidator.validateBoxMember(box, member);
-        return BoxContentCountResponse.of(boxContentQueryService.countByBox(box));
+        return BoxContentCountResponse.of(boxContentQueryService.countBoxContent(box, member, request));
     }
 
     @Transactional(readOnly = true)

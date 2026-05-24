@@ -7,8 +7,8 @@ import net.watchbox.application.admin.dto.TmdbContentItem;
 import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
 import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.auth.service.OauthAccountService;
-import net.watchbox.domain.box.dto.box.BoxCreateRequest;
-import net.watchbox.domain.box.dto.box.BoxCreateResponse;
+import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
+import net.watchbox.domain.box.dto.box.response.BoxCreateResponse;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.box.service.box.BoxService;
@@ -91,7 +91,7 @@ public class AdminFacade {
             // ContentRecord 조회 or 생성
             ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
             // WatchStatus 업데이트
-            contentRecord.updateWatchStatus(item.watchStatus());
+            contentRecordCommandService.upsertWatchStatus(contentRecord, item.watchStatus());
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {

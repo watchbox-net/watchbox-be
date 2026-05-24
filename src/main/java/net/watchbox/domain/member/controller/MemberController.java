@@ -26,11 +26,12 @@ public class MemberController {
             "박스 멤버 상태 포함")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<MemberSearchPageResponse>> searchMemberList(
+            @AuthenticationPrincipal Member member,
             @RequestParam String keyword,
             @RequestParam Long boxId
     ){
         return ResponseEntity.ok(
-                ApiResponse.success(memberFacade.searchMemberListWithSharedStatus(keyword, boxId))
+                ApiResponse.success(memberFacade.searchMemberListWithSharedStatus(member, keyword, boxId))
         );
     }
 

@@ -26,14 +26,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                m.profileImage as profileImage,
                bi.status as status
         FROM Member m
-        LEFT JOIN BoxInvitation bi 
-            ON bi.receiver.memberId = m.memberId 
+        LEFT JOIN BoxInvitation bi
+            ON bi.receiver.memberId = m.memberId
             AND bi.box.boxId = :boxId
         WHERE m.nickname LIKE %:query%
+            AND m.memberId <> :excludeMemberId
     """)
     List<MemberInvitationProjection> findMembersWithInvitationStatus(
             @Param("query") String query,
-            @Param("boxId") Long boxId
+            @Param("boxId") Long boxId,
+            @Param("excludeMemberId") Long excludeMemberId
     );
 
     boolean existsByNickname(String nickname);

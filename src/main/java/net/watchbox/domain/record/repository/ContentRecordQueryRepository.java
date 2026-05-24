@@ -12,10 +12,11 @@ import net.watchbox.domain.content.entity.QContent;
 import net.watchbox.domain.content.sub.movie.entity.QMovie;
 import net.watchbox.domain.content.sub.tv.entity.QTv;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
-import net.watchbox.domain.record.dto.request.ContentRecordSortOrder;
-import net.watchbox.domain.record.dto.request.WatchMediaTypeFilter;
-import net.watchbox.domain.record.dto.request.WatchRecordFilter;
+import net.watchbox.domain.record.dto.type.ContentRecordSortOrder;
+import net.watchbox.domain.record.dto.type.WatchMediaTypeFilter;
+import net.watchbox.domain.record.dto.type.WatchRecordFilter;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.entity.QContentRecord;
 import net.watchbox.global.dto.CursorPayload;
@@ -64,6 +65,29 @@ public class ContentRecordQueryRepository {
                 .orderBy(orderSpecifiers)
                 .limit(size + 1L) // hasNext 판단용 +1
                 .fetch();
+    }
+
+    /**
+     * 시청 미디어 타입 + 시청 기록 필터를 적용한 ContentRecord 총 개수.
+     * 정렬/페이징 없이 필터 조건만 적용.
+     */
+    public Long countMyContentRecord(
+            Member member, ContentRecordCountRequest request
+    ) {
+        QContentRecord contentRecord = QContentRecord.contentRecord;
+
+        BooleanBuilder conditions = new BooleanBuilder()
+                .and(contentRecord.member.eq(member))
+                .and(watchMediaTypeFilterCondition(request.getWatchMediaTypeFilter()))
+                .and(watchRecordFilterCondition(request.getWatchRecordFilter()));
+
+        Long count = jpaQueryFactory
+                .select(contentRecord.count())
+                .from(contentRecord)
+                .where(conditions)
+                .fetchOne();
+
+        return count != null ? count : 0L;
     }
 
     /**

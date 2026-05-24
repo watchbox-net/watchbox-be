@@ -1,4 +1,4 @@
-package net.watchbox.domain.box.dto.box;
+package net.watchbox.domain.box.dto.box.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

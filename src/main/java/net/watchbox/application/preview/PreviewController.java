@@ -3,9 +3,10 @@ package net.watchbox.application.preview;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.box.dto.box.BoxPageResponse;
-import net.watchbox.domain.box.dto.content.BoxContentCountResponse;
-import net.watchbox.domain.box.dto.content.BoxContentRecordQueryRequest;
+import net.watchbox.domain.box.dto.box.response.BoxPageResponse;
+import net.watchbox.domain.box.dto.content.response.BoxContentCountResponse;
+import net.watchbox.domain.box.dto.content.request.BoxContentCountRequest;
+import net.watchbox.domain.box.dto.content.request.BoxContentQueryRequest;
 import net.watchbox.domain.box.facade.box.BoxFacade;
 import net.watchbox.domain.box.facade.content.BoxContentFacade;
 import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
@@ -13,6 +14,7 @@ import net.watchbox.domain.member.dto.response.MyPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.facade.MemberFacade;
 import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
 import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.dto.response.ContentRecordCountResponse;
 import net.watchbox.domain.record.facade.ContentRecordFacade;
@@ -56,7 +58,7 @@ public class PreviewController {
     @GetMapping("/boxes/{boxId}/contents")
     public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getBoxContentPage(
             @ParameterObject
-            @ModelAttribute BoxContentRecordQueryRequest request,
+            @ModelAttribute BoxContentQueryRequest request,
             @PathVariable("boxId") Long boxId
     ) {
         Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
@@ -68,11 +70,13 @@ public class PreviewController {
     @Operation(summary = "Preview 박스 컨텐츠 총 개수 조회")
     @GetMapping("/boxes/{boxId}/contents/count")
     public ResponseEntity<ApiResponse<BoxContentCountResponse>> getBoxContentCount(
+            @ParameterObject
+            @ModelAttribute BoxContentCountRequest request,
             @PathVariable("boxId") Long boxId
     ) {
         Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(
-                ApiResponse.success(boxContentFacade.getBoxContentCount(member, boxId))
+                ApiResponse.success(boxContentFacade.getBoxContentCount(member, request, boxId))
         );
     }
 
@@ -90,10 +94,13 @@ public class PreviewController {
 
     @Operation(summary = "Preview 시청 기록 총 개수 조회")
     @GetMapping("/records/watch/count")
-    public ResponseEntity<ApiResponse<ContentRecordCountResponse>> getMyContentRecordCount() {
+    public ResponseEntity<ApiResponse<ContentRecordCountResponse>> getMyContentRecordCount(
+            @ParameterObject
+            @ModelAttribute ContentRecordCountRequest request
+    ) {
         Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(ApiResponse.success(
-                contentRecordFacade.getMyContentRecordCount(member)
+                contentRecordFacade.getMyContentRecordCount(member, request)
         ));
     }
 
