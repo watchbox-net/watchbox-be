@@ -2,7 +2,6 @@ package net.watchbox.global.health;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -13,55 +12,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
-import java.util.UUID;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
-import static net.watchbox.global.health.HealthStatus.*;
+import static net.watchbox.global.health.HealthStatus.CONNECTED;
+import static net.watchbox.global.health.HealthStatus.DISCONNECTED;
 
 @RestController
-@RequestMapping("/health")
+@RequestMapping("/health/infra")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "HealthCheck")
-public class HealthCheck {
+@Tag(name = "HealthCheck - Infra", description = "인프라(DB, Redis 등) 연결 확인")
+public class InfraHealthController {
 
     private final DataSource dataSource;
     private final RedisConnectionFactory redisConnectionFactory;
     private final StringRedisTemplate stringRedisTemplate;
 
-    @Operation(summary = "서버 헬스체크")
-    @GetMapping
-    public String healthCheck() {
-        return "WatchBox Server " + CONNECTED;
-    }
-
-    @Operation(summary = "서버 정보 확인")
-    @GetMapping("/info")
-    public String info(HttpServletRequest request) {
-        String requestUrl = request.getRequestURL().toString();
-        return String.format(
-                "서버 정보 확인 %s - IP: %s - User-Agent: %s - 요청URL: %s",
-                ZonedDateTime.now(),
-                request.getRemoteAddr(),
-                request.getHeader("User-Agent"),
-                requestUrl
-        );
-    }
-
-    @Operation(summary = "서버 시간 확인")
-    @GetMapping("/time")
-    public ZonedDateTime time() {
-        return ZonedDateTime.now();
-    }
-
     @Operation(summary = "MySQL 연결 헬스체크")
-    @GetMapping("/infra/db")
+    @GetMapping("/db")
     public ResponseEntity<Map<String, Object>> dbHealthCheck() {
         Map<String, Object> body = new LinkedHashMap<>();
         try (Connection conn = dataSource.getConnection()) {
@@ -83,7 +57,7 @@ public class HealthCheck {
     }
 
     @Operation(summary = "Redis 연결 헬스체크")
-    @GetMapping("/infra/redis")
+    @GetMapping("/redis")
     public ResponseEntity<Map<String, Object>> redisHealthCheck() {
         Map<String, Object> body = new LinkedHashMap<>();
         try (RedisConnection conn = redisConnectionFactory.getConnection()) {
@@ -106,7 +80,7 @@ public class HealthCheck {
 
     @Operation(summary = "Redis 읽기/쓰기 동작 헬스체크",
             description = "임시 키에 값 SET → GET 으로 일치 확인 → DEL 로 정리. PING 보다 강한 검증.")
-    @GetMapping("/infra/redis/rw")
+    @GetMapping("/redis/rw")
     public ResponseEntity<Map<String, Object>> redisReadWriteCheck() {
         Map<String, Object> body = new LinkedHashMap<>();
         String key = "healthcheck:rw:" + UUID.randomUUID();
