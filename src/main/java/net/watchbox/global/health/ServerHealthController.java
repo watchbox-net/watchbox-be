@@ -17,7 +17,7 @@ import static net.watchbox.global.health.HealthStatus.CONNECTED;
 @RequestMapping("/health")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "HealthCheck - Server", description = "서버 상태 / 정보 / 시간 확인")
+@Tag(name = "HealthCheck", description = "서버 상태 / 정보 / 시간 확인")
 public class ServerHealthController {
 
     @Operation(summary = "서버 헬스체크")
