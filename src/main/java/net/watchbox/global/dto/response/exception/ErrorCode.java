@@ -86,6 +86,11 @@ public enum ErrorCode {
     NOT_RECORD_MEMBER(HttpStatus.FORBIDDEN, "ContentRecord-403", "기록한 멤버가 아닙니다."),
 
     /**
+     * Notification
+     */
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION-404", "알림을 찾을 수 없거나 접근 권한이 없습니다."),
+
+    /**
      * 인증
      */
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-401", "유효하지 않은 토큰입니다."),
