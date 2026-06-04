@@ -43,7 +43,8 @@ public class KafkaHealthCheckListener {
 
     @KafkaListener(
             topics = "${kafka.topics.health-check}",
-            groupId = "watchbox-healthcheck-${spring.profiles.active:local}"
+            groupId = "watchbox-healthcheck-${spring.profiles.active:local}",
+            containerFactory = "healthCheckKafkaListenerContainerFactory"
     )
     public void onMessage(ConsumerRecord<String, String> record) {
         CompletableFuture<String> future = pending.get(record.key());
