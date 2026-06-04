@@ -3,7 +3,6 @@ package net.watchbox.domain.notification.sse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.notification.dto.response.NotificationResponse;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -21,7 +20,6 @@ import java.io.IOException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@EnableConfigurationProperties(SseProperties.class)
 public class SseEmitterService {
 
     private static final String CONNECT_EVENT = "connect";

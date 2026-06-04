@@ -148,3 +148,8 @@ management:
       kafka: true
     tags:
       application: ${spring.application.name}
+
+notification:
+  sse:
+    timeout: 30m
+    heartbeat: 30s
