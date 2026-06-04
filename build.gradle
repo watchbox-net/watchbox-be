@@ -72,6 +72,9 @@ dependencies {
 
     // AWS S3
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.3.0'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
 }
 
 tasks.named('test') {
