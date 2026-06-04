@@ -25,21 +25,21 @@ public class KafkaConfig {
 
     private final KafkaTopicProperties topics;
 
-    /** 헬스체크용 토픽 — partition 1, replica 1, 짧은 retention 권장 (브로커 측 설정). */
+    /** 헬스체크용 토픽 — partition 1, replica 3 (브로커 min.insync.replicas=2 와 일치). */
     @Bean
     public NewTopic healthCheckTopic() {
         return TopicBuilder.name(topics.healthCheck())
                 .partitions(1)
-                .replicas(1)
+                .replicas(3)
                 .build();
     }
 
-    /** 알림 이벤트 토픽 — 사용자별 순서 보장을 위해 memberId 키로 파티셔닝, partition 3. */
+    /** 알림 이벤트 토픽 — 사용자별 순서 보장을 위해 memberId 키로 파티셔닝, partition 3, replica 3. */
     @Bean
     public NewTopic notificationEventsTopic() {
         return TopicBuilder.name(topics.notificationEvents())
                 .partitions(3)
-                .replicas(1)
+                .replicas(3)
                 .build();
     }
 }
