@@ -196,7 +196,9 @@ public class InfraHealthController {
             // 2. Consume — 일회용 consumer 로 발행된 offset 지점만 polling
             String actual = consumeOne(topic, partition, offset, key);
 
-            boolean ok = expected.equals(actual);
+            // producer 가 JsonSerializer 라 String 이 "..." 로 감싸짐 → StringDeserializer 로 읽으면 따옴표 포함
+            // 양쪽 끝 따옴표를 제거해 정규화 후 비교
+            boolean ok = expected.equals(stripJsonQuotes(actual));
             body.put("status", ok ? CONNECTED : DISCONNECTED);
             body.put("topic", topic);
             body.put("partition", partition);
@@ -215,6 +217,15 @@ public class InfraHealthController {
             body.put("checkedAt", ZonedDateTime.now());
             return ResponseEntity.status(503).body(body);
         }
+    }
+
+    /** JsonSerializer 가 String 을 감싼 양끝 따옴표 제거 ("ok-123" -> ok-123). */
+    private String stripJsonQuotes(String value) {
+        if (value == null) return null;
+        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
     }
 
     private Properties adminProps() {
