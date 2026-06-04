@@ -11,7 +11,7 @@ import java.util.List;
  * 위반 시 400 Bad Request (INVALID_IMAGE_URL) 로 응답되도록 CustomException 을 던진다.
  */
 public final class S3ImageUrlValidator {
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${spring.cloud.aws.s3.bucket}")
     private static String bucketName;
 
     public static final String REQUIRED_PREFIX =

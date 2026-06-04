@@ -9,20 +9,13 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.Node;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,10 +25,10 @@ import java.sql.Connection;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static net.watchbox.global.health.HealthStatus.CONNECTED;
@@ -53,6 +46,7 @@ public class InfraHealthController {
     private final StringRedisTemplate stringRedisTemplate;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final KafkaTopicProperties topics;
+    private final KafkaHealthCheckListener kafkaHealthCheckListener;
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -176,7 +170,8 @@ public class InfraHealthController {
     }
 
     @Operation(summary = "Kafka 발행/구독 동작 헬스체크",
-            description = "헬스체크 토픽에 메시지 produce → consume 으로 일치 확인. Redis R/W 와 같은 강한 검증.")
+            description = "헬스체크 토픽에 produce → @KafkaListener 로 consume 후 값 일치 확인. " +
+                    "실서비스와 동일한 @KafkaListener 경로라 trace 에 producer/consumer span 모두 잡힘.")
     @GetMapping("/kafka/pub-sub")
     public ResponseEntity<Map<String, Object>> kafkaPubSubCheck() {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -184,25 +179,18 @@ public class InfraHealthController {
         String expected = "ok-" + System.currentTimeMillis();
         String topic = topics.healthCheck();
 
+        // 수신 대기 future 등록 (리스너가 같은 key 메시지 받으면 complete)
+        CompletableFuture<String> future = kafkaHealthCheckListener.register(key);
         try {
-            // 1. Produce
-            SendResult<String, String> sendResult = kafkaTemplate
-                    .send(topic, key, expected)
-                    .get(3, TimeUnit.SECONDS);
+            // Produce (KafkaTemplate → producer span 자동 계측)
+            kafkaTemplate.send(topic, key, expected).get(3, TimeUnit.SECONDS);
 
-            long offset = sendResult.getRecordMetadata().offset();
-            int partition = sendResult.getRecordMetadata().partition();
+            // Consume 대기 (@KafkaListener → consumer span 자동 계측)
+            String actual = future.get(5, TimeUnit.SECONDS);
 
-            // 2. Consume — 일회용 consumer 로 발행된 offset 지점만 polling
-            String actual = consumeOne(topic, partition, offset, key);
-
-            // producer 가 JsonSerializer 라 String 이 "..." 로 감싸짐 → StringDeserializer 로 읽으면 따옴표 포함
-            // 양쪽 끝 따옴표를 제거해 정규화 후 비교
-            boolean ok = expected.equals(stripJsonQuotes(actual));
+            boolean ok = expected.equals(actual);
             body.put("status", ok ? CONNECTED : DISCONNECTED);
             body.put("topic", topic);
-            body.put("partition", partition);
-            body.put("offset", offset);
             body.put("expected", expected);
             body.put("actual", actual);
             body.put("checkedAt", ZonedDateTime.now());
@@ -216,16 +204,9 @@ public class InfraHealthController {
             body.put("error", e.getMessage());
             body.put("checkedAt", ZonedDateTime.now());
             return ResponseEntity.status(503).body(body);
+        } finally {
+            kafkaHealthCheckListener.unregister(key);
         }
-    }
-
-    /** JsonSerializer 가 String 을 감싼 양끝 따옴표 제거 ("ok-123" -> ok-123). */
-    private String stripJsonQuotes(String value) {
-        if (value == null) return null;
-        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
-            return value.substring(1, value.length() - 1);
-        }
-        return value;
     }
 
     private Properties adminProps() {
@@ -234,29 +215,5 @@ public class InfraHealthController {
         props.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 3000);
         props.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 5000);
         return props;
-    }
-
-    /** 발행한 메시지를 해당 partition/offset 에서 단건 소비하여 값 반환. 없으면 null. */
-    private String consumeOne(String topic, int partition, long offset, String key) {
-        Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        // 일회용 group — 다른 컨슈머 offset 에 영향 X
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "hc-" + UUID.randomUUID());
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-
-        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props)) {
-            TopicPartition tp = new TopicPartition(topic, partition);
-            consumer.assign(List.of(tp));
-            consumer.seek(tp, offset);
-
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(3));
-            for (ConsumerRecord<String, String> r : records) {
-                if (key.equals(r.key())) return r.value();
-            }
-            return null;
-        }
     }
 }

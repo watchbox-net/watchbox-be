@@ -21,14 +21,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3ImageService {
 
-    private final S3Client s3Client;
-    private final S3Presigner s3Presigner;
-
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.s3.exp-time}")
+    @Value("${spring.cloud.aws.s3.exp-time}")
     private Long expTime;
+
+    private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
     private static final String BASE_URL = "https://%s.s3.ap-northeast-2.amazonaws.com/%s";
 
