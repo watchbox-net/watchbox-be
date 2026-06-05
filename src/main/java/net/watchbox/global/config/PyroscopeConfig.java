@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
+
 /**
  * Pyroscope continuous profiling 설정.
  *
@@ -35,6 +37,14 @@ public class PyroscopeConfig {
     @Value("${pyroscope.server.address}")
     private String serverAddress;
 
+    /**
+     * 프로파일 샘플링 간격(ms). 기본 10ms(100Hz).
+     * 단일 요청(span) 프로파일을 촘촘히 보고 싶으면 줄인다 (예: 1ms → 같은 구간 샘플 10배).
+     * 단 간격이 작을수록 프로파일링 CPU 오버헤드가 커지므로 운영 부하를 고려해 조정.
+     */
+    @Value("${pyroscope.profiling-interval-ms}")
+    private long profilingIntervalMs;
+
     /** Pyroscope agent 시작 */
     @PostConstruct
     public void startPyroscope() {
@@ -42,11 +52,13 @@ public class PyroscopeConfig {
                 new Config.Builder()
                         .setApplicationName(applicationName)
                         .setProfilingEvent(EventType.ITIMER)
+                        .setProfilingInterval(Duration.ofMillis(profilingIntervalMs))
                         .setFormat(Format.JFR)
                         .setServerAddress(serverAddress)
                         .build()
         );
-        log.info("Pyroscope agent started: app={}, server={}", applicationName, serverAddress);
+        log.info("Pyroscope agent started: app={}, server={}, interval={}ms",
+                applicationName, serverAddress, profilingIntervalMs);
     }
 
     /**
