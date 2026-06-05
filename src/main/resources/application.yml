@@ -159,7 +159,7 @@ management:
 
   # Trace
   tracing:
-    enabled: ${TRACING_ACTIVATED:false}
+    enabled: ${TRACING_ACTIVATED:true}
     sampling:
       probability: ${TRACING_SAMPLE_RATIO:1.0}
     propagation:
@@ -171,7 +171,7 @@ management:
       endpoint: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/traces
     metrics:
       export:
-        enabled: ${METRICS_ACTIVATED:false}
+        enabled: ${METRICS_ACTIVATED:true}
         url: ${OTEL_COL_ENDPOINT:http://localhost:4318}/v1/metrics
         step: 30s                          # 30초마다 push
         aggregation-temporality: cumulative # Prometheus 호환
@@ -190,3 +190,9 @@ management:
       kafka: true
     tags:
       application: ${spring.application.name}
+
+# Continuous profiling (Pyroscope)
+pyroscope:
+  enabled: ${PYROSCOPE_ENABLED:true}
+  server:
+    address: http://${O11Y_PRIVATE_IP:localhost}:4040
