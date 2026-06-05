@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.Map;
@@ -62,6 +63,11 @@ public class KafkaConfig {
      *
      * <p>{@code auto.offset.reset=latest}: 헬스체크는 "방금 발행한" 메시지만 관심.
      * 리스너는 상시 가동 중이므로 누적된 과거 메시지를 따라잡느라 타임아웃 날 일이 없다.
+     *
+     * <p>value 는 {@link ErrorHandlingDeserializer} 로 {@code JsonDeserializer<String>} 을 감싼다.
+     * 역직렬화 실패 시 예외를 record 헤더에 담고 value 를 null 로 넘겨서, {@code DefaultErrorHandler}
+     * 가 해당 레코드를 건너뛸 수 있게 한다. 이게 없으면 깨진 메시지 하나가 같은 offset 에서
+     * 무한 재시도(SerializationException)되어 토픽 소비가 통째로 멈춘다. (실제로 한 번 겪음)
      */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> healthCheckKafkaListenerContainerFactory(
@@ -69,7 +75,10 @@ public class KafkaConfig {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
-        JsonDeserializer<String> valueDeserializer = new JsonDeserializer<>(String.class, false);
+        // JsonDeserializer<String>(String.class) 로 타입 명시 → "\"ok-123\"" 를 "ok-123" 으로 복원
+        // ErrorHandlingDeserializer 로 감싸 역직렬화 실패가 무한루프로 번지지 않게 함
+        ErrorHandlingDeserializer<String> valueDeserializer =
+                new ErrorHandlingDeserializer<>(new JsonDeserializer<>(String.class, false));
 
         DefaultKafkaConsumerFactory<String, String> consumerFactory =
                 new DefaultKafkaConsumerFactory<>(

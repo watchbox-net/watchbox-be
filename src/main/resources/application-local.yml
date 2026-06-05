@@ -3,9 +3,9 @@
 # 로컬엔 Kafka 브로커가 없으므로 자동 연결/구독을 꺼서
 # AdminClient·Consumer 의 매초 재연결 시도(및 그로 인한 로그·소켓·스레드 자원 낭비)를
 # 원천 차단한다. (로그만 끄면 재시도 루프 자체는 계속 돈다)
-spring:
-  kafka:
-    listener:
-      auto-startup: false   # @KafkaListener 컨테이너 미기동 → consumer 연결 시도 자체가 없음
-    admin:
-      auto-create: false    # NewTopic 빈 자동 생성 안 함 → 부팅 시 KafkaAdmin 연결 시도 없음
+#spring:
+#  kafka:
+#    listener:
+#      auto-startup: false   # @KafkaListener 컨테이너 미기동 → consumer 연결 시도 자체가 없음
+#    admin:
+#      auto-create: false    # NewTopic 빈 자동 생성 안 함 → 부팅 시 KafkaAdmin 연결 시도 없음

@@ -78,7 +78,7 @@ spring:
         exp-time: 300000  # presigned URL 유효시간 (ms) = 5분
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
