@@ -60,17 +60,21 @@ public class SwaggerConfig {
 
     /**
      * Swagger description 에 API 개수 노출 customizer.
-     * - Dev 컨트롤러는 제외 ("/dev/" path prefix 또는 "Dev" 로 시작하는 tag 기준)
-     * - 운영 API 와 Dev API 를 분리해서 카운트
+     * - 운영 API: "/dev/", "/health" path prefix 와 "Dev"/"HealthCheck" 로 시작하는 tag 제외
+     * - Dev API: "/dev/" path prefix
+     * - HealthCheck API: "/health" path prefix
      */
     @Bean
     public OpenApiCustomizer apiCountCustomizer() {
         return openApi -> {
             long productionApis = openApi.getPaths().entrySet().stream()
                     .filter(entry -> !entry.getKey().startsWith("/dev/"))
+                    .filter(entry -> !entry.getKey().startsWith("/health"))
                     .flatMap(entry -> entry.getValue().readOperations().stream())
                     .filter(op -> op.getTags() == null
                             || op.getTags().stream().noneMatch(t -> t.startsWith("Dev")))
+                    .filter(op -> op.getTags() == null
+                            || op.getTags().stream().noneMatch(t -> t.startsWith("HealthCheck")))
                     .count();
 
             long devApis = openApi.getPaths().entrySet().stream()
@@ -78,10 +82,17 @@ public class SwaggerConfig {
                     .flatMap(entry -> entry.getValue().readOperations().stream())
                     .count();
 
+            long healthApis = openApi.getPaths().entrySet().stream()
+                    .filter(entry -> entry.getKey().startsWith("/health"))
+                    .flatMap(entry -> entry.getValue().readOperations().stream())
+                    .count();
+
             String original = openApi.getInfo().getDescription();
             openApi.getInfo().setDescription(
                     (original == null ? "" : original)
-                            + String.format("%n%n**운영 API: %d개**  /  Dev(hidden 제외): %d개", productionApis, devApis)
+                            + String.format(
+                                    "%n%n**운영 API: %d개**  /  Dev(hidden 제외): %d개  /  HealthCheck: %d개",
+                                    productionApis, devApis, healthApis)
             );
         };
     }
