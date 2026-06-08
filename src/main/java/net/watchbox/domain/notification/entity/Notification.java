@@ -31,7 +31,13 @@ public class Notification extends BaseTime {
     @Builder.Default
     boolean isRead = false;
 
+    @Builder.Default
+    boolean isSent = false;
+
     public void markAsRead() {
         this.isRead = true;
+    }
+    public void markAsSent() {
+        this.isSent = true;
     }
 }
