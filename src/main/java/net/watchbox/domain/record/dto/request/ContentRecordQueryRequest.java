@@ -17,7 +17,7 @@ public class ContentRecordQueryRequest {
     @Schema(description = "시청 미디어 타입", defaultValue = "MOVIE_TV")
     private WatchMediaTypeFilter watchMediaTypeFilter = WatchMediaTypeFilter.MOVIE_TV;
 
-    @Schema(description = "정렬 기준", defaultValue = "RECENT_SAVED")
+    @Schema(description = "정렬 기준", defaultValue = "RECENT_UPDATED")
     private ContentRecordSortOrder sort = ContentRecordSortOrder.RECENT_UPDATED;
 
     @Schema(description = "시청 기록", defaultValue = "ALL")
