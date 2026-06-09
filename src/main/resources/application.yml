@@ -153,3 +153,12 @@ notification:
   sse:
     timeout: 30m
     heartbeat: 30s
+
+# Web Push
+# - public-key / private-key : VAPID 키쌍 (한 번 발급 후 고정).
+# - subject : 푸시 서비스가 응급 연락 위해 요구. 메일 or https URL.
+# - 키 발급: WebPushVapidKeyGenerator main 실행 또는 https://vapidkeys.com/
+web-push:
+  public-key: ${WEB_PUSH_PUBLIC_KEY:BKWM-Kmq4CzPscGrdWsO7SiqD35cqgbZjJVkg6MLc4nBNiINPXlCDkN4KveLRR76j4yQ0RfUeJtBz-j7fq92eJQ}
+  private-key: ${WEB_PUSH_PRIVATE_KEY:AJZEBA95q2uNCo4mSvHn8ffDu4Xbgt1Owvttq1i3jXHh}
+  subject: ${WEB_PUSH_SUBJECT:mailto:admin@watchbox.net}

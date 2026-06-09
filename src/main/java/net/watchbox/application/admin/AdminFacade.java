@@ -21,6 +21,7 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.service.ContentRecordCommandService;
+import net.watchbox.domain.notification.webpush.service.WebPushService;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,17 @@ public class AdminFacade {
     private final ContentCommandService contentCommandService;
     private final BoxContentCommandService boxContentCommandService;
     private final ContentRecordCommandService contentRecordCommandService;
+    private final WebPushService webPushService;
+
+    /**
+     * Web Push POC — 닉네임으로 멤버 찾아 해당 멤버 앞으로 Web Push 발송.
+     * @return 실제 전송 성공한 구독 개수
+     */
+    @Transactional
+    public int sendWebPushTest(String nickname, String text) {
+        Member target = memberService.getByNicknameOrThrow(nickname);
+        return webPushService.sendToMember(target, "WatchBox", text);
+    }
 
     @Transactional
     public ProfileResponse createSampleMember(String name, String nickname) {
