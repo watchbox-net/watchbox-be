@@ -100,7 +100,9 @@ public enum ErrorCode {
      * 프론트엔드 오류
      */
     PARAMETER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "FE-PARAMETER-400", "잘못된 파라미터 입력입니다."),
-    INVALID_CURSOR(HttpStatus.BAD_REQUEST, "CURSOR-400", "잘못된 cursor 입니다.");
+    INVALID_CURSOR(HttpStatus.BAD_REQUEST, "CURSOR-400", "잘못된 cursor 입니다."),
+    INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "IMAGE-400",
+            "이미지 URL은 watchbox S3 경로(https://{bucketName}.s3.ap-northeast-2.amazonaws.com/...) 여야 합니다.");
 
     /**
      * 백엔드 오류

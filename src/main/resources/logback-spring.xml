@@ -11,6 +11,11 @@
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
+
+        <!-- 로컬엔 보통 Kafka 브로커가 안 떠 있음 → AdminClient/Consumer 재연결 시도 로그 억제.
+             dev/prod 에선 정의하지 않아 진짜 연결 장애는 그대로 보임. -->
+        <logger name="org.apache.kafka" level="OFF"/>
+        <logger name="org.springframework.kafka" level="OFF"/>
     </springProfile>
 
     <!-- ─────────── dev / prod 환경 ───────────
@@ -34,6 +39,12 @@
             <appender-ref ref="CONSOLE_TRACE"/>
             <appender-ref ref="OTEL"/>
         </root>
+
+        <!-- Kafka 브로커 장애 시 NetworkClient 의 매초 재연결 WARN/INFO 도배 제거.
+             연결 장애 감지는 /health/infra/kafka(503) + 메트릭 + spring-kafka
+             리스너 컨테이너 ERROR 로 한다. 여기서 ERROR 로 올려도 그 경로는 영향 없음. -->
+        <logger name="org.apache.kafka.clients.NetworkClient" level="ERROR"/>
+        <logger name="org.apache.kafka.clients.admin.internals.AdminMetadataManager" level="ERROR"/>
     </springProfile>
 
     <!-- 패키지별 레벨 -->
