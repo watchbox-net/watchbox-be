@@ -31,13 +31,15 @@ public class Notification extends BaseTime {
     @Builder.Default
     boolean isRead = false;
 
+    /**
+     * 클라이언트에서 스낵바로 실제 노출되었는지 여부.
+     * 클라이언트가 렌더 후 ACK 보내면 true 로 마킹 — 서버의 SSE push 성공이 아니라
+     * "사용자에게 보인 시점" 을 기준으로 함 (백그라운드 탭/네트워크 오류 등 부정확성 회피).
+     */
     @Builder.Default
-    boolean isSent = false;
+    boolean snackbarShown = false;
 
-    public void markAsRead() {
-        this.isRead = true;
-    }
-    public void markAsSent() {
-        this.isSent = true;
+    public void markSnackbarShown() {
+        this.snackbarShown = true;
     }
 }

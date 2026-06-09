@@ -14,7 +14,7 @@ import java.util.List;
  * <p>새 이벤트 타입 추가 시 permits 갱신 + NotificationType + NotificationPayload 같이 추가.
  */
 public sealed interface NotificationEvent
-        permits BoxInvitationReceivedEvent, BoxContentAddedEvent {
+        permits BoxInvitationReceivedEvent, BoxInvitationRespondedEvent, BoxContentAddedEvent {
 
     /** 알림 수신자 ID 목록 (1명이면 size 1). */
     List<Long> receiverIds();

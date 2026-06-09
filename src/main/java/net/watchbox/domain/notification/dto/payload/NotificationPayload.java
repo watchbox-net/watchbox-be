@@ -23,10 +23,11 @@ import net.watchbox.domain.notification.entity.NotificationType;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BoxInvitationPayload.class, name = "BOX_INVITATION_RECEIVED"),
+        @JsonSubTypes.Type(value = BoxInvitationRespondedPayload.class, name = "BOX_INVITATION_RESPONDED"),
         @JsonSubTypes.Type(value = BoxContentAddedPayload.class, name = "BOX_CONTENT_ADDED")
 })
 public sealed interface NotificationPayload
-        permits BoxInvitationPayload, BoxContentAddedPayload {
+        permits BoxInvitationPayload, BoxInvitationRespondedPayload, BoxContentAddedPayload {
 
     /** 페이로드의 알림 타입 (NotificationType enum 과 1:1). */
     NotificationType type();

@@ -10,23 +10,26 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    /** 수신자 기준 최신순 조회. size 는 Pageable.ofSize(n) 로 전달. */
-    List<Notification> findByReceiverOrderByCreatedAtDesc(Member receiver, Pageable pageable);
+    /**
+     * SSE 구독 시 catchup 대상 조회 — 아직 스낵바로 노출되지 않은(snackbarShown=false) 알림 중 최신순 N개.
+     * freshness 만료 여부는 코드에서 NotificationResponse.from 으로 row 별 판정.
+     */
+    List<Notification> findByReceiverAndSnackbarShownFalseOrderByCreatedAtDesc(
+            Member receiver, Pageable pageable);
 
-    /** 안 읽음 카운트. */
-    long countByReceiverAndIsReadFalse(Member receiver);
-
-    /** 개별 조회 — 본인 소유 검증 포함. */
-    Optional<Notification> findByNotificationIdAndReceiver(Long notificationId, Member receiver);
-
-    /** 사용자의 모든 안 읽은 알림을 일괄 읽음 처리 (벌크 update). */
+    /**
+     * 클라이언트 스낵바 노출 ACK — 본인 소유 알림들을 일괄 snackbarShown=true 처리.
+     * receiver 조건으로 타인 알림 마킹 방지.
+     */
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Notification n SET n.isRead = true " +
-            "WHERE n.receiver = :receiver AND n.isRead = false")
-    int markAllAsReadByReceiver(@Param("receiver") Member receiver);
+    @Query("UPDATE Notification n SET n.snackbarShown = true " +
+            "WHERE n.receiver = :receiver " +
+            "AND n.notificationId IN :notificationIds " +
+            "AND n.snackbarShown = false")
+    int markSnackbarShownByReceiverAndIds(@Param("receiver") Member receiver,
+                                          @Param("notificationIds") List<Long> notificationIds);
 }

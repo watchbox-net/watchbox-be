@@ -8,10 +8,10 @@ import net.watchbox.domain.notification.dto.payload.NotificationPayload;
 import net.watchbox.domain.notification.entity.Notification;
 import net.watchbox.domain.notification.entity.NotificationType;
 import net.watchbox.domain.notification.repository.NotificationRepository;
-import net.watchbox.global.dto.response.exception.CustomException;
-import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,7 +25,7 @@ public class NotificationCommandService {
     /**
      * 알림 1건 생성 (receiver 한 명당 row 1개 — fan-out on write 시 호출 반복).
      */
-    public Notification create(Long receiverId, NotificationType type, NotificationPayload payload) {
+    public Notification createNotification(Long receiverId, NotificationType type, NotificationPayload payload) {
         Member receiver = memberService.getByMemberIdOrThrow(receiverId);
         return notificationRepository.save(
                 Notification.builder()
@@ -37,20 +37,13 @@ public class NotificationCommandService {
     }
 
     /**
-     * 개별 읽음 처리 — 본인 소유 알림이어야 함.
+     * 스낵바 노출 ACK — 클라이언트에서 실제 토스트가 떴음을 알려옴.
+     * 본인 소유 알림만 마킹 가능 (다른 사용자 알림은 영향 없음).
      */
-    public void markAsRead(Member member, Long notificationId) {
-        Notification notification = notificationRepository
-                .findByNotificationIdAndReceiver(notificationId, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND, notificationId));
-        notification.markAsRead();
-    }
-
-    /**
-     * 사용자의 모든 안 읽은 알림 일괄 읽음 처리.
-     */
-    public void markAllAsRead(Member member) {
-        int updated = notificationRepository.markAllAsReadByReceiver(member);
-        log.debug("Marked all as read. memberId={}, count={}", member.getMemberId(), updated);
+    public void markSnackbarShown(Member member, List<Long> notificationIds) {
+        if (notificationIds == null || notificationIds.isEmpty()) return;
+        int updated = notificationRepository.markSnackbarShownByReceiverAndIds(member, notificationIds);
+        log.debug("Marked snackbar shown. memberId={}, requested={}, updated={}",
+                member.getMemberId(), notificationIds.size(), updated);
     }
 }
