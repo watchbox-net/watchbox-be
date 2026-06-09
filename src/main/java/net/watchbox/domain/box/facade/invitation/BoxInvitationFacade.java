@@ -13,6 +13,11 @@ import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.invitation.BoxInvitationService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.notification.dto.payload.BoxInvitationPayload;
+import net.watchbox.domain.notification.dto.payload.BoxInvitationRespondedPayload;
+import net.watchbox.domain.notification.event.BoxInvitationReceivedEvent;
+import net.watchbox.domain.notification.event.BoxInvitationRespondedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +35,7 @@ public class BoxInvitationFacade {
     private final BoxService boxService;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public InvitationSentResponse inviteToBox(Member sender, Long boxId, Long receiverId) {
@@ -42,6 +48,14 @@ public class BoxInvitationFacade {
         boxValidator.validateDuplicateInviteRequest(box, receiver);
         // 초대 요청 생성
         BoxInvitation boxInvitation = boxInvitationService.inviteToBox(sender, box, receiver);
+
+        // 알림 도메인 이벤트 발행
+        // - AFTER_COMMIT 리스너가 비동기로 Notification 저장 + SSE push 처리
+        // - 알림 실패가 초대 트랜잭션에 영향 X
+        eventPublisher.publishEvent(new BoxInvitationReceivedEvent(
+                receiverId,
+                BoxInvitationPayload.of(boxInvitation, box, sender)
+        ));
 
         return InvitationSentResponse.from(boxInvitation);
     }
@@ -78,9 +92,15 @@ public class BoxInvitationFacade {
         // 수신자 본인인지 검증
         boxValidator.validateReceiver(member, boxInvitation.getReceiver());
         // 수락 처리
-        boxInvitationService.acceptBoxInvitation(member, boxInvitation);
+        boxInvitationService.acceptBoxInvitation(boxInvitation);
         // 박스 멤버(EDITOR 권한)로 추가
         boxMemberService.addEditorToBox(member, box);
+
+        // 결과 알림 이벤트 발행 (수신자 = 원래 sender)
+        eventPublisher.publishEvent(new BoxInvitationRespondedEvent(
+                boxInvitation.getSender().getMemberId(),
+                BoxInvitationRespondedPayload.of(boxInvitation, box, member)
+        ));
     }
 
     @Transactional
@@ -91,7 +111,13 @@ public class BoxInvitationFacade {
         // 수신자 본인인지 검증
         boxValidator.validateReceiver(member, boxInvitation.getReceiver());
         // 거절 처리
-        boxInvitationService.rejectBoxInvitation(member, boxInvitation);
+        boxInvitationService.rejectBoxInvitation(boxInvitation);
+
+        // 결과 알림 이벤트 발행 (수신자 = 원래 sender)
+        eventPublisher.publishEvent(new BoxInvitationRespondedEvent(
+                boxInvitation.getSender().getMemberId(),
+                BoxInvitationRespondedPayload.of(boxInvitation, boxInvitation.getBox(), member)
+        ));
     }
 
     @Transactional

@@ -33,6 +33,14 @@ public class BoxMemberService {
         return boxMemberRepository.countByMember(member);
     }
 
+    /**
+     * 박스 멤버 중 특정 멤버를 제외한 ID 목록.
+     * 주로 알림 fan-out 수신자 목록 계산에 사용 (publisher 제외 등).
+     */
+    public List<Long> getAllBoxMemberIdsExcluding(Box box, Member excluded) {
+        return boxMemberRepository.findMemberIdsByBoxExcluding(box, excluded.getMemberId());
+    }
+
     public Optional<BoxMember> findOldestEditorExcludingMember(Box box, Member excluded) {
         return boxMemberRepository.findAllByBox(box).stream()
                 .filter(bm -> bm.getRole() == BoxMemberRole.EDITOR)

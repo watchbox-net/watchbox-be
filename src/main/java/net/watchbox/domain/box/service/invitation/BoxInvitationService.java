@@ -39,13 +39,13 @@ public class BoxInvitationService {
 
     // 공유 박스 받은초대 수락 (ACCEPTED)
     @Transactional
-    public void acceptBoxInvitation(Member receiver, BoxInvitation boxInvitation) {
+    public void acceptBoxInvitation(BoxInvitation boxInvitation) {
         boxInvitation.updateStatus(RequestStatus.ACCEPTED);
     }
 
     // 공유 박스 받은초대 거절 (REJECTED)
     @Transactional
-    public void rejectBoxInvitation(Member receiver, BoxInvitation boxInvitation) {
+    public void rejectBoxInvitation(BoxInvitation boxInvitation) {
         boxInvitation.updateStatus(RequestStatus.REJECTED);
     }
 

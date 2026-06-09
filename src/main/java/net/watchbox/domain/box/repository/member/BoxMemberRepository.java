@@ -28,4 +28,17 @@ public interface BoxMemberRepository extends JpaRepository<BoxMember, Long> {
     List<BoxMember> findWithSharedBoxByMember(@Param("member") Member member);
 
     long countByMember(Member member);
+
+    /**
+     * 박스 멤버 중 특정 멤버를 제외한 member_id 목록.
+     * 주로 알림 fan-out 수신자 목록 계산에 사용 (엔티티 hydration 없이 ID 컬럼만 select).
+     */
+    @Query("""
+            SELECT bm.member.memberId
+              FROM BoxMember bm
+             WHERE bm.box = :box
+               AND bm.member.memberId <> :excludedMemberId
+            """)
+    List<Long> findMemberIdsByBoxExcluding(@Param("box") Box box,
+                                           @Param("excludedMemberId") Long excludedMemberId);
 }
