@@ -56,6 +56,9 @@ dependencies {
     implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.10.0'
     // Tracing (Micrometer Tracing + OTel)
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
+    // Pyroscope OTel Exporter (Pyroscope로 메트릭/트레이스 전송)
+    implementation 'io.pyroscope:agent:2.5.2'
+    implementation 'io.pyroscope:otel:2.0.1'
 
 //    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'           // OTLP exporter (Collector로 전송)
 //    // Logs — OTel Logback appender
@@ -69,6 +72,16 @@ dependencies {
 
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // AWS S3
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.3.0'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // Web Push
+    implementation 'nl.martijndwars:web-push:5.1.1'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
 }
 
 tasks.named('test') {
