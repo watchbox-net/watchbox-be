@@ -14,7 +14,6 @@ import net.watchbox.domain.box.repository.content.BoxContentPage;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
-import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.content.dto.list.ContentItem;
@@ -23,13 +22,10 @@ import net.watchbox.domain.content.mapper.box.MyBoxContentMapper;
 import net.watchbox.domain.content.mapper.box.SharedBoxContentMapper;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.notification.dto.payload.BoxContentAddedPayload;
-import net.watchbox.domain.notification.event.BoxContentAddedEvent;
 import net.watchbox.domain.record.entity.ContentRecord;
 import net.watchbox.domain.record.service.ContentRecordQueryService;
 import net.watchbox.global.constants.AppConstants;
 import net.watchbox.global.util.CursorCodec;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,10 +42,8 @@ public class BoxContentFacade {
     private final BoxContentCommandService boxContentCommandService;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
-    private final BoxMemberService boxMemberService;
     private final ContentRecordQueryService contentRecordQueryService;
     private final CursorCodec cursorCodec;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public ContentCursorPageResponse getBoxContentPage(Member member, BoxContentQueryRequest request, Long boxId) {
@@ -158,19 +152,6 @@ public class BoxContentFacade {
 
         // 박스 lastContentAddedAt 업데이트
         box.updateLastContentAddedAt(boxContent.getCreatedAt());
-
-        // 알림 도메인 이벤트 발행
-        // - SHARED 박스: publisher 제외한 멤버 전원에게 알림
-        // - MY 박스: receiver 없으므로 발행 스킵 (본인 활동이라 알림 불필요)
-        if (box.getBoxType() == BoxType.SHARED) {
-            List<Long> receiverIds = boxMemberService.getAllBoxMemberIdsExcluding(box, member);
-            if (!receiverIds.isEmpty()) {
-                eventPublisher.publishEvent(new BoxContentAddedEvent(
-                        receiverIds,
-                        BoxContentAddedPayload.of(content, box, member)
-                ));
-            }
-        }
 
         return BoxContentAddResponse.from(boxContent);
     }

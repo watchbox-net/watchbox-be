@@ -69,6 +69,11 @@ public class BoxInvitationFacade {
     }
 
     @Transactional (readOnly = true)
+    public boolean hasReceivedInvitation(Member member) {
+        return boxInvitationService.hasPendingReceivedInvitation(member);
+    }
+
+    @Transactional (readOnly = true)
     public List<InvitationReceivedResponse> getBoxInvitationsReceived(Member member) {
         List<BoxInvitation> receivedInvitations = boxInvitationService.getAllByReceiverWithBoxAndMembers(member);
         List<Box> boxes = receivedInvitations.stream()
@@ -77,8 +82,8 @@ public class BoxInvitationFacade {
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(boxes);
 
         return receivedInvitations.stream()
-                .map(bi -> InvitationReceivedResponse.from(bi,
-                        posterMap.getOrDefault(bi.getBox().getBoxId(), Collections.emptyList())))
+                .map(boxInvitation -> InvitationReceivedResponse.of(boxInvitation,
+                        posterMap.getOrDefault(boxInvitation.getBox().getBoxId(), Collections.emptyList())))
                 .toList();
     }
 

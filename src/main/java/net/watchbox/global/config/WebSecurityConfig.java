@@ -14,6 +14,7 @@ import net.watchbox.global.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRep
 import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
 import net.watchbox.global.auth.oauth.OAuth2UserCustomService;
 import net.watchbox.global.properties.AdminProperties;
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,9 @@ public class WebSecurityConfig {
                 .addFilterBefore(adminAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        // SSE(SseEmitter) 등 async 응답의 ASYNC 재디스패치는 인증 재검증에서 제외.
+                        // 최초 REQUEST에서 이미 인증 완료 → ASYNC는 응답 생성 단계라 재검증 불필요.
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                         .requestMatchers(PublicPaths.antPatterns()).permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()

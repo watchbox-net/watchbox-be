@@ -3,10 +3,12 @@ package net.watchbox.domain.notification.sse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.notification.dto.response.NotificationResponse;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * SSE 연결/전송 관리.
@@ -79,6 +81,32 @@ public class SseEmitterService {
                         receiverId, notification.notificationId(), e);
                 emitter.complete();
                 emitterRepository.deleteByMemberId(receiverId);
+            }
+        });
+    }
+
+    /**
+     * Heartbeat(keep-alive) 브로드캐스트.
+     *
+     * <p>주기적으로 SSE 주석(comment) 라인을 보내 idle 연결이 nginx/프록시의
+     * idle timeout(보통 60s)에 끊기는 것을 방지한다. comment 라인은 클라이언트
+     * 이벤트를 발생시키지 않아 EventSource는 영향받지 않는다.
+     *
+     * <p>heartbeat 전송이 실패하면 죽은 연결로 판단해 정리 → 클라이언트는 재연결.
+     *
+     * <p>주기는 notification.sse.heartbeat(현재 30s)와 동일하게 맞춤.
+     */
+    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
+    public void sendHeartbeat() {
+        emitterRepository.entries().forEach(entry -> {
+            Long memberId = entry.getKey();
+            SseEmitter emitter = entry.getValue();
+            try {
+                emitter.send(SseEmitter.event().comment("heartbeat"));
+            } catch (Exception e) {
+                log.debug("SSE heartbeat failed, cleaning up. memberId={}", memberId);
+                emitter.complete();                           // ① 서버 쪽 스트림 닫기
+                emitterRepository.deleteByMemberId(memberId); // ② 맵에서 죽은 emitter 제거 (청소)
             }
         });
     }
