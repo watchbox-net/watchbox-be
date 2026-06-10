@@ -34,7 +34,7 @@ public interface BoxInvitationRepository extends JpaRepository<BoxInvitation, Lo
             "JOIN FETCH bi.sender " +
             "LEFT JOIN FETCH b.boxMembers bm " +
             "LEFT JOIN FETCH bm.member " +
-            "WHERE bi.receiver = :member")
+            "WHERE bi.receiver = :member and bi.status = 'PENDING'")
     List<BoxInvitation> findAllByReceiverWithBoxAndMembers(@Param("member") Member member);
 
 }

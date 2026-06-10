@@ -29,6 +29,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         LEFT JOIN BoxInvitation bi
             ON bi.receiver.memberId = m.memberId
             AND bi.box.boxId = :boxId
+            AND bi.status IN (
+                net.watchbox.domain.box.entity.invitation.RequestStatus.PENDING,
+                net.watchbox.domain.box.entity.invitation.RequestStatus.ACCEPTED
+            )
         WHERE m.nickname LIKE %:query%
             AND m.memberId <> :excludeMemberId
     """)

@@ -15,7 +15,7 @@ public class InvitationReceivedResponse { // 받은초대 정보
     private RequestStatus status;
     private BoxItem sharedBox; // 초대받은 박스 정보 (박스 제목, 설명, 포스터 3개, 멤버 리스트)
 
-    public static InvitationReceivedResponse from(BoxInvitation boxInvitation, List<String> previewPosters) {
+    public static InvitationReceivedResponse of(BoxInvitation boxInvitation, List<String> previewPosters) {
         InvitationReceivedResponse response = new InvitationReceivedResponse();
         response.setRequestId(boxInvitation.getRequestId());
         response.setSenderId(boxInvitation.getSender().getMemberId());
