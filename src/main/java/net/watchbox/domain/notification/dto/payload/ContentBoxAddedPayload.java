@@ -12,7 +12,7 @@ import net.watchbox.domain.notification.entity.NotificationType;
  *
  * <p>예시 메시지: "{publisher}님이 {boxName}에 〈{contentName}〉을 추가했어요"
  */
-public record BoxContentAddedPayload(
+public record ContentBoxAddedPayload(
         Long boxId,                 // 박스 ID (클릭 시 박스 컨텐츠 페이지로 이동)
         String boxName,             // 박스 이름
         BoxType boxType,            // MY / SHARED — 프론트 분기/표시용
@@ -31,12 +31,12 @@ public record BoxContentAddedPayload(
         return NotificationType.BOX_CONTENT_ADDED;
     }
 
-    public static BoxContentAddedPayload of(
+    public static ContentBoxAddedPayload of(
             Content content,
             Box box,
             Member member
     ) {
-        return new BoxContentAddedPayload(
+        return new ContentBoxAddedPayload(
                 box.getBoxId(),
                 box.getName(),
                 box.getBoxType(),

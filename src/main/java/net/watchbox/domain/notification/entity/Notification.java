@@ -38,8 +38,4 @@ public class Notification extends BaseTime {
      */
     @Builder.Default
     boolean snackbarShown = false;
-
-    public void markSnackbarShown() {
-        this.snackbarShown = true;
-    }
 }
