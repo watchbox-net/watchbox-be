@@ -21,6 +21,8 @@ public interface BoxInvitationRepository extends JpaRepository<BoxInvitation, Lo
 
     boolean existsByBoxAndReceiverAndStatus(Box box, Member receiver, RequestStatus requestStatus);
 
+    boolean existsByReceiverAndStatus(Member receiver, RequestStatus requestStatus);
+
     /**
      * 받은 초대 목록 조회 — 박스 정보 + 멤버까지 FETCH JOIN으로 한 번에 로딩
      * BoxInvitation에 매핑된 Box로 LAZY 관계를 개별 접근(getBox())하면 N+1 발생하므로 한 방 쿼리로 해결

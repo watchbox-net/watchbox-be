@@ -6,6 +6,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,5 +43,10 @@ public class SseEmitterRepository {
 
     public int size() {
         return emitters.size();
+    }
+
+    /** 전체 emitter 순회용 (heartbeat 브로드캐스트 등). ConcurrentHashMap이라 순회 중 삭제 안전. */
+    public Set<Map.Entry<Long, SseEmitter>> entries() {
+        return emitters.entrySet();
     }
 }

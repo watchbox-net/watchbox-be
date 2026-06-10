@@ -59,6 +59,11 @@ public class BoxInvitationService {
         return boxInvitationRepository.findAllBySender(sender);
     }
 
+    // 받은(PENDING) 초대 존재 유무 — 화면 진입 전 배지/유무 표시용
+    public boolean hasPendingReceivedInvitation(Member member) {
+        return boxInvitationRepository.existsByReceiverAndStatus(member, RequestStatus.PENDING);
+    }
+
     @Transactional
     public void deleteBoxInvitation(BoxInvitation boxInvitation) {
         boxInvitationRepository.delete(boxInvitation);

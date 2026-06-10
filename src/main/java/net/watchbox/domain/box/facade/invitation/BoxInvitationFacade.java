@@ -69,6 +69,11 @@ public class BoxInvitationFacade {
     }
 
     @Transactional (readOnly = true)
+    public boolean hasReceivedInvitation(Member member) {
+        return boxInvitationService.hasPendingReceivedInvitation(member);
+    }
+
+    @Transactional (readOnly = true)
     public List<InvitationReceivedResponse> getBoxInvitationsReceived(Member member) {
         List<BoxInvitation> receivedInvitations = boxInvitationService.getAllByReceiverWithBoxAndMembers(member);
         List<Box> boxes = receivedInvitations.stream()
