@@ -1,6 +1,6 @@
 package net.watchbox.domain.notification.event;
 
-import net.watchbox.domain.notification.dto.payload.BoxContentAddedPayload;
+import net.watchbox.domain.notification.dto.payload.ContentBoxAddedPayload;
 import net.watchbox.domain.notification.entity.NotificationType;
 
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.List;
  *
  * <p>발행 위치 예: BoxContentFacade.addBoxContent(...) 트랜잭션 안.
  */
-public record BoxContentAddedEvent(
+public record ContentBoxAddedEvent(
         List<Long> receiverIds,
-        BoxContentAddedPayload payload
+        ContentBoxAddedPayload payload
 ) implements NotificationEvent {
 
     @Override
