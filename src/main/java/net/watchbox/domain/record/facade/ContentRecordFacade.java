@@ -16,7 +16,9 @@ import net.watchbox.domain.record.dto.record.request.WatchStatusUpsertRequest;
 import net.watchbox.domain.record.dto.record.response.ContentRecordCountResponse;
 import net.watchbox.domain.record.dto.record.response.ContentRecordResponse;
 import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.entity.record.WatchStatus;
 import net.watchbox.domain.record.repository.record.ContentRecordCursorBuilder;
+import net.watchbox.domain.record.service.history.ContentRecordHistoryCommandService;
 import net.watchbox.domain.record.service.record.ContentRecordCommandService;
 import net.watchbox.domain.record.service.record.ContentRecordQueryService;
 import net.watchbox.global.constants.AppConstants;
@@ -33,6 +35,7 @@ import java.util.List;
 public class ContentRecordFacade {
     private final ContentRecordQueryService contentRecordQueryService;
     private final ContentRecordCommandService contentRecordCommandService;
+    private final ContentRecordHistoryCommandService contentRecordHistoryCommandService;
     private final ContentCommandService contentCommandService;
     private final CursorCodec cursorCodec;
 
@@ -45,7 +48,7 @@ public class ContentRecordFacade {
         List<ContentRecord> page = hasNext ? fetched.subList(0, AppConstants.PAGE_SIZE) : fetched;
 
         String nextCursor = hasNext
-                ? cursorCodec.encode(ContentRecordCursorBuilder.build(page.get(page.size() - 1), request))
+                ? cursorCodec.encode(ContentRecordCursorBuilder.build(page.getLast(), request))
                 : null;
 
         List<ContentItem> contentItemList = ContentRecordMapper.toContentItems(page);
@@ -84,8 +87,17 @@ public class ContentRecordFacade {
         // ContentRecord 조회 or 생성
         ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
 
+        // 변경 전 상태 스냅샷 (히스토리용)
+        WatchStatus oldStatus = contentRecord.getWatchStatus();
+        WatchStatus newStatus = request.getWatchStatus();
+
         // WatchStatus 업데이트
-        contentRecordCommandService.upsertWatchStatus(contentRecord, request.getWatchStatus());
+        contentRecordCommandService.upsertWatchStatus(contentRecord, newStatus);
+
+        // 히스토리 기록 — 실제로 상태가 바뀐 경우에만
+        if (oldStatus != newStatus) {
+            contentRecordHistoryCommandService.watchStatusChange(member, content, oldStatus, newStatus);
+        }
 
         return ContentRecordResponse.from(contentRecord);
     }
@@ -97,8 +109,17 @@ public class ContentRecordFacade {
         // 시청 기록한 사용자인지 검증
         contentRecordQueryService.validateMember(contentRecord, member);
 
+        // 변경 전 상태 스냅샷 (히스토리용)
+        WatchStatus oldStatus = contentRecord.getWatchStatus();
+
         // WatchStatus 삭제
         contentRecordCommandService.deleteWatchStatus(contentRecord);
+
+        // 히스토리 기록 — 상태가 있었으면 (null → null 은 기록 안 함)
+        if (oldStatus != null) {
+            contentRecordHistoryCommandService.watchStatusChange(
+                    member, contentRecord.getContent(), oldStatus, null);
+        }
     }
 
     @Transactional
@@ -109,8 +130,21 @@ public class ContentRecordFacade {
         // ContentRecord 조회 or 생성
         ContentRecord contentRecord = contentRecordCommandService.getOrCreate(member, content);
 
+        // 변경 전 좋아요 스냅샷 (히스토리용)
+        Boolean before = contentRecord.getLiked();
+        Boolean after = request.getLiked();
+
         // Liked 업데이트
-        contentRecord.updateLiked(request.getLiked());
+        contentRecord.updateLiked(after);
+
+        // 히스토리 기록 — 실제로 바뀐 경우에만
+        if (!java.util.Objects.equals(before, after)) {
+            if (Boolean.TRUE.equals(after)) {
+                contentRecordHistoryCommandService.likeAdded(member, content);
+            } else {
+                contentRecordHistoryCommandService.likeRemoved(member, content);
+            }
+        }
 
         return ContentRecordResponse.from(contentRecord);
     }
@@ -122,9 +156,16 @@ public class ContentRecordFacade {
         // 좋아요한 사용자인지 검증
         contentRecordQueryService.validateMember(contentRecord, member);
 
+        // 변경 전 좋아요 스냅샷 (히스토리용)
+        Boolean before = contentRecord.getLiked();
+
         // Liked 삭제
         contentRecordCommandService.deleteLiked(contentRecord);
 
+        // 히스토리 기록 — 좋아요가 등록돼 있었을 때만
+        if (Boolean.TRUE.equals(before)) {
+            contentRecordHistoryCommandService.likeRemoved(member, contentRecord.getContent());
+        }
     }
 
 
