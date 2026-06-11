@@ -1,4 +1,4 @@
-package net.watchbox.domain.record.entity;
+package net.watchbox.domain.record.entity.record;
 
 public enum WatchStatus {
     COMPLETED,

@@ -6,7 +6,7 @@ import net.watchbox.domain.auth.entity.OauthAccount;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
-import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.entity.record.ContentRecord;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;

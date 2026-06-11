@@ -1,11 +1,11 @@
-package net.watchbox.domain.record.service;
+package net.watchbox.domain.record.service.record;
 
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.entity.WatchStatus;
-import net.watchbox.domain.record.repository.ContentRecordRepository;
+import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.entity.record.WatchStatus;
+import net.watchbox.domain.record.repository.record.ContentRecordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

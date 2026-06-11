@@ -1,4 +1,4 @@
-package net.watchbox.domain.record.repository;
+package net.watchbox.domain.record.repository.record;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
@@ -12,13 +12,13 @@ import net.watchbox.domain.content.entity.QContent;
 import net.watchbox.domain.content.sub.movie.entity.QMovie;
 import net.watchbox.domain.content.sub.tv.entity.QTv;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
-import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
+import net.watchbox.domain.record.dto.record.request.ContentRecordCountRequest;
+import net.watchbox.domain.record.dto.record.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.dto.type.ContentRecordSortOrder;
 import net.watchbox.domain.record.dto.type.WatchMediaTypeFilter;
 import net.watchbox.domain.record.dto.type.WatchRecordFilter;
-import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.entity.QContentRecord;
+import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.entity.record.QContentRecord;
 import net.watchbox.global.dto.CursorPayload;
 import org.springframework.stereotype.Repository;
 

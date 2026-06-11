@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoxContentController {
     private final BoxContentFacade boxContentFacade;
 
-    @Operation(summary = "박스 컨텐츠 페이지 조회", description = "정렬 & 필터 & 커서 기반 무한스크롤 박스 컨텐츠 페이지 조회")
+    @Operation(summary = "박스 컨텐츠 페이지 조회", description = "정렬 & 필터 & 커서 기반 무한 스크롤 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getBoxContentPage(
             @AuthenticationPrincipal Member member,

@@ -6,12 +6,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.dto.request.ContentLikeUpsertRequest;
-import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
-import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
-import net.watchbox.domain.record.dto.request.WatchStatusUpsertRequest;
-import net.watchbox.domain.record.dto.response.ContentRecordCountResponse;
-import net.watchbox.domain.record.dto.response.ContentRecordResponse;
+import net.watchbox.domain.record.dto.record.request.ContentLikeUpsertRequest;
+import net.watchbox.domain.record.dto.record.request.ContentRecordCountRequest;
+import net.watchbox.domain.record.dto.record.request.ContentRecordQueryRequest;
+import net.watchbox.domain.record.dto.record.request.WatchStatusUpsertRequest;
+import net.watchbox.domain.record.dto.record.response.ContentRecordCountResponse;
+import net.watchbox.domain.record.dto.record.response.ContentRecordResponse;
 import net.watchbox.domain.record.facade.ContentRecordFacade;
 import net.watchbox.global.dto.response.ApiResponse;
 import org.springdoc.core.annotations.ParameterObject;
@@ -46,7 +46,7 @@ public class ContentRecordController {
      ! 좋아요는 MOVIE, TV, PERSON 모두 취급
      */
 
-    @Operation(summary = "시청 기록 조회", description = "정렬 & 필터 & 커서 기반 무한스크롤 시청 기록 페이지 조회")
+    @Operation(summary = "시청 기록 조회", description = "정렬 & 필터 & 커서 기반 무한스크롤 조회")
     @GetMapping("/watch")
     public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getMyRecordedContentPage(
             @AuthenticationPrincipal Member member,
@@ -70,7 +70,7 @@ public class ContentRecordController {
         ));
     }
 
-    // ---------------------------------------- 시청 상태 쓰기 ---------------------------------------------------
+    // ─────────────────────────────────────── 시청 상태 쓰기 ───────────────────────────────────────
 
     @Operation(summary = "시청 상태 등록/변경", description = "WatchMediaType = {MOVIE, TV} <br>" +
             "WatchStatus = {COMPLETED, WATCHING, PLANNED, PAUSED}")
@@ -94,7 +94,7 @@ public class ContentRecordController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
-    // --------------------------------------- 좋아요 쓰기 ----------------------------------------------------
+    // ─────────────────────────────────────── 좋아요 업데이트 ───────────────────────────────────────
 
     @Operation(summary = "좋아요 등록/변경")
     @PostMapping("/likes")
@@ -117,4 +117,10 @@ public class ContentRecordController {
         contentRecordFacade.deleteContentLike(member, recordId);
         return ResponseEntity.ok(ApiResponse.success());
     }
+
+    // ─────────────────────────────────────── 시청 기록 히스토리  ───────────────────────────────────────
+//    @Operation(summary = "시청 기록 히스토리 페이지 조회", description = "커서 기반 무한 스크롤 조회")
+//    @GetMapping("/history")
+//    public ResponseEntity<ApiResponse<ContentRecordHistoryPageResponse>> getMyContentRecordHistoryPage(
+//            @AuthenticationPrincipal Member member,
 }

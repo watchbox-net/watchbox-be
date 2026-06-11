@@ -1,9 +1,9 @@
-package net.watchbox.domain.record.repository;
+package net.watchbox.domain.record.repository.record;
 
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.entity.record.ContentRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
