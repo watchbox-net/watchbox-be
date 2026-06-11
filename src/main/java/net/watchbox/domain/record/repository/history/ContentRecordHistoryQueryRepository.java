@@ -11,8 +11,8 @@ import net.watchbox.domain.content.sub.person.entity.QPerson;
 import net.watchbox.domain.content.sub.tv.entity.QTv;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.record.dto.history.ContentRecordHistoryQueryRequest;
-import net.watchbox.domain.record.dto.type.ContentRecordHistorySortOrder;
-import net.watchbox.domain.record.dto.type.WatchStatusFilter;
+import net.watchbox.domain.record.dto.history.ContentRecordHistorySortOrder;
+import net.watchbox.domain.record.dto.history.WatchRecordHistoryFilter;
 import net.watchbox.domain.record.entity.history.ContentRecordHistory;
 import net.watchbox.domain.record.entity.history.ContentRecordHistoryEventType;
 import net.watchbox.domain.record.entity.history.QContentRecordHistory;
@@ -40,7 +40,7 @@ public class ContentRecordHistoryQueryRepository {
 
         BooleanBuilder conditions = new BooleanBuilder()
                 .and(history.member.eq(member))
-                .and(watchStatusFilterCondition(request.getWatchStatusFilter()))
+                .and(watchStatusFilterCondition(request.getWatchRecordHistoryFilter()))
                 .and(cursorCondition(sort, cursor)); // null 이면 무시됨
 
         return jpaQueryFactory
@@ -90,10 +90,10 @@ public class ContentRecordHistoryQueryRepository {
      * LIKED: 좋아요 추가(LIKE_ADDED) 이벤트만.
      * 특정 상태: 해당 상태로 변경된 이벤트만(newStatus 기준).
      */
-    private BooleanExpression watchStatusFilterCondition(WatchStatusFilter filter) {
+    private BooleanExpression watchStatusFilterCondition(WatchRecordHistoryFilter filter) {
         QContentRecordHistory h = QContentRecordHistory.contentRecordHistory;
-        if (filter == WatchStatusFilter.ALL) return null;
-        if (filter == WatchStatusFilter.LIKED) {
+        if (filter == WatchRecordHistoryFilter.ALL) return null;
+        if (filter == WatchRecordHistoryFilter.LIKED) {
             return h.eventType.eq(ContentRecordHistoryEventType.LIKE_ADDED);
         }
         return h.eventType.eq(ContentRecordHistoryEventType.WATCH_STATUS_CHANGED)
