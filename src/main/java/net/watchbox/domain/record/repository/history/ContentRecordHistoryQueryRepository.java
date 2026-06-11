@@ -86,11 +86,16 @@ public class ContentRecordHistoryQueryRepository {
 
     /**
      * 시청 상태 필터.
-     * ALL: 전체 (좋아요/삭제 이벤트 포함). 특정 상태: 해당 상태로 변경된 이벤트만(newStatus 기준).
+     * ALL: 전체 (좋아요/삭제 이벤트 포함).
+     * LIKED: 좋아요 추가(LIKE_ADDED) 이벤트만.
+     * 특정 상태: 해당 상태로 변경된 이벤트만(newStatus 기준).
      */
     private BooleanExpression watchStatusFilterCondition(WatchStatusFilter filter) {
         QContentRecordHistory h = QContentRecordHistory.contentRecordHistory;
         if (filter == WatchStatusFilter.ALL) return null;
+        if (filter == WatchStatusFilter.LIKED) {
+            return h.eventType.eq(ContentRecordHistoryEventType.LIKE_ADDED);
+        }
         return h.eventType.eq(ContentRecordHistoryEventType.WATCH_STATUS_CHANGED)
                 .and(h.newStatus.eq(filter.toWatchStatus()));
     }
