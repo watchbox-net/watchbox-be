@@ -9,8 +9,11 @@ import net.watchbox.domain.box.dto.box.request.BoxUpdateRequest;
 import net.watchbox.domain.box.dto.box.response.BoxCreateResponse;
 import net.watchbox.domain.box.dto.box.response.BoxPageResponse;
 import net.watchbox.domain.box.dto.box.response.BoxUpdateResponse;
+import net.watchbox.domain.box.dto.history.BoxHistoryPageResponse;
+import net.watchbox.domain.box.dto.history.BoxHistorySortOrder;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.box.BoxType;
+import net.watchbox.domain.box.facade.history.BoxHistoryFacade;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
@@ -37,6 +40,7 @@ public class BoxFacade {
     private final BoxValidator boxValidator;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxContentCommandService  boxContentCommandService;
+    private final BoxHistoryFacade boxHistoryFacade;
 
     @Transactional(readOnly = true)
     public BoxItem getBox(Member member, Long boxId) {
@@ -111,5 +115,10 @@ public class BoxFacade {
                     ));
             log.info("SharedBox {} deleted by owner: {}, members: {}", boxId, member.getNickname(), boxMembers);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public BoxHistoryPageResponse getBoxHistoryPage(Member member, Long boxId, BoxHistorySortOrder sort, Long cursorId, int size) {
+        return boxHistoryFacade.getBoxHistoryPage(member, boxId, sort, cursorId, size);
     }
 }

@@ -9,7 +9,6 @@ import net.watchbox.domain.record.dto.history.ContentRecordHistoryItem;
 import net.watchbox.domain.record.dto.history.ContentRecordHistoryPageResponse;
 import net.watchbox.domain.record.dto.history.ContentRecordHistoryQueryRequest;
 import net.watchbox.domain.record.entity.history.ContentRecordHistory;
-import net.watchbox.domain.record.service.history.ContentRecordHistoryCommandService;
 import net.watchbox.domain.record.service.history.ContentRecordHistoryQueryService;
 import net.watchbox.global.constants.AppConstants;
 import net.watchbox.global.dto.CursorPayload;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Observed
 public class ContentRecordHistoryFacade {
-    private final ContentRecordHistoryCommandService contentRecordHistoryCommandService;
     private final ContentRecordHistoryQueryService contentRecordHistoryQueryService;
     private final CursorCodec cursorCodec;
 

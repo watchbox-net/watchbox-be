@@ -11,9 +11,12 @@ package net.watchbox.domain.box.entity.history;
  * </ul>
  */
 public enum BoxHistoryEventType {
+    // ────── 구현됨 ──────
     CONTENT_ADDED,
     CONTENT_DELETED,
     MEMBER_JOINED,
+
+    // ────── 미구현 ──────
     MEMBER_LEFT,
     MEMBER_KICKED,
     MEMBER_NAME_CHANGED,

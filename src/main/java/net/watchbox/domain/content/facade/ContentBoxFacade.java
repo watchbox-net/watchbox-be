@@ -7,6 +7,7 @@ import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.box.service.history.BoxHistoryCommandService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.content.dto.box.ContentBoxDiffRequest;
@@ -37,6 +38,7 @@ public class ContentBoxFacade {
     private final BoxContentCommandService boxContentCommandService;
     private final BoxValidator boxValidator;
     private final BoxMemberService boxMemberService;
+    private final BoxHistoryCommandService boxHistoryCommandService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
@@ -81,6 +83,9 @@ public class ContentBoxFacade {
             boxContentCommandService.addContentToBox(member, box, content);
             addedBoxIds.add(boxId);
 
+            // 박스 히스토리 기록
+            boxHistoryCommandService.contentAdded(box, member, content);
+
             // 알림 도메인 이벤트 발행 (추가 시에만)
             // - SHARED 박스: publisher 제외한 멤버 전원에게 알림
             // - MY 박스: 본인 활동이라 알림 불필요 → 스킵
@@ -104,6 +109,9 @@ public class ContentBoxFacade {
             boxValidator.validateBoxContentRemover(member, boxContent);  // 본인이 추가한 것만 삭제
             boxContentCommandService.deleteContentFromBox(boxContent);
             removedBoxIds.add(boxId);
+
+            // 박스 히스토리 기록
+            boxHistoryCommandService.contentDeleted(box, member, content);
         }
 
         // 4. 응답

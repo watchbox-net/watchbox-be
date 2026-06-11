@@ -11,6 +11,8 @@ import net.watchbox.domain.box.dto.box.request.BoxUpdateRequest;
 import net.watchbox.domain.box.dto.box.response.BoxCreateResponse;
 import net.watchbox.domain.box.dto.box.response.BoxPageResponse;
 import net.watchbox.domain.box.dto.box.response.BoxUpdateResponse;
+import net.watchbox.domain.box.dto.history.BoxHistoryPageResponse;
+import net.watchbox.domain.box.dto.history.BoxHistorySortOrder;
 import net.watchbox.domain.box.facade.box.BoxFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
@@ -86,5 +88,20 @@ public class BoxController {
     ) {
         boxFacade.deleteBox(member, boxId);
         return ResponseEntity.ok(ApiResponse.success());
+    }
+
+    // ─────────────────────────────────────── 박스 히스토리  ───────────────────────────────────────
+    @Operation(summary = "박스 히스토리 페이지 조회", description = "정렬(RECENT/OLDEST) & 커서 기반 무한 스크롤 조회")
+    @GetMapping("/{boxId}/history")
+    public ResponseEntity<ApiResponse<BoxHistoryPageResponse>> getBoxHistoryPage(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long boxId,
+            @RequestParam(defaultValue = "RECENT") BoxHistorySortOrder sort,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(defaultValue = "30") int size
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                boxFacade.getBoxHistoryPage(member, boxId, sort, cursorId, size)
+        ));
     }
 }

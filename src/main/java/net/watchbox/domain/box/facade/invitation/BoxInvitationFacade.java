@@ -7,6 +7,7 @@ import net.watchbox.domain.box.dto.Invitation.InvitationSentResponse;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.box.service.history.BoxHistoryCommandService;
 import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.box.BoxService;
@@ -35,6 +36,7 @@ public class BoxInvitationFacade {
     private final BoxService boxService;
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
+    private final BoxHistoryCommandService boxHistoryCommandService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
@@ -100,6 +102,9 @@ public class BoxInvitationFacade {
         boxInvitationService.acceptBoxInvitation(boxInvitation);
         // 박스 멤버(EDITOR 권한)로 추가
         boxMemberService.addEditorToBox(member, box);
+
+        // 박스 히스토리 기록 (수락한 본인이 합류)
+        boxHistoryCommandService.memberJoined(box, member, member);
 
         // 결과 알림 이벤트 발행 (수신자 = 원래 sender)
         eventPublisher.publishEvent(new BoxInvitationRespondedEvent(
