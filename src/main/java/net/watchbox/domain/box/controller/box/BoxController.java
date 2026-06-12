@@ -28,8 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoxController {
     private final BoxFacade boxFacade;
 
-    @Operation(summary = "박스 단일 조회", description = "박스 생성/수정 후 응답 <br>"
-            + "응답에 포스터, 박스멤버 X")
+    @Operation(summary = "박스 단일 조회")
     @GetMapping("/{boxId}")
     public ResponseEntity<ApiResponse<BoxItem>> getBox(
             @AuthenticationPrincipal Member member,

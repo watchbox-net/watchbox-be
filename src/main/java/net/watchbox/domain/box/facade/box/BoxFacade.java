@@ -50,7 +50,11 @@ public class BoxFacade {
         }else{
             boxValidator.validateBoxMember(box, member);
         }
-        return BoxItem.from(box);
+
+        List<String> previewPosters = boxContentQueryService
+                .getRecentPosterPathsByBoxes(List.of(box))
+                .getOrDefault(box.getBoxId(), Collections.emptyList());
+        return BoxItem.of(box, previewPosters);
     }
 
     @Transactional(readOnly = true)
