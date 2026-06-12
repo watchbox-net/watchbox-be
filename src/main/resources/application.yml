@@ -197,3 +197,8 @@ pyroscope:
   server:
     address: http://${O11Y_PRIVATE_IP:localhost}:4040
   profiling-interval-ms: ${PYROSCOPE_PROFILING_INTERVAL_MS:10}
+  
+notification:
+  sse:
+    timeout: 30m
+    heartbeat: 30s

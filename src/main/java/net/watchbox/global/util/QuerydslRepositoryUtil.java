@@ -5,7 +5,7 @@ import com.querydsl.core.types.dsl.DateExpression;
 import net.watchbox.domain.box.dto.content.type.BoxContentSortOrder;
 import net.watchbox.domain.box.entity.content.QBoxContent;
 import net.watchbox.domain.record.dto.type.ContentRecordSortOrder;
-import net.watchbox.domain.record.entity.QContentRecord;
+import net.watchbox.domain.record.entity.record.QContentRecord;
 
 import java.time.LocalDate;
 

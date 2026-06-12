@@ -3,8 +3,8 @@ package net.watchbox.domain.content.dto.interaction;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.entity.WatchStatus;
+import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.entity.record.WatchStatus;
 
 @Getter
 @ToString

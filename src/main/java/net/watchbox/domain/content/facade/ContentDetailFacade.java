@@ -9,11 +9,8 @@ import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.service.ContentRecordQueryService;
-import net.watchbox.global.tmdb.service.TmdbMoviesService;
-import net.watchbox.global.tmdb.service.TmdbPeopleService;
-import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
+import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.service.record.ContentRecordQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

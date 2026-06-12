@@ -12,4 +12,7 @@ public final class AppConstants {
 
     /** 무한스크롤 리스트 페이지 크기 (시청 기록, 박스 컨텐츠 등) */
     public static final int PAGE_SIZE = 20; // 페이지 리스트 응답 Item 개수 단위
+
+    /** 시청 기록 히스토리 무한스크롤 페이지 크기 */
+    public static final int HISTORY_PAGE_SIZE = 30;
 }

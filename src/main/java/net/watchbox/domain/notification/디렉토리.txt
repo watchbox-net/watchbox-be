@@ -1,0 +1,24 @@
+domain/notification/
+├── entity/
+│   ├── Notification.java                ← 알림 영속 (id, receiver, type, payload(JSON), isRead, createdAt)
+│   └── NotificationType.java            ← BOX_INVITATION_RECEIVED, SHARED_BOX_CONTENT_ADDED, ...
+├── repository/
+│   └── NotificationRepository.java      ← 안 읽은 알림 / 페이지 조회
+├── service/
+│   ├── NotificationCommandService.java  ← 저장 / 읽음 처리
+│   └── NotificationQueryService.java    ← 조회
+├── facade/
+│   └── NotificationFacade.java          ← 도메인 이벤트 받아 저장 + SSE push
+├── controller/
+│   └── NotificationController.java      ← /api/notifications/subscribe (SSE), /api/notifications (목록), /read
+├── dto/
+│   ├── NotificationResponse.java
+│   └── payload/                          ← 타입별 payload DTO (BoxInvitationPayload 등)
+├── sse/
+│   ├── SseEmitterRepository.java        ← memberId → SseEmitter 매핑 (in-memory ConcurrentHashMap)
+│   ├── SseEmitterService.java                  ← send(memberId, NotificationEvent) — 끊긴 연결 정리
+│   └── SseProperties.java               ← timeout 등 설정 바인딩
+└── event/
+    ├── NotificationEvent.java           ← record 또는 sealed interface
+    ├── BoxInvitationReceivedEvent.java
+    └── BoxContentAddedEvent.java

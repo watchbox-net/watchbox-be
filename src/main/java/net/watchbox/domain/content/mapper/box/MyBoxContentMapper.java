@@ -4,7 +4,7 @@ import net.watchbox.domain.box.entity.content.BoxContent;
 import net.watchbox.domain.content.dto.interaction.MemberRecord;
 import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.content.mapper.ContentSummaryMapper;
-import net.watchbox.domain.record.entity.ContentRecord;
+import net.watchbox.domain.record.entity.record.ContentRecord;
 
 import java.util.List;
 import java.util.Map;

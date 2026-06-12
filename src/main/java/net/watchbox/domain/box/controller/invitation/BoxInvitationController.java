@@ -21,6 +21,17 @@ import java.util.List;
 public class BoxInvitationController {
     private final BoxInvitationFacade boxInvitationFacade;
 
+    @Operation(summary = "받은 초대 존재 유무",
+            description = "받은 PENDING 초대가 있는지 boolean 으로만 반환. 화면 진입 전 배지/점 표시용 (목록 조회보다 가벼움).")
+    @GetMapping("/received/exists")
+    public ResponseEntity<ApiResponse<Boolean>> hasReceivedInvitation(
+            @AuthenticationPrincipal Member member
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(boxInvitationFacade.hasReceivedInvitation(member))
+        );
+    }
+
     @Operation(summary = "받은 초대 리스트 조회") // 일단 모든 요청상태 조회
     @GetMapping("/received")
     public ResponseEntity<ApiResponse<List<InvitationReceivedResponse>>> getBoxInvitationsReceived(

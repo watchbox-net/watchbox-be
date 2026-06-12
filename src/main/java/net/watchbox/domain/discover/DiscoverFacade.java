@@ -7,7 +7,7 @@ import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.mapper.tmdb.TmdbDiscoverDtoMapper;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.service.ContentRecordQueryService;
+import net.watchbox.domain.record.service.record.ContentRecordQueryService;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import net.watchbox.global.tmdb.service.TmdbMovieListsService;

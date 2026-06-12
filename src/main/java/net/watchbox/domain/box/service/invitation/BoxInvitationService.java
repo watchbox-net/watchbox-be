@@ -39,13 +39,13 @@ public class BoxInvitationService {
 
     // 공유 박스 받은초대 수락 (ACCEPTED)
     @Transactional
-    public void acceptBoxInvitation(Member receiver, BoxInvitation boxInvitation) {
+    public void acceptBoxInvitation(BoxInvitation boxInvitation) {
         boxInvitation.updateStatus(RequestStatus.ACCEPTED);
     }
 
     // 공유 박스 받은초대 거절 (REJECTED)
     @Transactional
-    public void rejectBoxInvitation(Member receiver, BoxInvitation boxInvitation) {
+    public void rejectBoxInvitation(BoxInvitation boxInvitation) {
         boxInvitation.updateStatus(RequestStatus.REJECTED);
     }
 
@@ -57,6 +57,11 @@ public class BoxInvitationService {
     // 공유 박스 보낸초대 리스트 조회
     public List<BoxInvitation> getAllBySender(Member sender) {
         return boxInvitationRepository.findAllBySender(sender);
+    }
+
+    // 받은(PENDING) 초대 존재 유무 — 화면 진입 전 배지/유무 표시용
+    public boolean hasPendingReceivedInvitation(Member member) {
+        return boxInvitationRepository.existsByReceiverAndStatus(member, RequestStatus.PENDING);
     }
 
     @Transactional

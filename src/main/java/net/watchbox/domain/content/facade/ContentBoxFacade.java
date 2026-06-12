@@ -3,9 +3,12 @@ package net.watchbox.domain.content.facade;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.content.BoxContent;
+import net.watchbox.domain.box.entity.box.BoxType;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.content.BoxContentCommandService;
 import net.watchbox.domain.box.service.content.BoxContentQueryService;
+import net.watchbox.domain.box.service.history.BoxHistoryCommandService;
+import net.watchbox.domain.box.service.member.BoxMemberService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.content.dto.box.ContentBoxDiffRequest;
 import net.watchbox.domain.content.dto.box.ContentBoxItem;
@@ -15,6 +18,9 @@ import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.content.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.notification.dto.payload.ContentBoxAddedPayload;
+import net.watchbox.domain.notification.event.ContentBoxAddedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import net.watchbox.domain.content.entity.Content;
@@ -31,6 +37,9 @@ public class ContentBoxFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxContentCommandService boxContentCommandService;
     private final BoxValidator boxValidator;
+    private final BoxMemberService boxMemberService;
+    private final BoxHistoryCommandService boxHistoryCommandService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public ContentBoxSheetResponse getContentBoxSheet(Member member, Long tmdbId, MediaType mediaType) {
@@ -73,6 +82,22 @@ public class ContentBoxFacade {
             }
             boxContentCommandService.addContentToBox(member, box, content);
             addedBoxIds.add(boxId);
+
+            // 박스 히스토리 기록
+            boxHistoryCommandService.contentAdded(box, member, content);
+
+            // 알림 도메인 이벤트 발행 (추가 시에만)
+            // - SHARED 박스: publisher 제외한 멤버 전원에게 알림
+            // - MY 박스: 본인 활동이라 알림 불필요 → 스킵
+            if (box.getBoxType() == BoxType.SHARED) {
+                List<Long> receiverIds = boxMemberService.getAllBoxMemberIdsExcluding(box, member);
+                if (!receiverIds.isEmpty()) {
+                    eventPublisher.publishEvent(new ContentBoxAddedEvent(
+                            receiverIds,
+                            ContentBoxAddedPayload.of(content, box, member)
+                    ));
+                }
+            }
         }
 
         // 3. removeBoxIds 처리
@@ -84,6 +109,9 @@ public class ContentBoxFacade {
             boxValidator.validateBoxContentRemover(member, boxContent);  // 본인이 추가한 것만 삭제
             boxContentCommandService.deleteContentFromBox(boxContent);
             removedBoxIds.add(boxId);
+
+            // 박스 히스토리 기록
+            boxHistoryCommandService.contentDeleted(box, member, content);
         }
 
         // 4. 응답

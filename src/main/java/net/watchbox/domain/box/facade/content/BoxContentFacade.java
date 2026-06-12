@@ -17,14 +17,13 @@ import net.watchbox.domain.box.service.content.BoxContentQueryService;
 import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.content.dto.list.ContentItem;
-import net.watchbox.domain.content.dto.list.ContentPageResponse;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.mapper.box.MyBoxContentMapper;
 import net.watchbox.domain.content.mapper.box.SharedBoxContentMapper;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.service.ContentRecordQueryService;
+import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.service.record.ContentRecordQueryService;
 import net.watchbox.global.constants.AppConstants;
 import net.watchbox.global.util.CursorCodec;
 import org.springframework.stereotype.Component;
@@ -94,42 +93,42 @@ public class BoxContentFacade {
         return BoxContentCountResponse.of(boxContentQueryService.countBoxContent(box, member, request));
     }
 
-    @Transactional(readOnly = true)
-    public ContentPageResponse getBoxContentPageDeprecated(Member member, Long boxId) {
-        Box box = boxService.getByBoxIdOrElseThrow(boxId);
-
-        // 1. BoxContent 리스트 조회 (SubContent fetch join)
-        List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);
-
-        if (boxContents.isEmpty()) {
-            return ContentPageResponse.empty();
-        }
-
-        // 2. 해당 contentId로 ContentRecord 리스트 조회
-        List<Long> contentIds = boxContents.stream()
-                .map(bc -> bc.getContent().getContentId())
-                .toList();
-
-        List<ContentRecord> records = contentRecordQueryService
-                .getByMemberAndContentIds(member, contentIds);
-
-        // 3. Map으로 매핑 (contentId 기준)
-        Map<Long, ContentRecord> recordMap = records.stream()
-                .collect(Collectors.toMap(cr -> cr.getContent().getContentId(), cr -> cr));
-
-        // 4. ContentItem 리스트 조립
-        List<ContentItem> contentItemList = box.getBoxType().equals(BoxType.MY)
-                ? MyBoxContentMapper.toContentItems(boxContents, recordMap)
-                : SharedBoxContentMapper.toContentItemsWithPublisher(boxContents, recordMap);
-
-        // 5. 응답
-        return ContentPageResponse.builder()
-                .contentItemList(contentItemList)
-                .totalCount((long) contentItemList.size())
-//                .totalPages()
-//                .currentPage()
-                .build();
-    }
+//    @Transactional(readOnly = true)
+//    public ContentPageResponse getBoxContentPageDeprecated(Member member, Long boxId) {
+//        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+//
+//        // 1. BoxContent 리스트 조회 (SubContent fetch join)
+//        List<BoxContent> boxContents = boxContentQueryService.getMyBoxContentAllWithSubContent(box);
+//
+//        if (boxContents.isEmpty()) {
+//            return ContentPageResponse.empty();
+//        }
+//
+//        // 2. 해당 contentId로 ContentRecord 리스트 조회
+//        List<Long> contentIds = boxContents.stream()
+//                .map(bc -> bc.getContent().getContentId())
+//                .toList();
+//
+//        List<ContentRecord> records = contentRecordQueryService
+//                .getByMemberAndContentIds(member, contentIds);
+//
+//        // 3. Map으로 매핑 (contentId 기준)
+//        Map<Long, ContentRecord> recordMap = records.stream()
+//                .collect(Collectors.toMap(cr -> cr.getContent().getContentId(), cr -> cr));
+//
+//        // 4. ContentItem 리스트 조립
+//        List<ContentItem> contentItemList = box.getBoxType().equals(BoxType.MY)
+//                ? MyBoxContentMapper.toContentItems(boxContents, recordMap)
+//                : SharedBoxContentMapper.toContentItemsWithPublisher(boxContents, recordMap);
+//
+//        // 5. 응답
+//        return ContentPageResponse.builder()
+//                .contentItemList(contentItemList)
+//                .totalCount((long) contentItemList.size())
+////                .totalPages()
+////                .currentPage()
+//                .build();
+//    }
 
     @Transactional
     public BoxContentAddResponse addBoxContent(Member member, Long boxId, BoxContentAddRequest request) {
