@@ -94,8 +94,12 @@ public class ContentRecordFacade {
         // WatchStatus 업데이트
         contentRecordCommandService.upsertWatchStatus(contentRecord, newStatus);
 
-        // 히스토리 기록 — 실제로 상태가 바뀐 경우에만
-        if (oldStatus != newStatus) {
+        // 히스토리 기록 — 첫 등록 / 변경 분기
+        if (oldStatus == null) {
+            // 시청 상태가 없던 컨텐츠 → 최초 등록
+            contentRecordHistoryCommandService.watchStatusRegister(member, content, newStatus);
+        } else if (oldStatus != newStatus) {
+            // 기존 상태 있음 + 실제로 바뀐 경우만 → 변경
             contentRecordHistoryCommandService.watchStatusChange(member, content, oldStatus, newStatus);
         }
 

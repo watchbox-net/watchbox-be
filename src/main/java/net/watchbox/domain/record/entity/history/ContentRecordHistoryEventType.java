@@ -10,6 +10,7 @@ package net.watchbox.domain.record.entity.history;
  * </ul>
  */
 public enum ContentRecordHistoryEventType {
+    WATCH_STATUS_REGISTERED, // 시청 상태가 처음 등록됨 (oldStatus 없음)
     WATCH_STATUS_CHANGED,
     LIKE_ADDED,
     LIKE_REMOVED

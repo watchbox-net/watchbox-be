@@ -61,7 +61,17 @@ public class ContentRecordHistory extends BaseTime {
 
     // ─────────────────── 정적 팩토리 ───────────────────
 
-    /** 시청 상태 변경 이벤트. */
+    /** 시청 상태 최초 등록 이벤트 (oldStatus 없음). */
+    public static ContentRecordHistory ofStatusRegister(Member member, Content content, WatchStatus newStatus) {
+        return ContentRecordHistory.builder()
+                .member(member)
+                .content(content)
+                .eventType(ContentRecordHistoryEventType.WATCH_STATUS_REGISTERED)
+                .newStatus(newStatus)
+                .build();
+    }
+
+    /** 시청 상태 변경 이벤트 (old → new). */
     public static ContentRecordHistory ofStatusChange(Member member, Content content,
                                                       WatchStatus oldStatus, WatchStatus newStatus) {
         return ContentRecordHistory.builder()

@@ -16,7 +16,7 @@ public class ContentRecordHistoryItem {
     private Long contentRecordHistoryId;
     private ContentRecordHistoryEventType eventType;
     private WatchStatus oldStatus; // WATCH_STATUS_CHANGED 일 때만 존재
-    private WatchStatus newStatus; // WATCH_STATUS_CHANGED 일 때만 존재 (삭제 시 null)
+    private WatchStatus newStatus;
     private ContentSummary contentSummary;
     private LocalDateTime createdAt;
 }

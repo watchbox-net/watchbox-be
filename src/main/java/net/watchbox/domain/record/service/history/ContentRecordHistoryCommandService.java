@@ -16,6 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContentRecordHistoryCommandService {
     private final ContentRecordHistoryRepository contentRecordHistoryRepository;
 
+    /** 시청 상태 최초 등록 기록 (oldStatus 없음). */
+    public void watchStatusRegister(Member member, Content content, WatchStatus newStatus) {
+        contentRecordHistoryRepository.save(
+                ContentRecordHistory.ofStatusRegister(member, content, newStatus));
+    }
+
     /** 시청 상태 변경 기록 (old → new). */
     public void watchStatusChange(Member member, Content content,
                                   WatchStatus oldStatus, WatchStatus newStatus) {
