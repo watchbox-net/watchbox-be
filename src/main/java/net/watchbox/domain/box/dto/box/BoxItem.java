@@ -20,17 +20,6 @@ public class BoxItem {
     private List<String> previewPosterList; // 3개
     private List<BoxMemberResponse> memberList; // 공유박스에만 존재
 
-    // 박스 생성/수정 응답
-    public static BoxItem from(Box box) {
-        BoxItem response = new BoxItem();
-        response.boxId = box.getBoxId();
-        response.name = box.getName();
-        response.description = box.getDescription();
-        response.boxType = box.getBoxType();
-        response.lastContentAddedAt = box.getLastContentAddedAt();
-        return response;
-    }
-
     // 박스 페이지 박스 응답
     public static BoxItem of(Box box, List<String> previewPosters){
        BoxItem response = new BoxItem();

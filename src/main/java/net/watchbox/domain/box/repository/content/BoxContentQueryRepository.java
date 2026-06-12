@@ -25,7 +25,7 @@ import net.watchbox.domain.content.sub.movie.entity.QMovie;
 import net.watchbox.domain.content.sub.person.entity.QPerson;
 import net.watchbox.domain.content.sub.tv.entity.QTv;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.entity.QContentRecord;
+import net.watchbox.domain.record.entity.record.QContentRecord;
 import net.watchbox.global.dto.CursorPayload;
 import org.springframework.stereotype.Repository;
 

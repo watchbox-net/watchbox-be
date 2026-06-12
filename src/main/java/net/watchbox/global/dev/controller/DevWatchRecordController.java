@@ -5,7 +5,7 @@
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;
 //import net.watchbox.domain.record.dto.response.ContentRecordResponse;
-//import net.watchbox.domain.record.service.ContentRecordQueryService;
+//import net.watchbox.domain.record.service.record.ContentRecordQueryService;
 //import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.RequestMapping;

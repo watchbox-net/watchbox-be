@@ -18,7 +18,7 @@ import net.watchbox.domain.member.dto.response.search.MemberSearchPageResponse;
 import net.watchbox.domain.member.dto.response.search.MemberSearchResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
-import net.watchbox.domain.record.service.ContentRecordQueryService;
+import net.watchbox.domain.record.service.record.ContentRecordQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

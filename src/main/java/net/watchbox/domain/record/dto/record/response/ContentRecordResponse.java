@@ -1,10 +1,10 @@
-package net.watchbox.domain.record.dto.response;
+package net.watchbox.domain.record.dto.record.response;
 
 import lombok.Getter;
 import lombok.ToString;
 import net.watchbox.domain.content.entity.MediaType;
-import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.entity.WatchStatus;
+import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.entity.record.WatchStatus;
 
 import java.time.LocalDate;
 
