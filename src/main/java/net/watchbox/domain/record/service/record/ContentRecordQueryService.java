@@ -1,4 +1,4 @@
-package net.watchbox.domain.record.service;
+package net.watchbox.domain.record.service.record;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
@@ -7,11 +7,11 @@ import net.watchbox.domain.content.dto.list.ContentItem;
 import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.entity.MediaType;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.record.dto.request.ContentRecordCountRequest;
-import net.watchbox.domain.record.dto.request.ContentRecordQueryRequest;
-import net.watchbox.domain.record.entity.ContentRecord;
-import net.watchbox.domain.record.repository.ContentRecordQueryRepository;
-import net.watchbox.domain.record.repository.ContentRecordRepository;
+import net.watchbox.domain.record.dto.record.request.ContentRecordCountRequest;
+import net.watchbox.domain.record.dto.record.request.ContentRecordQueryRequest;
+import net.watchbox.domain.record.entity.record.ContentRecord;
+import net.watchbox.domain.record.repository.record.ContentRecordQueryRepository;
+import net.watchbox.domain.record.repository.record.ContentRecordRepository;
 import net.watchbox.global.dto.CursorPayload;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;

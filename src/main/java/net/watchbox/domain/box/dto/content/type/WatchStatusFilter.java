@@ -1,6 +1,6 @@
 package net.watchbox.domain.box.dto.content.type;
 
-import net.watchbox.domain.record.entity.WatchStatus;
+import net.watchbox.domain.record.entity.record.WatchStatus;
 
 public enum WatchStatusFilter {
     ALL(null),
