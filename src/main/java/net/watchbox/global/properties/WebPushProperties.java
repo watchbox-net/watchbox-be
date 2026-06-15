@@ -1,4 +1,4 @@
-package net.watchbox.domain.notification.webpush.config;
+package net.watchbox.global.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

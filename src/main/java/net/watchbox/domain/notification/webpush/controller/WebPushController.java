@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.notification.webpush.config.WebPushProperties;
+import net.watchbox.global.properties.WebPushProperties;
 import net.watchbox.domain.notification.webpush.dto.PushSubscriptionRequest;
 import net.watchbox.domain.notification.webpush.service.WebPushService;
 import net.watchbox.global.dto.response.ApiResponse;

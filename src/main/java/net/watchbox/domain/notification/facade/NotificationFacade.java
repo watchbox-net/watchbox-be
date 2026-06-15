@@ -8,7 +8,7 @@ import net.watchbox.domain.notification.entity.Notification;
 import net.watchbox.domain.notification.event.NotificationEvent;
 import net.watchbox.domain.notification.service.NotificationCommandService;
 import net.watchbox.domain.notification.service.NotificationQueryService;
-import net.watchbox.domain.notification.sse.SseEmitterService;
+import net.watchbox.domain.notification.sse.service.SseEmitterService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,8 +1,9 @@
-package net.watchbox.domain.notification.webpush.config;
+package net.watchbox.global.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.global.properties.WebPushProperties;
 import nl.martijndwars.webpush.PushService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
