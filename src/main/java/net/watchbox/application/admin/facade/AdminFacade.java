@@ -1,4 +1,4 @@
-package net.watchbox.application.admin;
+package net.watchbox.application.admin.facade;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
