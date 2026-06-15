@@ -1,4 +1,4 @@
-package net.watchbox.domain.discover;
+package net.watchbox.domain.discover.facade;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;

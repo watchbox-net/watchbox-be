@@ -1,9 +1,10 @@
-package net.watchbox.application.admin;
+package net.watchbox.application.admin.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.application.admin.facade.AdminFacade;
 import net.watchbox.application.admin.dto.TmdbContentItem;
 import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
 import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
