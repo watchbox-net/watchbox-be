@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'net.watchbox'
-version = '1.2.0-beta'
+version = 'v1.8.1-beta'
 description = 'watchbox backend server'
 
 java {
@@ -36,7 +36,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // TMDB API dependencies
-    implementation 'org.springframework.boot:spring-boot-starter-webflux' // WebClient 사용
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'com.fasterxml.jackson.core:jackson-databind' // JSON 처리
 
     // Spring Security, OAuth2, JWT
@@ -48,22 +48,6 @@ dependencies {
     // Swagger UI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 
-    // Actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    // Micrometer → OTLP push (Redis/MySQL/Kafka/HikariCP/JVM 메트릭)
-    implementation 'io.micrometer:micrometer-registry-otlp'
-    // Spring Boot 전용 OTel 스타터
-    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.10.0'
-    // Tracing (Micrometer Tracing + OTel)
-    implementation 'io.micrometer:micrometer-tracing-bridge-otel'           // Micrometer → OTel 브릿지
-    // Pyroscope OTel Exporter (Pyroscope로 메트릭/트레이스 전송)
-    implementation 'io.pyroscope:agent:2.5.2'
-    implementation 'io.pyroscope:otel:2.0.1'
-
-//    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'           // OTLP exporter (Collector로 전송)
-//    // Logs — OTel Logback appender
-//    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.10.0-alpha'
-
     // QueryDSL
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
@@ -73,15 +57,31 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // AWS S3
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.3.0'
-
     // Kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
     // Web Push
     implementation 'nl.martijndwars:web-push:5.1.1'
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+
+    // AWS S3
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.3.0'
+
+    // Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Micrometer → OTLP push (Redis/MySQL/Kafka/HikariCP/JVM 메트릭)
+    implementation 'io.micrometer:micrometer-registry-otlp'
+    // Spring Boot 전용 OTel 스타터
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.10.0'
+    // Tracing (Micrometer Tracing + OTel)
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel' // Micrometer → OTel 브릿지
+    // Pyroscope OTel Exporter (Pyroscope로 메트릭/트레이스 전송)
+    implementation 'io.pyroscope:agent:2.5.2'
+    implementation 'io.pyroscope:otel:2.0.1'
+
+//    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'           // OTLP exporter (Collector로 전송)
+//    // Logs — OTel Logback appender
+//    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.10.0-alpha'
 }
 
 tasks.named('test') {
