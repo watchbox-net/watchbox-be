@@ -88,4 +88,17 @@ public class AdminController {
                 ApiResponse.success(adminFacade.createSampleMember(name, nickname))
         );
     }
+
+    @Operation(summary = "Web Push 테스트 발송 (POC)",
+            description = "대상 닉네임의 모든 등록된 브라우저 구독에 Web Push 발송. " +
+                    "응답값은 실제 전송 성공한 구독 개수 (0이면 등록된 구독 없음 또는 모두 실패).")
+    @PostMapping("/web-push/test")
+    public ResponseEntity<ApiResponse<Integer>> sendWebPushTest(
+            @RequestParam String nickname,
+            @RequestParam String text
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(adminFacade.sendWebPushTest(nickname, text))
+        );
+    }
 }

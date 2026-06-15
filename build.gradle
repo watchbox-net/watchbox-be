@@ -48,7 +48,6 @@ dependencies {
     // Swagger UI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 
-    // ─────────── Observability (OTel + Micrometer) ───────────
     // Actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     // Micrometer → OTLP push (Redis/MySQL/Kafka/HikariCP/JVM 메트릭)
@@ -79,6 +78,10 @@ dependencies {
 
     // Kafka
     implementation 'org.springframework.kafka:spring-kafka'
+
+    // Web Push
+    implementation 'nl.martijndwars:web-push:5.1.1'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
 }
 
 tasks.named('test') {
