@@ -10,7 +10,8 @@ import net.watchbox.global.entity.BaseTime;
 @Builder
 @Getter
 @Entity
-public class OauthAccount extends BaseTime {
+@Table(name = "oauth_account") // 테이블명과 컬럼명은 oauth_XX 로 사용 (oAuth 미사용)
+public class OAuthAccount extends BaseTime {
     //사용자의 인증 정보와 권한 정보를 저장하는 메서드 제공
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +20,7 @@ public class OauthAccount extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "oauth_provider", nullable = false, updatable = false)
-    private OauthProvider oauthProvider;
+    private OAuthProvider oauthProvider;
 
     @OneToOne(mappedBy = "oauthAccount", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Member member;

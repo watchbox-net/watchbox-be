@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.auth.entity.RefreshToken;
@@ -51,7 +51,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             throw new IllegalArgumentException("OAuth2User is not an instance of CustomOAuth2User");
         }
         CustomOAuth2User customUser = (CustomOAuth2User) oAuth2User;
-        OauthAccount oauthAccount = customUser.getOauthAccount();
+        OAuthAccount oauthAccount = customUser.getOauthAccount();
 
         /**
          * 최초 가입시

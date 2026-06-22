@@ -2,7 +2,7 @@ package net.watchbox.domain.member.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.auth.service.OauthAccountService;
+import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.service.box.BoxService;
@@ -35,7 +35,7 @@ public class MemberFacade {
     private final BoxService boxService;
     private final BoxContentCommandService boxContentCommandService;
     private final TokenService tokenService;
-    private final OauthAccountService oauthAccountService;
+    private final OAuthAccountService oauthAccountService;
 
     @Transactional(readOnly = true)
     public MemberSearchPageResponse searchMemberListWithSharedStatus(Member member, String keyword, Long boxId) {

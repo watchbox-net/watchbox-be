@@ -1,7 +1,7 @@
 package net.watchbox.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.member.dto.request.ProfileUpdateRequest;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.domain.member.repository.MemberInvitationProjection;
@@ -46,11 +46,11 @@ public class MemberService {
 
     private static final Random RANDOM = new Random();
 
-    public boolean notExistsByOauthAccount(OauthAccount oauthAccount) {
+    public boolean notExistsByOauthAccount(OAuthAccount oauthAccount) {
         return memberRepository.findByOauthAccount(oauthAccount).isEmpty();
     }
 
-    public Member createMember(OauthAccount oauthAccount) {
+    public Member createMember(OAuthAccount oauthAccount) {
         String nickname = generateNickname();
         return memberRepository.save(Member.builder()
                 .email(oauthAccount.getEmail())
@@ -59,7 +59,7 @@ public class MemberService {
                 .build());
     }
 
-    public Member createSampleMember(OauthAccount oauthAccount, String nickname) {
+    public Member createSampleMember(OAuthAccount oauthAccount, String nickname) {
         return memberRepository.save(Member.builder()
                 .email(oauthAccount.getEmail())
                 .oauthAccount(oauthAccount)
@@ -67,7 +67,7 @@ public class MemberService {
                 .build());
     }
 
-    public Member getByOauthAccount(OauthAccount oauthAccount) {
+    public Member getByOauthAccount(OAuthAccount oauthAccount) {
         return memberRepository.findByOauthAccount(oauthAccount)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }

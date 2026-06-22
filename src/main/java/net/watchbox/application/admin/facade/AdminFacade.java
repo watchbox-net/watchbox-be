@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.application.admin.dto.TmdbContentItem;
 import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
-import net.watchbox.domain.auth.entity.OauthAccount;
-import net.watchbox.domain.auth.service.OauthAccountService;
+import net.watchbox.domain.auth.entity.OAuthAccount;
+import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
 import net.watchbox.domain.box.dto.box.response.BoxCreateResponse;
 import net.watchbox.domain.box.entity.box.Box;
@@ -34,7 +34,7 @@ import java.util.List;
 public class AdminFacade {
     private final static long SLEEP_TIME = 100;
 
-    private final OauthAccountService oauthAccountService;
+    private final OAuthAccountService oauthAccountService;
     private final MemberService memberService;
     private final BoxService boxService;
     private final BoxValidator boxValidator;
@@ -66,7 +66,7 @@ public class AdminFacade {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        OauthAccount oauthAccount = oauthAccountService.createSampleAccount(name, email);
+        OAuthAccount oauthAccount = oauthAccountService.createSampleAccount(name, email);
         Member member = memberService.createSampleMember(oauthAccount, nickname);
         boxService.createInitialMyBox(member);
         return ProfileResponse.from(member);

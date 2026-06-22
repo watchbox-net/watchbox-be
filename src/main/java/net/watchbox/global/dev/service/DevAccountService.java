@@ -1,9 +1,9 @@
 package net.watchbox.global.dev.service;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.auth.entity.OauthAccount;
-import net.watchbox.domain.auth.entity.OauthProvider;
-import net.watchbox.domain.auth.repository.OauthAccountRepository;
+import net.watchbox.domain.auth.entity.OAuthAccount;
+import net.watchbox.domain.auth.entity.OAuthProvider;
+import net.watchbox.domain.auth.repository.OAuthAccountRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class DevAccountService {
-    private final OauthAccountRepository oauthAccountRepository;
+    private final OAuthAccountRepository oauthAccountRepository;
     private final MemberRepository memberRepository;
 
     public Member createDevMember() {
-        OauthAccount oauthAccount = OauthAccount.builder()
-                .oauthProvider(OauthProvider.GOOGLE)
+        OAuthAccount oauthAccount = OAuthAccount.builder()
+                .oauthProvider(OAuthProvider.GOOGLE)
                 .oauthId("tester-oauth-id")
                 .email("tester0@gmail.com")
                 .name("tester0")

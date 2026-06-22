@@ -2,7 +2,7 @@ package net.watchbox.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
@@ -30,7 +30,7 @@ public class Member implements UserDetails {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "oauth_account_id", nullable = false)
-    private OauthAccount oauthAccount;
+    private OAuthAccount oauthAccount;
 
     private String email;
 
