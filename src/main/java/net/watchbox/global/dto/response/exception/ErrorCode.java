@@ -46,6 +46,10 @@ public enum ErrorCode {
     // SharedBoxContent 오류
     FORBIDDEN_CONTENT_REMOVAL(HttpStatus.FORBIDDEN, "SHARED-BOX-CONTENT-403", "컨텐츠 삭제 권한이 없습니다."),
 
+    // InviteBoxRequest 오류
+    DUPLICATE_INVITE_REQUEST(HttpStatus.CONFLICT, "INVITE-409", "이미 진행중인 초대 요청입니다."),
+    INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "INVITE-409", "이미 처리된 초대 요청입니다."),
+
     /**
      * TMDB API
      */
@@ -72,12 +76,7 @@ public enum ErrorCode {
     NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER-409", "이미 존재하는 닉네임입니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER-409", "이미 존재하는 이메일입니다."),
 
-    // 체크 리스트 전달 관련 오류
-    EMPTY_CHECKED_LIST(HttpStatus.BAD_REQUEST, "CHECKED-LIST-400", "빈 배열은 허용되지 않습니다."),
 
-    // InviteBoxRequest 오류
-    DUPLICATE_INVITE_REQUEST(HttpStatus.CONFLICT, "INVITE-409", "이미 진행중인 초대 요청입니다."),
-    INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "INVITE-409", "이미 처리된 초대 요청입니다."),
 
     /**
      * ContentRecord
@@ -99,6 +98,7 @@ public enum ErrorCode {
     /**
      * 프론트엔드 오류
      */
+    EMPTY_CHECKED_LIST(HttpStatus.BAD_REQUEST, "CHECKED-LIST-400", "빈 배열은 허용되지 않습니다."),
     PARAMETER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "FE-PARAMETER-400", "잘못된 파라미터 입력입니다."),
     INVALID_CURSOR(HttpStatus.BAD_REQUEST, "CURSOR-400", "잘못된 cursor 입니다."),
     INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "IMAGE-400",

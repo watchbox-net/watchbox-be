@@ -12,7 +12,6 @@ import net.watchbox.domain.auth.entity.RefreshToken;
 import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
-import net.watchbox.global.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
