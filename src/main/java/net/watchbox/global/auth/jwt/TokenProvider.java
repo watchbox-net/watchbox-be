@@ -24,7 +24,6 @@ import java.util.Set;
 // 토큰을 생성하고 올바른 토큰인지 유효성 검사를 하고, 토큰에서 필요한 정보를 가져오는 클래스
 public class TokenProvider {
     private final JwtProperties jwtProperties;
-    private final OAuthAccountRepository oauthAccountRepository;
     private final MemberRepository memberRepository;
 
     public String generateToken(Member member, Duration expiredAt){
