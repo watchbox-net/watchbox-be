@@ -2,7 +2,7 @@ package net.watchbox.global.auth.oauth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OAuthAccount;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 @Getter
 public class CustomOAuth2User implements OAuth2User {
     private final OAuth2User delegate;
-    private final OauthAccount oauthAccount;
+    private final OAuthAccount oauthAccount;
 
     @Override
     public Map<String, Object> getAttributes() {

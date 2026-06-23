@@ -1,6 +1,6 @@
 package net.watchbox.domain.member.repository;
 
-import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByOauthAccount(OauthAccount oauthAccount);
+    Optional<Member> findByOauthAccount(OAuthAccount oauthAccount);
 
     Optional<Member> findByNickname(String nickname);
 

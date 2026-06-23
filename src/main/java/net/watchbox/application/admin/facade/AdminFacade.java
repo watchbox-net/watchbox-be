@@ -1,12 +1,12 @@
-package net.watchbox.application.admin;
+package net.watchbox.application.admin.facade;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.application.admin.dto.TmdbContentItem;
 import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
-import net.watchbox.domain.auth.entity.OauthAccount;
-import net.watchbox.domain.auth.service.OauthAccountService;
+import net.watchbox.domain.auth.entity.OAuthAccount;
+import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
 import net.watchbox.domain.box.dto.box.response.BoxCreateResponse;
 import net.watchbox.domain.box.entity.box.Box;
@@ -21,6 +21,7 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.domain.record.entity.record.ContentRecord;
 import net.watchbox.domain.record.service.record.ContentRecordCommandService;
+import net.watchbox.domain.notification.webpush.service.WebPushService;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Component;
@@ -33,18 +34,29 @@ import java.util.List;
 public class AdminFacade {
     private final static long SLEEP_TIME = 100;
 
-    private final OauthAccountService oauthAccountService;
+    private final OAuthAccountService oAuthAccountService;
     private final MemberService memberService;
     private final BoxService boxService;
     private final BoxValidator boxValidator;
     private final ContentCommandService contentCommandService;
     private final BoxContentCommandService boxContentCommandService;
     private final ContentRecordCommandService contentRecordCommandService;
+    private final WebPushService webPushService;
+
+    /**
+     * Web Push POC — 닉네임으로 멤버 찾아 해당 멤버 앞으로 Web Push 발송.
+     * @return 실제 전송 성공한 구독 개수
+     */
+    @Transactional
+    public int sendWebPushTest(String nickname, String text) {
+        Member target = memberService.getByNicknameOrThrow(nickname);
+        return webPushService.sendToMember(target, "WatchBox", text);
+    }
 
     @Transactional
     public ProfileResponse createSampleMember(String name, String nickname) {
         String email = name + "@example.com";
-        if(oauthAccountService.existsByName(name)) {
+        if(oAuthAccountService.existsByName(name)) {
             throw new CustomException(ErrorCode.NAME_ALREADY_EXISTS);
         }
         if(memberService.existsByNickname(nickname)){
@@ -54,8 +66,9 @@ public class AdminFacade {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        OauthAccount oauthAccount = oauthAccountService.createSampleAccount(name, email);
+        OAuthAccount oauthAccount = oAuthAccountService.createSampleAccount(name, email);
         Member member = memberService.createSampleMember(oauthAccount, nickname);
+        oAuthAccountService.linkMember(oauthAccount, member); // OAuthAccount → Member FK 연결
         boxService.createInitialMyBox(member);
         return ProfileResponse.from(member);
     }

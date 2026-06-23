@@ -5,7 +5,7 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.auth.repository.OauthAccountRepository;
+import net.watchbox.domain.auth.repository.OAuthAccountRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.properties.JwtProperties;
@@ -24,7 +24,6 @@ import java.util.Set;
 // 토큰을 생성하고 올바른 토큰인지 유효성 검사를 하고, 토큰에서 필요한 정보를 가져오는 클래스
 public class TokenProvider {
     private final JwtProperties jwtProperties;
-    private final OauthAccountRepository oauthAccountRepository;
     private final MemberRepository memberRepository;
 
     public String generateToken(Member member, Duration expiredAt){

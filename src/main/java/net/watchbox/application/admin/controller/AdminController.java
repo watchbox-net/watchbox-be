@@ -1,9 +1,10 @@
-package net.watchbox.application.admin;
+package net.watchbox.application.admin.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.application.admin.facade.AdminFacade;
 import net.watchbox.application.admin.dto.TmdbContentItem;
 import net.watchbox.application.admin.dto.TmdbWatchStatusItem;
 import net.watchbox.domain.box.dto.box.request.BoxCreateRequest;
@@ -85,6 +86,19 @@ public class AdminController {
     ) {
         return ResponseEntity.ok(
                 ApiResponse.success(adminFacade.createSampleMember(name, nickname))
+        );
+    }
+
+    @Operation(summary = "Web Push 테스트 발송 (POC)",
+            description = "대상 닉네임의 모든 등록된 브라우저 구독에 Web Push 발송. " +
+                    "응답값은 실제 전송 성공한 구독 개수 (0이면 등록된 구독 없음 또는 모두 실패).")
+    @PostMapping("/web-push/test")
+    public ResponseEntity<ApiResponse<Integer>> sendWebPushTest(
+            @RequestParam String nickname,
+            @RequestParam String text
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(adminFacade.sendWebPushTest(nickname, text))
         );
     }
 }

@@ -1,4 +1,4 @@
-package net.watchbox.domain.notification.sse;
+package net.watchbox.domain.notification.sse.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;

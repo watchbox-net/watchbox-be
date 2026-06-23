@@ -1,8 +1,10 @@
-package net.watchbox.domain.notification.sse;
+package net.watchbox.domain.notification.sse.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.notification.dto.response.NotificationResponse;
+import net.watchbox.domain.notification.sse.repository.SseEmitterRepository;
+import net.watchbox.global.properties.SseProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

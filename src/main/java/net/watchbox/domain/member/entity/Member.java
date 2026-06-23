@@ -2,7 +2,7 @@ package net.watchbox.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.box.entity.member.BoxMember;
 import net.watchbox.domain.box.entity.invitation.BoxInvitation;
 import net.watchbox.domain.box.entity.invitation.BoxJoinRequest;
@@ -28,9 +28,9 @@ public class Member implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "oauth_account_id", nullable = false)
-    private OauthAccount oauthAccount;
+    // FK 는 OAuthAccount(oauth_account.member_id) 가 소유. 여기는 역방향(읽기 전용).
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    private OAuthAccount oauthAccount;
 
     private String email;
 

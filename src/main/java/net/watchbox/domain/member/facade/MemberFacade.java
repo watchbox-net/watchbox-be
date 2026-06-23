@@ -2,7 +2,7 @@ package net.watchbox.domain.member.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.auth.service.OauthAccountService;
+import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.entity.box.Box;
 import net.watchbox.domain.box.entity.member.BoxMemberRole;
 import net.watchbox.domain.box.service.box.BoxService;
@@ -35,7 +35,7 @@ public class MemberFacade {
     private final BoxService boxService;
     private final BoxContentCommandService boxContentCommandService;
     private final TokenService tokenService;
-    private final OauthAccountService oauthAccountService;
+    private final OAuthAccountService oAuthAccountService;
 
     @Transactional(readOnly = true)
     public MemberSearchPageResponse searchMemberListWithSharedStatus(Member member, String keyword, Long boxId) {
@@ -101,11 +101,11 @@ public class MemberFacade {
         // RefreshToken 삭제
         tokenService.logout(member.getMemberId());
 
-        // Member 및 연관된 엔티티들 삭제
-        memberService.deleteMember(member);
+        // OAuthAccount 삭제 — FK(oauth_account.member_id) 자식이므로 Member 보다 먼저 제거
+        oAuthAccountService.deleteByMember(member);
 
-        // OauthAccount 삭제
-        oauthAccountService.deleteByMember(member);
+        // Member 및 연관된 엔티티들 삭제 (cascade)
+        memberService.deleteMember(member);
 
         // ToDO: 이메일로 탈퇴 회원 정보 보내기
     }

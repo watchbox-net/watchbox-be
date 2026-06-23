@@ -5,14 +5,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.auth.entity.OauthAccount;
+import net.watchbox.domain.auth.entity.OAuthAccount;
+import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.auth.entity.RefreshToken;
 import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
-import net.watchbox.global.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -40,6 +40,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
     private final MemberService memberService;
+    private final OAuthAccountService oAuthAccountService;
     private final BoxService boxService;
 
     @Override
@@ -52,18 +53,20 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             throw new IllegalArgumentException("OAuth2User is not an instance of CustomOAuth2User");
         }
         CustomOAuth2User customUser = (CustomOAuth2User) oAuth2User;
-        OauthAccount oauthAccount = customUser.getOauthAccount();
+        OAuthAccount oauthAccount = customUser.getOauthAccount();
 
         /**
          * 최초 가입시
          * 1. Member 생성
-         * 2. MyBox 생성
-         * 3. BoxMember Owner 생성
+         * 2. OAuthAccount에 Member 매핑
+         * 3. MyBox 생성
+         * 4. BoxMember Owner 생성
          */
         Member member;
         if(memberService.notExistsByOauthAccount(oauthAccount)) {
             log.info("OAuth2SuccessHandler: 신규 회원 가입 - 이메일: {}", oauthAccount.getEmail());
             member = memberService.createMember(oauthAccount);
+            oAuthAccountService.linkMember(oauthAccount, member); // OAuthAccount → Member FK 연결
             boxService.createInitialMyBox(member);
         }else{
             log.info("OAuth2SuccessHandler: 기존 회원 로그인 - 이메일: {}", oauthAccount.getEmail());

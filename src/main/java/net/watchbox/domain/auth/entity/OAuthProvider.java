@@ -1,6 +1,6 @@
 package net.watchbox.domain.auth.entity;
 
-public enum OauthProvider {
+public enum OAuthProvider {
     GOOGLE,
     NAVER,
     KAKAO
