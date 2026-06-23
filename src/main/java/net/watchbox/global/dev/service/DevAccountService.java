@@ -15,17 +15,18 @@ public class DevAccountService {
     private final MemberRepository memberRepository;
 
     public Member createDevMember() {
-        OAuthAccount oauthAccount = OAuthAccount.builder()
+        OAuthAccount oauthAccount = oauthAccountRepository.save(OAuthAccount.builder()
                 .oauthProvider(OAuthProvider.GOOGLE)
                 .oauthId("tester-oauth-id")
                 .email("tester0@gmail.com")
                 .name("tester0")
-                .build();
-        Member member = Member.builder()
-                .oauthAccount(oauthAccount)
+                .build());
+        Member member = memberRepository.save(Member.builder()
                 .email(oauthAccount.getEmail())
                 .nickname(oauthAccount.getName())
-                .build();
-        return memberRepository.save(member);
+                .build());
+        oauthAccount.linkMember(member); // OAuthAccount → Member FK 연결
+        oauthAccountRepository.save(oauthAccount);
+        return member;
     }
 }

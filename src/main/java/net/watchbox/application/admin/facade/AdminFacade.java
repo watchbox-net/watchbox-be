@@ -34,7 +34,7 @@ import java.util.List;
 public class AdminFacade {
     private final static long SLEEP_TIME = 100;
 
-    private final OAuthAccountService oauthAccountService;
+    private final OAuthAccountService oAuthAccountService;
     private final MemberService memberService;
     private final BoxService boxService;
     private final BoxValidator boxValidator;
@@ -56,7 +56,7 @@ public class AdminFacade {
     @Transactional
     public ProfileResponse createSampleMember(String name, String nickname) {
         String email = name + "@example.com";
-        if(oauthAccountService.existsByName(name)) {
+        if(oAuthAccountService.existsByName(name)) {
             throw new CustomException(ErrorCode.NAME_ALREADY_EXISTS);
         }
         if(memberService.existsByNickname(nickname)){
@@ -66,8 +66,9 @@ public class AdminFacade {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        OAuthAccount oauthAccount = oauthAccountService.createSampleAccount(name, email);
+        OAuthAccount oauthAccount = oAuthAccountService.createSampleAccount(name, email);
         Member member = memberService.createSampleMember(oauthAccount, nickname);
+        oAuthAccountService.linkMember(oauthAccount, member); // OAuthAccount → Member FK 연결
         boxService.createInitialMyBox(member);
         return ProfileResponse.from(member);
     }

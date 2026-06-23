@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class OAuth2UserCustomService extends DefaultOAuth2UserService {
-    private final OAuthAccountService oauthAccountService;
+    private final OAuthAccountService oAuthAccountService;
 
     // 소셜 계정과 앱 연결 로그인 최초에 한번 시행
     @Override
@@ -23,7 +23,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         // 사용자 객체는 식별자, 이름, 이메일, 프로필 사진 링크 등의 정보를 담고 있다.
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String provider = userRequest.getClientRegistration().getRegistrationId();
-        OAuthAccount oauthAccount = oauthAccountService.createOrUpdate(oAuth2User, provider);
+        OAuthAccount oauthAccount = oAuthAccountService.createOrUpdate(oAuth2User, provider);
 
         // CustomOAuth2User로 래핑해서 반환
         return new CustomOAuth2User(oAuth2User,oauthAccount);

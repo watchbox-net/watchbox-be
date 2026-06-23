@@ -28,8 +28,8 @@ public class Member implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "oauth_account_id", nullable = false)
+    // FK 는 OAuthAccount(oauth_account.member_id) 가 소유. 여기는 역방향(읽기 전용).
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private OAuthAccount oauthAccount;
 
     private String email;
