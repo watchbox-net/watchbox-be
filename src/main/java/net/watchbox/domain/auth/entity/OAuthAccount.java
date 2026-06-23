@@ -22,7 +22,12 @@ public class OAuthAccount extends BaseTime {
     @Column(name = "oauth_provider", nullable = false, updatable = false)
     private OAuthProvider oauthProvider;
 
-    @OneToOne(mappedBy = "oauthAccount", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    /**
+     * 연결된 멤버 (FK 소유측). nullable — OAuth 로그인 시 OAuthAccount 가 Member 보다 먼저 생성됨.
+     * 추후 소셜계정 다중 연동(N:1) 확장 시 {@code @ManyToOne} 으로 바꾸면 됨.
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(name = "oauthId", nullable = false, updatable = false, unique = true)
@@ -37,4 +42,7 @@ public class OAuthAccount extends BaseTime {
     @Column(name="name")
     private String name;
 
+    public void linkMember(Member member) {
+        this.member = member;
+    }
 }

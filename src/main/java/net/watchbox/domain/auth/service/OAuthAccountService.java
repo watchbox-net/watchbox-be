@@ -75,9 +75,17 @@ public class OAuthAccountService {
                 .build());
     }
 
+    /** OAuthAccount(FK 소유측)에 Member 연결 후 영속화. */
+    @Transactional
+    public void linkMember(OAuthAccount oauthAccount, Member member) {
+        oauthAccount.linkMember(member);
+        oauthAccountRepository.save(oauthAccount); // detached 면 merge 로 FK 반영
+    }
+
     @Transactional
     public void deleteByMember(Member member) {
-        oauthAccountRepository.delete(member.getOauthAccount());
+        oauthAccountRepository.findByMember(member)
+                .ifPresent(oauthAccountRepository::delete);
     }
 
     public boolean existsByName(String name) {

@@ -50,11 +50,11 @@ public class MemberService {
         return memberRepository.findByOauthAccount(oauthAccount).isEmpty();
     }
 
+    // Member 만 생성·저장. OAuthAccount 와의 연결(FK)은 OAuthAccountService.linkMember 로 별도 처리.
     public Member createMember(OAuthAccount oauthAccount) {
         String nickname = generateNickname();
         return memberRepository.save(Member.builder()
                 .email(oauthAccount.getEmail())
-                .oauthAccount(oauthAccount)
                 .nickname(nickname)
                 .build());
     }
@@ -62,7 +62,6 @@ public class MemberService {
     public Member createSampleMember(OAuthAccount oauthAccount, String nickname) {
         return memberRepository.save(Member.builder()
                 .email(oauthAccount.getEmail())
-                .oauthAccount(oauthAccount)
                 .nickname(nickname)
                 .build());
     }
