@@ -9,8 +9,7 @@ import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.auth.entity.RefreshToken;
-import net.watchbox.domain.auth.repository.RefreshTokenRepository;
+import net.watchbox.domain.auth.repository.RedisRefreshTokenRepository;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.properties.CookieProperties;
@@ -37,7 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisRefreshTokenRepository refreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
     private final MemberService memberService;
     private final OAuthAccountService oAuthAccountService;
@@ -92,15 +91,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
     }
 
-    // 생성된 리프레시 토큰을 전달받아 유저 아이디와 데이터베이스에 저장
     private void saveRefreshToken(Long memberId, String newRefreshToken) {
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
-                .map(entity -> entity.update(newRefreshToken))
-                .orElse(RefreshToken.builder()
-                        .memberId(memberId)
-                        .refreshToken(newRefreshToken)
-                        .build());
-        refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.save(memberId, newRefreshToken);
     }
 
     // 인증 관련 설정값과 쿠키 제거
