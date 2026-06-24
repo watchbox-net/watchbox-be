@@ -193,7 +193,7 @@ management:
 
 # Continuous profiling (Pyroscope)
 pyroscope:
-  enabled: ${PYROSCOPE_ENABLED:true}
+  enabled: ${PYROSCOPE_ENABLED:false}
   server:
     address: http://${O11Y_PRIVATE_IP:localhost}:4040
   profiling-interval-ms: ${PYROSCOPE_PROFILING_INTERVAL_MS:10}
