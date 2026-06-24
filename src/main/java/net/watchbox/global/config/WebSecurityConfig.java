@@ -15,6 +15,8 @@ import net.watchbox.global.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRep
 import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
 import net.watchbox.global.auth.oauth.OAuth2UserCustomService;
 import net.watchbox.global.properties.AdminProperties;
+import net.watchbox.global.properties.CookieProperties;
+import net.watchbox.global.properties.JwtProperties;
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +43,8 @@ public class WebSecurityConfig {
     private final OAuthAccountService oAuthAccountService;
     private final BoxService boxService;
     private final AdminProperties adminProperties;
+    private final JwtProperties jwtProperties;
+    private final CookieProperties cookieProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -114,7 +118,9 @@ public class WebSecurityConfig {
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
                 memberService,
                 oAuthAccountService,
-                boxService
+                boxService,
+                jwtProperties,
+                cookieProperties
         );
     }
 }

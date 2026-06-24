@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev/infra")
-@Tag(name = "DevAccount")
+@Tag(name = "DevInfra")
 public class DevInfraController {
 
     private final StringRedisTemplate stringRedisTemplate;

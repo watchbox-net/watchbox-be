@@ -94,6 +94,7 @@ public enum ErrorCode {
      */
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-401", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-401", "액세스 토큰이 만료되었습니다."),
+    REFRESH_TOKEN_REUSED(HttpStatus.UNAUTHORIZED, "AUTH-401", "이미 사용된 리프레시 토큰입니다. 다시 로그인해주세요."),
 
     /**
      * 프론트엔드 오류
