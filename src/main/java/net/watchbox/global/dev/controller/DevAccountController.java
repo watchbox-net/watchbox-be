@@ -52,8 +52,8 @@ public class DevAccountController {
     ) {
         Member member = memberRepository.findById(accountId).orElseThrow();
 
-        String refreshToken = tokenService.createNewRefreshToken(member);
-        String accessToken = tokenService.createNewAccessToken(member, refreshToken);
+        String refreshToken = tokenService.issueRefreshToken(member);
+        String accessToken = tokenService.createAccessToken(member);
 
         return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
     }
@@ -64,8 +64,8 @@ public class DevAccountController {
     ) {
         Member member = memberRepository.findByNickname(nickname).orElseThrow();
 
-        String refreshToken = tokenService.createNewRefreshToken(member);
-        String accessToken = tokenService.createNewAccessToken(member, refreshToken);
+        String refreshToken = tokenService.issueRefreshToken(member);
+        String accessToken = tokenService.createAccessToken(member);
 
         return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
     }

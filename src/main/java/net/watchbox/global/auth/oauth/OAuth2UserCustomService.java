@@ -27,7 +27,6 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
         // CustomOAuth2User로 래핑해서 반환
         return new CustomOAuth2User(oAuth2User,oauthAccount);
-//        return oAuth2User;
     }
 
 }
