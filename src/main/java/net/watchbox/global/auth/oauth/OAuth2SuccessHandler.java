@@ -13,12 +13,15 @@ import net.watchbox.domain.auth.entity.RefreshToken;
 import net.watchbox.domain.auth.repository.RefreshTokenRepository;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
+import net.watchbox.global.properties.CookieProperties;
+import net.watchbox.global.properties.JwtProperties;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -29,11 +32,9 @@ import java.time.Duration;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // 인증 성공시 실행할 핸들러
     @Value("${url.oauth-callback}")
     private String REDIRECT_PATH;
-//    public static final String REDIRECT_PATH = "http://localhost:3000/login/success";
 
-    public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
-    public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
-    public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
+    private static final String ACCESS_TOKEN_COOKIE_NAME = "accessToken";
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -41,6 +42,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final MemberService memberService;
     private final OAuthAccountService oAuthAccountService;
     private final BoxService boxService;
+    private final JwtProperties jwtProperties;
+    private final CookieProperties cookieProperties;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -72,20 +75,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             member = memberService.getByOauthAccount(oauthAccount);
         }
 
-        // 리프레시 토큰 생성 -> DB에 저장 -> 쿠키에 저장
-        String refreshToken = tokenProvider.generateToken(member, REFRESH_TOKEN_DURATION);
+        // 토큰 발급 (수명은 JwtProperties 기준 — refresh 회전과 동일 정합)
+        String refreshToken = tokenProvider.generateToken(member, jwtProperties.getRefreshTokenExpiry());
         saveRefreshToken(member.getMemberId(), refreshToken);
-        addRefreshTokenToCookie(request, response, refreshToken); // 쿠키에 토큰 저장 제외
+        String accessToken = tokenProvider.generateToken(member, jwtProperties.getAccessTokenExpiry());
 
-        // 액세스 토큰 생성 -> 패스에 엑세스 토큰 추가
-        String accessToken = tokenProvider.generateToken(member, ACCESS_TOKEN_DURATION);
-        String targetUrl = getTargetUrl(accessToken, refreshToken); // 액세스, 리프레시 모두 전달
+        // 토큰을 URL이 아니라 HttpOnly 쿠키로 직접 전달 (URL 누출 제거).
+        // 쿠키 보관기간(maxAge)은 세션 수명 = refresh 만료로 통일(access 쿠키는 컨테이너, 토큰 자체는 JWT exp로 만료).
+        addTokenCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, jwtProperties.getRefreshTokenExpiry());
+        addTokenCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, jwtProperties.getRefreshTokenExpiry());
 
         // 인증 관련 설정값과 쿠키 제거
         clearAuthenticationAttributes(request, response);
 
-        // 리다이렉트
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        // 토큰 없이 프론트 콜백 경로로 리다이렉트
+        getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
     }
 
     // 생성된 리프레시 토큰을 전달받아 유저 아이디와 데이터베이스에 저장
@@ -99,17 +103,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshTokenRepository.save(refreshToken);
     }
 
-    // 액세스 토큰을 패스에 추가
-    // 쿠키에서 리다이렉트 경로가 담긴 값을 가져와 쿼리 파라미터에 액세스 토큰을 추가한다
-    // 액세스 토큰을 클라이언트에게 전달: http://localhost:8080/artilcles?token=aksdjgl3i.saelkgjald..
-    private String getTargetUrl(String accessToken, String refreshToken) {
-        return UriComponentsBuilder.fromUriString(REDIRECT_PATH)
-                .queryParam("access_token", accessToken)
-                .queryParam("refresh_token", refreshToken)
-                .build()
-                .toUriString();
-    }
-
     // 인증 관련 설정값과 쿠키 제거
     // 인증 프로세스를 진행하면서 세션과 쿠키에 임시로 저장해둔 인증 관련 데이터를 제거한다
     private void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
@@ -117,12 +110,19 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
     }
 
-    // 생성된 리프레시 토큰을 쿠키에 저장.
-    // 클라이언트에서 액세스 토큰이 만료되면 재발급 요청하도록 해당 메서드로 쿠키에 리프레시 토큰을 저장
-    private void addRefreshTokenToCookie(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
-        int cookieMaxAge = (int) REFRESH_TOKEN_DURATION.toSeconds();
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN_COOKIE_NAME);
-        CookieUtil.addCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookieMaxAge);
+    // 토큰을 HttpOnly 쿠키로 응답에 추가. 도메인/Secure는 환경별(CookieProperties)로 분기.
+    private void addTokenCookie(HttpServletResponse response, String name, String value, Duration maxAge) {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(cookieProperties.isSecure())
+                .sameSite(cookieProperties.getSameSite())
+                .path("/")
+                .maxAge(maxAge);
+        // domain이 비어있으면(로컬) 속성 생략 → host-only 쿠키
+        if (cookieProperties.getDomain() != null && !cookieProperties.getDomain().isBlank()) {
+            builder.domain(cookieProperties.getDomain());
+        }
+        response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
     }
 
 }
