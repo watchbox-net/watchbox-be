@@ -1,16 +1,36 @@
-//package net.watchbox.domain.auth.entity;
-//
-//import jakarta.persistence.Id;
-//import org.springframework.data.redis.core.RedisHash;
-//
-//import java.time.LocalDateTime;
-//
-//@RedisHash(value = "refreshToken", timeToLive = 604800)
-//public class RedisRefreshToken {
-//    @Id
-//    private Long memberId;
-//    private String tokenHash;
-//    private LocalDateTime expiresAt;
-//    private boolean revoked;
-//    private String deviceInfo;
-//}
+package net.watchbox.domain.auth.entity;
+
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
+
+import java.time.Instant;
+
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@RedisHash("refreshToken")
+public class RedisRefreshToken {
+    @Id
+    private Long memberId;
+
+    private String nickname;
+    private String token;
+    private String ip;
+    private String deviceInfo;
+    private Instant issuedAt;
+    private Instant expiresAt;
+    private Instant lastUsedAt;
+
+    @TimeToLive
+    private Long ttl;
+
+    public void rotate(String newToken, Instant expiresAt, long ttlSeconds) {
+        this.token = newToken;
+        this.expiresAt = expiresAt;
+        this.lastUsedAt = Instant.now();
+        this.ttl = ttlSeconds;
+    }
+}

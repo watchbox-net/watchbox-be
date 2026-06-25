@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.properties.WebPushProperties;
 import nl.martijndwars.webpush.PushService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +21,6 @@ import java.security.Security;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties(WebPushProperties.class)
 @RequiredArgsConstructor
 public class WebPushConfig {
 

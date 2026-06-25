@@ -5,7 +5,6 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import net.watchbox.domain.auth.repository.OAuthAccountRepository;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.repository.MemberRepository;
 import net.watchbox.global.properties.JwtProperties;
@@ -37,12 +36,12 @@ public class TokenProvider {
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // 헤더 typ: JWT
-                .setIssuer(jwtProperties.getIssuer()) // 내용 iss: asdf@mail.com(properties에서 설정한 값)
+                .setIssuer(jwtProperties.issuer()) // 내용 iss: asdf@mail.com(properties에서 설정한 값)
                 .setIssuedAt(now)       // 내용 iat: 현재 시간
                 .setExpiration(expiry)  // 내용 exp: expiry 멤버 변수값
                 .setSubject(member.getEmail()) // 내용 sub: member의 이메일
                 .claim("memberId", member.getMemberId()) // 클레임 id: memberId
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.secretKey())
                 //서명: secretKey와 함께 해시값을 HS256 방식으로 암호화
                 .compact();
     }
@@ -51,7 +50,7 @@ public class TokenProvider {
     public boolean validToken(String token){
         try{
             Jwts.parser()
-                    .setSigningKey(jwtProperties.getSecretKey()) // secretKey로 복호화
+                    .setSigningKey(jwtProperties.secretKey()) // secretKey로 복호화
                     .parseClaimsJws(token);
             return true;
         }catch(Exception e){ // 복호화 과정에서 에러나면 유효하지 않은 토큰
@@ -78,7 +77,7 @@ public class TokenProvider {
 
     private Claims getClaims(String token) {
         return Jwts.parser() // 클레임 조회
-                .setSigningKey(jwtProperties.getSecretKey())
+                .setSigningKey(jwtProperties.secretKey())
                 .parseClaimsJws(token)
                 .getBody();
     }

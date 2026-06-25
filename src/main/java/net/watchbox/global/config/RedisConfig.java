@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @Configuration
-@EnableRedisRepositories
+@EnableRedisRepositories(basePackages = "net.watchbox")
 public class RedisConfig {
     @Value("${spring.data.redis.host}")
     private String host;

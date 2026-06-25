@@ -9,7 +9,7 @@ import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.auth.repository.RedisRefreshTokenRepository;
+import net.watchbox.domain.auth.service.RefreshTokenSessionService;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.properties.CookieProperties;
@@ -36,7 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
     private final TokenProvider tokenProvider;
-    private final RedisRefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenSessionService refreshTokenSessionService;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
     private final MemberService memberService;
     private final OAuthAccountService oAuthAccountService;
@@ -75,14 +75,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
 
         // 토큰 발급 (수명은 JwtProperties 기준 — refresh 회전과 동일 정합)
-        String refreshToken = tokenProvider.generateToken(member, jwtProperties.getRefreshTokenExpiry());
-        saveRefreshToken(member.getMemberId(), refreshToken);
-        String accessToken = tokenProvider.generateToken(member, jwtProperties.getAccessTokenExpiry());
+        String refreshToken = tokenProvider.generateToken(member, jwtProperties.refreshTokenExpiry());
+        saveRefreshToken(member, refreshToken, request);
+        String accessToken = tokenProvider.generateToken(member, jwtProperties.accessTokenExpiry());
 
         // 토큰을 URL이 아니라 HttpOnly 쿠키로 직접 전달 (URL 누출 제거).
         // 쿠키 보관기간(maxAge)은 세션 수명 = refresh 만료로 통일(access 쿠키는 컨테이너, 토큰 자체는 JWT exp로 만료).
-        addTokenCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, jwtProperties.getRefreshTokenExpiry());
-        addTokenCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, jwtProperties.getRefreshTokenExpiry());
+        addTokenCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, jwtProperties.refreshTokenExpiry());
+        addTokenCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, jwtProperties.refreshTokenExpiry());
 
         // 인증 관련 설정값과 쿠키 제거
         clearAuthenticationAttributes(request, response);
@@ -91,8 +91,18 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
     }
 
-    private void saveRefreshToken(Long memberId, String newRefreshToken) {
-        refreshTokenRepository.save(memberId, newRefreshToken);
+    private void saveRefreshToken(Member member, String newRefreshToken, HttpServletRequest request) {
+        String ip = extractClientIp(request);
+        String deviceInfo = request.getHeader("User-Agent");
+        refreshTokenSessionService.save(member, newRefreshToken, ip, deviceInfo);
+    }
+
+    private String extractClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 
     // 인증 관련 설정값과 쿠키 제거

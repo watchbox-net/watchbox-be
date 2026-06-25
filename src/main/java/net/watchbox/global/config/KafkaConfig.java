@@ -6,7 +6,6 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -29,7 +28,6 @@ import java.util.Map;
  * <p>토픽 이름은 yml 에서 {@code ${spring.profiles.active}.xxx} 패턴으로 환경별 prefix 자동 적용.
  */
 @Configuration
-@EnableConfigurationProperties(KafkaTopicProperties.class)
 @RequiredArgsConstructor
 public class KafkaConfig {
 

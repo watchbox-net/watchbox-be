@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-@Schema(description = "프리사인드 URL 요청 DTO")
+@Schema(description = "Presigned URL 요청 DTO")
 public class PresignedUrlRequest {
 
     @Schema(description = "저장 폴더 (예: images, spots, profiles)", example = "images")

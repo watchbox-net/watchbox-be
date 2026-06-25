@@ -9,7 +9,7 @@ import net.watchbox.global.auth.admin.AdminAuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import net.watchbox.global.auth.jwt.PublicPaths;
 import net.watchbox.global.auth.jwt.TokenAuthenticationFilter;
-import net.watchbox.domain.auth.repository.RedisRefreshTokenRepository;
+import net.watchbox.domain.auth.service.RefreshTokenSessionService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
@@ -37,7 +37,7 @@ public class WebSecurityConfig {
     private final TokenProvider tokenProvider;
     private final ObjectMapper objectMapper;
     private final OAuth2UserCustomService oAuth2UserCustomService;
-    private final RedisRefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenSessionService refreshTokenSessionService;
 
     private final MemberService memberService;
     private final OAuthAccountService oAuthAccountService;
@@ -114,7 +114,7 @@ public class WebSecurityConfig {
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
         return new OAuth2SuccessHandler(
                 tokenProvider,
-                refreshTokenRepository,
+                refreshTokenSessionService,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
                 memberService,
                 oAuthAccountService,
