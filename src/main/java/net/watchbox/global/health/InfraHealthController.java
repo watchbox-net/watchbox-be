@@ -38,7 +38,7 @@ import static net.watchbox.global.health.HealthStatus.DISCONNECTED;
 @RequestMapping("/health/infra")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "HealthCheck - Infra", description = "인프라(DB, Redis, Kafka 등) 연결 확인")
+@Tag(name = "HealthCheck Infra", description = "인프라(DB, Redis, Kafka 등) 연결 확인")
 public class InfraHealthController {
 
     private final DataSource dataSource;

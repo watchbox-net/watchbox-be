@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'net.watchbox'
-version = 'v1.8.1-beta'
+version = 'v1.9.x-beta'
 description = 'watchbox backend server'
 
 java {

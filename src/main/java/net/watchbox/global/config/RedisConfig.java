@@ -10,16 +10,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @Configuration
-@EnableRedisRepositories
+@EnableRedisRepositories(basePackages = "net.watchbox")
 public class RedisConfig {
     @Value("${spring.data.redis.host}")
     private String host;
 
     @Value("${spring.data.redis.port}")
     private int port;
+
+    @Value("${spring.data.redis.password:}")
+    private String password;
 
     /**
      * Lettuce ClientResources - Micrometer Tracing 주입.
@@ -35,11 +39,19 @@ public class RedisConfig {
     @Bean // Lettuce - 토큰 저장, 캐싱에 사용
     public LettuceConnectionFactory redisConnectionFactory(ClientResources clientResources) {
         RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration(host, port);
+        if (password != null && !password.isBlank()) {
+            serverConfig.setPassword(password);
+        }
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
                 .clientResources(clientResources)
                 .build();
 
         return new LettuceConnectionFactory(serverConfig, clientConfig);
+    }
+
+    @Bean
+    public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory connectionFactory) {
+        return new StringRedisTemplate(connectionFactory);
     }
 }
