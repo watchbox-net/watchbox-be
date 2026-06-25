@@ -22,6 +22,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int port;
 
+    @Value("${spring.data.redis.password:}")
+    private String password;
+
     /**
      * Lettuce ClientResources - Micrometer Tracing 주입.
      * 모든 Redis 명령(GET/SET/DEL 등)이 OTel span 으로 자동 생성됨.
@@ -36,6 +39,9 @@ public class RedisConfig {
     @Bean // Lettuce - 토큰 저장, 캐싱에 사용
     public LettuceConnectionFactory redisConnectionFactory(ClientResources clientResources) {
         RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration(host, port);
+        if (password != null && !password.isBlank()) {
+            serverConfig.setPassword(password);
+        }
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
                 .clientResources(clientResources)
