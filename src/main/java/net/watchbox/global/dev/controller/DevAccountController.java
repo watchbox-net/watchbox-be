@@ -13,6 +13,7 @@ import net.watchbox.global.dto.response.exception.ErrorDetail;
 import net.watchbox.global.properties.AdminProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,11 +49,14 @@ public class DevAccountController {
 
     @GetMapping("/login/id/{accountId}")
     public DevTokenResponse loginById(
-            @PathVariable Long accountId
+            @PathVariable Long accountId,
+            HttpServletRequest request
     ) {
         Member member = memberRepository.findById(accountId).orElseThrow();
 
-        String refreshToken = tokenService.issueRefreshToken(member);
+        String ip = extractClientIp(request);
+        String deviceInfo = request.getHeader("User-Agent");
+        String refreshToken = tokenService.issueRefreshToken(member, ip, deviceInfo);
         String accessToken = tokenService.createAccessToken(member);
 
         return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
@@ -60,14 +64,25 @@ public class DevAccountController {
 
     @GetMapping("/login/nickname/{nickname}")
     public DevTokenResponse loginByNickname(
-            @PathVariable String nickname
+            @PathVariable String nickname,
+            HttpServletRequest request
     ) {
         Member member = memberRepository.findByNickname(nickname).orElseThrow();
 
-        String refreshToken = tokenService.issueRefreshToken(member);
+        String ip = extractClientIp(request);
+        String deviceInfo = request.getHeader("User-Agent");
+        String refreshToken = tokenService.issueRefreshToken(member, ip, deviceInfo);
         String accessToken = tokenService.createAccessToken(member);
 
         return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
+    }
+
+    private String extractClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 
     @GetMapping("/member")

@@ -1,7 +1,6 @@
 package net.watchbox.global.config;
 
 import net.watchbox.global.properties.SseProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * </ul>
  */
 @Configuration
-@EnableConfigurationProperties(SseProperties.class)
 public class SseConfig {
     // SSE 전용 스레드풀 (heartbeat / 비동기 send용)
 //    @Bean

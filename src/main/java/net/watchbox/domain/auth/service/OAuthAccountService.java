@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class OAuthAccountService {
-    private final OAuthAccountRepository oauthAccountRepository;
+    private final OAuthAccountRepository oAuthAccountRepository;
 
     @Transactional
     public OAuthAccount createOrUpdate(OAuth2User oAuth2User, String provider) {
@@ -26,8 +26,8 @@ public class OAuthAccountService {
         switch (provider) {
             case "google":
                 oauthId = (String) attributes.get("sub");
-                existingAccount = oauthAccountRepository.findByOauthId(oauthId);
-                if(existingAccount.isPresent()) return existingAccount.get(); // ToDo: 업데이트 로직 추가 필요
+                existingAccount = oAuthAccountRepository.findByOauthId(oauthId);
+                if(existingAccount.isPresent()) return existingAccount.get();
 
                 email = (String) attributes.get("email");
                 name = (String) attributes.get("name");
@@ -35,7 +35,7 @@ public class OAuthAccountService {
                 break;
             case "kakao":
                 oauthId = attributes.get("id").toString();
-                existingAccount = oauthAccountRepository.findByOauthId(oauthId);
+                existingAccount = oAuthAccountRepository.findByOauthId(oauthId);
                 if(existingAccount.isPresent()) return existingAccount.get();
 
                 Map attributesProperties = (Map) attributes.get("properties");
@@ -47,7 +47,7 @@ public class OAuthAccountService {
             case "naver": // ToDo: 네이버 파라미터 확인 필요
                 Map attributesResponse = (Map) attributes.get("response");
                 oauthId = attributesResponse.get("id").toString();
-                existingAccount = oauthAccountRepository.findByOauthId(oauthId);
+                existingAccount = oAuthAccountRepository.findByOauthId(oauthId);
                 if(existingAccount.isPresent()) return existingAccount.get();
 
                 name = (String) attributesResponse.get("name");
@@ -57,7 +57,7 @@ public class OAuthAccountService {
             default:
                 throw new IllegalArgumentException("Unknown provider: " + provider);
         }
-        return oauthAccountRepository.save(OAuthAccount.builder()
+        return oAuthAccountRepository.save(OAuthAccount.builder()
                 .oauthProvider(oauthProvider)
                 .oauthId(oauthId)
                 .email(email)
@@ -67,7 +67,7 @@ public class OAuthAccountService {
 
     @Transactional
     public OAuthAccount createSampleAccount(String nickname, String email) {
-        return oauthAccountRepository.save(OAuthAccount.builder()
+        return oAuthAccountRepository.save(OAuthAccount.builder()
                 .oauthProvider(OAuthProvider.GOOGLE)
                 .email(email)
                 .oauthId("oauth_"+nickname)
@@ -79,16 +79,16 @@ public class OAuthAccountService {
     @Transactional
     public void linkMember(OAuthAccount oauthAccount, Member member) {
         oauthAccount.linkMember(member);
-        oauthAccountRepository.save(oauthAccount); // detached 면 merge 로 FK 반영
+        oAuthAccountRepository.save(oauthAccount); // detached 면 merge 로 FK 반영
     }
 
     @Transactional
     public void deleteByMember(Member member) {
-        oauthAccountRepository.findByMember(member)
-                .ifPresent(oauthAccountRepository::delete);
+        oAuthAccountRepository.findByMember(member)
+                .ifPresent(oAuthAccountRepository::delete);
     }
 
     public boolean existsByName(String name) {
-        return oauthAccountRepository.existsByName(name);
+        return oAuthAccountRepository.existsByName(name);
     }
 }
