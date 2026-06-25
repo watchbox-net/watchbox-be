@@ -2,19 +2,20 @@ package net.watchbox.global.dev.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.watchbox.domain.auth.service.TokenService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.repository.MemberRepository;
+import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.dev.dto.DevTokenResponse;
+import net.watchbox.global.util.HttpRequestUtils;
+import net.watchbox.global.dev.service.DevAccountService;
 import net.watchbox.global.dto.response.ApiResponse;
 import net.watchbox.global.dto.response.exception.ErrorDetail;
 import net.watchbox.global.properties.AdminProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -26,8 +27,9 @@ import java.util.Map;
 @Tag(name = "DevAccount")
 public class DevAccountController {
     private final AdminProperties adminProperties;
-    private final TokenService tokenService;
-    private final MemberRepository memberRepository;
+    private final DevAccountService devAccountService;
+    private final TokenProvider tokenProvider;
+    private final MemberService memberService;
 
     @Operation(summary = "관리자 인증", description = "API Key를 이용한 관리자 인증")
     @PostMapping("/auth")
@@ -52,14 +54,7 @@ public class DevAccountController {
             @PathVariable Long accountId,
             HttpServletRequest request
     ) {
-        Member member = memberRepository.findById(accountId).orElseThrow();
-
-        String ip = extractClientIp(request);
-        String deviceInfo = request.getHeader("User-Agent");
-        String refreshToken = tokenService.issueRefreshToken(member, ip, deviceInfo);
-        String accessToken = tokenService.createAccessToken(member);
-
-        return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
+        return devAccountService.loginById(accountId, HttpRequestUtils.extractClientIp(request), request.getHeader("User-Agent"));
     }
 
     @GetMapping("/login/nickname/{nickname}")
@@ -67,28 +62,14 @@ public class DevAccountController {
             @PathVariable String nickname,
             HttpServletRequest request
     ) {
-        Member member = memberRepository.findByNickname(nickname).orElseThrow();
-
-        String ip = extractClientIp(request);
-        String deviceInfo = request.getHeader("User-Agent");
-        String refreshToken = tokenService.issueRefreshToken(member, ip, deviceInfo);
-        String accessToken = tokenService.createAccessToken(member);
-
-        return new DevTokenResponse(accessToken, refreshToken, member.getMemberId());
-    }
-
-    private String extractClientIp(HttpServletRequest request) {
-        String xff = request.getHeader("X-Forwarded-For");
-        if (xff != null && !xff.isBlank()) {
-            return xff.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
+        return devAccountService.loginByNickname(nickname, HttpRequestUtils.extractClientIp(request), request.getHeader("User-Agent"));
     }
 
     @GetMapping("/member")
-    public String getMember(
-            @AuthenticationPrincipal Member member
-    ) {
-        return "ID: " + member.getMemberId() + "\nName: " + member.getNickname();
+    public String getMember(@RequestParam String accessToken) {
+        Long memberId = tokenProvider.getMemberId(accessToken);
+        Member member = memberService.getByMemberIdOrThrow(memberId);
+        return "ID: " + member.getMemberId() + "\nName: " + member.getNickname() + "\nEmail: " + member.getEmail();
     }
+
 }

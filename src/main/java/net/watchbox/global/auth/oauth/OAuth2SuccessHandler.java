@@ -12,6 +12,7 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.auth.service.RefreshTokenSessionService;
 import net.watchbox.domain.member.service.MemberService;
 import net.watchbox.global.auth.jwt.TokenProvider;
+import net.watchbox.global.util.HttpRequestUtils;
 import net.watchbox.global.properties.CookieProperties;
 import net.watchbox.global.properties.JwtProperties;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,17 +93,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     private void saveRefreshToken(Member member, String newRefreshToken, HttpServletRequest request) {
-        String ip = extractClientIp(request);
+        String ip = HttpRequestUtils.extractClientIp(request);
         String deviceInfo = request.getHeader("User-Agent");
         refreshTokenSessionService.save(member, newRefreshToken, ip, deviceInfo);
-    }
-
-    private String extractClientIp(HttpServletRequest request) {
-        String xff = request.getHeader("X-Forwarded-For");
-        if (xff != null && !xff.isBlank()) {
-            return xff.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
     }
 
     // 인증 관련 설정값과 쿠키 제거
