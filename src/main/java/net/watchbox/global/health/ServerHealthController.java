@@ -30,8 +30,13 @@ public class ServerHealthController {
     @GetMapping("/info")
     public String info(HttpServletRequest request) {
         String requestUrl = request.getRequestURL().toString();
-        return String.format(
-                "서버 정보 확인 %s - IP: %s - User-Agent: %s - 요청URL: %s",
+        return String.format("""
+                        [서버 정보 확인]
+                        - 시간       : %s
+                        - IP         : %s
+                        - User-Agent : %s
+                        - 요청 URL   : %s
+                        """,
                 ZonedDateTime.now(),
                 request.getRemoteAddr(),
                 request.getHeader("User-Agent"),

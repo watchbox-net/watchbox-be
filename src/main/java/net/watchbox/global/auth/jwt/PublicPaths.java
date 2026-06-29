@@ -14,10 +14,11 @@ public final class PublicPaths {
 
     /** 인증 불필요 — 토큰 검증 자체를 스킵 (TokenAuthenticationFilter) */
     public static final List<String> SKIP_TOKEN_PREFIXES = List.of(
+            "/health",
+            "/dev/",
             "/api/search",
             "/api/preview/",
             "/api/auth/",
-            "/dev/",
             "/api/admin/",
             "/swagger-ui/",
             "/v3/api-docs/"
