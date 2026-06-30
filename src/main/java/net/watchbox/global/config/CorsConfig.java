@@ -9,19 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class CorsConfig implements WebMvcConfigurer {
-    @Value("${url.frontend}")
-    private String frontendUrl;
+    // URL_CORS_ORIGINS(쉼표 구분) 를 배열로 바인딩. application.yml 의 url.cors-origins 참고.
+    @Value("${url.cors-origins}")
+    private String[] corsOrigins;
 
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
-                // 운영/개발 프론트 + 로컬 WebView 앱 테스트(맥 LAN IP) 허용.
                 // allowCredentials(true) 와 함께 쓰려면 allowedOriginPatterns 사용.
-                .allowedOriginPatterns(
-                        frontendUrl,
-                        "http://localhost:4000",
-                        "http://192.168.*.*:4000"
-                )
+                .allowedOriginPatterns(corsOrigins)
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
