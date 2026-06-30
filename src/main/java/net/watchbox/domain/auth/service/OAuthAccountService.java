@@ -91,4 +91,15 @@ public class OAuthAccountService {
     public boolean existsByName(String name) {
         return oAuthAccountRepository.existsByName(name);
     }
+
+    @Transactional
+    public OAuthAccount findOrCreateNativeAccount(OAuthProvider provider, String oauthId, String email, String name) {
+        return oAuthAccountRepository.findByOauthId(oauthId)
+                .orElseGet(() -> oAuthAccountRepository.save(OAuthAccount.builder()
+                        .oauthProvider(provider)
+                        .oauthId(oauthId)
+                        .email(email)
+                        .name(name)
+                        .build()));
+    }
 }
