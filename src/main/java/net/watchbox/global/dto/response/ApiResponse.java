@@ -10,7 +10,7 @@ public class ApiResponse<T> {
     private T data;
     private ErrorDetail error;
 
-    // ===== 성공 응답 생성 메서드 =====
+    // ──────── 성공 응답 생성 메서드 ────────
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
                 .success(true)
@@ -27,7 +27,7 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    // ===== 실패 응답 생성 메서드 =====
+    // ──────── 실패 응답 생성 메서드 ────────
     public static <T> ApiResponse<T> error(ErrorDetail error) {
         return ApiResponse.<T>builder()
                 .success(false)
