@@ -3,6 +3,7 @@ package net.watchbox.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.auth.service.NativeAuthService;
+import net.watchbox.domain.auth.service.OAuthOneTimeCodeService;
 import net.watchbox.global.auth.admin.AdminAuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import net.watchbox.global.auth.jwt.PublicPaths;
@@ -33,6 +34,7 @@ public class WebSecurityConfig {
     private final ObjectMapper objectMapper;
     private final OAuth2UserCustomService oAuth2UserCustomService;
     private final NativeAuthService nativeAuthService;
+    private final OAuthOneTimeCodeService oAuthOneTimeCodeService;
     private final AdminProperties adminProperties;
 
     @Bean
@@ -101,6 +103,6 @@ public class WebSecurityConfig {
 
     @Bean
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(nativeAuthService, oAuth2AuthorizationRequestBasedOnCookieRepository());
+        return new OAuth2SuccessHandler(nativeAuthService, oAuthOneTimeCodeService, oAuth2AuthorizationRequestBasedOnCookieRepository());
     }
 }
