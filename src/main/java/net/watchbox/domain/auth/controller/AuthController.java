@@ -1,5 +1,6 @@
 package net.watchbox.domain.auth.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ public class AuthController {
     private final AuthFacade authFacade;
 
     @PostMapping("/refresh")
+    @Operation(summary = "accessToken 재발급", description = "refreshToken 검증 후 새 accessToken 발급")
     public ResponseEntity<ApiResponse<TokenRefreshResponse>> createNewAccessToken(@RequestBody TokenRefreshRequest request) {
         TokenRefreshResponse response = authFacade.refresh(request.getRefreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
@@ -38,6 +40,7 @@ public class AuthController {
      * 응답 바디로 받아 자기 도메인 쿠키를 직접 심는다. code 는 1회용(30초 TTL).
      */
     @PostMapping("/exchange")
+    @Operation(summary = "oneTimeCode → 토큰 교환", description = "1회용 oneTimeCode 를 access/refresh 토큰으로 교환합니다. (30초 TTL, 1회성)")
     public ResponseEntity<ApiResponse<TokenRefreshResponse>> exchange(
             @RequestBody @Valid CodeExchangeRequest request,
             HttpServletRequest httpRequest) {
@@ -52,6 +55,7 @@ public class AuthController {
      * 성공 시 기존 redirect OAuth와 동일한 HttpOnly 쿠키를 설정하고 200 반환.
      */
     @PostMapping("/login/{provider}")
+    @Operation(summary = "네이티브 소셜로그인", description = "WebView 앱에서 네이티브 SDK 로 얻은 토큰으로 로그인합니다.")
     public ResponseEntity<ApiResponse<Void>> nativeLogin(
             @PathVariable String provider,
             @RequestBody @Valid NativeLoginRequest request,
@@ -63,6 +67,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/logout")
+    @Operation(summary = "로그아웃", description = "Redis 에 저장된 리프레시 토큰 세션을 삭제해 무효화합니다.")
     public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal Member member) {
         authFacade.logout(member.getMemberId());
         return ResponseEntity.ok(ApiResponse.success());
