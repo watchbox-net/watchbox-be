@@ -10,19 +10,9 @@ import net.watchbox.domain.auth.dto.CodeExchangeRequest;
 import net.watchbox.domain.auth.dto.NativeLoginRequest;
 import net.watchbox.domain.auth.dto.TokenRefreshRequest;
 import net.watchbox.domain.auth.dto.TokenRefreshResponse;
-import net.watchbox.domain.auth.entity.OAuthAccount;
-import net.watchbox.domain.auth.entity.OAuthProvider;
-import net.watchbox.domain.auth.service.GoogleNativeAuthService;
-import net.watchbox.domain.auth.service.NativeAuthService;
-import net.watchbox.domain.auth.service.OAuthAccountService;
-import net.watchbox.domain.auth.service.OAuthOneTimeCodeService;
-import net.watchbox.domain.auth.service.TokenService;
+import net.watchbox.domain.auth.facade.AuthFacade;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.service.MemberService;
-import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.dto.response.ApiResponse;
-import net.watchbox.global.dto.response.exception.CustomException;
-import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,27 +24,11 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Auth", description = "인증 API")
 @Slf4j
 public class AuthController {
-
-    private final TokenProvider tokenProvider;
-    private final TokenService tokenService;
-    private final MemberService memberService;
-    private final NativeAuthService nativeAuthService;
-    private final OAuthAccountService oAuthAccountService;
-    private final OAuthOneTimeCodeService oAuthOneTimeCodeService;
-    private final GoogleNativeAuthService googleNativeAuthService;
+    private final AuthFacade authFacade;
 
     @PostMapping("/refresh")
     public ResponseEntity<TokenRefreshResponse> createNewAccessToken(@RequestBody TokenRefreshRequest request) {
-        String refreshToken = request.getRefreshToken();
-
-        if (!tokenProvider.validToken(refreshToken)) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
-
-        Long tokenMemberId = tokenProvider.getMemberId(refreshToken);
-        Member member = memberService.getByMemberIdOrThrow(tokenMemberId);
-
-        TokenRefreshResponse response = tokenService.rotate(member, refreshToken);
+        TokenRefreshResponse response = authFacade.refresh(request.getRefreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -68,15 +42,7 @@ public class AuthController {
             @RequestBody @Valid CodeExchangeRequest request,
             HttpServletRequest httpRequest) {
 
-        Long memberId = oAuthOneTimeCodeService.consume(request.getOneTimeCode());
-        Member member = memberService.getByMemberIdOrThrow(memberId);
-        return ResponseEntity.ok(nativeAuthService.issueTokens(member, httpRequest));
-    }
-
-    @DeleteMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal Member member) {
-        tokenService.logout(member.getMemberId());
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(authFacade.exchange(request.getOneTimeCode(), httpRequest));
     }
 
     /**
@@ -92,19 +58,13 @@ public class AuthController {
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
 
-        OAuthAccount oauthAccount = switch (provider.toLowerCase()) {
-            case "google" -> {
-                GoogleNativeAuthService.GoogleUserInfo userInfo =
-                        googleNativeAuthService.exchangeServerAuthCode(request.getToken());
-                yield oAuthAccountService.findOrCreateNativeAccount(
-                        OAuthProvider.GOOGLE, userInfo.sub(), userInfo.email(), userInfo.name());
-            }
-            default -> throw new CustomException(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER);
-        };
+        authFacade.nativeLogin(provider, request.getToken(), httpRequest, httpResponse);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
 
-        Member member = nativeAuthService.findOrCreateMember(oauthAccount);
-        nativeAuthService.issueTokensAndSetCookies(member, httpRequest, httpResponse);
-
+    @DeleteMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal Member member) {
+        authFacade.logout(member.getMemberId());
         return ResponseEntity.ok(ApiResponse.success());
     }
 }
