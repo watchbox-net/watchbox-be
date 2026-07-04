@@ -18,7 +18,8 @@ import net.watchbox.domain.content.entity.Content;
 import net.watchbox.domain.content.service.ContentCommandService;
 import net.watchbox.domain.member.dto.response.ProfileResponse;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.member.service.MemberCommandService;
+import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.domain.record.entity.record.ContentRecord;
 import net.watchbox.domain.record.service.record.ContentRecordCommandService;
 import net.watchbox.domain.notification.webpush.service.WebPushService;
@@ -35,7 +36,8 @@ public class AdminFacade {
     private final static long SLEEP_TIME = 100;
 
     private final OAuthAccountService oAuthAccountService;
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
+    private final MemberCommandService memberCommandService;
     private final BoxService boxService;
     private final BoxValidator boxValidator;
     private final ContentCommandService contentCommandService;
@@ -49,7 +51,7 @@ public class AdminFacade {
      */
     @Transactional
     public int sendWebPushTest(String nickname, String text) {
-        Member target = memberService.getByNicknameOrThrow(nickname);
+        Member target = memberQueryService.getByNicknameOrThrow(nickname);
         return webPushService.sendToMember(target, "WatchBox", text);
     }
 
@@ -59,15 +61,15 @@ public class AdminFacade {
         if(oAuthAccountService.existsByName(name)) {
             throw new CustomException(ErrorCode.NAME_ALREADY_EXISTS);
         }
-        if(memberService.existsByNickname(nickname)){
+        if(memberQueryService.existsByNickname(nickname)){
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
-        if(memberService.existsByEmail(email)){
+        if(memberQueryService.existsByEmail(email)){
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         OAuthAccount oauthAccount = oAuthAccountService.createSampleAccount(name, email);
-        Member member = memberService.createSampleMember(oauthAccount, nickname);
+        Member member = memberCommandService.createSampleMember(oauthAccount, nickname);
         oAuthAccountService.linkMember(oauthAccount, member); // OAuthAccount → Member FK 연결
         boxService.createInitialMyBox(member);
         return ProfileResponse.from(member);
@@ -75,13 +77,13 @@ public class AdminFacade {
 
     @Transactional
     public BoxCreateResponse createBox(String nickname, BoxCreateRequest request) {
-        Member member = memberService.getByNicknameOrThrow(nickname);
+        Member member = memberQueryService.getByNicknameOrThrow(nickname);
         Box box = boxService.createBox(member, request);
         return BoxCreateResponse.from(box);
     }
 
     public void batchAddContentsToBox(String nickname, Long boxId, List<TmdbContentItem> request) {
-        Member member = memberService.getByNicknameOrThrow(nickname);
+        Member member = memberQueryService.getByNicknameOrThrow(nickname);
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
         for(TmdbContentItem item : request) {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.mediaType());
@@ -98,7 +100,7 @@ public class AdminFacade {
     }
 
     public void batchUpsertWatchStatus(String nickname, List<TmdbWatchStatusItem> request) {
-        Member member = memberService.getByNicknameOrThrow(nickname);
+        Member member = memberQueryService.getByNicknameOrThrow(nickname);
         for(TmdbWatchStatusItem item : request) {
             Content content = contentCommandService.getOrSaveContentCascade(item.tmdbId(), item.watchMediaType().toMediaType());
             // ContentRecord 조회 or 생성

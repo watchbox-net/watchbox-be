@@ -13,7 +13,7 @@ import net.watchbox.domain.box.service.validation.BoxValidator;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.box.service.invitation.BoxInvitationService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.domain.notification.dto.payload.BoxInvitationPayload;
 import net.watchbox.domain.notification.dto.payload.BoxInvitationRespondedPayload;
 import net.watchbox.domain.notification.event.BoxInvitationReceivedEvent;
@@ -30,7 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class BoxInvitationFacade {
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
     private final BoxInvitationService boxInvitationService;
     private final BoxMemberService boxMemberService;
     private final BoxService boxService;
@@ -41,7 +41,7 @@ public class BoxInvitationFacade {
 
     @Transactional
     public InvitationSentResponse inviteToBox(Member sender, Long boxId, Long receiverId) {
-        Member receiver = memberService.getByMemberIdOrThrow(receiverId);
+        Member receiver = memberQueryService.getByMemberIdOrThrow(receiverId);
         Box box = boxService.getByBoxIdOrElseThrow(boxId);
 
         // 기존 박스 멤버인지 검증

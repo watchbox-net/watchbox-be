@@ -6,13 +6,10 @@ import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.auth.dto.TokenRefreshResponse;
 import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.auth.entity.OAuthProvider;
-import net.watchbox.domain.auth.service.GoogleNativeAuthService;
-import net.watchbox.domain.auth.service.NativeAuthService;
-import net.watchbox.domain.auth.service.OAuthAccountService;
-import net.watchbox.domain.auth.service.OAuthOneTimeCodeService;
-import net.watchbox.domain.auth.service.TokenService;
+import net.watchbox.domain.auth.service.*;
+import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
@@ -21,14 +18,15 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AuthFacade {
-
-    private final TokenProvider tokenProvider;
-    private final TokenService tokenService;
-    private final MemberService memberService;
-    private final NativeAuthService nativeAuthService;
     private final OAuthAccountService oAuthAccountService;
     private final OAuthOneTimeCodeService oAuthOneTimeCodeService;
     private final GoogleNativeAuthService googleNativeAuthService;
+    private final RefreshTokenSessionService refreshTokenSessionService;
+    private final MemberQueryService memberQueryService;
+    private final AuthService authService;
+    private final TokenProvider tokenProvider;
+    private final TokenService tokenService;
+    private final BoxService boxService;
 
     /** refreshToken 검증 후 토큰 회전. */
     public TokenRefreshResponse refresh(String refreshToken) {
@@ -37,7 +35,7 @@ public class AuthFacade {
         }
 
         Long tokenMemberId = tokenProvider.getMemberId(refreshToken);
-        Member member = memberService.getByMemberIdOrThrow(tokenMemberId);
+        Member member = memberQueryService.getByMemberIdOrThrow(tokenMemberId);
 
         return tokenService.rotate(member, refreshToken);
     }
@@ -49,12 +47,12 @@ public class AuthFacade {
      */
     public TokenRefreshResponse exchange(String oneTimeCode, HttpServletRequest httpRequest) {
         Long memberId = oAuthOneTimeCodeService.consume(oneTimeCode);
-        Member member = memberService.getByMemberIdOrThrow(memberId);
-        return nativeAuthService.issueTokens(member, httpRequest);
+        Member member = memberQueryService.getByMemberIdOrThrow(memberId);
+        return authService.issueTokens(member, httpRequest);
     }
 
     public void logout(Long memberId) {
-        tokenService.logout(memberId);
+        refreshTokenSessionService.delete(memberId);
     }
 
     /**
@@ -75,7 +73,11 @@ public class AuthFacade {
             default -> throw new CustomException(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER);
         };
 
-        Member member = nativeAuthService.findOrCreateMember(oauthAccount);
-        nativeAuthService.issueTokensAndSetCookies(member, httpRequest, httpResponse);
+        boolean isNewMemberByOAuthAccount = authService.isNewMemberByOAuthAccount(oauthAccount);
+        Member member = authService.findOrCreateMemberByOAuthAccount(oauthAccount);
+        if (isNewMemberByOAuthAccount) {
+            boxService.createInitialMyBox(member);
+        }
+        authService.issueTokensAndSetCookies(member, httpRequest, httpResponse);
     }
 }

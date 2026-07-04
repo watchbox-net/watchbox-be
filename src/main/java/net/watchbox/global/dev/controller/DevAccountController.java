@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.dev.dto.DevTokenResponse;
 import net.watchbox.global.util.HttpRequestUtils;
@@ -29,7 +29,7 @@ public class DevAccountController {
     private final AdminProperties adminProperties;
     private final DevAccountService devAccountService;
     private final TokenProvider tokenProvider;
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
 
     @Operation(summary = "관리자 인증", description = "API Key를 이용한 관리자 인증")
     @PostMapping("/auth")
@@ -68,7 +68,7 @@ public class DevAccountController {
     @GetMapping("/member")
     public String getMember(@RequestParam String accessToken) {
         Long memberId = tokenProvider.getMemberId(accessToken);
-        Member member = memberService.getByMemberIdOrThrow(memberId);
+        Member member = memberQueryService.getByMemberIdOrThrow(memberId);
         return "ID: " + member.getMemberId() + "\nName: " + member.getNickname() + "\nEmail: " + member.getEmail();
     }
 

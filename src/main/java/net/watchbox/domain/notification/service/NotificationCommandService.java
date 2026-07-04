@@ -3,7 +3,7 @@ package net.watchbox.domain.notification.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.domain.notification.dto.payload.NotificationPayload;
 import net.watchbox.domain.notification.entity.Notification;
 import net.watchbox.domain.notification.entity.NotificationType;
@@ -20,13 +20,13 @@ import java.util.List;
 public class NotificationCommandService {
 
     private final NotificationRepository notificationRepository;
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
 
     /**
      * 알림 1건 생성 (receiver 한 명당 row 1개 — fan-out on write 시 호출 반복).
      */
     public Notification createNotification(Long receiverId, NotificationType type, NotificationPayload payload) {
-        Member receiver = memberService.getByMemberIdOrThrow(receiverId);
+        Member receiver = memberQueryService.getByMemberIdOrThrow(receiverId);
         return notificationRepository.save(
                 Notification.builder()
                         .receiver(receiver)

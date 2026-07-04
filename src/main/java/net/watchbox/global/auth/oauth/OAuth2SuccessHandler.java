@@ -7,8 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.auth.entity.OAuthAccount;
-import net.watchbox.domain.auth.service.NativeAuthService;
+import net.watchbox.domain.auth.service.AuthService;
 import net.watchbox.domain.auth.service.OAuthOneTimeCodeService;
+import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -30,8 +31,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Value("${url.oauth-callback}")
     private String REDIRECT_PATH;
 
-    private final NativeAuthService nativeAuthService;
+    private final AuthService authService;
     private final OAuthOneTimeCodeService oneTimeCodeService;
+    private final BoxService boxService;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
     @Override
@@ -43,7 +45,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
 
         OAuthAccount oauthAccount = customUser.getOauthAccount();
-        Member member = nativeAuthService.findOrCreateMember(oauthAccount);
+        boolean isNewMemberByOAuthAccount = authService.isNewMemberByOAuthAccount(oauthAccount);
+        Member member = authService.findOrCreateMemberByOAuthAccount(oauthAccount);
+        if (isNewMemberByOAuthAccount) {
+            boxService.createInitialMyBox(member);
+        }
 
         // 하이브리드 분기: 로컬 웹이 개발 서버로 로그인한 경우(진입점에서 표식 쿠키를 심어둠).
         // localhost 는 백엔드 Set-Cookie 를 못 받으므로, 토큰 대신 1회용 oneTimeCode 만 넘겨
@@ -62,7 +68,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
 
         // 일반 분기: dev 웹 / 운영 — 기존대로 백엔드가 직접 쿠키를 심는다.
-        nativeAuthService.issueTokensAndSetCookies(member, request, response);
+        authService.issueTokensAndSetCookies(member, request, response);
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
     }

@@ -9,3 +9,17 @@
 #      auto-startup: false   # @KafkaListener 컨테이너 미기동 → consumer 연결 시도 자체가 없음
 #    admin:
 #      auto-create: false    # NewTopic 빈 자동 생성 안 함 → 부팅 시 KafkaAdmin 연결 시도 없음
+
+# 로컬 관측(trace / metric / profile) 일괄 토글.
+# O11Y_ENABLED 하나로 셋 다 on/off 한다. (base application.yml 의 기본값을 local 에서 덮어씀)
+# 개별로 끄고 켜고 싶으면 TRACING_ACTIVATED / METRICS_ACTIVATED / PYROSCOPE_ENABLED 를 주면 그게 우선.
+management:
+  tracing:
+    enabled: ${TRACING_ACTIVATED:${O11Y_ENABLED:false}}
+  otlp:
+    metrics:
+      export:
+        enabled: ${METRICS_ACTIVATED:${O11Y_ENABLED:false}}
+
+pyroscope:
+  enabled: ${PYROSCOPE_ENABLED:${O11Y_ENABLED:false}}
