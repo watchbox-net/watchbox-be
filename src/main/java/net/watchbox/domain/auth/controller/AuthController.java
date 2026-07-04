@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.auth.dto.CodeExchangeRequest;
 import net.watchbox.domain.auth.dto.NativeLoginRequest;
 import net.watchbox.domain.auth.dto.TokenRefreshRequest;
 import net.watchbox.domain.auth.dto.TokenRefreshResponse;
@@ -14,6 +15,7 @@ import net.watchbox.domain.auth.entity.OAuthProvider;
 import net.watchbox.domain.auth.service.GoogleNativeAuthService;
 import net.watchbox.domain.auth.service.NativeAuthService;
 import net.watchbox.domain.auth.service.OAuthAccountService;
+import net.watchbox.domain.auth.service.OAuthOneTimeCodeService;
 import net.watchbox.domain.auth.service.TokenService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberService;
@@ -38,6 +40,7 @@ public class AuthController {
     private final MemberService memberService;
     private final NativeAuthService nativeAuthService;
     private final OAuthAccountService oAuthAccountService;
+    private final OAuthOneTimeCodeService oAuthOneTimeCodeService;
     private final GoogleNativeAuthService googleNativeAuthService;
 
     @PostMapping("/refresh")
@@ -53,6 +56,21 @@ public class AuthController {
 
         TokenRefreshResponse response = tokenService.rotate(member, refreshToken);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * 하이브리드 로그인(로컬 웹 ↔ 개발 서버) 전용 code → 토큰 교환.
+     * localhost 는 백엔드 Set-Cookie 를 못 받으므로, 로컬 Next.js 서버가 이 API 로 토큰을
+     * 응답 바디로 받아 자기 도메인 쿠키를 직접 심는다. code 는 1회용(30초 TTL).
+     */
+    @PostMapping("/exchange")
+    public ResponseEntity<TokenRefreshResponse> exchange(
+            @RequestBody @Valid CodeExchangeRequest request,
+            HttpServletRequest httpRequest) {
+
+        Long memberId = oAuthOneTimeCodeService.consume(request.getOneTimeCode());
+        Member member = memberService.getByMemberIdOrThrow(memberId);
+        return ResponseEntity.ok(nativeAuthService.issueTokens(member, httpRequest));
     }
 
     @DeleteMapping("/logout")

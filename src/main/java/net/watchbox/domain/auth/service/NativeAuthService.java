@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.auth.dto.TokenRefreshResponse;
 import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
@@ -52,6 +53,16 @@ public class NativeAuthService {
     }
 
     public void issueTokensAndSetCookies(Member member, HttpServletRequest request, HttpServletResponse response) {
+        TokenRefreshResponse tokens = issueTokens(member, request);
+        addTokenCookie(response, ACCESS_TOKEN_COOKIE_NAME, tokens.getAccessToken(), jwtProperties.refreshTokenExpiry());
+        addTokenCookie(response, REFRESH_TOKEN_COOKIE_NAME, tokens.getRefreshToken(), jwtProperties.refreshTokenExpiry());
+    }
+
+    /**
+     * 토큰을 발급(+Redis 세션 저장)하되 쿠키는 심지 않고 값만 반환한다.
+     * 하이브리드 로그인(localhost)에서 프론트가 응답 바디로 토큰을 받아 직접 쿠키를 심는 용도.
+     */
+    public TokenRefreshResponse issueTokens(Member member, HttpServletRequest request) {
         String ip = HttpRequestUtils.extractClientIp(request);
         String deviceInfo = request.getHeader("User-Agent");
 
@@ -59,8 +70,7 @@ public class NativeAuthService {
         refreshTokenSessionService.save(member, refreshToken, ip, deviceInfo);
         String accessToken = tokenProvider.generateToken(member, jwtProperties.accessTokenExpiry());
 
-        addTokenCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, jwtProperties.refreshTokenExpiry());
-        addTokenCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, jwtProperties.refreshTokenExpiry());
+        return new TokenRefreshResponse(accessToken, refreshToken);
     }
 
     private void addTokenCookie(HttpServletResponse response, String name, String value, Duration maxAge) {
