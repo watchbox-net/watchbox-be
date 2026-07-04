@@ -1,7 +1,7 @@
-package net.watchbox.global.s3;
+package net.watchbox.global.file;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.global.s3.dto.PresignedUrlResponse;
+import net.watchbox.global.file.dto.PresignedUrlResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -17,9 +17,12 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * {@link FileService} 의 S3 구현체. AWS S3 의존을 이 클래스 한 곳에 격리한다.
+ */
 @Service
 @RequiredArgsConstructor
-public class S3ImageService {
+public class S3FileStorage implements FileService {
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
@@ -32,6 +35,7 @@ public class S3ImageService {
 
     private static final String BASE_URL = "https://%s.s3.ap-northeast-2.amazonaws.com/%s";
 
+    @Override
     public PresignedUrlResponse getUploadPresignedUrl(String prefix, String fileName) {
         String key = createPath(prefix, fileName);
 
@@ -43,10 +47,11 @@ public class S3ImageService {
         );
 
         String presignedUrl = presignedRequest.url().toString();
-        String imageUrl = BASE_URL.formatted(bucket, key);
-        return new PresignedUrlResponse(presignedUrl, imageUrl);
+        String fileUrl = BASE_URL.formatted(bucket, key);
+        return new PresignedUrlResponse(presignedUrl, fileUrl);
     }
 
+    @Override
     public String uploadBytes(String key, byte[] data, String contentType) {
         s3Client.putObject(
                 PutObjectRequest.builder()
@@ -59,8 +64,9 @@ public class S3ImageService {
         return BASE_URL.formatted(bucket, key);
     }
 
-    public void delete(String imageUrl) {
-        String key = imageUrl.substring(imageUrl.indexOf(".amazonaws.com/") + ".amazonaws.com/".length());
+    @Override
+    public void delete(String fileUrl) {
+        String key = fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + ".amazonaws.com/".length());
         s3Client.deleteObject(DeleteObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
