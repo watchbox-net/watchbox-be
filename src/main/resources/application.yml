@@ -102,7 +102,7 @@ spring:
       properties:
         request.timeout.ms: 3000
 
-# 토픽 이름 환경별 분리 (이전 답변의 A안)
+# 토픽 이름 환경별 분리
 kafka:
   topics:
     health-check: ${spring.profiles.active}.healthcheck
