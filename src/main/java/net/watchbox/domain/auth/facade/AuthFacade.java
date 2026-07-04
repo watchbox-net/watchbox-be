@@ -21,7 +21,6 @@ public class AuthFacade {
     private final OAuthAccountService oAuthAccountService;
     private final OAuthOneTimeCodeService oAuthOneTimeCodeService;
     private final GoogleNativeAuthService googleNativeAuthService;
-    private final RefreshTokenSessionService refreshTokenSessionService;
     private final MemberQueryService memberQueryService;
     private final AuthService authService;
     private final TokenProvider tokenProvider;
@@ -52,7 +51,7 @@ public class AuthFacade {
     }
 
     public void logout(Long memberId) {
-        refreshTokenSessionService.delete(memberId);
+        tokenService.logout(memberId);
     }
 
     /**
