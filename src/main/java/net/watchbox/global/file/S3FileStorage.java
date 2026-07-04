@@ -30,10 +30,12 @@ public class S3FileStorage implements FileService {
     @Value("${spring.cloud.aws.s3.exp-time}")
     private Long expTime;
 
+    /** 파일 접근 base URL (URL 조립의 단일 출처). */
+    @Value("${file.base-url}")
+    private String baseUrl;
+
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
-
-    private static final String BASE_URL = "https://%s.s3.ap-northeast-2.amazonaws.com/%s";
 
     @Override
     public PresignedUrlResponse getUploadPresignedUrl(String prefix, String fileName) {
@@ -47,7 +49,7 @@ public class S3FileStorage implements FileService {
         );
 
         String presignedUrl = presignedRequest.url().toString();
-        String fileUrl = BASE_URL.formatted(bucket, key);
+        String fileUrl = toFileUrl(key);
         return new PresignedUrlResponse(presignedUrl, fileUrl);
     }
 
@@ -61,16 +63,26 @@ public class S3FileStorage implements FileService {
                         .build(),
                 RequestBody.fromBytes(data)
         );
-        return BASE_URL.formatted(bucket, key);
+        return toFileUrl(key);
     }
 
     @Override
     public void delete(String fileUrl) {
-        String key = fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + ".amazonaws.com/".length());
+        String key = extractKey(fileUrl);
         s3Client.deleteObject(DeleteObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
                 .build());
+    }
+
+    /** key → 공개 접근 URL (base-url 기준). */
+    private String toFileUrl(String key) {
+        return baseUrl + "/" + key;
+    }
+
+    /** 공개 URL → S3 object key (base-url 접두사 제거). */
+    private String extractKey(String fileUrl) {
+        return fileUrl.substring(baseUrl.length() + 1);
     }
 
     private String createPath(String prefix, String fileName) {

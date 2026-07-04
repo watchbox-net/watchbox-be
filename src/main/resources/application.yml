@@ -112,6 +112,11 @@ kafka:
 #  level:
 #    org.hibernate.orm.jdbc.bind: trace
 
+# 파일(S3/CDN) 접근 base URL — URL 조립·검증의 단일 출처.
+# CloudFront 도입 시 이 값만 CDN 도메인으로 교체하면 됨.
+file:
+  base-url: https://${S3_BUCKET}.s3.ap-northeast-2.amazonaws.com
+
 tmdb:
   api:
     key: ${TMDB_API_KEY}

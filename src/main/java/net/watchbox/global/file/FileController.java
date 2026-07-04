@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class FileController {
 
     private final FileService fileService;
+    private final FileUrlValidator fileUrlValidator;
 
     @PostMapping("/presigned-url")
     @Operation(
@@ -41,7 +42,7 @@ public class FileController {
     @DeleteMapping
     @Operation(summary = "파일 삭제", description = "fileUrl로 저장소에서 파일을 삭제합니다.")
     public ResponseEntity<ApiResponse<Void>> delete(@RequestParam String fileUrl) {
-        FileUrlValidator.validate(fileUrl);
+        fileUrlValidator.validate(fileUrl);
         fileService.delete(fileUrl);
         return ResponseEntity.ok(ApiResponse.success());
     }
