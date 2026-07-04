@@ -27,9 +27,9 @@ public class AuthController {
     private final AuthFacade authFacade;
 
     @PostMapping("/refresh")
-    public ResponseEntity<TokenRefreshResponse> createNewAccessToken(@RequestBody TokenRefreshRequest request) {
+    public ResponseEntity<ApiResponse<TokenRefreshResponse>> createNewAccessToken(@RequestBody TokenRefreshRequest request) {
         TokenRefreshResponse response = authFacade.refresh(request.getRefreshToken());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
     }
 
     /**
@@ -38,11 +38,11 @@ public class AuthController {
      * 응답 바디로 받아 자기 도메인 쿠키를 직접 심는다. code 는 1회용(30초 TTL).
      */
     @PostMapping("/exchange")
-    public ResponseEntity<TokenRefreshResponse> exchange(
+    public ResponseEntity<ApiResponse<TokenRefreshResponse>> exchange(
             @RequestBody @Valid CodeExchangeRequest request,
             HttpServletRequest httpRequest) {
 
-        return ResponseEntity.ok(authFacade.exchange(request.getOneTimeCode(), httpRequest));
+        return ResponseEntity.ok(ApiResponse.success(authFacade.exchange(request.getOneTimeCode(), httpRequest)));
     }
 
     /**

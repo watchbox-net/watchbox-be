@@ -116,7 +116,7 @@ public class ContentCommandService {
                 .voteCount(tmdbMovieDetail.getVoteCount())
                 .releaseDate(TmdbUtils.extractDate(tmdbMovieDetail.getReleaseDate()))
                 .originCountry(tmdbMovieDetail.getOriginCountry().isEmpty() ? null :
-                        Country.fromCode(tmdbMovieDetail.getOriginCountry().get(0)))
+                        Country.fromCode(tmdbMovieDetail.getOriginCountry().getFirst()))
                 .genreIds(tmdbMovieDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
                 .build());
     }
@@ -136,7 +136,7 @@ public class ContentCommandService {
                 .lastAirDate(TmdbUtils.extractDate(tmdbTvSeriesDetail.getLastAirDate()))
                 .numberOfSeasons(tmdbTvSeriesDetail.getNumberOfSeasons())
                 .originCountry(tmdbTvSeriesDetail.getOriginCountry().isEmpty() ? null :
-                        Country.fromCode(tmdbTvSeriesDetail.getOriginCountry().get(0)))
+                        Country.fromCode(tmdbTvSeriesDetail.getOriginCountry().getFirst()))
                 .genreIds(tmdbTvSeriesDetail.getGenres().stream().map(g -> g.getId().intValue()).toList())
                 .build());
     }
