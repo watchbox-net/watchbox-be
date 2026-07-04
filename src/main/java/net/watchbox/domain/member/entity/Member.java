@@ -59,7 +59,7 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoxJoinRequest> sentBoxJoinRequests;
 
-    /* ================= implements from UserDetails ================= */
+    /* ──────────────── implements from UserDetails ──────────────── */
     @Override // 권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));

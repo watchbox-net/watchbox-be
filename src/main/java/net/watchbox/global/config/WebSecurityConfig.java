@@ -2,21 +2,18 @@ package net.watchbox.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.auth.service.AuthService;
+import net.watchbox.domain.auth.service.OAuthOneTimeCodeService;
 import net.watchbox.domain.box.service.box.BoxService;
-import net.watchbox.domain.member.service.MemberService;
-import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.global.auth.admin.AdminAuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import net.watchbox.global.auth.jwt.PublicPaths;
 import net.watchbox.global.auth.jwt.TokenAuthenticationFilter;
-import net.watchbox.domain.auth.service.RefreshTokenSessionService;
 import net.watchbox.global.auth.jwt.TokenProvider;
 import net.watchbox.global.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
 import net.watchbox.global.auth.oauth.OAuth2UserCustomService;
 import net.watchbox.global.properties.AdminProperties;
-import net.watchbox.global.properties.CookieProperties;
-import net.watchbox.global.properties.JwtProperties;
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,14 +34,10 @@ public class WebSecurityConfig {
     private final TokenProvider tokenProvider;
     private final ObjectMapper objectMapper;
     private final OAuth2UserCustomService oAuth2UserCustomService;
-    private final RefreshTokenSessionService refreshTokenSessionService;
-
-    private final MemberService memberService;
-    private final OAuthAccountService oAuthAccountService;
+    private final AuthService authService;
+    private final OAuthOneTimeCodeService oAuthOneTimeCodeService;
     private final BoxService boxService;
     private final AdminProperties adminProperties;
-    private final JwtProperties jwtProperties;
-    private final CookieProperties cookieProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -112,15 +105,6 @@ public class WebSecurityConfig {
 
     @Bean
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(
-                tokenProvider,
-                refreshTokenSessionService,
-                oAuth2AuthorizationRequestBasedOnCookieRepository(),
-                memberService,
-                oAuthAccountService,
-                boxService,
-                jwtProperties,
-                cookieProperties
-        );
+        return new OAuth2SuccessHandler(authService, oAuthOneTimeCodeService, boxService, oAuth2AuthorizationRequestBasedOnCookieRepository());
     }
 }

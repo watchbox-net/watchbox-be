@@ -30,7 +30,7 @@ public class OAuthAccount extends BaseTime {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(name = "oauthId", nullable = false, updatable = false, unique = true)
+    @Column(name = "oauth_id", nullable = false, updatable = false, unique = true)
     private String oauthId; // 소셜로그인 ID
 
     @Column(name = "email", nullable = false, updatable = false) //, unique = true) ToDo

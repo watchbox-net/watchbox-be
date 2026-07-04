@@ -13,7 +13,7 @@ import net.watchbox.domain.content.dto.list.ContentCursorPageResponse;
 import net.watchbox.domain.member.dto.response.MyPageResponse;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.facade.MemberFacade;
-import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.domain.record.dto.record.request.ContentRecordCountRequest;
 import net.watchbox.domain.record.dto.record.request.ContentRecordQueryRequest;
 import net.watchbox.domain.record.dto.record.response.ContentRecordCountResponse;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Preview", description = "샘플 화면 API")
 public class PreviewController {
     private final static String SAMPLE_NICKNAME = "해달";
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
 
     private final BoxFacade boxFacade;
     private final BoxContentFacade boxContentFacade;
@@ -48,7 +48,7 @@ public class PreviewController {
     @Operation(summary = "Preview 박스 페이지 조회")
     @GetMapping("/boxes")
     public ResponseEntity<ApiResponse<BoxPageResponse>> getBoxPage() {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        Member member = memberQueryService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(ApiResponse.success(
                 boxFacade.getBoxPage(member)
         ));
@@ -61,7 +61,7 @@ public class PreviewController {
             @ModelAttribute BoxContentQueryRequest request,
             @PathVariable("boxId") Long boxId
     ) {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        Member member = memberQueryService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(
                 ApiResponse.success(boxContentFacade.getBoxContentPage(member, request, boxId))
         );
@@ -74,7 +74,7 @@ public class PreviewController {
             @ModelAttribute BoxContentCountRequest request,
             @PathVariable("boxId") Long boxId
     ) {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        Member member = memberQueryService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(
                 ApiResponse.success(boxContentFacade.getBoxContentCount(member, request, boxId))
         );
@@ -86,7 +86,7 @@ public class PreviewController {
             @ParameterObject
             @ModelAttribute ContentRecordQueryRequest request
     ) {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        Member member = memberQueryService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(ApiResponse.success(
                 contentRecordFacade.getMyRecordedContentPage(member, request)
         ));
@@ -98,7 +98,7 @@ public class PreviewController {
             @ParameterObject
             @ModelAttribute ContentRecordCountRequest request
     ) {
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        Member member = memberQueryService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(ApiResponse.success(
                 contentRecordFacade.getMyContentRecordCount(member, request)
         ));
@@ -107,7 +107,7 @@ public class PreviewController {
     @Operation(summary = "Preview 마이 페이지 조회", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
     @GetMapping("/members/mypage")
     public ResponseEntity<ApiResponse<MyPageResponse>> getMyPage(){
-        Member member = memberService.getByNicknameOrThrow(SAMPLE_NICKNAME);
+        Member member = memberQueryService.getByNicknameOrThrow(SAMPLE_NICKNAME);
         return ResponseEntity.ok(
                 ApiResponse.success(memberFacade.getMyPage(member))
         );

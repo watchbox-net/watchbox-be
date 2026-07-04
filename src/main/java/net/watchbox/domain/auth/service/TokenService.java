@@ -29,6 +29,7 @@ public class TokenService {
         return refreshToken;
     }
 
+    /** 로그아웃. Redis 에 저장된 리프레시 토큰 세션을 삭제해 무효화한다. */
     public void logout(Long memberId) {
         refreshTokenSessionService.delete(memberId);
     }

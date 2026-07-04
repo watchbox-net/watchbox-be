@@ -12,7 +12,7 @@
             <appender-ref ref="CONSOLE"/>
         </root>
 
-        <!-- 로컬엔 보통 Kafka 브로커가 안 떠 있음 → AdminClient/Consumer 재연결 시도 로그 억제.
+        <!-- 로컬에 Kafka 브로커가 안 떠 있을경우 → AdminClient/Consumer 재연결 시도 로그 억제.
              dev/prod 에선 정의하지 않아 진짜 연결 장애는 그대로 보임. -->
         <logger name="org.apache.kafka" level="OFF"/>
         <logger name="org.springframework.kafka" level="OFF"/>

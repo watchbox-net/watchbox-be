@@ -17,7 +17,8 @@ import net.watchbox.domain.member.dto.response.search.BoxInviteStatus;
 import net.watchbox.domain.member.dto.response.search.MemberSearchPageResponse;
 import net.watchbox.domain.member.dto.response.search.MemberSearchResponse;
 import net.watchbox.domain.member.entity.Member;
-import net.watchbox.domain.member.service.MemberService;
+import net.watchbox.domain.member.service.MemberCommandService;
+import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.domain.record.service.record.ContentRecordQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class MemberFacade {
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
+    private final MemberCommandService memberCommandService;
     private final BoxMemberService boxMemberService;
     private final ContentRecordQueryService contentRecordQueryService;
     private final BoxService boxService;
@@ -39,7 +41,7 @@ public class MemberFacade {
 
     @Transactional(readOnly = true)
     public MemberSearchPageResponse searchMemberListWithSharedStatus(Member member, String keyword, Long boxId) {
-        List<MemberSearchResponse> memberSearchResponseList  = memberService.searchMembersForBoxInvitation(keyword, boxId, member.getMemberId())
+        List<MemberSearchResponse> memberSearchResponseList  = memberQueryService.searchMembersForBoxInvitation(keyword, boxId, member.getMemberId())
                 .stream()
                 .map(p -> MemberSearchResponse.builder()
                         .memberId(p.getMemberId())
@@ -56,7 +58,7 @@ public class MemberFacade {
 
     @Transactional(readOnly = true)
     public MyPageResponse getMyPage(Member member) {
-        ProfileResponse profileResponse = memberService.getProfile(member);
+        ProfileResponse profileResponse = memberQueryService.getProfile(member);
         long likeCount = contentRecordQueryService.countLikedContentsByMember(member);
         long watchStatusCount = contentRecordQueryService.countWatchStatusByMember(member);
         long boxCount = boxMemberService.countByMember(member); // 회원이 속한 박스 개수 (마이 박스 + 공유 박스) | 박스 멤버 개수가 곧 박스 개수이다
@@ -70,7 +72,7 @@ public class MemberFacade {
 
     @Transactional
     public ProfileResponse updateProfile(Member member, ProfileUpdateRequest request) {
-        return ProfileResponse.from(memberService.updateProfile(member, request));
+        return ProfileResponse.from(memberCommandService.updateProfile(member, request));
     }
 
     @Transactional
@@ -105,7 +107,7 @@ public class MemberFacade {
         oAuthAccountService.deleteByMember(member);
 
         // Member 및 연관된 엔티티들 삭제 (cascade)
-        memberService.deleteMember(member);
+        memberCommandService.deleteMember(member);
 
         // ToDO: 이메일로 탈퇴 회원 정보 보내기
     }
