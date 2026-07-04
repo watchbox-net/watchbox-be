@@ -110,7 +110,7 @@ public class TmdbAppendToResponseConverter {
     }
 
     private static Crew toCrew(List<TmdbCrewItem> sameIdGroup) {
-        TmdbCrewItem first = sameIdGroup.get(0);
+        TmdbCrewItem first = sameIdGroup.getFirst();
         // 한 인물이 작품에서 여러 부서를 겸한 경우(예: 감독+각본) 모두 보존
         List<Department> departmentList = sameIdGroup.stream()
                 .map(TmdbCrewItem::getDepartment)
@@ -199,7 +199,7 @@ public class TmdbAppendToResponseConverter {
     }
 
     private static Crew toCrewFromAggregate(List<TmdbAggregateCrewItem> sameIdGroup) {
-        TmdbAggregateCrewItem first = sameIdGroup.get(0);
+        TmdbAggregateCrewItem first = sameIdGroup.getFirst();
         List<Department> departmentList = sameIdGroup.stream()
                 .map(TmdbAggregateCrewItem::getDepartment)
                 .filter(Objects::nonNull)
@@ -286,7 +286,7 @@ public class TmdbAppendToResponseConverter {
 
     /** 같은 (tmdbId, mediaType) 작품 그룹을 하나의 CombinedCredit 로 머지 */
     private static CombinedCredit mergeWorkGroup(List<RawCredit> group) {
-        RawCredit first = group.get(0);
+        RawCredit first = group.getFirst();
         List<CreditRole> roles = group.stream()
                 .map(RawCredit::role).distinct().toList();
         String character = group.stream()

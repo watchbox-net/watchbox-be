@@ -53,6 +53,9 @@ public class WebSecurityConfig {
                         // SSE(SseEmitter) 등 async 응답의 ASYNC 재디스패치는 인증 재검증에서 제외.
                         // 최초 REQUEST에서 이미 인증 완료 → ASYNC는 응답 생성 단계라 재검증 불필요.
                         .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
+                        // 인증 필요 예외(예: /api/auth/logout)를 permitAll 프리픽스보다 먼저 authenticated 로 등록.
+                        // (없으면 /api/auth/** permitAll 에 먹혀 토큰 없이도 통과 → @AuthenticationPrincipal null)
+                        .requestMatchers(PublicPaths.authRequiredExceptionPatterns()).authenticated()
                         .requestMatchers(PublicPaths.antPatterns()).permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()

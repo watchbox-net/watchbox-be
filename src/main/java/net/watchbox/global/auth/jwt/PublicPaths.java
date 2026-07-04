@@ -24,6 +24,12 @@ public final class PublicPaths {
             "/v3/api-docs/"
     );
 
+    /** SKIP_TOKEN_PREFIXES 에 매칭되더라도 예외적으로 인증이 필요한 경로.
+     *  예: /api/auth/ 는 스킵 대상이지만 /api/auth/logout 은 @AuthenticationPrincipal 로 회원을 식별해야 한다. */
+    public static final List<String> AUTH_REQUIRED_EXCEPTIONS = List.of(
+            "/api/auth/logout"
+    );
+
     /** 비로그인도 접근 가능 — 토큰 있으면 인증 설정, 없으면 비로그인으로 통과 */
     public static final List<String> OPTIONAL_AUTH_PREFIXES = List.of(
             "/api/discover/",
@@ -36,5 +42,10 @@ public final class PublicPaths {
                 SKIP_TOKEN_PREFIXES.stream(),
                 OPTIONAL_AUTH_PREFIXES.stream()
         ).map(p -> p.endsWith("/") ? p + "**" : p + "/**").toArray(String[]::new);
+    }
+
+    /** 인증 필요 예외 경로들의 requestMatchers 용 배열 (permitAll 보다 먼저 authenticated 로 등록). */
+    public static String[] authRequiredExceptionPatterns() {
+        return AUTH_REQUIRED_EXCEPTIONS.toArray(String[]::new);
     }
 }

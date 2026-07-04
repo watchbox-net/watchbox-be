@@ -1,5 +1,7 @@
 package net.watchbox.global.auth.oauth;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,7 @@ import java.nio.charset.StandardCharsets;
  *
  * <p>target 은 오픈 리다이렉트 방지를 위해 {@code http://localhost:} 로만 제한한다.
  */
-@Slf4j
+@Tag(name = "OAuth Local Entry", description = "로컬 웹 ↔ 개발 서버 하이브리드 로그인 진입점 (dev 전용)")
 @Profile("dev")
 @RestController
 public class OAuthLocalEntryController {
@@ -37,6 +39,7 @@ public class OAuthLocalEntryController {
     private static final String ALLOWED_TARGET_PREFIX = "http://localhost:";
 
     @GetMapping("/oauth2/local-entry")
+    @Operation(summary = "하이브리드 로그인 요청", description = "표식 쿠키를 심고 구글 인증으로 리다이렉트합니다. target 은 localhost 만 허용.")
     public void localEntry(@RequestParam String target, HttpServletResponse response) throws IOException {
         if (!target.startsWith(ALLOWED_TARGET_PREFIX)) {
             throw new CustomException(ErrorCode.PARAMETER_BAD_REQUEST);
