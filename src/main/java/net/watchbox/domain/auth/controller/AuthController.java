@@ -52,17 +52,16 @@ public class AuthController {
      * 네이티브 앱(WebView)에서 소셜 SDK로 얻은 토큰으로 로그인.
      * - Google: serverAuthCode (offlineAccess=true 로 획득)
      * - Apple: authorizationCode (Phase 4)
-     * 성공 시 기존 redirect OAuth와 동일한 HttpOnly 쿠키를 설정하고 200 반환.
+     * provider 는 요청 본문으로 전달한다. 성공 시 기존 redirect OAuth와 동일한 HttpOnly 쿠키를 설정하고 200 반환.
      */
-    @PostMapping("/login/{provider}")
-    @Operation(summary = "네이티브 소셜로그인", description = "WebView 앱에서 네이티브 SDK 로 얻은 토큰으로 로그인합니다.")
+    @PostMapping("/login")
+    @Operation(summary = "네이티브 소셜로그인", description = "WebView 앱에서 네이티브 SDK 로 얻은 토큰으로 로그인합니다. provider 는 요청 본문으로 전달합니다.")
     public ResponseEntity<ApiResponse<Void>> nativeLogin(
-            @PathVariable String provider,
             @RequestBody @Valid NativeLoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
 
-        authFacade.nativeLogin(provider, request.getToken(), httpRequest, httpResponse);
+        authFacade.nativeLogin(request.getProvider(), request.getToken(), httpRequest, httpResponse);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
