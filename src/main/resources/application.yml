@@ -112,6 +112,11 @@ kafka:
 #  level:
 #    org.hibernate.orm.jdbc.bind: trace
 
+# 파일(S3/CDN) 접근 base URL — URL 조립·검증의 단일 출처.
+# CloudFront 도입 시 이 값만 CDN 도메인으로 교체하면 됨.
+file:
+  base-url: https://${S3_BUCKET}.s3.ap-northeast-2.amazonaws.com
+
 tmdb:
   api:
     key: ${TMDB_API_KEY}
@@ -128,6 +133,11 @@ url:
 
 admin:
   api-key: ${ADMIN_API_KEY:admin}
+
+# Sign in with Apple (네이티브). 앱이 받은 identityToken(JWT)을 Apple JWKS 로 검증한다.
+# client-ids: identityToken 의 aud 허용값(쉼표 구분). 네이티브=iOS 앱 번들ID, 웹=Services ID.
+apple:
+  client-ids: ${APPLE_CLIENT_IDS:net.watchbox.app}
 
 jwt:
   issuer: ${JWT_ISSUER:abc}

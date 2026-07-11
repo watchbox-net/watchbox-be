@@ -1,4 +1,4 @@
-package net.watchbox.global.s3.dto;
+package net.watchbox.global.file.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

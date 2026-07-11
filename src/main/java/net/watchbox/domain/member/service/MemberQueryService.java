@@ -18,12 +18,15 @@ public class MemberQueryService {
     private final MemberRepository memberRepository;
 
     public boolean notExistsByOauthAccount(OAuthAccount oauthAccount) {
-        return memberRepository.findByOauthAccount(oauthAccount).isEmpty();
+        return oauthAccount.getMember() == null;
     }
 
     public Member getByOauthAccount(OAuthAccount oauthAccount) {
-        return memberRepository.findByOauthAccount(oauthAccount)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Member member = oauthAccount.getMember();
+        if (member == null) {
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+        return member;
     }
 
     public Member getByMemberIdOrThrow(Long memberId) {
@@ -34,10 +37,6 @@ public class MemberQueryService {
     public Member getByNicknameOrThrow(String nickname) {
         return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND, nickname));
-    }
-
-    public Member getByNameOrThrow(String name) {
-        return memberRepository.findByOauthAccount_Name(name);
     }
 
     public ProfileResponse getProfile(Member member) {

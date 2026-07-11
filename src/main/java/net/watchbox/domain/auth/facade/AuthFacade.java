@@ -21,6 +21,7 @@ public class AuthFacade {
     private final OAuthAccountService oAuthAccountService;
     private final OAuthOneTimeCodeService oAuthOneTimeCodeService;
     private final GoogleNativeAuthService googleNativeAuthService;
+    private final AppleNativeAuthService appleNativeAuthService;
     private final MemberQueryService memberQueryService;
     private final AuthService authService;
     private final TokenProvider tokenProvider;
@@ -57,17 +58,23 @@ public class AuthFacade {
     /**
      * 네이티브 앱(WebView)에서 소셜 SDK로 얻은 토큰으로 로그인.
      * - Google: serverAuthCode (offlineAccess=true 로 획득)
-     * - Apple: authorizationCode (Phase 4)
+     * - Apple: identityToken(JWT, Apple JWKS 로 검증)
      * 성공 시 기존 redirect OAuth와 동일한 HttpOnly 쿠키를 설정한다.
      */
-    public void nativeLogin(String provider, String token,
+    public void nativeLogin(OAuthProvider provider, String token,
                              HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-        OAuthAccount oauthAccount = switch (provider.toLowerCase()) {
-            case "google" -> {
+        OAuthAccount oauthAccount = switch (provider) {
+            case GOOGLE -> {
                 GoogleNativeAuthService.GoogleUserInfo userInfo =
                         googleNativeAuthService.exchangeServerAuthCode(token);
                 yield oAuthAccountService.findOrCreateNativeAccount(
                         OAuthProvider.GOOGLE, userInfo.sub(), userInfo.email(), userInfo.name());
+            }
+            case APPLE -> {
+                AppleNativeAuthService.AppleUserInfo userInfo =
+                        appleNativeAuthService.verifyIdentityToken(token);
+                yield oAuthAccountService.findOrCreateNativeAccount(
+                        OAuthProvider.APPLE, userInfo.sub(), userInfo.email(), userInfo.name());
             }
             default -> throw new CustomException(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER);
         };

@@ -24,9 +24,11 @@ public class OAuthAccount extends BaseTime {
 
     /**
      * 연결된 멤버 (FK 소유측). nullable — OAuth 로그인 시 OAuthAccount 가 Member 보다 먼저 생성됨.
-     * 추후 소셜계정 다중 연동(N:1) 확장 시 {@code @ManyToOne} 으로 바꾸면 됨.
+     * 한 Member 에 여러 소셜계정(구글·애플)을 붙일 수 있도록 N:1. (현재 로그인 로직은 provider 별
+     * 별도 Member 를 만들지만, 추후 계정 연동에 대비해 관계만 N:1 로 열어둠)
+     * 네이티브 로그인은 세션 종료(detach) 후 getMember() 로 참조하므로 EAGER 로 미리 로딩한다.
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     private Member member;
 
