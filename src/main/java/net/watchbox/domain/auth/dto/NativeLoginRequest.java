@@ -16,5 +16,5 @@ public class NativeLoginRequest {
     private OAuthProvider provider;
 
     @NotBlank
-    private String token; // Google: serverAuthCode, Apple: authorizationCode
+    private String token; // Google: serverAuthCode, Apple: identityToken(JWT)
 }
