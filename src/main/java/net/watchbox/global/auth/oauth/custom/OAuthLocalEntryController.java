@@ -1,10 +1,10 @@
-package net.watchbox.global.auth.oauth;
+package net.watchbox.global.auth.oauth.custom;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import net.watchbox.global.auth.oauth.OAuth2SuccessHandler;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.context.annotation.Profile;

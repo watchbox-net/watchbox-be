@@ -2,6 +2,7 @@ package net.watchbox.domain.auth.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.auth.dto.SocialUserInfo;
 import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.auth.entity.OAuthProvider;
 import net.watchbox.domain.auth.repository.OAuthAccountRepository;
@@ -93,13 +94,13 @@ public class OAuthAccountService {
     }
 
     @Transactional
-    public OAuthAccount findOrCreateNativeAccount(OAuthProvider provider, String oauthId, String email, String name) {
-        return oAuthAccountRepository.findByOauthId(oauthId)
+    public OAuthAccount findOrCreateNativeAccount(OAuthProvider provider, SocialUserInfo userInfo) {
+        return oAuthAccountRepository.findByOauthId(userInfo.sub())
                 .orElseGet(() -> oAuthAccountRepository.save(OAuthAccount.builder()
                         .oauthProvider(provider)
-                        .oauthId(oauthId)
-                        .email(email)
-                        .name(name)
+                        .oauthId(userInfo.sub())
+                        .email(userInfo.email())
+                        .name(userInfo.name())
                         .build()));
     }
 }

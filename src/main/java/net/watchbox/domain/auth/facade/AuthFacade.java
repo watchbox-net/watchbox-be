@@ -3,6 +3,7 @@ package net.watchbox.domain.auth.facade;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.domain.auth.dto.SocialUserInfo;
 import net.watchbox.domain.auth.dto.TokenRefreshResponse;
 import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.auth.entity.OAuthProvider;
@@ -65,16 +66,12 @@ public class AuthFacade {
                              HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         OAuthAccount oauthAccount = switch (provider) {
             case GOOGLE -> {
-                GoogleNativeAuthService.GoogleUserInfo userInfo =
-                        googleNativeAuthService.exchangeServerAuthCode(token);
-                yield oAuthAccountService.findOrCreateNativeAccount(
-                        OAuthProvider.GOOGLE, userInfo.sub(), userInfo.email(), userInfo.name());
+                SocialUserInfo userInfo = googleNativeAuthService.exchangeServerAuthCode(token);
+                yield oAuthAccountService.findOrCreateNativeAccount(OAuthProvider.GOOGLE, userInfo);
             }
             case APPLE -> {
-                AppleNativeAuthService.AppleUserInfo userInfo =
-                        appleNativeAuthService.verifyIdentityToken(token);
-                yield oAuthAccountService.findOrCreateNativeAccount(
-                        OAuthProvider.APPLE, userInfo.sub(), userInfo.email(), userInfo.name());
+                SocialUserInfo userInfo = appleNativeAuthService.verifyIdentityToken(token);
+                yield oAuthAccountService.findOrCreateNativeAccount(OAuthProvider.APPLE, userInfo);
             }
             default -> throw new CustomException(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER);
         };

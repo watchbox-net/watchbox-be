@@ -1,6 +1,7 @@
 package net.watchbox.domain.auth.service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.auth.dto.SocialUserInfo;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,9 +49,7 @@ public class AppleNativeAuthService {
         this.jwtDecoder = decoder;
     }
 
-    public record AppleUserInfo(String sub, String email, String name) {}
-
-    public AppleUserInfo verifyIdentityToken(String identityToken) {
+    public SocialUserInfo verifyIdentityToken(String identityToken) {
         try {
             Jwt jwt = jwtDecoder.decode(identityToken);
 
@@ -61,7 +60,7 @@ public class AppleNativeAuthService {
             String email = jwt.getClaimAsString("email");
             String resolvedEmail = (email != null) ? email : sub + "@privaterelay.appleid.com";
 
-            return new AppleUserInfo(sub, resolvedEmail, resolvedEmail);
+            return new SocialUserInfo(sub, resolvedEmail, resolvedEmail);
         } catch (JwtException e) {
             log.warn("[AppleNativeAuth] identityToken 검증 실패: {}", e.getMessage());
             throw new CustomException(ErrorCode.INVALID_OAUTH_TOKEN);

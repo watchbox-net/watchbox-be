@@ -11,6 +11,7 @@ import net.watchbox.domain.auth.service.AuthService;
 import net.watchbox.domain.auth.service.OAuthOneTimeCodeService;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.global.auth.oauth.custom.OAuthLocalEntryController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
