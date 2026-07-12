@@ -8,10 +8,14 @@ import net.watchbox.domain.auth.dto.TokenRefreshResponse;
 import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.auth.entity.OAuthProvider;
 import net.watchbox.domain.auth.service.*;
+import net.watchbox.domain.auth.service.custom.AppleNativeAuthService;
+import net.watchbox.domain.auth.service.custom.GoogleNativeAuthService;
 import net.watchbox.domain.box.service.box.BoxService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberQueryService;
 import net.watchbox.global.auth.jwt.TokenProvider;
+import net.watchbox.global.auth.oauth.custom.AppleWebLoginService;
+import net.watchbox.global.auth.oauth.custom.GoogleWebLoginService;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.stereotype.Component;
@@ -28,6 +32,8 @@ public class AuthFacade {
     private final TokenProvider tokenProvider;
     private final TokenService tokenService;
     private final BoxService boxService;
+    private final AppleWebLoginService appleWebLoginService;
+    private final GoogleWebLoginService googleWebLoginService;
 
     /** refreshToken 검증 후 토큰 회전. */
     public TokenRefreshResponse refresh(String refreshToken) {
@@ -82,5 +88,21 @@ public class AuthFacade {
             boxService.createInitialMyBox(member);
         }
         authService.issueTokensAndSetCookies(member, httpRequest, httpResponse);
+    }
+
+    /** 애플 웹 로그인 진입 — 애플 인증 URL 생성 + state 쿠키 심기. (AppleWebLoginService 위임) */
+    public String appleWebAuthorizeUrl(HttpServletResponse response) {
+        return appleWebLoginService.createAuthorizeUrl(response);
+    }
+
+    /** 애플 웹 로그인 콜백 처리 — id_token 검증 → 회원 처리 → 쿠키 발급 후 리다이렉트 대상 반환. (위임) */
+    public String handleAppleWebCallback(String idToken, String state, String error,
+                                         HttpServletRequest request, HttpServletResponse response) {
+        return appleWebLoginService.handleCallback(idToken, state, error, request, response);
+    }
+
+    /** 구글 웹 로그인 진입 — Spring Security 진입 경로로 위임할 리다이렉트 대상 반환. (GoogleWebLoginService 위임) */
+    public String googleWebAuthorizeRedirect(HttpServletResponse response) {
+        return googleWebLoginService.resolveEntryRedirect(response);
     }
 }
