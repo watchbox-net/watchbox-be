@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.auth.dto.SocialUserInfo;
 import net.watchbox.domain.auth.entity.OAuthAccount;
 import net.watchbox.domain.auth.entity.OAuthProvider;
-import net.watchbox.domain.auth.service.AppleNativeAuthService;
+import net.watchbox.domain.auth.service.custom.AppleNativeAuthService;
 import net.watchbox.domain.auth.service.AuthService;
 import net.watchbox.domain.auth.service.OAuthAccountService;
 import net.watchbox.domain.box.service.box.BoxService;

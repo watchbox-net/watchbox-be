@@ -1,4 +1,4 @@
-package net.watchbox.domain.auth.service;
+package net.watchbox.domain.auth.service.custom;
 
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.auth.dto.SocialUserInfo;

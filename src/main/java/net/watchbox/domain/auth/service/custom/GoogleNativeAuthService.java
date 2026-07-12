@@ -1,4 +1,4 @@
-package net.watchbox.domain.auth.service;
+package net.watchbox.domain.auth.service.custom;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
