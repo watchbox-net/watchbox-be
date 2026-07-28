@@ -134,10 +134,13 @@ url:
 admin:
   api-key: ${ADMIN_API_KEY:admin}
 
-# Sign in with Apple (네이티브). 앱이 받은 identityToken(JWT)을 Apple JWKS 로 검증한다.
-# client-ids: identityToken 의 aud 허용값(쉼표 구분). 네이티브=iOS 앱 번들ID, 웹=Services ID.
+# Sign in with Apple. Spring Security 등록이 아닌 커스텀 처리(AppleNativeAuthService / AppleWebLoginController)라 최상위 프로퍼티로 둔다.
 apple:
+  # identityToken(JWT) 검증 시 허용할 aud 목록(쉼표). 네이티브=iOS 번들ID, 웹=Services ID 둘 다 넣는다.
   client-ids: ${APPLE_CLIENT_IDS:net.watchbox.app}
+  web:
+    client-id: ${APPLE_WEB_CLIENT_ID:}        # 웹 Services ID (예: net.watchbox.service.dev)
+    redirect-uri: ${APPLE_WEB_REDIRECT_URI:}  # Apple 에 등록한 https 콜백 (…/oauth2/apple/callback)
 
 jwt:
   issuer: ${JWT_ISSUER:abc}

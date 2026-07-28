@@ -1,8 +1,9 @@
-package net.watchbox.domain.auth.service;
+package net.watchbox.domain.auth.service.custom;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.auth.dto.SocialUserInfo;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,9 +38,7 @@ public class GoogleNativeAuthService {
         this.objectMapper = objectMapper;
     }
 
-    public record GoogleUserInfo(String sub, String email, String name) {}
-
-    public GoogleUserInfo exchangeServerAuthCode(String serverAuthCode) {
+    public SocialUserInfo exchangeServerAuthCode(String serverAuthCode) {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("code", serverAuthCode);
         form.add("client_id", clientId);
@@ -73,7 +72,7 @@ public class GoogleNativeAuthService {
         return parseIdToken((String) tokenResponse.get("id_token"));
     }
 
-    private GoogleUserInfo parseIdToken(String idToken) {
+    private SocialUserInfo parseIdToken(String idToken) {
         try {
             String[] parts = idToken.split("\\.");
             if (parts.length < 2) throw new CustomException(ErrorCode.INVALID_OAUTH_TOKEN);
@@ -90,7 +89,7 @@ public class GoogleNativeAuthService {
 
             if (sub == null || email == null) throw new CustomException(ErrorCode.INVALID_OAUTH_TOKEN);
 
-            return new GoogleUserInfo(sub, email, name);
+            return new SocialUserInfo(sub, email, name);
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
