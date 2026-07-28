@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class RefreshTokenSessionService {
     private final JwtProperties jwtProperties;
 
     public void save(Member member, String token, String ip, String deviceInfo) {
-        OffsetDateTime now = OffsetDateTime.now(KST);
+        OffsetDateTime now = OffsetDateTime.now(KST).truncatedTo(ChronoUnit.SECONDS);
         long ttlSeconds = jwtProperties.refreshTokenExpiry().toSeconds();
         redisRefreshTokenRepository.save(RedisRefreshToken.builder()
                 .memberId(member.getMemberId())

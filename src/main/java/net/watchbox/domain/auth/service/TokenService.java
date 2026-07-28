@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,7 +79,7 @@ public class TokenService {
         try {
             RedisRefreshToken stored = refreshTokenSessionService.find(memberId)
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
-            OffsetDateTime now = OffsetDateTime.now(KST);
+            OffsetDateTime now = OffsetDateTime.now(KST).truncatedTo(ChronoUnit.SECONDS);
 
             // 1) 현재 토큰과 일치 → 정상 회전
             if (stored.getToken().equals(presentedRefreshToken)) {
