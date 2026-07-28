@@ -7,17 +7,20 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.properties.JwtProperties;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class RefreshTokenSessionService {
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+
     private final RedisRefreshTokenRepository redisRefreshTokenRepository;
     private final JwtProperties jwtProperties;
 
     public void save(Member member, String token, String ip, String deviceInfo) {
-        Instant now = Instant.now();
+        OffsetDateTime now = OffsetDateTime.now(KST);
         long ttlSeconds = jwtProperties.refreshTokenExpiry().toSeconds();
         redisRefreshTokenRepository.save(RedisRefreshToken.builder()
                 .memberId(member.getMemberId())
