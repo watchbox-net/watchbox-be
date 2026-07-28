@@ -35,7 +35,7 @@ public class AuthFacade {
     private final AppleWebLoginService appleWebLoginService;
     private final GoogleWebLoginService googleWebLoginService;
 
-    /** refreshToken 검증 후 토큰 회전. */
+    /** refreshToken 검증 후 토큰 회전(동시 요청 안전 — 락 + 직전 토큰 유예). */
     public TokenRefreshResponse refresh(String refreshToken) {
         if (!tokenProvider.validToken(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
