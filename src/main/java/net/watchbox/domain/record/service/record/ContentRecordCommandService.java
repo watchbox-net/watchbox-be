@@ -33,7 +33,7 @@ public class ContentRecordCommandService {
 
     public void deleteWatchStatus(ContentRecord contentRecord) {
         contentRecord.updateWatchStatus(null);
-        if(contentRecord.getLiked() == null){
+        if(!Boolean.TRUE.equals(contentRecord.getLiked())){
             contentRecordRepository.delete(contentRecord);
         }
     }
