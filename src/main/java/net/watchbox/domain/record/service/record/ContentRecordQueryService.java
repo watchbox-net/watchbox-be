@@ -93,6 +93,43 @@ public class ContentRecordQueryService {
                         r -> r
                 ));
 
+        return applyRecordMap(items, recordMap);
+    }
+
+    /**
+     * 여러 섹션을 <b>mediaType 당 한 번의 IN 쿼리</b>로 개인화한다.
+     *
+     * <p>섹션마다 {@link #attachMemberRecord} 를 부르면 섹션 수만큼 쿼리가 나간다.
+     * 홈(movie 4 + tv 4 섹션)은 8회 → 이 메서드로 mediaType 당 1회, 총 2회가 된다.
+     *
+     * @return 입력 {@code sections} 와 같은 순서·크기의 리스트
+     */
+    public List<List<ContentItem>> attachMemberRecordBatch(
+            List<List<ContentItem>> sections, Member member, MediaType mediaType) {
+        List<Long> tmdbIds = sections.stream()
+                .flatMap(List::stream)
+                .map(item -> item.getContentSummary().getTmdbId())
+                .distinct()
+                .toList();
+
+        if (tmdbIds.isEmpty()) {
+            return sections;
+        }
+
+        Map<Long, ContentRecord> recordMap = getByMemberAndTmdbIdsAndMediaType(member, tmdbIds, mediaType)
+                .stream()
+                .collect(Collectors.toMap(
+                        r -> r.getContent().getTmdbId(),
+                        r -> r
+                ));
+
+        return sections.stream()
+                .map(items -> applyRecordMap(items, recordMap))
+                .toList();
+    }
+
+    // 조회해둔 record 맵을 각 아이템에 병합 (쿼리 없음)
+    private static List<ContentItem> applyRecordMap(List<ContentItem> items, Map<Long, ContentRecord> recordMap) {
         return items.stream()
                 .map(item -> ContentItem.builder()
                         .contentSummary(item.getContentSummary())
