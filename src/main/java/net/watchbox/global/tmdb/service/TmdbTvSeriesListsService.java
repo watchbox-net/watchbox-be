@@ -2,6 +2,7 @@ package net.watchbox.global.tmdb.service;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.global.tmdb.cache.TmdbResponseCache;
 import net.watchbox.global.tmdb.client.TmdbClient;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 @Observed
 public class TmdbTvSeriesListsService { // TV SERIES LISTS
     private final TmdbClient tmdbClient;
+    private final TmdbResponseCache cache;
 
     /**
      * Popular List
@@ -26,14 +28,16 @@ public class TmdbTvSeriesListsService { // TV SERIES LISTS
     }
 
     public Mono<TmdbTvSeriesListsResponse> getPopularTvSeriesListsMono(Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:tv:popular:" + page,
+                TmdbResponseCache.Ttl.STABLE, TmdbTvSeriesListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/tv/popular")
                         .queryParam("page", page)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbTvSeriesListsResponse.class);
+                .bodyToMono(TmdbTvSeriesListsResponse.class));
     }
 
     /**
@@ -44,14 +48,16 @@ public class TmdbTvSeriesListsService { // TV SERIES LISTS
     }
 
     public Mono<TmdbTvSeriesListsResponse> getTopRatedTvSeriesListsMono(Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:tv:top-rated:" + page,
+                TmdbResponseCache.Ttl.STABLE, TmdbTvSeriesListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/tv/top_rated")
                         .queryParam("page", page)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbTvSeriesListsResponse.class);
+                .bodyToMono(TmdbTvSeriesListsResponse.class));
     }
 
     /**
@@ -62,7 +68,9 @@ public class TmdbTvSeriesListsService { // TV SERIES LISTS
     }
 
     public Mono<TmdbTvSeriesListsResponse> getOnTheAirTvSeriesListsMono(Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:tv:on-the-air:" + page,
+                TmdbResponseCache.Ttl.NOW_SHOWING, TmdbTvSeriesListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/tv/on_the_air")
@@ -70,6 +78,6 @@ public class TmdbTvSeriesListsService { // TV SERIES LISTS
                         .queryParam("timezone", "Asia/Seoul") // 특정 시간대의 방영중인 TV 시리즈를 필터링 (예: Asia/Seoul, America/New_York)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbTvSeriesListsResponse.class);
+                .bodyToMono(TmdbTvSeriesListsResponse.class));
     }
 }

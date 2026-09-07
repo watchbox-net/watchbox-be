@@ -2,6 +2,7 @@ package net.watchbox.global.tmdb.service;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.global.tmdb.cache.TmdbResponseCache;
 import net.watchbox.global.tmdb.client.TmdbClient;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import reactor.core.publisher.Mono;
 @Observed
 public class TmdbMovieListsService { // MOVIE LISTS
     private final TmdbClient tmdbClient;
+    private final TmdbResponseCache cache;
 
     /**
      * Popular
@@ -32,7 +34,9 @@ public class TmdbMovieListsService { // MOVIE LISTS
     }
 
     public Mono<TmdbMovieListsResponse> getPopularMovieListsMono(Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:movie:popular:" + page,
+                TmdbResponseCache.Ttl.STABLE, TmdbMovieListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/popular")
@@ -40,7 +44,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
 //                        .queryParam("region", "KR") // 특정 국가의 인기 컨텐츠를 필터링 (KR, US, JP..)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbMovieListsResponse.class);
+                .bodyToMono(TmdbMovieListsResponse.class));
     }
 
     /**
@@ -51,7 +55,9 @@ public class TmdbMovieListsService { // MOVIE LISTS
     }
 
     public Mono<TmdbMovieListsResponse> getTopRatedMovieListsMono(Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:movie:top-rated:" + page,
+                TmdbResponseCache.Ttl.STABLE, TmdbMovieListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/top_rated")
@@ -59,7 +65,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
 //                        .queryParam("region", "KR") // 특정 국가의 인기 컨텐츠를 필터링 (KR, US, JP..)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbMovieListsResponse.class);
+                .bodyToMono(TmdbMovieListsResponse.class));
     }
 
     /**
@@ -70,7 +76,9 @@ public class TmdbMovieListsService { // MOVIE LISTS
     }
 
     public Mono<TmdbMovieListsResponse> getNowPlayingMovieListsMono(Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:movie:now-playing:" + page,
+                TmdbResponseCache.Ttl.NOW_SHOWING, TmdbMovieListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/now_playing")
@@ -78,6 +86,6 @@ public class TmdbMovieListsService { // MOVIE LISTS
                         .queryParam("region", "KR") // 특정 국가의 인기 컨텐츠를 필터링 (KR, US, JP..)
                         .build())
                 .retrieve()
-                .bodyToMono(TmdbMovieListsResponse.class);
+                .bodyToMono(TmdbMovieListsResponse.class));
     }
 }
