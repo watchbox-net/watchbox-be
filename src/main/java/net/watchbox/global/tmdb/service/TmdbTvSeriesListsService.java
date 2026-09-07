@@ -1,6 +1,5 @@
 package net.watchbox.global.tmdb.service;
 
-import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.global.tmdb.cache.TmdbResponseCache;
 import net.watchbox.global.tmdb.client.TmdbClient;
@@ -15,7 +14,6 @@ import reactor.core.publisher.Mono;
  */
 @Service
 @RequiredArgsConstructor
-@Observed
 public class TmdbTvSeriesListsService { // TV SERIES LISTS
     private final TmdbClient tmdbClient;
     private final TmdbResponseCache cache;

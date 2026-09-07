@@ -14,6 +14,12 @@ spring:
   application:
     name: watchbox-spring
 
+  # 리액티브 체인(WebClient·Lettuce)이 이벤트 루프로 넘어갈 때 트레이스 컨텍스트를 함께 옮긴다.
+  # 기본값 LIMITED 에서는 Netty 이벤트 루프에서 실행되는 Redis 명령이 부모 span 을 못 찾아
+  # 캐시 조회가 트레이스에 안 잡힌다.
+  reactor:
+    context-propagation: auto
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
 
