@@ -1,6 +1,8 @@
 package net.watchbox.global.tmdb.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.properties.TmdbProperties;
@@ -33,9 +35,22 @@ import java.util.function.Supplier;
 @Component
 @RequiredArgsConstructor
 public class TmdbResponseCache {
+
+    /**
+     * 관측 이름. Micrometer Observation 은 <b>span 과 metric 을 동시에</b> 만든다.
+     * <ul>
+     *   <li>트레이스: {@code tmdb.cache} span + {@code cache.result=hit|miss} 태그
+     *       → waterfall 에서 캐시 적중 여부가 바로 보인다</li>
+     *   <li>메트릭: 같은 태그가 붙은 타이머 → Grafana 에서 <b>실제 hit rate</b> 집계 가능
+     *       (캐시 워밍 도입 근거를 추정이 아니라 실측으로 세우기 위함)</li>
+     * </ul>
+     */
+    private static final String OBSERVATION_NAME = "tmdb.cache";
+
     private final ReactiveStringRedisTemplate redis;
     private final ObjectMapper objectMapper;
     private final TmdbProperties tmdbProperties;
+    private final ObservationRegistry observationRegistry;
 
     /** TTL 등급. 실제 값은 {@code tmdb.cache.*} 설정에서 온다. */
     public enum Ttl {
@@ -50,6 +65,10 @@ public class TmdbResponseCache {
     /**
      * 캐시에 있으면 그대로 돌려주고, 없으면 {@code loader} 를 호출한 뒤 저장한다.
      *
+     * <p>관측은 {@code Mono.defer} 안에서 시작한다. 조립 시점이 아니라 <b>구독 시점</b>에 시작해야
+     * span 이 실제 실행 구간을 재고, 8개 섹션이 동시에 진행되는 모습이 waterfall 에 겹쳐 보인다.
+     * (조립 시점에 재면 μs 짜리 span 이 순차로 찍혀 병렬이 아닌 것처럼 오해를 부른다)
+     *
      * @param key    캐시 키. 응답을 결정하는 값(목록 종류·page·timeWindow)을 모두 담아야 한다
      * @param loader 캐시 미스일 때 실행할 TMDB 호출
      */
@@ -57,13 +76,30 @@ public class TmdbResponseCache {
         if (!tmdbProperties.getCache().isEnabled()) {
             return loader.get();
         }
+        return Mono.defer(() -> {
+            Observation observation = Observation.createNotStarted(OBSERVATION_NAME, observationRegistry)
+                    .lowCardinalityKeyValue("cache.name", "tmdb")
+                    // 미스 경로로 안 가고 에러가 나도 태그가 비지 않도록 기본값을 먼저 넣는다
+                    .lowCardinalityKeyValue("cache.result", "miss")
+                    .highCardinalityKeyValue("cache.key", key)
+                    .start();
+
+            return lookup(key, type)
+                    .doOnNext(hit -> observation.lowCardinalityKeyValue("cache.result", "hit"))
+                    .switchIfEmpty(Mono.defer(() -> loadAndStore(key, ttl, loader)))
+                    .doOnError(observation::error)
+                    .doFinally(signal -> observation.stop());
+        });
+    }
+
+    /** Redis 조회. 장애·깨진 값은 모두 빈 결과(=miss)로 흡수한다. */
+    private <T> Mono<T> lookup(String key, Class<T> type) {
         return redis.opsForValue().get(key)
                 .onErrorResume(e -> {
                     log.warn("tmdb cache read failed, bypassing cache - key={}, cause={}", key, e.getMessage());
                     return Mono.empty();
                 })
-                .flatMap(cached -> deserialize(cached, type, key))
-                .switchIfEmpty(Mono.defer(() -> loadAndStore(key, ttl, loader)));
+                .flatMap(cached -> deserialize(cached, type, key));
     }
 
     private <T> Mono<T> deserialize(String json, Class<T> type, String key) {

@@ -1,6 +1,8 @@
 package net.watchbox.global.tmdb.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.observation.tck.TestObservationRegistry;
+import io.micrometer.observation.tck.TestObservationRegistryAssert;
 import net.watchbox.global.properties.TmdbProperties;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,7 @@ class TmdbResponseCacheTest {
     private ReactiveValueOperations<String, String> valueOps;
     private ObjectMapper objectMapper;
     private TmdbProperties properties;
+    private TestObservationRegistry observationRegistry;
     private TmdbResponseCache cache;
 
     @SuppressWarnings("unchecked")
@@ -50,7 +53,8 @@ class TmdbResponseCacheTest {
         properties = new TmdbProperties();
         properties.setCache(new TmdbProperties.Cache());
 
-        cache = new TmdbResponseCache(redis, objectMapper, properties);
+        observationRegistry = TestObservationRegistry.create();
+        cache = new TmdbResponseCache(redis, objectMapper, properties, observationRegistry);
     }
 
     private TmdbMovieListsResponse tmdbResponse() throws Exception {
@@ -144,5 +148,44 @@ class TmdbResponseCacheTest {
         assertThat(result).isSameAs(loaded);
         verify(valueOps, never()).get(anyString());
         verify(valueOps, never()).set(anyString(), anyString(), any(Duration.class));
+    }
+
+    @Test
+    @DisplayName("hit 이면 cache.result=hit 태그가 붙은 관측이 기록된다 (span + metric)")
+    void hit이면_관측태그_hit() {
+        when(valueOps.get(KEY)).thenReturn(Mono.just(TMDB_JSON));
+
+        cache.readThrough(KEY, TmdbResponseCache.Ttl.STABLE, TmdbMovieListsResponse.class,
+                () -> Mono.error(new AssertionError("hit 인데 TMDB 를 불렀다"))).block();
+
+        TestObservationRegistryAssert.assertThat(observationRegistry)
+                .hasObservationWithNameEqualTo("tmdb.cache")
+                .that()
+                .hasBeenStopped()
+                .hasLowCardinalityKeyValue("cache.result", "hit");
+    }
+
+    @Test
+    @DisplayName("miss 이면 cache.result=miss 태그가 붙은 관측이 기록된다")
+    void miss면_관측태그_miss() throws Exception {
+        when(valueOps.get(KEY)).thenReturn(Mono.empty());
+        when(valueOps.set(anyString(), anyString(), any(Duration.class))).thenReturn(Mono.just(true));
+
+        cache.readThrough(KEY, TmdbResponseCache.Ttl.STABLE, TmdbMovieListsResponse.class,
+                () -> Mono.just(tmdbResponseUnchecked())).block();
+
+        TestObservationRegistryAssert.assertThat(observationRegistry)
+                .hasObservationWithNameEqualTo("tmdb.cache")
+                .that()
+                .hasBeenStopped()
+                .hasLowCardinalityKeyValue("cache.result", "miss");
+    }
+
+    private TmdbMovieListsResponse tmdbResponseUnchecked() {
+        try {
+            return tmdbResponse();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
