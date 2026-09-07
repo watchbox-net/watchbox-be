@@ -2,6 +2,7 @@ package net.watchbox.global.tmdb.service;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import net.watchbox.global.tmdb.cache.TmdbResponseCache;
 import net.watchbox.global.tmdb.client.TmdbClient;
 import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 @Observed
 public class TmdbTrendingService { // TRENDING
     private final TmdbClient tmdbClient;
+    private final TmdbResponseCache cache;
 
     /**
      * Movies
@@ -28,14 +30,16 @@ public class TmdbTrendingService { // TRENDING
     }
 
     public Mono<TmdbMovieListsResponse> getTrendingMoviesMono(String timeWindow, Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:trending:movie:" + timeWindow + ":" + page,
+                TmdbResponseCache.Ttl.TRENDING, TmdbMovieListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/trending/movie/{timeWindow}")
                         .queryParam("page", page)
                         .build(timeWindow))
                 .retrieve()
-                .bodyToMono(TmdbMovieListsResponse.class);
+                .bodyToMono(TmdbMovieListsResponse.class));
     }
 
     /**
@@ -47,13 +51,15 @@ public class TmdbTrendingService { // TRENDING
     }
 
     public Mono<TmdbTvSeriesListsResponse> getTrendingTvMono(String timeWindow, Integer page) {
-        return tmdbClient.baseWebClient()
+        return cache.readThrough("tmdb:trending:tv:" + timeWindow + ":" + page,
+                TmdbResponseCache.Ttl.TRENDING, TmdbTvSeriesListsResponse.class,
+                () -> tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/trending/tv/{timeWindow}")
                         .queryParam("page", page)
                         .build(timeWindow))
                 .retrieve()
-                .bodyToMono(TmdbTvSeriesListsResponse.class);
+                .bodyToMono(TmdbTvSeriesListsResponse.class));
     }
 }

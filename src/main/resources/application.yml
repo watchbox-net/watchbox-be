@@ -123,6 +123,13 @@ tmdb:
     base-url: https://api.themoviedb.org/3
     include_adult: true
   image-url: https://image.tmdb.org/t/p/w500
+  cache:
+    # 캐시 on/off 토글. 같은 빌드로 캐시 유무를 A/B 측정하기 위한 것(빌드 차이가 비교에 안 섞이게).
+    enabled: ${TMDB_CACHE_ENABLED:true}
+    # TTL 은 목록 변동성에 따라 차등. TMDB 데이터는 우리가 못 바꾸니 명시적 무효화 없이 만료로만 갱신.
+    trending-ttl: 15m      # trending — 자주 바뀜
+    now-showing-ttl: 2h    # now-playing / on-the-air
+    stable-ttl: 12h        # popular / top-rated — 거의 고정
 
 url:
   # CORS 허용 오리진(쉼표 구분). 운영/개발 프론트 + 로컬 WebView 앱 테스트(맥 LAN IP).

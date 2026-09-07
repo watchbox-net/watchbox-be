@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
@@ -53,5 +54,17 @@ public class RedisConfig {
     @Bean
     public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);
+    }
+
+    /**
+     * TMDB 응답 캐시용 논블로킹 템플릿.
+     *
+     * <p>TMDB 호출은 WebClient 리액티브 체인 안에서 일어나므로, 그 안에서 캐시를 조회하려면
+     * 블로킹 {@link StringRedisTemplate} 이 아니라 리액티브 템플릿을 써야 한다.
+     * (블로킹 호출을 쓰면 Netty 이벤트 루프를 점유한다)
+     */
+    @Bean
+    public ReactiveStringRedisTemplate reactiveStringRedisTemplate(LettuceConnectionFactory connectionFactory) {
+        return new ReactiveStringRedisTemplate(connectionFactory);
     }
 }
