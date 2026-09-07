@@ -3,6 +3,7 @@ package net.watchbox.global.tmdb.cache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.properties.TmdbProperties;
@@ -88,7 +89,12 @@ public class TmdbResponseCache {
                     .doOnNext(hit -> observation.lowCardinalityKeyValue("cache.result", "hit"))
                     .switchIfEmpty(Mono.defer(() -> loadAndStore(key, ttl, loader)))
                     .doOnError(observation::error)
-                    .doFinally(signal -> observation.stop());
+                    .doFinally(signal -> observation.stop())
+                    // 이 관측을 "현재 관측"으로 만들어 하위 계측(Redis·WebClient)이 부모로 잡게 한다.
+                    // 넣지 않으면 Redis/TMDB span 이 이 span 이 아니라 상위(facade)에 붙어 평평해지고,
+                    // 어떤 TMDB 호출이 어느 캐시 키의 것인지 트레이스에서 구분할 수 없다.
+                    // (contextWrite 는 상류에 적용되므로 lookup·loadAndStore 가 대상이 된다)
+                    .contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, observation));
         });
     }
 
