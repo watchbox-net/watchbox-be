@@ -1,6 +1,5 @@
 package net.watchbox.global.tmdb.client;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.dto.response.exception.CustomException;
 import net.watchbox.global.dto.response.exception.ErrorCode;
@@ -21,13 +20,25 @@ import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class TmdbClient {
-    private final WebClient.Builder webClientBuilder;
     private final TmdbProperties tmdbProperties;
 
-    public WebClient baseWebClient() {
-        return webClientBuilder
+    /**
+     * WebClient 는 불변·스레드세이프라 <b>1회만 만들어 재사용</b>한다.
+     *
+     * <p>호출할 때마다 build() 하면 안 된다. {@code WebClient.Builder} 는 {@code filter()} 호출 시
+     * 자기 자신을 변형(append)하고 반환하는데, 주입받는 빌더 빈이 싱글턴이라 호출할 때마다
+     * retry 필터와 statusHandler 가 무한 누적된다.
+     * → 요청마다 필터 체인이 길어져 시간이 갈수록 느려지고, retry 가 중첩돼 재시도가 곱연산으로 늘어난다.
+     *
+     * <p>{@code clone()} 은 주입받은 공유 빌더 자체를 오염시키지 않기 위한 것(다른 컴포넌트가 같은
+     * 빌더 빈을 주입받을 수 있다).
+     */
+    private final WebClient webClient;
+
+    public TmdbClient(WebClient.Builder webClientBuilder, TmdbProperties tmdbProperties) {
+        this.tmdbProperties = tmdbProperties;
+        this.webClient = webClientBuilder.clone()
                 .baseUrl(tmdbProperties.getApi().getBaseUrl())
                 // 일시적 오류(5xx, 429, 네트워크 예외) 자동 재시도 필터
                 // - statusHandler 보다 먼저 실행되어, retryable 응답은 statusHandler 까지 안 도달
@@ -35,6 +46,10 @@ public class TmdbClient {
                 // 4xx/5xx 응답을 CustomException 으로 변환 (재시도 후에도 실패하면 여기로)
                 .defaultStatusHandler(HttpStatusCode::isError, TmdbClient::toCustomException)
                 .build();
+    }
+
+    public WebClient baseWebClient() {
+        return webClient;
     }
 
     /**
