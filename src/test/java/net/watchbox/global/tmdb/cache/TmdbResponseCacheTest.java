@@ -99,8 +99,8 @@ class TmdbResponseCacheTest {
 
         assertThat(tmdbCalls).hasValue(1);
         assertThat(result).isSameAs(loaded);
-        // TRENDING 등급의 TTL(기본 15분)로 저장되어야 한다
-        verify(valueOps).set(eq(KEY), anyString(), eq(Duration.ofMinutes(15)));
+        // TRENDING 등급에 설정된 TTL 로 저장되어야 한다 (기본값이 바뀌어도 깨지지 않게 설정에서 읽는다)
+        verify(valueOps).set(eq(KEY), anyString(), eq(properties.getCache().getTrendingTtl()));
     }
 
     @Test

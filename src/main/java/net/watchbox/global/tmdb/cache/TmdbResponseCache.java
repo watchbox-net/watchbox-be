@@ -10,8 +10,10 @@ import net.watchbox.global.properties.TmdbProperties;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 import java.time.Duration;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -48,6 +50,22 @@ public class TmdbResponseCache {
      */
     private static final String OBSERVATION_NAME = "tmdb.cache";
 
+    /** {@link #forceRefresh()} 가 심는 Reactor Context 키. */
+    private static final String FORCE_REFRESH_KEY = TmdbResponseCache.class.getName() + ".forceRefresh";
+
+    /**
+     * 이 체인 안의 캐시 <b>조회를 건너뛰고</b> 원본을 다시 받아 저장하게 한다.
+     *
+     * <p>스케줄 워밍이 TTL 만료 <b>전에</b> 캐시를 갱신할 때 쓴다. 그냥 호출하면 캐시가 hit 이라
+     * 원본을 부르지 않아 갱신이 일어나지 않는다 — 워밍 구현에서 놓치기 쉬운 지점이다.
+     *
+     * <p>파라미터로 넘기지 않고 Context 를 쓰는 이유는, 갱신 여부가 8개 섹션 전체에 걸리는
+     * 횡단 관심사라 서비스 메서드 시그니처를 전부 바꾸지 않기 위해서다.
+     */
+    public static Function<Context, Context> forceRefresh() {
+        return ctx -> ctx.put(FORCE_REFRESH_KEY, Boolean.TRUE);
+    }
+
     private final ReactiveStringRedisTemplate redis;
     private final ObjectMapper objectMapper;
     private final TmdbProperties tmdbProperties;
@@ -77,17 +95,24 @@ public class TmdbResponseCache {
         if (!tmdbProperties.getCache().isEnabled()) {
             return loader.get();
         }
-        return Mono.defer(() -> {
+        return Mono.deferContextual(contextView -> {
+            boolean refreshing = Boolean.TRUE.equals(contextView.getOrDefault(FORCE_REFRESH_KEY, Boolean.FALSE));
+
             Observation observation = Observation.createNotStarted(OBSERVATION_NAME, observationRegistry)
                     .lowCardinalityKeyValue("cache.name", "tmdb")
-                    // 미스 경로로 안 가고 에러가 나도 태그가 비지 않도록 기본값을 먼저 넣는다
-                    .lowCardinalityKeyValue("cache.result", "miss")
+                    // 미스 경로로 안 가고 에러가 나도 태그가 비지 않도록 기본값을 먼저 넣는다.
+                    // refresh 는 워밍이 선제 갱신한 것으로, 사용자 요청의 miss 와 구분해 집계한다.
+                    .lowCardinalityKeyValue("cache.result", refreshing ? "refresh" : "miss")
                     .highCardinalityKeyValue("cache.key", key)
                     .start();
 
-            return lookup(key, type)
-                    .doOnNext(hit -> observation.lowCardinalityKeyValue("cache.result", "hit"))
-                    .switchIfEmpty(Mono.defer(() -> loadAndStore(key, ttl, loader)))
+            Mono<T> source = refreshing
+                    ? loadAndStore(key, ttl, loader)
+                    : lookup(key, type)
+                            .doOnNext(hit -> observation.lowCardinalityKeyValue("cache.result", "hit"))
+                            .switchIfEmpty(Mono.defer(() -> loadAndStore(key, ttl, loader)));
+
+            return source
                     .doOnError(observation::error)
                     .doFinally(signal -> observation.stop())
                     // 이 관측을 "현재 관측"으로 만들어 하위 계측(Redis·WebClient)이 부모로 잡게 한다.
