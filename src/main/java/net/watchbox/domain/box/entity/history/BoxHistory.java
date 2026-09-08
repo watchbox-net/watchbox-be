@@ -13,7 +13,7 @@ import net.watchbox.global.entity.BaseTime;
  * <p>설계 원칙
  * <ul>
  *   <li>상태 테이블(box_member 등)이 아니라 <b>영속 식별자 테이블</b>(box, member, content)을 참조 —
- *       멤버가 박스를 나가거나 컨텐츠가 삭제돼도 사건 기록은 보존되도록.</li>
+ *       멤버가 박스를 나가거나 콘텐츠가 삭제돼도 사건 기록은 보존되도록.</li>
  *   <li>actor / targetMember 는 회원 탈퇴 대비 nullable (FK ON DELETE SET NULL). NULL 이면 "탈퇴한 사용자".</li>
  *   <li>이벤트 타입별로 사용하는 선택 필드가 다름 (content / targetMember / old·newValue).</li>
  * </ul>
@@ -65,7 +65,7 @@ public class BoxHistory extends BaseTime {
 
     // ─────────────────── 정적 팩토리 ───────────────────
 
-    /** 컨텐츠 추가/삭제 이벤트. */
+    /** 콘텐츠 추가/삭제 이벤트. */
     public static BoxHistory ofContentEvent(Box box, Member actor, BoxHistoryEventType eventType, Content content) {
         return BoxHistory.builder()
                 .box(box)

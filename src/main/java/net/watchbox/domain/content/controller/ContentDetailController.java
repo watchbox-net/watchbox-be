@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents/{mediaType}/{tmdbId}")
-@Tag(name = "ContentDetail", description = "컨텐츠 상세 조회 API")
+@Tag(name = "ContentDetail", description = "콘텐츠 상세 조회 API")
 public class ContentDetailController {
     private final ContentDetailFacade contentDetailFacade;
 
-    @Operation(summary = "컨텐츠 상세 페이지 조회", description = "비로그인/로그인 분기 있음")
+    @Operation(summary = "콘텐츠 상세 페이지 조회", description = "비로그인/로그인 분기 있음")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentDetailResponse>> getContentDetail(
             @PathVariable MediaType mediaType,

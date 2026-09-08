@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/{boxId}/contents")
-@Tag(name = "BoxContent", description = "박스 컨텐츠 API")
+@Tag(name = "BoxContent", description = "박스 콘텐츠 API")
 @Observed
 public class BoxContentController {
     private final BoxContentFacade boxContentFacade;
 
-    @Operation(summary = "박스 컨텐츠 페이지 조회", description = "정렬 & 필터 & 커서 기반 무한 스크롤 조회")
+    @Operation(summary = "박스 콘텐츠 페이지 조회", description = "정렬 & 필터 & 커서 기반 무한 스크롤 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getBoxContentPage(
             @AuthenticationPrincipal Member member,
@@ -42,7 +42,7 @@ public class BoxContentController {
         );
     }
 
-    @Operation(summary = "박스 컨텐츠 총 개수 조회")
+    @Operation(summary = "박스 콘텐츠 총 개수 조회")
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<BoxContentCountResponse>> getBoxContentCount(
             @AuthenticationPrincipal Member member,
@@ -55,7 +55,7 @@ public class BoxContentController {
         );
     }
 
-//    @Operation(summary = "박스 컨텐츠 리스트 조회", description = "정렬 최근순 (createdAt desc)")
+//    @Operation(summary = "박스 콘텐츠 리스트 조회", description = "정렬 최근순 (createdAt desc)")
 //    @GetMapping
 //    public ResponseEntity<ApiResponse<ContentPageResponse>> getBoxContentPage(
 //            @AuthenticationPrincipal Member member,
@@ -66,12 +66,12 @@ public class BoxContentController {
 //        );
 //    }
 
-    @Operation(summary = "박스에 컨텐츠 추가")
+    @Operation(summary = "박스에 콘텐츠 추가")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "추가 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "공유 박스 컨텐츠 편집 권한 없음",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "공유 박스 콘텐츠 편집 권한 없음",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "박스에 이미 추가된 컨텐츠",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "박스에 이미 추가된 콘텐츠",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @PostMapping
@@ -85,7 +85,7 @@ public class BoxContentController {
         ));
     }
 
-    @Operation(summary = "박스에서 내 컨텐츠 삭제")
+    @Operation(summary = "박스에서 내 콘텐츠 삭제")
     @DeleteMapping("/{boxContentId}")
     public ResponseEntity<ApiResponse<Void>> removeBoxContent(
             @AuthenticationPrincipal Member member,

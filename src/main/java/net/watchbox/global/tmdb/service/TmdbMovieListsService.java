@@ -39,7 +39,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/popular")
                         .queryParam("page", page)
-//                        .queryParam("region", "KR") // 특정 국가의 인기 컨텐츠를 필터링 (KR, US, JP..)
+//                        .queryParam("region", "KR") // 특정 국가의 인기 콘텐츠를 필터링 (KR, US, JP..)
                         .build())
                 .retrieve()
                 .bodyToMono(TmdbMovieListsResponse.class));
@@ -60,7 +60,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/top_rated")
                         .queryParam("page", page)
-//                        .queryParam("region", "KR") // 특정 국가의 인기 컨텐츠를 필터링 (KR, US, JP..)
+//                        .queryParam("region", "KR") // 특정 국가의 인기 콘텐츠를 필터링 (KR, US, JP..)
                         .build())
                 .retrieve()
                 .bodyToMono(TmdbMovieListsResponse.class));
@@ -81,7 +81,7 @@ public class TmdbMovieListsService { // MOVIE LISTS
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
                         .path("/movie/now_playing")
                         .queryParam("page", page)
-                        .queryParam("region", "KR") // 특정 국가의 인기 컨텐츠를 필터링 (KR, US, JP..)
+                        .queryParam("region", "KR") // 특정 국가의 인기 콘텐츠를 필터링 (KR, US, JP..)
                         .build())
                 .retrieve()
                 .bodyToMono(TmdbMovieListsResponse.class));

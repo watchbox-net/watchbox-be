@@ -13,7 +13,7 @@ import net.watchbox.domain.box.dto.content.type.WatchStatusFilter;
 @NoArgsConstructor
 @ToString
 public class BoxContentCountRequest {
-    @Schema(description = "컨텐츠 미디어 타입", defaultValue = "MOVIE_TV")
+    @Schema(description = "콘텐츠 미디어 타입", defaultValue = "MOVIE_TV")
     private ContentMediaTypeFilter contentMediaTypeFilter = ContentMediaTypeFilter.MOVIE_TV;
 
     @Schema(description = "시청 상태", defaultValue = "ALL")

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/search/contents")
-@Tag(name = "SearchContent", description = "컨텐츠 검색 API")
+@Tag(name = "SearchContent", description = "콘텐츠 검색 API")
 public class SearchContentController {
     private final SearchFacade searchFacade;
 
@@ -28,7 +28,7 @@ public class SearchContentController {
 
     /**
      * 파라미터 분기
-     * ?contentRecord (내 컨텐츠 기록)
+     * ?contentRecord (내 콘텐츠 기록)
      * ?hasBoxContent (박스 하나)
      */
 

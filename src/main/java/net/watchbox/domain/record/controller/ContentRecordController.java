@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/records")
-@Tag(name = "ContentRecord", description = "컨텐츠 기록 API")
+@Tag(name = "ContentRecord", description = "콘텐츠 기록 API")
 public class ContentRecordController {
     private final ContentRecordFacade contentRecordFacade;
     private final ContentRecordHistoryFacade contentRecordHistoryFacade;

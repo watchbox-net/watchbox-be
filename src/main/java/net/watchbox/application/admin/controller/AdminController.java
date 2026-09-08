@@ -31,7 +31,7 @@ public class AdminController {
      * 2. 박스 생성 - 메인 샘플 멤버 개인/공유 박스 몇개 생성 - 개인 박스 2개, 공유 박스 4개
      * 3. (SQL) 박스 초대 - 공유 박스들에 다른 멤버 2명 초대
      * 4. (SQL) 박스 초대 수락 - 다른 멤버들의 박스 초대 {수락, 거절, 대기} 골고루
-     * 5. 박스 컨텐츠 추가 - 개인/공유 박스 모두 추가, 빈 박스도 포함 - 영화/시리즈/인물 골고루
+     * 5. 박스 콘텐츠 추가 - 개인/공유 박스 모두 추가, 빈 박스도 포함 - 영화/시리즈/인물 골고루
      * 6. (SQL) 시청 기록 추가
      */
 
@@ -68,7 +68,7 @@ public class AdminController {
         return null;
     }
 
-    @Operation(summary = "TMDB 컨텐츠 데이터 일괄 저장")
+    @Operation(summary = "TMDB 콘텐츠 데이터 일괄 저장")
     @PostMapping("/contents/save")
     public ResponseEntity<ApiResponse<Void>> saveContents(
             @RequestBody List<@Valid TmdbContentItem> request

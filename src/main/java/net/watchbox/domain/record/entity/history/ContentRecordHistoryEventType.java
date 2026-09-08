@@ -1,7 +1,7 @@
 package net.watchbox.domain.record.entity.history;
 
 /**
- * 컨텐츠 시청 기록 히스토리 이벤트 종류.
+ * 콘텐츠 시청 기록 히스토리 이벤트 종류.
  *
  * <p>타입별 사용 필드:
  * <ul>

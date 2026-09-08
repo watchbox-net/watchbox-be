@@ -16,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoxHistoryCommandService {
     private final BoxHistoryRepository boxHistoryRepository;
 
-    /** 컨텐츠 추가 기록. */
+    /** 콘텐츠 추가 기록. */
     public void contentAdded(Box box, Member actor, Content content) {
         boxHistoryRepository.save(
                 BoxHistory.ofContentEvent(box, actor, BoxHistoryEventType.CONTENT_ADDED, content));
     }
 
-    /** 컨텐츠 삭제 기록. */
+    /** 콘텐츠 삭제 기록. */
     public void contentDeleted(Box box, Member actor, Content content) {
         boxHistoryRepository.save(
                 BoxHistory.ofContentEvent(box, actor, BoxHistoryEventType.CONTENT_DELETED, content));
