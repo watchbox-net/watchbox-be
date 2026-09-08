@@ -8,7 +8,7 @@ import net.watchbox.domain.record.entity.record.WatchStatus;
 import net.watchbox.global.entity.BaseTime;
 
 /**
- * 유저의 컨텐츠 시청 기록 변경 히스토리 (append-only 이벤트 로그).
+ * 유저의 콘텐츠 시청 기록 변경 히스토리 (append-only 이벤트 로그).
  *
  * <p>설계 원칙
  * <ul>
@@ -44,7 +44,7 @@ public class ContentRecordHistory extends BaseTime {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    /** 대상 컨텐츠 (content_record 가 아니라 content 직접 참조). */
+    /** 대상 콘텐츠 (content_record 가 아니라 content 직접 참조). */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_id", nullable = false)
     private Content content;

@@ -19,7 +19,7 @@ public enum NotificationType {
     /** 공유 박스 초대 결과(수락/거절) — sender 가 알아야 하므로 만료 없음. */
     BOX_INVITATION_RESPONDED(null),
 
-    /** 박스(마이/공유)에 컨텐츠 추가됨 — Ambient 알림이라 5분 지나면 스낵바 불필요. */
+    /** 박스(마이/공유)에 콘텐츠 추가됨 — Ambient 알림이라 5분 지나면 스낵바 불필요. */
     BOX_CONTENT_ADDED(Duration.ofMinutes(5));
 
     private final Duration snackbarFreshness;

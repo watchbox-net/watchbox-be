@@ -143,11 +143,11 @@ public class BoxContentFacade {
         // 박스에 이미 존재하는지 검증 -> 중복이면 예외
         if (box.getBoxType().equals(BoxType.MY)) { // 마이 박스에 이미 존재하는지 검증
             boxValidator.validateContentNotInBox(box, content);
-        } else { // 해당 멤버로 이미 추가된 컨텐츠인지 검증
+        } else { // 해당 멤버로 이미 추가된 콘텐츠인지 검증
             boxValidator.validateContentNotInSharedBox(member, box, content);
         }
 
-        // 박스에 컨텐츠 추가
+        // 박스에 콘텐츠 추가
         BoxContent boxContent = boxContentCommandService.addContentToBox(member, box, content);
 
         // 박스 lastContentAddedAt 업데이트
@@ -161,7 +161,7 @@ public class BoxContentFacade {
         BoxType boxType = boxService.getByBoxIdOrElseThrow(boxId).getBoxType();
         BoxContent boxContent = boxContentQueryService.getByBoxContentId(boxContentId);
 
-        // 박스 컨텐츠 추가한 사람인지 검증
+        // 박스 콘텐츠 추가한 사람인지 검증
         boxValidator.validateBoxContentRemover(member, boxContent);
 
         boxContentCommandService.deleteContentFromBox(boxContent);

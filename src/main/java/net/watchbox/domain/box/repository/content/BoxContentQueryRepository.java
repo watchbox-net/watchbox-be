@@ -44,7 +44,7 @@ public class BoxContentQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     /**
-     * 박스 컨텐츠 페이지 조회 — content_id 단위 페이지네이션.
+     * 박스 콘텐츠 페이지 조회 — content_id 단위 페이지네이션.
      *
      * 2단계 쿼리:
      *  1) contentId 페이지 선정: GROUP BY content_id, 정렬 = MAX(createdAt) 기준 (가장 최근 추가한 시점)

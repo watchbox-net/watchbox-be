@@ -46,7 +46,7 @@ public class MemberController {
         );
     }
 
-    @Operation(summary = "마이 페이지 조회", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
+    @Operation(summary = "마이 페이지 조회", description = "프로필 정보와 멤버 콘텐츠 개수 조회")
     @GetMapping("/mypage")
     public ResponseEntity<ApiResponse<MyPageResponse>> getMyPage(
             @AuthenticationPrincipal Member member

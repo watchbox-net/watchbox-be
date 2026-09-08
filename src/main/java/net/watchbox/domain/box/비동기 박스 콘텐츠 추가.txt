@@ -4,7 +4,7 @@
 - 존재하지 않으면
    1) Content 정보 저장 - SQL Insert (native/JdbcTemplate/Flyway)
    2) Content의 하위 엔티티 저장 or 저장 요청 이벤트 발행
-3. 마이/공유 박스에 컨텐츠 추가
+3. 마이/공유 박스에 콘텐츠 추가
 
 # 비동기 처리
 이벤트 구독 - TMDB API에서 Content의 하위 엔티티 정보 조회 후 DB에 저장 (비동기)

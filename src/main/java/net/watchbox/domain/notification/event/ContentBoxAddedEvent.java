@@ -6,7 +6,7 @@ import net.watchbox.domain.notification.entity.NotificationType;
 import java.util.List;
 
 /**
- * 박스에 컨텐츠 추가 시 발행.
+ * 박스에 콘텐츠 추가 시 발행.
  * 수신자 = 박스 멤버 중 추가자(publisher)를 제외한 나머지.
  *
  * <p>공유 박스든 마이 박스든 상관없이 사용 — boxType 정보는 payload 안에 들어있음.

@@ -64,24 +64,24 @@ public class BoxValidator {
     }
 
     // ------------------- BoxContent 존재 검증 -------------------
-    // 박스에 이미 추가된 컨텐츠인지 확인
+    // 박스에 이미 추가된 콘텐츠인지 확인
     public boolean contentExistsInBox(Box box, Content content) {
         return boxContentRepository.existsByBoxAndContent(box, content);
     }
 
-    // 박스에 이미 추가된 컨텐츠인지 검증
+    // 박스에 이미 추가된 콘텐츠인지 검증
     public void validateContentNotInBox(Box box, Content content) {
         if(contentExistsInBox(box, content)) {
             throw new CustomException(BOX_CONTENT_ALREADY_IN_BOX);
         }
     }
 
-    // 해당 멤버로 이미 추가된 컨텐츠인지 확인
+    // 해당 멤버로 이미 추가된 콘텐츠인지 확인
     public boolean contentExistsInBoxByMember(Member member, Box box, Content content) {
         return boxContentRepository.existsByPublisherAndBoxAndContent(member, box, content);
     }
 
-    // 해당 멤버로 이미 추가된 컨텐츠인지 검증
+    // 해당 멤버로 이미 추가된 콘텐츠인지 검증
     public void validateContentNotInSharedBox(Member member, Box box, Content content) {
         if(contentExistsInBoxByMember(member, box, content)) {
             throw new CustomException(CONTENT_ALREADY_IN_BOX, member.getMemberId());

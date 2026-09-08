@@ -78,7 +78,7 @@ public class ContentBoxFacade {
             Box box = boxService.getByBoxIdOrElseThrow(boxId);
             boxValidator.validateBoxContentAdder(box, member); // 권한 검증
             if (boxValidator.contentExistsInBoxByMember(member, box, content)) {
-                continue; // 해당 멤버로 추가된 컨텐츠이면 skip
+                continue; // 해당 멤버로 추가된 콘텐츠이면 skip
             }
             boxContentCommandService.addContentToBox(member, box, content);
             addedBoxIds.add(boxId);

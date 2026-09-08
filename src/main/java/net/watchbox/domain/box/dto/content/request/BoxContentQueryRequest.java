@@ -14,7 +14,7 @@ import net.watchbox.domain.box.dto.content.type.WatchStatusFilter;
 @NoArgsConstructor
 @ToString
 public class BoxContentQueryRequest {
-    @Schema(description = "컨텐츠 미디어 타입", defaultValue = "MOVIE_TV")
+    @Schema(description = "콘텐츠 미디어 타입", defaultValue = "MOVIE_TV")
     private ContentMediaTypeFilter contentMediaTypeFilter = ContentMediaTypeFilter.MOVIE_TV;
 
     @Schema(description = "정렬 기준", defaultValue = "RECENT_SAVED")

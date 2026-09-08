@@ -80,7 +80,7 @@ public class ContentRecordQueryService {
 //        return ContentRecordResponse.from(contentRecord);
 //    }
 
-    // 로그인 사용자의 ContentRecord를 각 컨텐츠에 후처리로 병합
+    // 로그인 사용자의 ContentRecord를 각 콘텐츠에 후처리로 병합
     public List<ContentItem> attachMemberRecord(List<ContentItem> items, Member member, MediaType mediaType) {
         List<Long> tmdbIds = items.stream()
                 .map(item -> item.getContentSummary().getTmdbId())
