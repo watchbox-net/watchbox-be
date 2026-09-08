@@ -93,6 +93,9 @@ spring:
       retries: 3
       properties:
         enable.idempotence: true # 중복 방지
+        # 브로커가 꺼져 있으면 send() 가 이 시간만큼 블로킹한 뒤 예외를 던진다.
+        # 기본값 60초로는 카프카를 꺼둔 상태에서 요청이 1분간 멈춘다.
+        max.block.ms: 3000
 
     consumer:
       group-id: watchbox-consumer-${spring.profiles.active}
@@ -113,6 +116,7 @@ kafka:
   topics:
     health-check: ${spring.profiles.active}.healthcheck
     notification-events: ${spring.profiles.active}.notification-events
+    domain-events: ${spring.profiles.active}.domain-events
 
 #logging:
 #  level:
