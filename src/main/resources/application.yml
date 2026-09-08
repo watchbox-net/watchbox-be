@@ -1,5 +1,10 @@
 server:
   port: 9000
+  # nginx 가 TLS 를 종료하고 평문 HTTP 로 프록시한다. 이 설정이 없으면 앱이 보는 scheme 이 http 라,
+  # 브라우저가 보낸 Origin(https://...) 과 불일치해 동일 출처 요청도 교차 출처로 판정된다.
+  # (Spring 의 CorsUtils.isCorsRequest 가 Origin 을 scheme·host·port 와 비교한다)
+  # → Swagger 에서 POST 시 403 "Invalid CORS request". nginx 는 이미 X-Forwarded-Proto 를 보내고 있다.
+  forward-headers-strategy: framework
 #  compression:
 #    enabled: true
 #    mime-types: application/json

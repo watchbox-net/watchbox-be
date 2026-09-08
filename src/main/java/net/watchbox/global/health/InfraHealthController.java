@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.global.event.DomainEventPublisher;
-import net.watchbox.global.event.EventTransport;
 import net.watchbox.global.event.setting.EventTransportSettings;
 import net.watchbox.global.properties.KafkaTopicProperties;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -20,9 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
@@ -253,25 +250,6 @@ public class InfraHealthController {
             return ResponseEntity.status(503).body(body);
         } finally {
             eventTransportHealthCheckListener.unregister(probeId);
-        }
-    }
-
-    @Operation(summary = "이벤트 전송 경로 전환",
-            description = "LOCAL ↔ KAFKA 전환. DB 에 저장되어 재기동 후에도 유지된다. " +
-                    "KAFKA 로 전환할 때 브로커가 닿지 않으면 전환하지 않고 409 를 반환한다 — " +
-                    "조용히 로컬로 남으면 '바꿨는데 왜 안 되지'를 디버깅하게 된다.")
-    @PostMapping("/event-transport/switch")
-    public ResponseEntity<Map<String, Object>> switchEventTransport(@RequestParam EventTransport transport) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        try {
-            body.put("transport", eventTransportSettings.switchTo(transport));
-            body.put("switchedAt", ZonedDateTime.now());
-            return ResponseEntity.ok(body);
-        } catch (IllegalStateException e) {
-            log.warn("event transport switch rejected - target={}, cause={}", transport, e.getMessage());
-            body.put("transport", eventTransportSettings.current());
-            body.put("error", e.getMessage());
-            return ResponseEntity.status(409).body(body);
         }
     }
 

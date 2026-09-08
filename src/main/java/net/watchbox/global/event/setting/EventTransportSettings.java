@@ -140,7 +140,9 @@ public class EventTransportSettings {
                     .get(BROKER_PROBE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             return true;
         } catch (Exception e) {
-            log.debug("kafka broker probe failed - {}", e.getMessage());
+            // debug 로 두면 정작 진단이 필요한 순간(기동 폴백·전환 거절)에 원인이 안 보인다.
+            // 기동·전환 시에만 호출되므로 로그가 쌓이지도 않는다.
+            log.warn("kafka broker probe failed - servers={}, cause={}", bootstrapServers, e.toString());
             return false;
         }
     }

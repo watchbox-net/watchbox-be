@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.global.event.EventTransport;
+import net.watchbox.global.event.setting.EventTransportSettings;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +26,36 @@ import java.util.Map;
 public class DevInfraController {
 
     private final StringRedisTemplate stringRedisTemplate;
+    private final EventTransportSettings eventTransportSettings;
+
+    /**
+     * 도메인 이벤트 전송 경로를 런타임에 바꾼다. Kafka 브로커는 비용 때문에 평소 꺼두므로,
+     * 재배포 없이 필요할 때만 켜서 쓰기 위한 조작이다.
+     *
+     * <p>DB 에 저장되어 재기동 후에도 유지된다. 전환 시 Kafka 컨슈머도 함께 start/stop 된다.
+     *
+     * <p><b>DB 를 직접 수정하면 반영되지 않는다.</b> 발행 경로가 메모리 캐시를 읽고,
+     * 그 캐시를 갱신하는 것은 이 API 뿐이다(이벤트마다 DB 를 치면 발행 경로가 병목이 된다).
+     * 직접 수정했다면 재기동이 필요하다.
+     */
+    @Operation(summary = "도메인 이벤트 전송 경로 전환 (LOCAL ↔ KAFKA)",
+            description = "DB 에 저장되어 재기동 후에도 유지된다. KAFKA 로 전환할 때 브로커가 닿지 않으면 " +
+                    "전환하지 않고 409 를 반환한다 — 조용히 LOCAL 로 남으면 '바꿨는데 왜 안 되지'를 디버깅하게 된다. " +
+                    "전환 결과 확인은 GET /health/infra/event-transport.")
+    @PostMapping("/event-transport/switch")
+    public ResponseEntity<Map<String, Object>> switchEventTransport(@RequestParam EventTransport transport) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        try {
+            body.put("transport", eventTransportSettings.switchTo(transport));
+            body.put("switchedAt", ZonedDateTime.now());
+            return ResponseEntity.ok(body);
+        } catch (IllegalStateException e) {
+            log.warn("event transport switch rejected - target={}, cause={}", transport, e.getMessage());
+            body.put("transport", eventTransportSettings.current());
+            body.put("error", e.getMessage());
+            return ResponseEntity.status(409).body(body);
+        }
+    }
 
     /**
      * 사용자가 지정한 key/value/TTL 로 Redis 에 값을 저장하고 즉시 GET 으로 확인.
