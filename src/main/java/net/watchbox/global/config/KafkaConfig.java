@@ -1,6 +1,7 @@
 package net.watchbox.global.config;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.global.health.EventTransportProbe;
 import net.watchbox.global.properties.KafkaTopicProperties;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -49,6 +50,44 @@ public class KafkaConfig {
                 .partitions(3)
                 .replicas(3)
                 .build();
+    }
+
+    /** 도메인 이벤트 토픽 — 파티션 키(memberId 등)로 순서 보장, partition 3, replica 3. */
+    @Bean
+    public NewTopic domainEventsTopic() {
+        return TopicBuilder.name(topics.domainEvents())
+                .partitions(3)
+                .replicas(3)
+                .build();
+    }
+
+    /**
+     * 도메인 이벤트 리스너 컨테이너 팩토리.
+     *
+     * <p>글로벌 consumer 는 {@code spring.json.use.type.headers=false} 라 타입 정보를 헤더에서
+     * 얻지 못한다. 여기서 대상 타입을 명시해 역직렬화를 성립시킨다.
+     *
+     * <p>지금은 프로브 한 종류만 다루므로 단일 타입으로 고정했다. 실제 도메인 이벤트를 여러 종류
+     * 태우려면 타입 헤더를 켜거나 이벤트별 토픽을 나누는 결정이 먼저 필요하다.
+     *
+     * <p>{@link ErrorHandlingDeserializer} 로 감싸는 이유는 헬스체크 팩토리와 같다 —
+     * 깨진 메시지 하나가 같은 offset 에서 무한 재시도되어 소비가 멈추는 것을 막는다.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, EventTransportProbe>
+            domainEventKafkaListenerContainerFactory(KafkaProperties kafkaProperties) {
+        Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
+
+        ErrorHandlingDeserializer<EventTransportProbe> valueDeserializer =
+                new ErrorHandlingDeserializer<>(new JsonDeserializer<>(EventTransportProbe.class, false));
+
+        DefaultKafkaConsumerFactory<String, EventTransportProbe> consumerFactory =
+                new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), valueDeserializer);
+
+        ConcurrentKafkaListenerContainerFactory<String, EventTransportProbe> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory);
+        return factory;
     }
 
     /**

@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.global.event.DomainEventPublisher;
+import net.watchbox.global.event.EventTransport;
+import net.watchbox.global.event.setting.EventTransportSettings;
 import net.watchbox.global.properties.KafkaTopicProperties;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -17,7 +20,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
@@ -47,6 +52,9 @@ public class InfraHealthController {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final KafkaTopicProperties topics;
     private final KafkaHealthCheckListener kafkaHealthCheckListener;
+    private final DomainEventPublisher domainEventPublisher;
+    private final EventTransportSettings eventTransportSettings;
+    private final EventTransportHealthCheckListener eventTransportHealthCheckListener;
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -206,6 +214,64 @@ public class InfraHealthController {
             return ResponseEntity.status(503).body(body);
         } finally {
             kafkaHealthCheckListener.unregister(key);
+        }
+    }
+
+    // ─────────────────── 도메인 이벤트 전송 경로 ───────────────────
+
+    @Operation(summary = "이벤트 전송 경로 왕복 헬스체크",
+            description = "현재 설정된 경로(LOCAL/KAFKA)로 프로브 이벤트를 발행 → 수신 확인. " +
+                    "로컬이든 카프카든 같은 리스너 레지스트리로 수렴하므로 검증 방식이 동일하다. " +
+                    "configured 는 DB 에 저장된 값, transport 는 실제 동작 중인 값 — " +
+                    "기동 시 브로커가 닿지 않아 LOCAL 로 폴백했다면 둘이 다를 수 있다.")
+    @GetMapping("/event-transport")
+    public ResponseEntity<Map<String, Object>> eventTransportCheck() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        String probeId = "probe-" + UUID.randomUUID();
+        String expected = "ok-" + System.currentTimeMillis();
+
+        CompletableFuture<String> future = eventTransportHealthCheckListener.register(probeId);
+        try {
+            domainEventPublisher.publish(new EventTransportProbe(probeId, expected));
+
+            String actual = future.get(5, TimeUnit.SECONDS);
+            boolean ok = expected.equals(actual);
+
+            body.put("status", ok ? CONNECTED : DISCONNECTED);
+            body.put("transport", eventTransportSettings.current());
+            body.put("configured", eventTransportSettings.configured());
+            body.put("expected", expected);
+            body.put("actual", actual);
+            body.put("checkedAt", ZonedDateTime.now());
+            return ok ? ResponseEntity.ok(body) : ResponseEntity.status(503).body(body);
+        } catch (Exception e) {
+            log.warn("event transport health check failed", e);
+            body.put("status", DISCONNECTED);
+            body.put("transport", eventTransportSettings.current());
+            body.put("error", e.getMessage());
+            body.put("checkedAt", ZonedDateTime.now());
+            return ResponseEntity.status(503).body(body);
+        } finally {
+            eventTransportHealthCheckListener.unregister(probeId);
+        }
+    }
+
+    @Operation(summary = "이벤트 전송 경로 전환",
+            description = "LOCAL ↔ KAFKA 전환. DB 에 저장되어 재기동 후에도 유지된다. " +
+                    "KAFKA 로 전환할 때 브로커가 닿지 않으면 전환하지 않고 409 를 반환한다 — " +
+                    "조용히 로컬로 남으면 '바꿨는데 왜 안 되지'를 디버깅하게 된다.")
+    @PostMapping("/event-transport/switch")
+    public ResponseEntity<Map<String, Object>> switchEventTransport(@RequestParam EventTransport transport) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        try {
+            body.put("transport", eventTransportSettings.switchTo(transport));
+            body.put("switchedAt", ZonedDateTime.now());
+            return ResponseEntity.ok(body);
+        } catch (IllegalStateException e) {
+            log.warn("event transport switch rejected - target={}, cause={}", transport, e.getMessage());
+            body.put("transport", eventTransportSettings.current());
+            body.put("error", e.getMessage());
+            return ResponseEntity.status(409).body(body);
         }
     }
 
