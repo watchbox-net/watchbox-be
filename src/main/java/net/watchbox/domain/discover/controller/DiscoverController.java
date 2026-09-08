@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.content.dto.list.ContentPageResponse;
+import net.watchbox.domain.discover.dto.HomeResponse;
 import net.watchbox.domain.discover.facade.DiscoverFacade;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.global.dto.response.ApiResponse;
@@ -23,8 +24,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class DiscoverController {
     private final DiscoverFacade discoverFacade;
 
-//    @GetMapping("/home")
-
+    @Operation(
+            summary = "홈 화면 통합 조회",
+            description = "홈에 필요한 8개 섹션(트렌딩·인기·상영중·평점높은 × 영화/시리즈)을 한 번에 내려준다. "
+                    + "TMDB 호출은 병렬로 수행하며, 일부 섹션이 실패해도 해당 섹션만 빈 배열로 응답한다."
+    )
+    @GetMapping("/home")
+    public ResponseEntity<ApiResponse<HomeResponse>> getHome(
+            @RequestParam(defaultValue = "week") String timeWindow,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "false") boolean withRecord,
+            @AuthenticationPrincipal Member member
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(discoverFacade.getHome(timeWindow, page, withRecord, member))
+        );
+    }
 
     @Operation(summary = "전세계 인기 영화")
     @GetMapping("/popular/movies")

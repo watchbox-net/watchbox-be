@@ -14,6 +14,12 @@ spring:
   application:
     name: watchbox-spring
 
+  # 리액티브 체인(WebClient·Lettuce)이 이벤트 루프로 넘어갈 때 트레이스 컨텍스트를 함께 옮긴다.
+  # 기본값 LIMITED 에서는 Netty 이벤트 루프에서 실행되는 Redis 명령이 부모 span 을 못 찾아
+  # 캐시 조회가 트레이스에 안 잡힌다.
+  reactor:
+    context-propagation: auto
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
 
@@ -123,6 +129,20 @@ tmdb:
     base-url: https://api.themoviedb.org/3
     include_adult: true
   image-url: https://image.tmdb.org/t/p/w500
+  cache:
+    # 캐시 on/off 토글. 같은 빌드로 캐시 유무를 A/B 측정하기 위한 것(빌드 차이가 비교에 안 섞이게).
+    enabled: ${TMDB_CACHE_ENABLED:true}
+    # 기동 직후 홈 캐시를 미리 채운다. 첫 사용자가 콜드 스타트 비용(1.4~1.9초)을 안 내게 하는 것이 목적.
+    warmup-on-startup: ${TMDB_CACHE_WARMUP:true}
+    # TTL 만료 전에 주기적으로 선제 갱신한다. 사용자가 miss(~900ms)를 아예 겪지 않게 하는 것이 목적.
+    warmup-scheduled: ${TMDB_CACHE_WARMUP_SCHEDULED:true}
+    # 가장 짧은 TTL(2h)보다 작아야 만료 전에 갱신된다.
+    warmup-interval: 90m
+    # TTL 은 목록 변동성에 따라 차등. TMDB 데이터는 우리가 못 바꾸니 명시적 무효화 없이 만료로만 갱신.
+    # 저트래픽에서는 hit rate ≈ TTL / 평균 방문간격 이라, TTL 이 짧으면 캐시가 사실상 동작하지 않는다.
+    trending-ttl: 2h       # trending — 주간 트렌딩이라 15분 TTL 은 과하게 짧았음
+    now-showing-ttl: 2h    # now-playing / on-the-air
+    stable-ttl: 12h        # popular / top-rated — 거의 고정
 
 url:
   # CORS 허용 오리진(쉼표 구분). 운영/개발 프론트 + 로컬 WebView 앱 테스트(맥 LAN IP).
