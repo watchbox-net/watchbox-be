@@ -21,6 +21,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  *   <li>{@code notificationExecutor} — Notification 저장 + SSE push 전용.
  *       발행 도메인 트랜잭션 커밋 후 (AFTER_COMMIT) 비동기로 실행.
  *       큐 가득 차면 CallerRunsPolicy 로 발행 스레드가 직접 처리 — 유실 방지.</li>
+ *   <li>{@code mailExecutor} — 메일 발송 전용. SSE 와 <b>풀을 나누는 이유는 격리</b>다.
+ *       SMTP 왕복은 수백 ms~수 초라 같은 풀을 쓰면 메일이 느려질 때 SSE 푸시까지 함께 막힌다.</li>
  * </ul>
  */
 @Slf4j
@@ -28,6 +30,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableScheduling // SSE heartbeat 등 @Scheduled 작업용
 @Configuration
 public class AsyncConfig {
+
+    public static final String MAIL_EXECUTOR = "mailExecutor";
 
     @Bean("notificationExecutor")
     public Executor notificationExecutor() {
@@ -39,6 +43,28 @@ public class AsyncConfig {
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(20);
+        executor.initialize();
+        return executor;
+    }
+
+    /**
+     * 메일 발송 전용 풀. SMTP 왕복이 길어 스레드가 오래 잡히므로 코어를 작게 두고 큐로 흡수한다.
+     *
+     * <p>거부 정책은 CallerRunsPolicy 다 — <b>초대 메일을 버리면 상대가 초대받은 사실조차 모른다.</b>
+     * 큐가 찰 정도면 이미 비정상이므로 그때는 느려지더라도 호출 스레드에서 마저 보낸다.
+     * (호출 스레드는 이미 notificationExecutor 라 사용자 요청을 붙잡지는 않는다)
+     */
+    @Bean(MAIL_EXECUTOR)
+    public Executor mailExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(1);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(200);
+        executor.setThreadNamePrefix("mail-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 종료 시 발송 중인 건은 마무리하되, 배포가 무한정 지연되지 않게 상한을 둔다.
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(10);
         executor.initialize();
         return executor;
     }
