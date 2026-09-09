@@ -52,7 +52,11 @@ public class AsyncConfig {
      *
      * <p>거부 정책은 CallerRunsPolicy 다 — <b>초대 메일을 버리면 상대가 초대받은 사실조차 모른다.</b>
      * 큐가 찰 정도면 이미 비정상이므로 그때는 느려지더라도 호출 스레드에서 마저 보낸다.
-     * (호출 스레드는 이미 notificationExecutor 라 사용자 요청을 붙잡지는 않는다)
+     *
+     * <p><b>다만 그 호출 스레드는 사용자 요청 스레드다.</b> {@code AFTER_COMMIT} 콜백은 커밋한 스레드
+     * (= HTTP 요청 스레드)에서 돌고, 거기서 {@code @Async} 가 이 풀로 넘긴다. 넘기지 못하면 그 자리에서
+     * 실행되므로 <b>초대 API 응답이 SMTP 왕복만큼 늦어진다.</b> 즉 이 정책은 "유실이냐 지연이냐" 중
+     * 지연을 고른 것이고, 둘 다 피하려면 큐가 아니라 <b>영속 큐(Outbox)</b> 가 필요하다.
      */
     @Bean(MAIL_EXECUTOR)
     public Executor mailExecutor() {

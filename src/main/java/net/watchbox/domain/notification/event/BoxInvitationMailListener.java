@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.member.service.MemberQueryService;
+import net.watchbox.domain.notification.entity.NotificationChannel;
 import net.watchbox.domain.notification.message.BoxInvitationMailFactory;
+import net.watchbox.domain.notification.metrics.NotificationDeliveryMetrics;
 import net.watchbox.domain.notification.service.MailSendService;
 import net.watchbox.global.config.AsyncConfig;
 import org.springframework.scheduling.annotation.Async;
@@ -43,6 +45,7 @@ public class BoxInvitationMailListener {
     private final MemberQueryService memberQueryService;
     private final BoxInvitationMailFactory boxInvitationMailFactory;
     private final MailSendService mailSendService;
+    private final NotificationDeliveryMetrics deliveryMetrics;
 
     @Async(AsyncConfig.MAIL_EXECUTOR)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -53,12 +56,15 @@ public class BoxInvitationMailListener {
             String email = receiver.getEmail();
             if (email == null || email.isBlank()) {
                 // 소셜 로그인이 이메일을 주지 않은 계정이다. 보낼 곳이 없을 뿐 오류는 아니다.
+                deliveryMetrics.skipped(NotificationChannel.MAIL);
                 log.info("[Mail] 발송 가능한 주소가 없어 초대 메일을 건너뜀 — memberId={}", event.receiverId());
                 return;
             }
             mailSendService.send(email, boxInvitationMailFactory.boxInvitation(
                     receiver.getNickname(), event.payload()));
         } catch (Exception e) {
+            // 수신자 조회 단계의 실패다. 발송 자체의 실패는 MailSendService 안에서 센다.
+            deliveryMetrics.failure(NotificationChannel.MAIL);
             log.warn("[Mail] 박스 초대 안내 발송 실패 — receiverId={}, {}", event.receiverId(), e.getMessage());
         }
     }

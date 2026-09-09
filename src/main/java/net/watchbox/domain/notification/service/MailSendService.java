@@ -2,7 +2,10 @@ package net.watchbox.domain.notification.service;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.notification.dev.NotificationFailureInjector;
+import net.watchbox.domain.notification.entity.NotificationChannel;
 import net.watchbox.domain.notification.message.MailMessage;
+import net.watchbox.domain.notification.metrics.NotificationDeliveryMetrics;
 import net.watchbox.global.properties.MailProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -33,12 +36,18 @@ public class MailSendService {
 
     private final JavaMailSender mailSender;
     private final MailProperties properties;
+    private final NotificationDeliveryMetrics deliveryMetrics;
+    private final NotificationFailureInjector failureInjector;
     private final String subjectPrefix;
 
     public MailSendService(JavaMailSender mailSender, MailProperties properties,
+                           NotificationDeliveryMetrics deliveryMetrics,
+                           NotificationFailureInjector failureInjector,
                            @Value("${spring.profiles.active:local}") String activeProfile) {
         this.mailSender = mailSender;
         this.properties = properties;
+        this.deliveryMetrics = deliveryMetrics;
+        this.failureInjector = failureInjector;
         this.subjectPrefix = subjectPrefixFor(activeProfile);
     }
 
@@ -61,6 +70,8 @@ public class MailSendService {
      */
     public void send(String to, MailMessage message) {
         if (!properties.enabled()) {
+            // 못 보낸 게 아니라 보내지 않기로 한 것이다. 실패로 세면 도착률이 왜곡된다.
+            deliveryMetrics.skipped(NotificationChannel.MAIL);
             log.info("[Mail] 발송 비활성 상태 — 보내지 않음: to={}, subject={}",
                     to, subjectPrefix + message.subject());
             return;
@@ -78,9 +89,13 @@ public class MailSendService {
             } else {
                 helper.setText(message.text(), false);
             }
+            // 측정용 실패 주입. 실제 SMTP 호출 직전이라 아래 catch 가 진짜 발송 실패와 똑같이 처리한다.
+            failureInjector.maybeFail(NotificationChannel.MAIL);
             mailSender.send(mimeMessage);
+            deliveryMetrics.success(NotificationChannel.MAIL);
             log.info("[Mail] 발송 완료 — subject={}", message.subject());
         } catch (UnsupportedEncodingException | jakarta.mail.MessagingException | RuntimeException e) {
+            deliveryMetrics.failure(NotificationChannel.MAIL);
             log.warn("[Mail] 발송 실패 — subject={}, {}", message.subject(), e.getMessage());
         }
     }

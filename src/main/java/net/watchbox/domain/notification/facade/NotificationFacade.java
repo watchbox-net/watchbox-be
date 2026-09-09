@@ -3,8 +3,11 @@ package net.watchbox.domain.notification.facade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.member.entity.Member;
+import net.watchbox.domain.notification.dev.NotificationFailureInjector;
 import net.watchbox.domain.notification.dto.response.NotificationResponse;
 import net.watchbox.domain.notification.entity.Notification;
+import net.watchbox.domain.notification.entity.NotificationChannel;
+import net.watchbox.domain.notification.metrics.NotificationDeliveryMetrics;
 import net.watchbox.domain.notification.event.NotificationEvent;
 import net.watchbox.domain.notification.service.NotificationCommandService;
 import net.watchbox.domain.notification.service.NotificationQueryService;
@@ -38,6 +41,8 @@ public class NotificationFacade {
     private final NotificationCommandService notificationCommandService;
     private final NotificationQueryService notificationQueryService;
     private final SseEmitterService sseEmitterService;
+    private final NotificationDeliveryMetrics deliveryMetrics;
+    private final NotificationFailureInjector failureInjector;
 
     // ─────────────────── 이벤트 수신 → 알림 발송 ───────────────────
 
@@ -53,9 +58,18 @@ public class NotificationFacade {
     @Async("notificationExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleNotificationEvent(NotificationEvent event) {
-        for (Long receiverId : event.receiverIds()) {
-            Notification saved = notificationCommandService.createNotification(receiverId, event.type(), event.payload());
-            sseEmitterService.send(receiverId, NotificationResponse.from(saved));
+        try {
+            for (Long receiverId : event.receiverIds()) {
+                failureInjector.maybeFail(NotificationChannel.SSE);
+                Notification saved = notificationCommandService.createNotification(receiverId, event.type(), event.payload());
+                sseEmitterService.send(receiverId, NotificationResponse.from(saved));
+                deliveryMetrics.success(NotificationChannel.SSE);
+            }
+        } catch (RuntimeException e) {
+            // 세기만 하고 그대로 던진다. 여기서 삼키면 "루프 중간에서 터지면 뒤 수신자는 못 받는다" 는
+            // 현재의 결함이 가려져 before 측정이 무의미해진다. 이 동작을 고치는 건 Outbox 단계의 몫이다.
+            deliveryMetrics.failure(NotificationChannel.SSE);
+            throw e;
         }
     }
 

@@ -1,13 +1,20 @@
 package net.watchbox.global.dev.controller;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.notification.dev.NotificationFailureInjector;
+import net.watchbox.domain.notification.entity.NotificationChannel;
+import net.watchbox.domain.notification.metrics.NotificationDeliveryMetrics;
 import net.watchbox.global.event.EventTransport;
 import net.watchbox.global.event.setting.EventTransportSettings;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,16 +24,20 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev/infra")
 @Tag(name = "DevInfra")
+@Profile("!prod")
 public class DevInfraController {
 
     private final StringRedisTemplate stringRedisTemplate;
     private final EventTransportSettings eventTransportSettings;
+    private final NotificationFailureInjector notificationFailureInjector;
+    private final MeterRegistry meterRegistry;
 
     /**
      * 도메인 이벤트 전송 경로를 런타임에 바꾼다. Kafka 브로커는 비용 때문에 평소 꺼두므로,
@@ -101,5 +112,61 @@ public class DevInfraController {
             body.put("savedAt", ZonedDateTime.now());
             return ResponseEntity.status(503).body(body);
         }
+    }
+
+    // ─────────────────── 알림 파이프라인 계측 (Outbox 전후 비교용) ───────────────────
+
+    /**
+     * 채널별 실패율을 런타임에 조절한다. <b>도착률을 결정론적으로 재기 위한 장치</b>다.
+     *
+     * <p>프로세스를 죽여 유실을 재현하면 타이밍이 매번 달라 숫자가 들쭉날쭉하다.
+     * 실패율을 고정하면 같은 조건을 반복할 수 있고, Outbox 도입 후
+     * <b>"실패율과 무관하게 도착률 100%"</b> 를 숫자로 보일 수 있다.
+     *
+     * <p>운영 프로파일에서는 거부된다. 측정이 끝나면 <b>반드시 0 으로 되돌려라</b> —
+     * 켜둔 걸 잊고 "왜 알림이 안 오지" 를 디버깅하는 사고가 가장 흔하다.
+     */
+    @Operation(summary = "알림 채널 실패율 주입 (측정용)",
+            description = "rate 는 0.0~1.0. 운영 프로파일에서는 409. 측정 후 0 으로 되돌릴 것.")
+    @PostMapping("/notification/failure-rate")
+    public ResponseEntity<Map<String, Object>> setNotificationFailureRate(
+            @RequestParam NotificationChannel channel,
+            @RequestParam double rate
+    ) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        try {
+            notificationFailureInjector.setFailureRate(channel, rate);
+            body.put("rates", notificationFailureInjector.currentRates());
+            body.put("changedAt", ZonedDateTime.now());
+            return ResponseEntity.ok(body);
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            body.put("rates", notificationFailureInjector.currentRates());
+            body.put("error", e.getMessage());
+            return ResponseEntity.status(409).body(body);
+        }
+    }
+
+    /**
+     * 채널별 전달 결과 카운터 스냅샷.
+     *
+     * <p>Micrometer 카운터는 리셋할 수 없다. 측정할 때는 <b>시작·종료 시점에 각각 찍어 차를 본다.</b>
+     * 도착률 = (종료 success − 시작 success) / 발송한 초대 수.
+     */
+    @Operation(summary = "알림 채널별 전달 결과 스냅샷 (측정용)",
+            description = "카운터는 리셋 불가. 측정 시작·종료 시점에 찍어 차를 계산한다.")
+    @GetMapping("/notification/delivery")
+    public ResponseEntity<Map<String, Object>> notificationDeliverySnapshot() {
+        Map<String, Map<String, Double>> byChannel = new TreeMap<>();
+        for (Counter counter : meterRegistry.find(NotificationDeliveryMetrics.METER_NAME).counters()) {
+            String channel = counter.getId().getTag("channel");
+            String result = counter.getId().getTag("result");
+            byChannel.computeIfAbsent(channel, k -> new TreeMap<>()).put(result, counter.count());
+        }
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("delivery", byChannel);
+        body.put("failureRates", notificationFailureInjector.currentRates());
+        body.put("capturedAt", ZonedDateTime.now());
+        return ResponseEntity.ok(body);
     }
 }
