@@ -1,64 +1,99 @@
 package net.watchbox.domain.notification.outbox;
 
 import lombok.RequiredArgsConstructor;
-import net.watchbox.global.event.DomainEventPublisher;
+import lombok.extern.slf4j.Slf4j;
+import net.watchbox.domain.notification.channel.NonRetryableDeliveryException;
+import net.watchbox.domain.notification.channel.NotificationChannelHandler;
+import net.watchbox.domain.notification.delivery.DeliveryStatus;
+import net.watchbox.domain.notification.delivery.NotificationDeliveryRecorder;
+import net.watchbox.domain.notification.event.NotificationEvent;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * outbox 행 하나를 발행한다. <b>행마다 독립 트랜잭션</b>이라 한 건이 실패해도 다른 건에 영향이 없다.
+ * outbox 행 하나를 <b>채널별로</b> 전달한다.
  *
- * <p>{@link OutboxRelay} 와 클래스를 나눈 이유는 <b>자기 호출로는 프록시를 안 거쳐</b>
- * {@code @Transactional} 이 무시되기 때문이다. 릴레이는 반복만 하고 트랜잭션 경계는 여기가 갖는다.
+ * <p><b>여기에는 트랜잭션이 없다.</b> 채널마다 자기 트랜잭션을 열고, 결과 기록은 별도 트랜잭션으로
+ * 남는다. 하나로 묶으면 메일 실패가 이미 성공한 SSE 까지 롤백시켜 <b>재시도 때 SSE 푸시가 또 나간다.</b>
  *
- * <p><b>리스너는 이 트랜잭션 안에서 동기로 실행된다.</b> 그래야 실패가 릴레이까지 올라와
- * 재시도로 이어진다. 비동기로 넘겨버리면 실패를 알 방법이 없어 outbox 를 둔 의미가 사라진다.
- * 대신 채널(SSE·메일)이 순차 실행되므로, 채널별 병렬·독립 재시도는 전송 경로를 나누는
- * 단계(Kafka 컨슈머 그룹)에서 다룬다.
+ * <p>이미 끝난 채널은 건너뛴다. 그래서 <b>재시도해도 남은 채널만 다시 시도</b>한다.
+ * 채널 실행 순서에 의존하지 않으므로, 순서가 바뀌어도 중복이 생기지 않는다.
+ *
+ * <p>채널이 하나라도 재시도 대기로 남으면 행을 미발행으로 두고 backoff 후 다시 집는다.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OutboxDispatcher {
 
-    /** 첫 재시도 간격. 실패마다 2배씩 늘린다. */
-    private static final Duration BASE_BACKOFF = Duration.ofSeconds(5);
-    private static final Duration MAX_BACKOFF = Duration.ofMinutes(10);
-
     private final OutboxEventRepository outboxEventRepository;
     private final NotificationEventCodec notificationEventCodec;
-    private final DomainEventPublisher domainEventPublisher;
+    private final NotificationDeliveryRecorder deliveryRecorder;
+    private final OutboxStateWriter outboxStateWriter;
 
-    /**
-     * @throws RuntimeException 리스너에서 올라온 실패. 호출자가 {@link #recordFailure} 로 기록한다.
-     */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    /** 등록된 모든 채널. 어떤 이벤트를 받을지는 각 핸들러의 {@code supports} 가 정한다. */
+    private final List<NotificationChannelHandler> channelHandlers;
+
     public void dispatch(Long outboxId) {
         OutboxEvent row = outboxEventRepository.findById(outboxId).orElse(null);
         if (row == null || row.getPublishedAt() != null) {
-            return; // 이미 처리됐다. 중복 집힘은 정상 상황이라 조용히 넘어간다.
+            return; // 이미 처리됐다. 중복으로 집히는 것은 정상 상황이라 조용히 넘어간다.
         }
-        domainEventPublisher.publish(notificationEventCodec.toEvent(row));
-        row.markPublished(LocalDateTime.now());
+
+        NotificationEvent event = notificationEventCodec.toEvent(row);
+        String eventId = row.getEventId();
+        boolean anyPending = false;
+        String lastError = null;
+
+        for (NotificationChannelHandler handler : channelHandlers) {
+            if (!handler.supports(event) || deliveryRecorder.isTerminal(eventId, handler.channel())) {
+                continue;
+            }
+            String error = deliverOnce(handler, event, eventId);
+            if (error != null) {
+                anyPending = true;
+                lastError = error;
+            }
+        }
+
+        if (anyPending) {
+            outboxStateWriter.markRetryLater(outboxId, lastError);
+        } else {
+            outboxStateWriter.markPublished(outboxId);
+        }
     }
 
     /**
-     * 실패 기록. <b>새 트랜잭션이어야 한다</b> — 발행 트랜잭션이 롤백된 뒤에 남기는 것이라
-     * 같은 트랜잭션에 쓰면 기록까지 같이 사라진다.
+     * @return 재시도로 남은 경우의 오류 문자열, 더 할 일이 없으면 {@code null}
+     *         (성공했거나, 재시도해도 소용없어 종결됐거나, 상한에 닿았거나)
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void recordFailure(Long outboxId, Throwable cause) {
-        outboxEventRepository.findById(outboxId).ifPresent(row -> {
-            row.markFailed(nextAttemptAt(row.getAttempt()), String.valueOf(cause));
-        });
+    private String deliverOnce(NotificationChannelHandler handler, NotificationEvent event, String eventId) {
+        try {
+            handler.handle(event);
+            deliveryRecorder.markSent(eventId, handler.channel());
+            return null;
+        } catch (NonRetryableDeliveryException e) {
+            deliveryRecorder.abandon(eventId, handler.channel(), e);
+            log.warn("delivery abandoned, retry is pointless - eventId={}, channel={}, cause={}",
+                    eventId, handler.channel(), e.getMessage());
+            return null;
+        } catch (Exception e) {
+            DeliveryStatus status = deliveryRecorder.markFailed(
+                    eventId, handler.channel(), e, handler.maxAttempt());
+            if (status == DeliveryStatus.FAILED) {
+                log.warn("delivery gave up after max attempts - eventId={}, channel={}, cause={}",
+                        eventId, handler.channel(), e.toString());
+                return null;
+            }
+            log.warn("delivery failed, will retry - eventId={}, channel={}, cause={}",
+                    eventId, handler.channel(), e.toString());
+            return String.valueOf(e);
+        }
     }
 
-    /** 지수 백오프. 외부 장애가 길어질수록 재시도 간격을 벌려 상대와 우리 둘 다 덜 때린다. */
-    private LocalDateTime nextAttemptAt(int currentAttempt) {
-        long seconds = BASE_BACKOFF.getSeconds() << Math.min(currentAttempt, 8);
-        return LocalDateTime.now().plusSeconds(Math.min(seconds, MAX_BACKOFF.getSeconds()));
+    /** 릴레이가 예상 못 한 실패를 만났을 때(행 조회 실패 등) 다음 주기로 미룬다. */
+    public void recordFailure(Long outboxId, Throwable cause) {
+        outboxStateWriter.markRetryLater(outboxId, String.valueOf(cause));
     }
 }
