@@ -64,6 +64,9 @@ dependencies {
     // Kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
+    // Mail (SES SMTP)
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     // Web Push
     implementation 'nl.martijndwars:web-push:5.1.1'
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'

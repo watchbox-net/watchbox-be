@@ -12,9 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * memberId → SseEmitter 매핑 저장소 (단일 서버 in-memory).
  *
- * <p>멀티 서버로 확장 시: Redis Pub/Sub 으로 노드 간 메시지 전파하는 구조로 교체 필요.
- * 현 구현은 ConcurrentHashMap 으로 동시성만 보장.
- *
  * <p>한 사용자가 여러 디바이스/탭으로 접속할 수 있다면 Map<Long, List<SseEmitter>> 로 확장.
  * 현재는 1:1 (마지막 연결만 유지).
  */

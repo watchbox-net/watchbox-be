@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents/{mediaType}/{tmdbId}/boxes")
-@Tag(name = "ContentBox", description = "컨텐츠 기준 박스 포함 여부 조회 및 일괄 추가/삭제 API")
+@Tag(name = "ContentBox", description = "콘텐츠 기준 박스 포함 여부 조회 및 일괄 추가/삭제 API")
 public class ContentBoxController {
     private final ContentBoxFacade contentBoxFacade;
 
-    @Operation(summary = "컨텐츠가 박스들에 저장되어있는지 유무 리스트 조회")
+    @Operation(summary = "콘텐츠가 박스들에 저장되어있는지 유무 리스트 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<ContentBoxSheetResponse>> getContentBoxSheet(
             @AuthenticationPrincipal Member member,
@@ -33,7 +33,7 @@ public class ContentBoxController {
         ));
     }
 
-    @Operation(summary = "컨텐츠를 박스들에 일괄 추가/삭제")
+    @Operation(summary = "콘텐츠를 박스들에 일괄 추가/삭제")
     @PostMapping
     public ResponseEntity<ApiResponse<ContentBoxUpdateResponse>> updateContentBoxes(
             @AuthenticationPrincipal Member member,

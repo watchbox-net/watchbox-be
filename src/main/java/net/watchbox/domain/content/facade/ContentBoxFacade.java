@@ -20,7 +20,7 @@ import net.watchbox.domain.content.service.ContentQueryService;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.notification.dto.payload.ContentBoxAddedPayload;
 import net.watchbox.domain.notification.event.ContentBoxAddedEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import net.watchbox.domain.notification.outbox.OutboxRecorder;
 import org.springframework.stereotype.Component;
 
 import net.watchbox.domain.content.entity.Content;
@@ -39,7 +39,7 @@ public class ContentBoxFacade {
     private final BoxValidator boxValidator;
     private final BoxMemberService boxMemberService;
     private final BoxHistoryCommandService boxHistoryCommandService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OutboxRecorder outboxRecorder;
 
     @Transactional(readOnly = true)
     public ContentBoxSheetResponse getContentBoxSheet(Member member, Long tmdbId, MediaType mediaType) {
@@ -78,7 +78,7 @@ public class ContentBoxFacade {
             Box box = boxService.getByBoxIdOrElseThrow(boxId);
             boxValidator.validateBoxContentAdder(box, member); // 권한 검증
             if (boxValidator.contentExistsInBoxByMember(member, box, content)) {
-                continue; // 해당 멤버로 추가된 컨텐츠이면 skip
+                continue; // 해당 멤버로 추가된 콘텐츠이면 skip
             }
             boxContentCommandService.addContentToBox(member, box, content);
             addedBoxIds.add(boxId);
@@ -86,13 +86,13 @@ public class ContentBoxFacade {
             // 박스 히스토리 기록
             boxHistoryCommandService.contentAdded(box, member, content);
 
-            // 알림 도메인 이벤트 발행 (추가 시에만)
+            // 알림 이벤트를 outbox 에 기록 (추가 시에만) — 이 트랜잭션과 원자적으로 묶인다.
             // - SHARED 박스: publisher 제외한 멤버 전원에게 알림
             // - MY 박스: 본인 활동이라 알림 불필요 → 스킵
             if (box.getBoxType() == BoxType.SHARED) {
                 List<Long> receiverIds = boxMemberService.getAllBoxMemberIdsExcluding(box, member);
                 if (!receiverIds.isEmpty()) {
-                    eventPublisher.publishEvent(new ContentBoxAddedEvent(
+                    outboxRecorder.record(new ContentBoxAddedEvent(
                             receiverIds,
                             ContentBoxAddedPayload.of(content, box, member)
                     ));

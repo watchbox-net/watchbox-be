@@ -1,5 +1,10 @@
 server:
   port: 9000
+  # nginx 가 TLS 를 종료하고 평문 HTTP 로 프록시한다. 이 설정이 없으면 앱이 보는 scheme 이 http 라,
+  # 브라우저가 보낸 Origin(https://...) 과 불일치해 동일 출처 요청도 교차 출처로 판정된다.
+  # (Spring 의 CorsUtils.isCorsRequest 가 Origin 을 scheme·host·port 와 비교한다)
+  # → Swagger 에서 POST 시 403 "Invalid CORS request". nginx 는 이미 X-Forwarded-Proto 를 보내고 있다.
+  forward-headers-strategy: framework
 #  compression:
 #    enabled: true
 #    mime-types: application/json
@@ -38,6 +43,24 @@ spring:
     url: ${DB_URL:jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:95206326}
+
+  # SES SMTP. 발송처(SES/Gmail 등)는 이 설정으로만 갈리고 MailSendService 코드는 바뀌지 않는다.
+  # username/password 는 SES 콘솔에서 발급하는 SMTP 자격증명(IAM 액세스 키와 다른 값)이다.
+  mail:
+    host: ${MAIL_HOST:email-smtp.ap-northeast-2.amazonaws.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          # 기본값이 무한이라 SMTP 연결이 물리면 메일 스레드가 영영 잡힌다.
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
   data:
     redis:
@@ -93,6 +116,9 @@ spring:
       retries: 3
       properties:
         enable.idempotence: true # 중복 방지
+        # 브로커가 꺼져 있으면 send() 가 이 시간만큼 블로킹한 뒤 예외를 던진다.
+        # 기본값 60초로는 카프카를 꺼둔 상태에서 요청이 1분간 멈춘다.
+        max.block.ms: 3000
 
     consumer:
       group-id: watchbox-consumer-${spring.profiles.active}
@@ -113,6 +139,7 @@ kafka:
   topics:
     health-check: ${spring.profiles.active}.healthcheck
     notification-events: ${spring.profiles.active}.notification-events
+    domain-events: ${spring.profiles.active}.domain-events
 
 #logging:
 #  level:
@@ -136,15 +163,21 @@ tmdb:
     warmup-on-startup: ${TMDB_CACHE_WARMUP:true}
     # TTL 만료 전에 주기적으로 선제 갱신한다. 사용자가 miss(~900ms)를 아예 겪지 않게 하는 것이 목적.
     warmup-scheduled: ${TMDB_CACHE_WARMUP_SCHEDULED:true}
-    # 가장 짧은 TTL(2h)보다 작아야 만료 전에 갱신된다.
-    warmup-interval: 90m
+    # 가장 짧은 TTL(2h)보다 작아야 만료 전에 갱신된다. 여유 1시간.
+    warmup-interval: 1h
     # TTL 은 목록 변동성에 따라 차등. TMDB 데이터는 우리가 못 바꾸니 명시적 무효화 없이 만료로만 갱신.
     # 저트래픽에서는 hit rate ≈ TTL / 평균 방문간격 이라, TTL 이 짧으면 캐시가 사실상 동작하지 않는다.
+    #
+    # 알려진 한계: page 1 은 워밍이 갱신하지만 page 2 이후는 TTL 로만 산다. 두 스냅샷의 시차만큼
+    # 순위가 어긋나 같은 작품이 두 페이지에 겹치거나 사라진다(offset 페이지네이션의 고유 문제이고
+    # 캐시는 시차를 벌릴 뿐이다). 프론트에서 tmdbId 기준 중복 제거로 대응한다.
     trending-ttl: 2h       # trending — 주간 트렌딩이라 15분 TTL 은 과하게 짧았음
     now-showing-ttl: 2h    # now-playing / on-the-air
     stable-ttl: 12h        # popular / top-rated — 거의 고정
 
 url:
+  # 메일 본문의 '바로가기' 링크. 프론트 주소다.
+  service: ${WEB_SERVICE_URL:http://localhost:4000}
   # CORS 허용 오리진(쉼표 구분). 운영/개발 프론트 + 로컬 WebView 앱 테스트(맥 LAN IP).
   # dev·prod 는 URL_CORS_ORIGINS 로 주입, 로컬은 아래 기본값 사용.
   cors-origins: ${URL_CORS_ORIGINS:http://localhost:4000,http://localhost:3000,http://192.168.*.*:4000}
@@ -230,6 +263,24 @@ management:
     tags:
       application: ${spring.application.name}
 
+# OpenTelemetry Spring Boot starter
+#
+# starter 의 servlet 계측과 Micrometer 의 http.server.requests 관측이 각각 HTTP 서버 span 을
+# 만들어, 요청 하나에 SERVER span 이 두 개씩 나가고 있었다.
+#   watchbox-spring  http get /api/members/mypage   (Micrometer — 하위 span 을 전부 달고 있음)
+#                    GET /api/members/mypage        (starter — 자식 없는 leaf)
+#
+# Tempo service graph 는 (traceID, 부모 spanID) 로 엣지를 키잉하므로 같은 엣지가 두 번
+# upsert 되고, span-metrics 에서도 요청 하나가 서로 다른 두 이름으로 계상된다.
+#
+# starter 쪽을 끈다. Micrometer 쪽을 끄면 @Observed 커스텀 span 과 http_server_requests
+# 메트릭(위 percentiles-histogram 설정 포함)까지 같이 사라진다.
+# JDBC · Kafka 등 나머지 starter 계측은 영향 없다.
+otel:
+  instrumentation:
+    spring-webmvc:
+      enabled: false
+
 # Continuous profiling (Pyroscope)
 pyroscope:
   enabled: ${PYROSCOPE_ENABLED:false}
@@ -241,6 +292,31 @@ notification:
   sse:
     timeout: 30m
     heartbeat: 30s
+
+  # 알림 이벤트 outbox 릴레이.
+  # 기록 직후 트리거가 즉시 깨우므로 poll-interval 은 '트리거 유실 + 재시도' 를 받쳐주는 백스톱이다.
+  # 짧을수록 재시도가 빨라지지만 그만큼 빈 조회가 늘어난다.
+  outbox:
+    poll-interval: ${OUTBOX_POLL_INTERVAL:5s}
+    base-backoff: ${OUTBOX_BASE_BACKOFF:5s}    # 실패마다 2배씩 늘어난다
+    max-backoff: ${OUTBOX_MAX_BACKOFF:60s}     # 간격 상한. 크면 복구 후 반영이 느려진다
+    # 행 단위 백스톱. 반드시 아래 채널 상한보다 커야 한다 —
+    # 같거나 작으면 채널이 종결되기 전에 행이 조회에서 빠져 영원히 미발행으로 남는다.
+    max-attempt: ${OUTBOX_MAX_ATTEMPT:20}
+
+  # 채널별 재시도 상한. 만회 경로가 다르므로 값도 다르다.
+  # (SSE 는 실패해도 알림함 + catchup 이 만회하지만, 메일은 못 보내면 끝이다)
+  # 시연 중에는 값을 올려 재시도 창을 넓힐 수 있다 — 상한에 닿으면 종결되어 되돌려도 발송되지 않는다.
+  delivery:
+    sse-max-attempt: ${SSE_MAX_ATTEMPT:5}
+    mail-max-attempt: ${MAIL_MAX_ATTEMPT:10}
+
+  # 메일은 SSE 로 닿지 않는 사용자에게 초대를 전달하는 보조 채널이다.
+  # enabled=false 면 발송하지 않고 로그만 남긴다 — 로컬·테스트에서 실제 주소로 메일이 나가는 사고를 막는다.
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: no-reply@watch-box.net       # SES 에 인증된 도메인이어야 한다
+    support-address: watchboxnet@gmail.com
 
 # Web Push
 # - public-key / private-key : VAPID 키쌍 (한 번 발급 후 고정).

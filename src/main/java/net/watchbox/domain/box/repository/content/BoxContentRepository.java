@@ -28,7 +28,7 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
 
     Optional<BoxContent> findByBoxAndContent(Box box, Content content);
 
-    // 박스 컨텐츠 조회 시, SubContent인 영화/TV/인물 엔티티도 함께 조회
+    // 박스 콘텐츠 조회 시, SubContent인 영화/TV/인물 엔티티도 함께 조회
     @Query("SELECT bc FROM BoxContent bc " +
             "JOIN FETCH bc.content c " +
             "LEFT JOIN FETCH c.movie " +
@@ -68,8 +68,8 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
 //    List<Long> findBoxIdsByContent(@Param("content") Content content);
 
     // 특정 Content가 포함된 Member의 모든 박스 ID 목록 조회
-    // - 박스 컨텐츠에 저장되었다는 것은 Content가 저장되어 있는 상태이므로 tmdbId가 아닌 contentId로 조회
-    // - 공유 박스에서는 로그인한 유저가 추가한 컨텐츠만 포함으로 간주
+    // - 박스 콘텐츠에 저장되었다는 것은 Content가 저장되어 있는 상태이므로 tmdbId가 아닌 contentId로 조회
+    // - 공유 박스에서는 로그인한 유저가 추가한 콘텐츠만 포함으로 간주
     @Query("SELECT bc.box.boxId FROM BoxContent bc " +
             "WHERE bc.content = :content " +
             "AND (bc.box.boxType = 'MY' " +

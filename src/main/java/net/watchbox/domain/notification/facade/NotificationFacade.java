@@ -5,15 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.notification.dto.response.NotificationResponse;
 import net.watchbox.domain.notification.entity.Notification;
-import net.watchbox.domain.notification.event.NotificationEvent;
 import net.watchbox.domain.notification.service.NotificationCommandService;
 import net.watchbox.domain.notification.service.NotificationQueryService;
 import net.watchbox.domain.notification.sse.service.SseEmitterService;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -22,13 +18,13 @@ import java.util.List;
  * 알림 도메인 진입점.
  *
  * <ul>
- *   <li>도메인 이벤트 수신 → Notification 저장 + SSE push</li>
  *   <li>SSE 구독 + 미노출 알림 catchup 푸시</li>
  *   <li>스낵바 노출 ACK</li>
  * </ul>
  *
- * <p>이벤트 리스너는 {@link TransactionPhase#AFTER_COMMIT} 에서 동작 — 발행 도메인의 트랜잭션이
- * 성공적으로 커밋된 후에만 알림 발송 (정합성 보장).
+ * <p><b>알림 발송은 여기 없다.</b> 이벤트 수신 → 저장 + 푸시는 채널 단위로 재시도·멱등을
+ * 관리해야 해서 {@code SseChannelHandler} 로 옮겼다. 여기는 클라이언트가 직접 부르는
+ * 조회·구독 진입점만 남는다.
  */
 @Slf4j
 @Component
@@ -38,26 +34,6 @@ public class NotificationFacade {
     private final NotificationCommandService notificationCommandService;
     private final NotificationQueryService notificationQueryService;
     private final SseEmitterService sseEmitterService;
-
-    // ─────────────────── 이벤트 수신 → 알림 발송 ───────────────────
-
-    /**
-     * 모든 {@link NotificationEvent} 수신.
-     * receiver 수만큼 Notification row 생성 (fan-out on write) + 각 receiver 에 SSE push.
-     * 오프라인 사용자는 SSE no-op, DB 저장은 살아있어 다음 구독 시 catchup 으로 푸시됨.
-     *
-     * <p>{@code @Async("notificationExecutor")} — 발행 도메인 스레드와 분리.
-     * 알림 저장/SSE 발송이 발행자 응답속도에 영향 X.
-     * JVM 종료 시 큐잉된 이벤트는 유실될 수 있음 (Kafka 도입 전 한계).
-     */
-    @Async("notificationExecutor")
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleNotificationEvent(NotificationEvent event) {
-        for (Long receiverId : event.receiverIds()) {
-            Notification saved = notificationCommandService.createNotification(receiverId, event.type(), event.payload());
-            sseEmitterService.send(receiverId, NotificationResponse.from(saved));
-        }
-    }
 
     // ─────────────────── SSE 구독 + catchup ───────────────────
 

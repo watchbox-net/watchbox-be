@@ -18,7 +18,7 @@ import net.watchbox.domain.notification.dto.payload.BoxInvitationPayload;
 import net.watchbox.domain.notification.dto.payload.BoxInvitationRespondedPayload;
 import net.watchbox.domain.notification.event.BoxInvitationReceivedEvent;
 import net.watchbox.domain.notification.event.BoxInvitationRespondedEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import net.watchbox.domain.notification.outbox.OutboxRecorder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +37,7 @@ public class BoxInvitationFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxValidator boxValidator;
     private final BoxHistoryCommandService boxHistoryCommandService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OutboxRecorder outboxRecorder;
 
     @Transactional
     public InvitationSentResponse inviteToBox(Member sender, Long boxId, Long receiverId) {
@@ -51,10 +51,9 @@ public class BoxInvitationFacade {
         // 초대 요청 생성
         BoxInvitation boxInvitation = boxInvitationService.inviteToBox(sender, box, receiver);
 
-        // 알림 도메인 이벤트 발행
-        // - AFTER_COMMIT 리스너가 비동기로 Notification 저장 + SSE push 처리
-        // - 알림 실패가 초대 트랜잭션에 영향 X
-        eventPublisher.publishEvent(new BoxInvitationReceivedEvent(
+        // 알림 이벤트를 outbox 에 기록 — 이 트랜잭션과 원자적으로 묶인다.
+        // 실제 발행(Notification 저장 + SSE push + 메일)은 커밋 후 OutboxRelay 가 한다.
+        outboxRecorder.record(new BoxInvitationReceivedEvent(
                 receiverId,
                 BoxInvitationPayload.of(boxInvitation, box, sender)
         ));
@@ -107,7 +106,7 @@ public class BoxInvitationFacade {
         boxHistoryCommandService.memberJoined(box, member, member);
 
         // 결과 알림 이벤트 발행 (수신자 = 원래 sender)
-        eventPublisher.publishEvent(new BoxInvitationRespondedEvent(
+        outboxRecorder.record(new BoxInvitationRespondedEvent(
                 boxInvitation.getSender().getMemberId(),
                 BoxInvitationRespondedPayload.of(boxInvitation, box, member)
         ));
@@ -124,7 +123,7 @@ public class BoxInvitationFacade {
         boxInvitationService.rejectBoxInvitation(boxInvitation);
 
         // 결과 알림 이벤트 발행 (수신자 = 원래 sender)
-        eventPublisher.publishEvent(new BoxInvitationRespondedEvent(
+        outboxRecorder.record(new BoxInvitationRespondedEvent(
                 boxInvitation.getSender().getMemberId(),
                 BoxInvitationRespondedPayload.of(boxInvitation, boxInvitation.getBox(), member)
         ));

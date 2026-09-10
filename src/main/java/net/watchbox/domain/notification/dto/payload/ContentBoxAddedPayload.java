@@ -7,19 +7,19 @@ import net.watchbox.domain.member.entity.Member;
 import net.watchbox.domain.notification.entity.NotificationType;
 
 /**
- * 박스에 컨텐츠가 추가됐을 때 알림 페이로드.
+ * 박스에 콘텐츠가 추가됐을 때 알림 페이로드.
  * 박스 타입(MY / SHARED) 무관하게 사용.
  *
  * <p>예시 메시지: "{publisher}님이 {boxName}에 〈{contentName}〉을 추가했어요"
  */
 public record ContentBoxAddedPayload(
-        Long boxId,                 // 박스 ID (클릭 시 박스 컨텐츠 페이지로 이동)
+        Long boxId,                 // 박스 ID (클릭 시 박스 콘텐츠 페이지로 이동)
         String boxName,             // 박스 이름
         BoxType boxType,            // MY / SHARED — 프론트 분기/표시용
-        Long contentId,             // 추가된 컨텐츠 ID (상세 페이지 라우팅용)
+        Long contentId,             // 추가된 콘텐츠 ID (상세 페이지 라우팅용)
         Long tmdbId,                // TMDB ID (라우팅 패턴에 따라 둘 중 하나 사용)
         String mediaType,           // MOVIE / TV / PERSON
-        String contentName,         // 컨텐츠명
+        String contentName,         // 콘텐츠명
         String posterPath,          // 포스터 경로 (알림 카드 썸네일)
         Long publisherId,           // 추가한 멤버 ID
         String publisher,           // 추가한 멤버 닉네임 스냅샷

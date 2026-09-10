@@ -41,7 +41,7 @@ public class PreviewController {
     /**
      * Preview 페이지 대상
      * 1. 박스 페이지
-     * 2. 박스 컨텐츠 페이지
+     * 2. 박스 콘텐츠 페이지
      * 3. 시청 기록 페이지
      * 4. 마이 페이지
      */
@@ -54,7 +54,7 @@ public class PreviewController {
         ));
     }
 
-    @Operation(summary = "Preview 박스 컨텐츠 페이지 조회")
+    @Operation(summary = "Preview 박스 콘텐츠 페이지 조회")
     @GetMapping("/boxes/{boxId}/contents")
     public ResponseEntity<ApiResponse<ContentCursorPageResponse>> getBoxContentPage(
             @ParameterObject
@@ -67,7 +67,7 @@ public class PreviewController {
         );
     }
 
-    @Operation(summary = "Preview 박스 컨텐츠 총 개수 조회")
+    @Operation(summary = "Preview 박스 콘텐츠 총 개수 조회")
     @GetMapping("/boxes/{boxId}/contents/count")
     public ResponseEntity<ApiResponse<BoxContentCountResponse>> getBoxContentCount(
             @ParameterObject
@@ -104,7 +104,7 @@ public class PreviewController {
         ));
     }
 
-    @Operation(summary = "Preview 마이 페이지 조회", description = "프로필 정보와 멤버 컨텐츠 개수 조회")
+    @Operation(summary = "Preview 마이 페이지 조회", description = "프로필 정보와 멤버 콘텐츠 개수 조회")
     @GetMapping("/members/mypage")
     public ResponseEntity<ApiResponse<MyPageResponse>> getMyPage(){
         Member member = memberQueryService.getByNicknameOrThrow(SAMPLE_NICKNAME);
