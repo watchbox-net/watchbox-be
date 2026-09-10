@@ -2,6 +2,7 @@ package net.watchbox.domain.notification.outbox;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.watchbox.global.properties.OutboxProperties;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -35,17 +36,12 @@ public class OutboxRelay {
     /** 한 번에 가져올 행 수. 실패 시 재시도 단위이기도 하다. */
     private static final int BATCH_SIZE = 100;
 
-    /**
-     * 이 횟수를 넘으면 더 집지 않는다. 계속 실패하는 행이 배치를 독점하는 것을 막는다.
-     * 행은 미발행으로 남으므로 쿼리 한 번으로 확인·수동 조치가 가능하다.
-     */
-    static final int MAX_ATTEMPT = 10;
-
     /** 한 번 깨어났을 때 처리할 최대 배치 수. 무한 루프를 막는 안전장치. */
     private static final int MAX_BATCHES_PER_RUN = 10;
 
     private final OutboxEventRepository outboxEventRepository;
     private final OutboxDispatcher outboxDispatcher;
+    private final OutboxProperties outboxProperties;
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -78,8 +74,10 @@ public class OutboxRelay {
 
     void drain() {
         for (int batch = 0; batch < MAX_BATCHES_PER_RUN; batch++) {
+            // maxAttempt 는 채널 상한보다 큰 백스톱이다. 정상적으로는 채널이 먼저 종결돼
+            // 행이 닫히므로, 여기 걸리는 행은 조율 자체가 실패하고 있다는 신호다.
             List<OutboxEvent> pending = outboxEventRepository.findPending(
-                    LocalDateTime.now(), MAX_ATTEMPT, PageRequest.of(0, BATCH_SIZE));
+                    LocalDateTime.now(), outboxProperties.maxAttempt(), PageRequest.of(0, BATCH_SIZE));
             if (pending.isEmpty()) {
                 return;
             }
