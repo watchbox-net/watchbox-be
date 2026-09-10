@@ -6,6 +6,7 @@ import net.watchbox.global.tmdb.client.TmdbClient;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,10 @@ public class TmdbTvSeriesService {
      * 상세 페이지에 필요한 정보들 요청
      */
     public TmdbTvSeriesDetailsResponse getTvSeriesDetailsWithCVP(Long seriesId) {
+        return getTvSeriesDetailsWithCVPMono(seriesId).block();
+    }
+
+    public Mono<TmdbTvSeriesDetailsResponse> getTvSeriesDetailsWithCVPMono(Long seriesId) {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
@@ -42,8 +47,7 @@ public class TmdbTvSeriesService {
                         .path("/tv/{seriesId}")
                         .build(seriesId))
                 .retrieve()
-                .bodyToMono(TmdbTvSeriesDetailsResponse.class)
-                .block();
+                .bodyToMono(TmdbTvSeriesDetailsResponse.class);
     }
 
     /**
@@ -52,13 +56,16 @@ public class TmdbTvSeriesService {
      * language=null TvSeries 이미지 요청
      */
     public TmdbWorkImagesResponse getTvSeriesImages(Long seriesId) {
+        return getTvSeriesImagesMono(seriesId).block();
+    }
+
+    public Mono<TmdbWorkImagesResponse> getTvSeriesImagesMono(Long seriesId) {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder, "null")
                         .path("/tv/{seriesId}/images")
                         .build(seriesId))
                 .retrieve()
-                .bodyToMono(TmdbWorkImagesResponse.class)
-                .block();
+                .bodyToMono(TmdbWorkImagesResponse.class);
     }
 }

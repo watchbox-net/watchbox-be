@@ -6,6 +6,7 @@ import net.watchbox.global.tmdb.client.TmdbClient;
 import net.watchbox.global.tmdb.response.common.TmdbWorkImagesResponse;
 import net.watchbox.global.tmdb.response.movies.TmdbMoviesDetailsResponse;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,10 @@ public class TmdbMoviesService {
      * 상세 페이지에 필요한 정보 요청
      */
     public TmdbMoviesDetailsResponse getMovieDetailsWithCVP(Long movieId) {
+        return getMovieDetailsWithCVPMono(movieId).block();
+    }
+
+    public Mono<TmdbMoviesDetailsResponse> getMovieDetailsWithCVPMono(Long movieId) {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder)
@@ -42,8 +47,7 @@ public class TmdbMoviesService {
                         .path("/movie/{movieId}")
                         .build(movieId))
                 .retrieve()
-                .bodyToMono(TmdbMoviesDetailsResponse.class)
-                .block();
+                .bodyToMono(TmdbMoviesDetailsResponse.class);
     }
 
     /**
@@ -52,14 +56,17 @@ public class TmdbMoviesService {
      * language=null 영화 이미지 요청
      */
     public TmdbWorkImagesResponse getMovieImages(Long movieId) {
+        return getMovieImagesMono(movieId).block();
+    }
+
+    public Mono<TmdbWorkImagesResponse> getMovieImagesMono(Long movieId) {
         return tmdbClient.baseWebClient()
                 .get()
                 .uri(uriBuilder -> tmdbClient.addCommonParams(uriBuilder, "null")
                         .path("/movie/{movieId}/images")
                         .build(movieId))
                 .retrieve()
-                .bodyToMono(TmdbWorkImagesResponse.class)
-                .block();
+                .bodyToMono(TmdbWorkImagesResponse.class);
     }
 
 }
