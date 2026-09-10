@@ -1,5 +1,6 @@
 package net.watchbox.global.properties;
 
+import net.watchbox.global.event.TopicKey;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -12,4 +13,12 @@ public record KafkaTopicProperties(
         String notificationEvents,
         String domainEvents
 ) {
+
+    /** 논리 토픽 → 실제 이름. switch 가 enum 을 전부 다뤄 새 토픽을 추가하면 컴파일이 막힌다. */
+    public String resolve(TopicKey key) {
+        return switch (key) {
+            case DOMAIN_EVENTS -> domainEvents;
+            case NOTIFICATION_EVENTS -> notificationEvents;
+        };
+    }
 }

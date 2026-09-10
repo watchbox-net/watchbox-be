@@ -14,6 +14,9 @@ import java.util.concurrent.CompletableFuture;
  * Kafka 토픽으로 발행한다. 파티션 키로 {@link DomainEvent#partitionKey()} 를 써서
  * 같은 키(예: memberId)의 이벤트 순서를 보장한다.
  *
+ * <p><b>토픽은 이벤트가 정한다</b>({@link DomainEvent#topicKey()}). 종류가 다른 메시지를 한 토픽에
+ * 섞으면 컨슈머가 남의 메시지를 자기 타입으로 읽으려다 깨진다.
+ *
  * <p><b>실패는 여기서 처리하지 않는다.</b> 폴백 여부는 전송 경로를 아는
  * {@code SwitchingEventPublisher} 의 책임이라 future 를 그대로 넘긴다.
  *
@@ -30,7 +33,7 @@ public class KafkaEventPublisher implements DomainEventPublisher {
 
     /** 발행 결과 future 를 반환한다. 동기 실패(브로커 미가용)는 예외로 던져진다. */
     public CompletableFuture<SendResult<String, Object>> send(DomainEvent event) {
-        return kafkaTemplate.send(topics.domainEvents(), event.partitionKey(), event);
+        return kafkaTemplate.send(topics.resolve(event.topicKey()), event.partitionKey(), event);
     }
 
     @Override

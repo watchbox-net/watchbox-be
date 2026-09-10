@@ -3,74 +3,77 @@ package net.watchbox.global.event.publisher;
 import net.watchbox.global.event.DomainEvent;
 import net.watchbox.global.event.EventTransport;
 import net.watchbox.global.event.setting.EventTransportSettings;
-import org.junit.jupiter.api.BeforeEach;
+import net.watchbox.global.health.EventTransportProbe;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.kafka.support.SendResult;
 
 import java.util.concurrent.CompletableFuture;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * <b>브로커가 죽어도 이벤트를 잃지 않는다</b> 는 성질을 고정한다.
+ *
+ * <p>Kafka 는 비용 때문에 평소 꺼두는 구조라, 켜져 있다고 가정한 코드는 언젠가 반드시 물린다.
+ * 실패가 동기(브로커 미가용)로 오든 비동기(전송 중 다운)로 오든 <b>같은 자리에서 로컬로 떨어져야</b> 한다.
+ */
 class SwitchingEventPublisherTest {
 
-    private record TestEvent(String partitionKey) implements DomainEvent {
-        public String type() { return "test"; }
-    }
+    private final LocalEventPublisher local = mock(LocalEventPublisher.class);
+    private final KafkaEventPublisher kafka = mock(KafkaEventPublisher.class);
+    private final EventTransportSettings settings = mock(EventTransportSettings.class);
 
-    private LocalEventPublisher local;
-    private KafkaEventPublisher kafka;
-    private EventTransportSettings settings;
-    private SwitchingEventPublisher publisher;
-    private final DomainEvent event = new TestEvent("member-1");
+    private final SwitchingEventPublisher publisher =
+            new SwitchingEventPublisher(local, kafka, settings);
 
-    @BeforeEach
-    void setUp() {
-        local = mock(LocalEventPublisher.class);
-        kafka = mock(KafkaEventPublisher.class);
-        settings = mock(EventTransportSettings.class);
-        publisher = new SwitchingEventPublisher(local, kafka, settings);
+    private final DomainEvent event = new EventTransportProbe("p-1", "ok");
+
+    private void given(EventTransport transport) {
+        when(settings.current()).thenReturn(transport);
     }
 
     @Test
-    @DisplayName("LOCAL 모드면 Kafka 를 건드리지 않는다")
-    void local모드면_kafka_미사용() {
-        when(settings.current()).thenReturn(EventTransport.LOCAL);
+    @DisplayName("LOCAL 이면 브로커를 건드리지 않는다")
+    void localDoesNotTouchKafka() {
+        given(EventTransport.LOCAL);
 
         publisher.publish(event);
 
         verify(local).publish(event);
-        verify(kafka, never()).send(any());
+        verifyNoInteractions(kafka);
     }
 
     @Test
-    @DisplayName("KAFKA 모드면 Kafka 로 발행한다")
-    void kafka모드면_kafka로_발행() {
-        when(settings.current()).thenReturn(EventTransport.KAFKA);
-        when(kafka.send(event)).thenReturn(CompletableFuture.completedFuture(null));
+    @DisplayName("KAFKA 이고 ACK 를 받으면 로컬로 중복 발행하지 않는다")
+    void kafkaSuccessDoesNotAlsoPublishLocally() {
+        given(EventTransport.KAFKA);
+        when(kafka.send(event)).thenReturn(CompletableFuture.completedFuture(mock(SendResult.class)));
 
         publisher.publish(event);
 
         verify(kafka).send(event);
-        verify(local, never()).publish(any());
+        verifyNoInteractions(local);
     }
 
     @Test
-    @DisplayName("브로커 미가용으로 send 가 예외를 던지면 로컬로 폴백한다 (동기 실패)")
-    void 동기실패면_로컬폴백() {
-        when(settings.current()).thenReturn(EventTransport.KAFKA);
-        when(kafka.send(event)).thenThrow(new RuntimeException("broker down"));
+    @DisplayName("브로커가 꺼져 있어(동기 실패) 발행이 던지면 로컬로 떨어진다")
+    void fallsBackOnSynchronousFailure() {
+        given(EventTransport.KAFKA);
+        when(kafka.send(any())).thenThrow(new IllegalStateException("broker unreachable"));
 
-        assertThatCode(() -> publisher.publish(event)).doesNotThrowAnyException();
+        publisher.publish(event);
+
         verify(local).publish(event);
     }
 
     @Test
-    @DisplayName("발행 future 가 실패해도 로컬로 폴백한다 (비동기 실패)")
-    void 비동기실패면_로컬폴백() {
-        when(settings.current()).thenReturn(EventTransport.KAFKA);
-        when(kafka.send(event)).thenReturn(CompletableFuture.failedFuture(new RuntimeException("send failed")));
+    @DisplayName("전송 중 실패(비동기)해도 로컬로 떨어진다 — ACK 를 기다리기 때문에 잡힌다")
+    void fallsBackOnAsynchronousFailure() {
+        given(EventTransport.KAFKA);
+        when(kafka.send(event)).thenReturn(
+                CompletableFuture.failedFuture(new IllegalStateException("broker went down")));
 
         publisher.publish(event);
 
@@ -79,8 +82,8 @@ class SwitchingEventPublisherTest {
 
     @Test
     @DisplayName("설정 조회는 이벤트당 한 번만 — 발행 경로에 DB 조회가 끼면 안 된다")
-    void 설정조회는_이벤트당_한번() {
-        when(settings.current()).thenReturn(EventTransport.LOCAL);
+    void readsTransportSettingOncePerEvent() {
+        given(EventTransport.LOCAL);
 
         publisher.publish(event);
 
