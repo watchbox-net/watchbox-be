@@ -1,11 +1,11 @@
 package net.watchbox.domain.notification.outbox;
 
 import lombok.RequiredArgsConstructor;
+import net.watchbox.global.properties.OutboxProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -21,11 +21,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class OutboxStateWriter {
 
-    /** 첫 재시도 간격. 실패마다 2배씩 늘린다. */
-    private static final Duration BASE_BACKOFF = Duration.ofSeconds(5);
-    private static final Duration MAX_BACKOFF = Duration.ofMinutes(10);
-
     private final OutboxEventRepository outboxEventRepository;
+    private final OutboxProperties outboxProperties;
 
     /**
      * 처리 완료로 닫는다.
@@ -46,9 +43,15 @@ public class OutboxStateWriter {
                 .ifPresent(row -> row.markFailed(nextAttemptAt(row.getAttempt()), error));
     }
 
-    /** 지수 백오프. 외부 장애가 길어질수록 간격을 벌려 상대와 우리 둘 다 덜 때린다. */
+    /**
+     * 지수 백오프. 외부 장애가 길어질수록 간격을 벌려 상대와 우리 둘 다 덜 때린다.
+     *
+     * <p>상한을 두는 이유는 <b>장애가 복구된 뒤 반영이 늦어지지 않게</b> 하기 위해서다.
+     * 상한이 없으면 몇 번 실패한 건이 수십 분 뒤에나 다시 시도된다.
+     */
     private LocalDateTime nextAttemptAt(int currentAttempt) {
-        long seconds = BASE_BACKOFF.getSeconds() << Math.min(currentAttempt, 8);
-        return LocalDateTime.now().plusSeconds(Math.min(seconds, MAX_BACKOFF.getSeconds()));
+        long base = outboxProperties.baseBackoff().getSeconds();
+        long seconds = base << Math.min(currentAttempt, 8);   // 시프트 폭을 막아 오버플로 방지
+        return LocalDateTime.now().plusSeconds(Math.min(seconds, outboxProperties.maxBackoff().getSeconds()));
     }
 }

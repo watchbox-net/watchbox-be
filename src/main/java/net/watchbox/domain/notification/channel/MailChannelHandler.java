@@ -10,6 +10,7 @@ import net.watchbox.domain.notification.event.NotificationEvent;
 import net.watchbox.domain.notification.message.BoxInvitationMailFactory;
 import net.watchbox.domain.notification.metrics.NotificationDeliveryMetrics;
 import net.watchbox.domain.notification.service.MailSendService;
+import net.watchbox.global.properties.DeliveryProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +33,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MailChannelHandler implements NotificationChannelHandler {
 
-    /** 외부 서비스라 일시 실패가 잦다. 만회 경로가 없으니 SSE 보다 길게 붙든다. */
-    private static final int MAX_ATTEMPT = 5;
-
     private final MemberQueryService memberQueryService;
     private final BoxInvitationMailFactory boxInvitationMailFactory;
     private final MailSendService mailSendService;
     private final NotificationDeliveryMetrics deliveryMetrics;
+    /** 외부 서비스라 일시 실패가 잦다. 만회 경로가 없으니 SSE 보다 길게 붙든다. */
+    private final DeliveryProperties deliveryProperties;
 
     @Override
     public NotificationChannel channel() {
@@ -52,7 +52,7 @@ public class MailChannelHandler implements NotificationChannelHandler {
 
     @Override
     public int maxAttempt() {
-        return MAX_ATTEMPT;
+        return deliveryProperties.mailMaxAttempt();
     }
 
     @Override

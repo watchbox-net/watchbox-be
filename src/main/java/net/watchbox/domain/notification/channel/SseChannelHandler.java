@@ -10,6 +10,7 @@ import net.watchbox.domain.notification.event.NotificationEvent;
 import net.watchbox.domain.notification.metrics.NotificationDeliveryMetrics;
 import net.watchbox.domain.notification.service.NotificationCommandService;
 import net.watchbox.domain.notification.sse.service.SseEmitterService;
+import net.watchbox.global.properties.DeliveryProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,13 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SseChannelHandler implements NotificationChannelHandler {
 
-    /** 실패해도 알림함 + catchup 이 만회한다. 길게 붙들 이유가 없다. */
-    private static final int MAX_ATTEMPT = 3;
-
     private final NotificationCommandService notificationCommandService;
     private final SseEmitterService sseEmitterService;
     private final NotificationDeliveryMetrics deliveryMetrics;
     private final NotificationFailureInjector failureInjector;
+    /** 실패해도 알림함 + catchup 이 만회한다. 메일보다 짧게 잡는다. */
+    private final DeliveryProperties deliveryProperties;
 
     @Override
     public NotificationChannel channel() {
@@ -49,7 +49,7 @@ public class SseChannelHandler implements NotificationChannelHandler {
 
     @Override
     public int maxAttempt() {
-        return MAX_ATTEMPT;
+        return deliveryProperties.sseMaxAttempt();
     }
 
     @Override

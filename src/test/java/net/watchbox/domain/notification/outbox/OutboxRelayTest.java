@@ -2,8 +2,10 @@ package net.watchbox.domain.notification.outbox;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import net.watchbox.global.properties.OutboxProperties;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,9 +20,13 @@ import static org.mockito.Mockito.*;
  */
 class OutboxRelayTest {
 
+    private static final int MAX_ATTEMPT = 20;
+
     private final OutboxEventRepository repository = mock(OutboxEventRepository.class);
     private final OutboxDispatcher dispatcher = mock(OutboxDispatcher.class);
-    private final OutboxRelay relay = new OutboxRelay(repository, dispatcher);
+    private final OutboxRelay relay = new OutboxRelay(repository, dispatcher,
+            new OutboxProperties(Duration.ofSeconds(5), Duration.ofSeconds(5),
+                    Duration.ofSeconds(60), MAX_ATTEMPT));
 
     private static OutboxEvent row(Long id) {
         OutboxEvent row = mock(OutboxEvent.class);
@@ -84,13 +90,13 @@ class OutboxRelayTest {
     }
 
     @Test
-    @DisplayName("재시도 상한을 넘긴 행은 조회 단계에서 걸러 배치를 막지 않는다")
+    @DisplayName("설정된 상한을 조회 조건으로 넘겨 소진된 행이 배치를 막지 않게 한다")
     void queryExcludesExhaustedRows() {
         when(repository.findPending(any(LocalDateTime.class), anyInt(), any(Pageable.class)))
                 .thenReturn(List.of());
 
         relay.drain();
 
-        verify(repository).findPending(any(LocalDateTime.class), eq(OutboxRelay.MAX_ATTEMPT), any(Pageable.class));
+        verify(repository).findPending(any(LocalDateTime.class), eq(MAX_ATTEMPT), any(Pageable.class));
     }
 }

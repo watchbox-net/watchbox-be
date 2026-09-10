@@ -276,10 +276,22 @@ notification:
     heartbeat: 30s
 
   # 알림 이벤트 outbox 릴레이.
-  # 기록 직후 트리거가 즉시 깨우므로 이 주기는 '트리거 유실 + 재시도' 를 받쳐주는 백스톱이다.
+  # 기록 직후 트리거가 즉시 깨우므로 poll-interval 은 '트리거 유실 + 재시도' 를 받쳐주는 백스톱이다.
   # 짧을수록 재시도가 빨라지지만 그만큼 빈 조회가 늘어난다.
   outbox:
-    poll-interval: 5s
+    poll-interval: ${OUTBOX_POLL_INTERVAL:5s}
+    base-backoff: ${OUTBOX_BASE_BACKOFF:5s}    # 실패마다 2배씩 늘어난다
+    max-backoff: ${OUTBOX_MAX_BACKOFF:60s}     # 간격 상한. 크면 복구 후 반영이 느려진다
+    # 행 단위 백스톱. 반드시 아래 채널 상한보다 커야 한다 —
+    # 같거나 작으면 채널이 종결되기 전에 행이 조회에서 빠져 영원히 미발행으로 남는다.
+    max-attempt: ${OUTBOX_MAX_ATTEMPT:20}
+
+  # 채널별 재시도 상한. 만회 경로가 다르므로 값도 다르다.
+  # (SSE 는 실패해도 알림함 + catchup 이 만회하지만, 메일은 못 보내면 끝이다)
+  # 시연 중에는 값을 올려 재시도 창을 넓힐 수 있다 — 상한에 닿으면 종결되어 되돌려도 발송되지 않는다.
+  delivery:
+    sse-max-attempt: ${SSE_MAX_ATTEMPT:5}
+    mail-max-attempt: ${MAIL_MAX_ATTEMPT:10}
 
   # 메일은 SSE 로 닿지 않는 사용자에게 초대를 전달하는 보조 채널이다.
   # enabled=false 면 발송하지 않고 로그만 남긴다 — 로컬·테스트에서 실제 주소로 메일이 나가는 사고를 막는다.
