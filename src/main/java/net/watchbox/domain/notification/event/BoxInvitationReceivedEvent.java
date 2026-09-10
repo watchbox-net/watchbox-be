@@ -22,7 +22,7 @@ public record BoxInvitationReceivedEvent(
     }
 
     @Override
-    public NotificationType type() {
+    public NotificationType notificationType() {
         return NotificationType.BOX_INVITATION_RECEIVED;
     }
 }
