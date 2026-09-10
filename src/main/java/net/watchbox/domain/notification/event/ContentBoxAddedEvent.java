@@ -20,7 +20,7 @@ public record ContentBoxAddedEvent(
 ) implements NotificationEvent {
 
     @Override
-    public NotificationType type() {
+    public NotificationType notificationType() {
         return NotificationType.BOX_CONTENT_ADDED;
     }
 }

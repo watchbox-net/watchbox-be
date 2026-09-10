@@ -18,11 +18,9 @@ import java.nio.charset.StandardCharsets;
 /**
  * SMTP 발송. 발송처(SES/Gmail 등)는 {@code spring.mail.*} 설정으로만 갈리고 이 코드는 바뀌지 않는다.
  *
- * <p><b>예외를 밖으로 내보내지 않는다.</b> 이 서비스를 부르는 쪽은 이미 커밋된 작업(초대 생성 등)의
- * 후처리라, 메일 실패로 그 작업을 되돌릴 수도 없고 되돌려서도 안 된다.
- *
- * <p><b>지금은 실패하면 그걸로 끝이다</b> — 재시도 주체가 없다. Outbox 도입 시 이 지점이
- * "발송 시도" 로 바뀌고, 실패는 미발행 상태로 남아 재시도된다.
+ * <p><b>실패하면 {@link MailSendException} 을 던진다.</b> 호출자는 outbox 릴레이이고,
+ * 예외를 받아야 행을 미발행으로 남겨 재시도한다. 여기서 삼키면 재시도가 사라진다.
+ * (도메인 트랜잭션은 이미 커밋된 뒤라 초대 자체가 되돌아가지는 않는다)
  */
 @Slf4j
 @Service
@@ -63,7 +61,7 @@ public class MailSendService {
     }
 
     /**
-     * 한 통 발송. 실패하면 로그만 남긴다.
+     * 한 통 발송.
      *
      * @param to 받는 주소. <b>호출 전에 발송 가능한 주소인지 확인해야 한다</b>
      *           (배달 불가 주소로 보내면 반송률이 올라 발송 자격을 잃는다)
@@ -97,6 +95,7 @@ public class MailSendService {
         } catch (UnsupportedEncodingException | jakarta.mail.MessagingException | RuntimeException e) {
             deliveryMetrics.failure(NotificationChannel.MAIL);
             log.warn("[Mail] 발송 실패 — subject={}, {}", message.subject(), e.getMessage());
+            throw new MailSendException("mail send failed: " + message.subject(), e);
         }
     }
 }

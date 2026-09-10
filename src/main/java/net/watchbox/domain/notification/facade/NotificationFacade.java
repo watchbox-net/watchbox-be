@@ -12,11 +12,9 @@ import net.watchbox.domain.notification.event.NotificationEvent;
 import net.watchbox.domain.notification.service.NotificationCommandService;
 import net.watchbox.domain.notification.service.NotificationQueryService;
 import net.watchbox.domain.notification.sse.service.SseEmitterService;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -30,8 +28,8 @@ import java.util.List;
  *   <li>스낵바 노출 ACK</li>
  * </ul>
  *
- * <p>이벤트 리스너는 {@link TransactionPhase#AFTER_COMMIT} 에서 동작 — 발행 도메인의 트랜잭션이
- * 성공적으로 커밋된 후에만 알림 발송 (정합성 보장).
+ * <p>이벤트는 outbox 를 거쳐 들어온다 — 도메인 트랜잭션이 커밋된 뒤에만 발행되므로
+ * 롤백된 작업의 알림이 나가지 않고, 발행에 실패하면 릴레이가 재시도한다.
  */
 @Slf4j
 @Component
@@ -51,23 +49,21 @@ public class NotificationFacade {
      * receiver 수만큼 Notification row 생성 (fan-out on write) + 각 receiver 에 SSE push.
      * 오프라인 사용자는 SSE no-op, DB 저장은 살아있어 다음 구독 시 catchup 으로 푸시됨.
      *
-     * <p>{@code @Async("notificationExecutor")} — 발행 도메인 스레드와 분리.
-     * 알림 저장/SSE 발송이 발행자 응답속도에 영향 X.
-     * JVM 종료 시 큐잉된 이벤트는 유실될 수 있음 (Kafka 도입 전 한계).
+     * <p><b>평범한 {@code @EventListener} 다.</b> 예전에는 {@code AFTER_COMMIT} + {@code @Async} 로
+     * 발행 스레드와 분리했는데, 이제 {@code OutboxRelay} 가 커밋 이후에 트랜잭션 밖 스레드에서
+     * 발행하므로 두 장치가 모두 필요 없다. 실패는 삼키지 않고 릴레이로 올려 재시도되게 한다.
      */
-    @Async("notificationExecutor")
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     public void handleNotificationEvent(NotificationEvent event) {
         try {
             for (Long receiverId : event.receiverIds()) {
                 failureInjector.maybeFail(NotificationChannel.SSE);
-                Notification saved = notificationCommandService.createNotification(receiverId, event.type(), event.payload());
+                Notification saved = notificationCommandService.createNotification(receiverId, event.notificationType(), event.payload());
                 sseEmitterService.send(receiverId, NotificationResponse.from(saved));
                 deliveryMetrics.success(NotificationChannel.SSE);
             }
         } catch (RuntimeException e) {
-            // 세기만 하고 그대로 던진다. 여기서 삼키면 "루프 중간에서 터지면 뒤 수신자는 못 받는다" 는
-            // 현재의 결함이 가려져 before 측정이 무의미해진다. 이 동작을 고치는 건 Outbox 단계의 몫이다.
+            // 세고 나서 그대로 던진다 — 릴레이가 받아 행을 미발행으로 남기고 재시도한다.
             deliveryMetrics.failure(NotificationChannel.SSE);
             throw e;
         }
