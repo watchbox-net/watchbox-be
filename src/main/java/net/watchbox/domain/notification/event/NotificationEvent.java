@@ -1,5 +1,7 @@
 package net.watchbox.domain.notification.event;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import net.watchbox.domain.notification.dto.payload.NotificationPayload;
 import net.watchbox.domain.notification.entity.NotificationType;
 import net.watchbox.global.event.DomainEvent;
@@ -17,9 +19,19 @@ import java.util.List;
  * 그대로여야</b> 하기 때문이다. {@code type()} 과 {@code partitionKey()} 는 알림 정보에서
  * 파생되므로 각 이벤트가 따로 구현할 필요가 없다.
  *
+ * <p><b>Jackson 다형 직렬화</b>: Kafka 로 나갈 때 어느 구현인지 알아야 복원할 수 있다.
+ * discriminator 를 {@code eventType} 으로 둔 이유는 payload 가 이미 {@code type} 을 쓰고 있어
+ * 이름이 겹치면 읽기 헷갈리기 때문이다(중첩이라 충돌은 안 나지만).
+ *
  * <p>새 이벤트 타입 추가 시: permits 갱신 + NotificationType + NotificationPayload +
- * {@code NotificationEventCodec} 의 복원 분기를 같이 추가한다.
+ * {@code JsonSubTypes} + {@code NotificationEventCodec} 의 복원 분기를 같이 추가한다.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "eventType")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = BoxInvitationReceivedEvent.class, name = "BOX_INVITATION_RECEIVED"),
+        @JsonSubTypes.Type(value = BoxInvitationRespondedEvent.class, name = "BOX_INVITATION_RESPONDED"),
+        @JsonSubTypes.Type(value = ContentBoxAddedEvent.class, name = "BOX_CONTENT_ADDED")
+})
 public sealed interface NotificationEvent extends DomainEvent
         permits BoxInvitationReceivedEvent, BoxInvitationRespondedEvent, ContentBoxAddedEvent {
 

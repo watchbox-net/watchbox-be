@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
-@Tag(name = "File", description = "파일(이미지/영상 등) 업로드/삭제 API")
+@Tag(name = "1-4 [Member] File")
 public class FileController {
 
     private final FileService fileService;

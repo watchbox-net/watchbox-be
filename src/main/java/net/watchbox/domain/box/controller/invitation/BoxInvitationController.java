@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/shared/invitations")
-@Tag(name = "SharedBoxInvitation", description = "공유 박스 초대 관련 API")
+@Tag(name = "4-4 [Box] Invitation")
 public class BoxInvitationController {
     private final BoxInvitationFacade boxInvitationFacade;
 

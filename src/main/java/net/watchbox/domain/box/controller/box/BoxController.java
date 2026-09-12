@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes")
-@Tag(name = "Box", description = "박스 통합 API")
+@Tag(name = "4-1 [Box] Box")
 @Observed
 public class BoxController {
     private final BoxFacade boxFacade;

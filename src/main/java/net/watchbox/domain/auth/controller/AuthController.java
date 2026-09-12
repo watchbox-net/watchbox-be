@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Auth", description = "인증 API")
+@Tag(name = "0-2 [Auth] Token")
 @Slf4j
 public class AuthController {
     private final AuthFacade authFacade;

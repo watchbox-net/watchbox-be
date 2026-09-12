@@ -34,7 +34,7 @@ public class NotificationDelivery extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long deliveryId;
 
     /** {@code OutboxEvent.eventId}. 이 값을 미리 넣어둔 게 여기서 쓰려던 것이다. */
     @Column(name = "event_id", nullable = false, length = 36)

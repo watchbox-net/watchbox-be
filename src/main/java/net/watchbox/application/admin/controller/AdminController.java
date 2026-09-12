@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequestMapping("/api/admin")
-@Tag(name = "Admin", description = "관리자 API")
+@Tag(name = "8-1 [Admin] Admin")
 public class AdminController {
     private final AdminFacade adminFacade;
 

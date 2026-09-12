@@ -24,7 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/web-push")
 @RequiredArgsConstructor
-@Tag(name = "WebPush", description = "Web Push 구독 등록 / VAPID 공개키 (POC)")
+@Tag(name = "1-3 [Member] Web Push")
 public class WebPushController {
 
     private final WebPushService webPushService;

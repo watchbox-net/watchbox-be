@@ -129,6 +129,13 @@ spring:
         spring.json.trusted.packages: net.watchbox.*
         spring.json.use.type.headers: false
 
+    # produce / consume 스팬을 만든다. 켜지 않으면 Kafka 구간이 trace 에 통째로 빠지고,
+    # traceparent 헤더도 실리지 않아 발행과 소비가 다른 trace 로 흩어진다.
+    template:
+      observation-enabled: true
+    listener:
+      observation-enabled: true
+
     # AdminClient 용 (헬스체크에서 사용)
     admin:
       properties:

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents/{mediaType}/{tmdbId}/boxes")
-@Tag(name = "ContentBox", description = "콘텐츠 기준 박스 포함 여부 조회 및 일괄 추가/삭제 API")
+@Tag(name = "4-3 [Box] Content Sheet")
 public class ContentBoxController {
     private final ContentBoxFacade contentBoxFacade;
 

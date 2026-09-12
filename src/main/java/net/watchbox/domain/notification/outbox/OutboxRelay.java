@@ -82,7 +82,7 @@ public class OutboxRelay {
                 return;
             }
             for (OutboxEvent row : pending) {
-                dispatchOne(row.getId(), row.getEventId());
+                dispatchOne(row.getOutboxId(), row.getEventId());
             }
             if (pending.size() < BATCH_SIZE) {
                 return; // 마지막 배치였다

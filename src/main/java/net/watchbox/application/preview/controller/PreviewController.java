@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Validated
 @RequestMapping("/api/preview")
-@Tag(name = "Preview", description = "샘플 화면 API")
+@Tag(name = "8-2 [Admin] Preview")
 public class PreviewController {
     private final static String SAMPLE_NICKNAME = "해달";
     private final MemberQueryService memberQueryService;

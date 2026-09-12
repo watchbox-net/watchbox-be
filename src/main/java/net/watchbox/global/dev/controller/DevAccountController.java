@@ -14,6 +14,7 @@ import net.watchbox.global.dev.service.DevAccountService;
 import net.watchbox.global.dto.response.ApiResponse;
 import net.watchbox.global.dto.response.exception.ErrorDetail;
 import net.watchbox.global.properties.AdminProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,8 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev")
-@Tag(name = "DevAccount")
+@Tag(name = "9-1 [Dev] Account")
+@Profile("!prod")
 public class DevAccountController {
     private final AdminProperties adminProperties;
     private final DevAccountService devAccountService;

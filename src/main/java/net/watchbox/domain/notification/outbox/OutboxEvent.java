@@ -31,13 +31,13 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "notification_outbox",
-        indexes = @Index(name = "idx_outbox_pending", columnList = "published_at, next_attempt_at, id")
+        indexes = @Index(name = "idx_outbox_pending", columnList = "published_at, next_attempt_at, outbox_id")
 )
 public class OutboxEvent extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long outboxId;
 
     /**
      * 이벤트 고유 식별자. 지금은 추적용이고, <b>소비 쪽 중복 제거 키로 쓰일 자리</b>다.
@@ -77,8 +77,22 @@ public class OutboxEvent extends BaseTime {
     @Column(length = 500)
     private String lastError;
 
+    /**
+     * 기록 시점의 W3C {@code traceparent}. 발행할 때 이걸 부모로 삼아 <b>trace 를 잇는다.</b>
+     *
+     * <p>기록(요청 스레드)과 발행(릴레이 스레드)은 시점도 스레드도 달라 스레드 로컬로는 못 넘긴다.
+     * outbox 가 이벤트를 나르는 김에 trace 도 같이 나른다.
+     */
+    @Column(length = 64)
+    private String traceParent;
+
     public static OutboxEvent from(NotificationEvent event) {
+        return from(event, null);
+    }
+
+    public static OutboxEvent from(NotificationEvent event, String traceParent) {
         OutboxEvent row = new OutboxEvent();
+        row.traceParent = traceParent;
         row.eventId = UUID.randomUUID().toString();
         row.notificationType = event.notificationType();
         row.receiverIds = join(event.receiverIds());

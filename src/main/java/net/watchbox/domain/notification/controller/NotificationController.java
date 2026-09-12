@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/notifications")
 @Slf4j
-@Tag(name = "Notification", description = "알림 API (실시간 SSE 스낵바 전용)")
+@Tag(name = "1-2 [Member] Notification")
 public class NotificationController {
 
     private final NotificationFacade notificationFacade;

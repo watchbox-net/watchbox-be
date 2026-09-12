@@ -10,6 +10,7 @@ import net.watchbox.global.tmdb.response.tvseries.TmdbTvSeriesDetailsResponse;
 import net.watchbox.global.tmdb.service.TmdbMoviesService;
 import net.watchbox.global.tmdb.service.TmdbPeopleService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev/tmdb")
-@Tag(name = "DevTmdb")
+@Tag(name = "9-2 [Dev] TMDB")
 @Hidden
+@Profile("!prod")
 public class DevTmdbDetailsController {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;

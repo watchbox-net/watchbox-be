@@ -21,7 +21,7 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEvent, Long> 
             where o.publishedAt is null
               and o.attempt < :maxAttempt
               and (o.nextAttemptAt is null or o.nextAttemptAt <= :now)
-            order by o.id
+            order by o.outboxId
             """)
     List<OutboxEvent> findPending(@Param("now") LocalDateTime now,
                                   @Param("maxAttempt") int maxAttempt,

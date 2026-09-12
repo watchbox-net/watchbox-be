@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/discover")
-@Tag(name = "Discover", description = "영화, 시리즈 트렌드 리스트 조회 API")
+@Tag(name = "2-1 [Content] Discover")
 @Observed
 public class DiscoverController {
     private final DiscoverFacade discoverFacade;
