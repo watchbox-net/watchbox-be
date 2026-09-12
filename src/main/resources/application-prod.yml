@@ -10,12 +10,6 @@ jwt:
   refresh_token_expiry: 30d
   access_token_expiry: 30m
 
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    enabled: false
-
 tmdb:
   api:
     include_adult: false

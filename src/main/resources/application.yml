@@ -214,8 +214,10 @@ cookie:
 
 springdoc:
   api-docs:
+    enabled: ${SWAGGER_ENABLED:true}
     path: /api-docs
   swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}
     doc-expansion: none
     persist-authorization: true
     tags-sorter: alpha
