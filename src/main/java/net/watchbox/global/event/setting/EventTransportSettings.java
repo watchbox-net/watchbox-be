@@ -14,6 +14,7 @@ import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,6 +28,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * <p><b>Kafka 컨슈머는 KAFKA 모드일 때만 살려둔다.</b> 브로커가 꺼진 상태에서 컨슈머가
  * 살아있으면 무한 재연결로 로그가 폭발한다. 그래서 리스너는 {@code autoStartup = "false"} 로
  * 두고 여기서 start/stop 한다.
+ *
+ * <p><b>등록된 리스너를 전부</b> 켜고 끈다. 이 앱의 Kafka 리스너는 모두 KAFKA 모드에서만
+ * 돌아야 하므로 목록을 따로 관리하지 않는다 — 리스너를 추가하고 여기 등록을 잊는 사고가 없다.
  *
  * <p><b>기동 시</b> DB 값이 KAFKA 여도 브로커가 닿지 않으면 LOCAL 로 시작한다.
  * 브로커는 비용 때문에 평소 꺼두므로, 앱이 못 뜨거나 느리게 뜨는 일이 없어야 한다.
@@ -114,16 +118,21 @@ public class EventTransportSettings {
         return target;
     }
 
-    /** 컨슈머 상태를 목표 경로에 맞추고 캐시를 갱신한다. */
+    /** 등록된 컨슈머 전부를 목표 경로에 맞추고 캐시를 갱신한다. */
     private void apply(EventTransport target) {
-        MessageListenerContainer container = listenerRegistry.getListenerContainer(DOMAIN_EVENT_LISTENER_ID);
-        if (container == null) {
-            log.warn("domain event listener container not found - id={}", DOMAIN_EVENT_LISTENER_ID);
-        } else if (target == EventTransport.KAFKA) {
-            if (!container.isRunning()) container.start();
-        } else {
-            if (container.isRunning()) container.stop();
+        boolean shouldRun = target == EventTransport.KAFKA;
+        Collection<MessageListenerContainer> containers = listenerRegistry.getListenerContainers();
+        if (containers.isEmpty()) {
+            log.warn("no kafka listener container registered - nothing to {}", shouldRun ? "start" : "stop");
         }
+        for (MessageListenerContainer container : containers) {
+            if (shouldRun && !container.isRunning()) {
+                container.start();
+            } else if (!shouldRun && container.isRunning()) {
+                container.stop();
+            }
+        }
+        log.info("kafka listeners {} - count={}", shouldRun ? "started" : "stopped", containers.size());
         cached.set(target);
     }
 
