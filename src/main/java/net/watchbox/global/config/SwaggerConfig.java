@@ -6,9 +6,12 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.tags.Tag;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
@@ -39,28 +42,62 @@ public class SwaggerConfig {
                         .addSecuritySchemes("Bearer Token", apiKey)
                         .addSecuritySchemes("Admin Key", adminKey))
                 .addSecurityItem(securityRequirement)
-                .addServersItem(new Server().url("/"));
-//                .tags(List.of(
-//                        new Tag().name("DevAccount"),
-//                        new Tag().name("Member"),
-//                        new Tag().name("MyBox"),
-//                        new Tag().name("MyBoxContent"),
-//                        new Tag().name("SharedBox"),
-//                        new Tag().name("SharedBoxContent"),
-//                        new Tag().name("SharedBoxInvitation"),
-//                        new Tag().name("SearchContent"),
-//                        new Tag().name("TV API"),
-//                        new Tag().name("Movie API"),
-//                        new Tag().name("ContentRecord"),
-//                        new Tag().name("Auth"),
-//                        new Tag().name("HealthCheck"),
-//                        new Tag().name("DevWatchRecord")
-//                ));
+                .addServersItem(new Server().url("/"))
+                .tags(tags());
+    }
+
+    /**
+     * 태그 이름·설명을 한곳에 모은다. 이 목록이 곧 <b>API 명세서의 목차</b>다.
+     *
+     * <p>이름 규칙은 {@code {그룹}-{순번} [도메인] 이름}. 앞의 번호가 정렬 기준이라
+     * 스웨거 화면이 <b>도메인 흐름대로</b> 나온다(알파벳순이면 Admin 이 맨 위로 온다).
+     *
+     * <p>설명을 컨트롤러가 아니라 여기 두는 이유는 <b>전체를 한눈에 보기 위해서</b>다.
+     * 컨트롤러에는 이름만 남긴다 — 20여 개 파일을 열어봐야 목록을 파악할 수 있으면 관리가 안 된다.
+     *
+     * <p>번호대: 0 인증 / 1 회원 / 2 콘텐츠 / 3 시청기록 / 4 박스 / 8 운영 / 9 개발·헬스체크
+     */
+    private List<Tag> tags() {
+        return List.of(
+                tag("0-1 [Auth] Social Login", "소셜 로그인 (구글·애플 / 앱·웹)"),
+                tag("0-2 [Auth] Token", "토큰 재발급 · 로그아웃"),
+
+                tag("1-1 [Member] Member", "회원 관리"),
+                tag("1-2 [Member] Notification", "알림 - 실시간 SSE 스낵바"),
+                tag("1-3 [Member] Web Push", "웹 푸시 구독 등록 / VAPID 공개키 (POC)"),
+                tag("1-4 [Member] File", "파일(이미지·영상) 업로드 · 삭제"),
+
+                tag("2-1 [Content] Discover", "홈 · 트렌드 목록 (영화 · 시리즈)"),
+                tag("2-2 [Content] Search", "콘텐츠 검색"),
+                tag("2-3 [Content] Detail", "콘텐츠 상세 조회"),
+
+                tag("3-1 [Record] Watch Record", "시청 상태 · 좋아요 · 기록 이력"),
+
+                tag("4-1 [Box] Box", "박스 통합 - 생성 · 조회 · 수정 · 활동 이력"),
+                tag("4-2 [Box] Content", "박스 콘텐츠 조회 · 추가 · 삭제"),
+                tag("4-3 [Box] Content Sheet", "콘텐츠 기준 박스 포함 여부 조회 및 일괄 추가/삭제"),
+                tag("4-4 [Box] Invitation", "공유 박스 초대 - 발송 · 수락 · 거절 · 취소"),
+
+                tag("8-1 [Admin] Admin", "관리자"),
+                tag("8-2 [Admin] Preview", "샘플 화면"),
+
+                tag("9-1 [Dev] Account", "테스트 계정"),
+                tag("9-2 [Dev] TMDB", "TMDB 원본 응답 확인"),
+                tag("9-3 [Dev] Infra", "전송 경로 전환 · Redis · 알림 실패 주입"),
+                tag("9-4 [Dev] Social Login Web", "로컬 웹 ↔ 개발 서버 하이브리드 로그인 (구글 전용)"),
+
+                tag("9-5 [Health] Spring", "서버 상태 · 정보 · 시간 확인"),
+                tag("9-6 [Health] Infra", "인프라(DB · Redis · Kafka) 연결 확인")
+        );
+    }
+
+    private Tag tag(String name, String description) {
+        return new Tag().name(name).description(description);
     }
 
     /**
      * Swagger description 에 API 개수 노출 customizer.
-     * - 운영 API: "/dev/", "/health" path prefix 와 "Dev"/"HealthCheck" 로 시작하는 tag 제외
+     * - 운영 API: "/dev/", "/health" path prefix 와 [Dev]/[Health] 태그 제외
      * - Dev API: "/dev/" path prefix
      * - HealthCheck API: "/health" path prefix
      */
@@ -71,10 +108,11 @@ public class SwaggerConfig {
                     .filter(entry -> !entry.getKey().startsWith("/dev/"))
                     .filter(entry -> !entry.getKey().startsWith("/health"))
                     .flatMap(entry -> entry.getValue().readOperations().stream())
+                    // 태그 이름이 "9-3 [Dev] Infra" 형태라 접두어가 아니라 대괄호 그룹으로 가른다.
                     .filter(op -> op.getTags() == null
-                            || op.getTags().stream().noneMatch(t -> t.startsWith("Dev")))
+                            || op.getTags().stream().noneMatch(t -> t.contains("[Dev]")))
                     .filter(op -> op.getTags() == null
-                            || op.getTags().stream().noneMatch(t -> t.startsWith("HealthCheck")))
+                            || op.getTags().stream().noneMatch(t -> t.contains("[Health]")))
                     .count();
 
             long devApis = openApi.getPaths().entrySet().stream()

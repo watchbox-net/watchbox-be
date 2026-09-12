@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boxes/{boxId}/contents")
-@Tag(name = "BoxContent", description = "박스 콘텐츠 API")
+@Tag(name = "4-2 [Box] Content")
 @Observed
 public class BoxContentController {
     private final BoxContentFacade boxContentFacade;

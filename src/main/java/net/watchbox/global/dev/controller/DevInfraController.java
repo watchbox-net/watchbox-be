@@ -30,7 +30,7 @@ import java.util.TreeMap;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev/infra")
-@Tag(name = "DevInfra")
+@Tag(name = "9-3 [Dev] Infra")
 @Profile("!prod")
 public class DevInfraController {
 

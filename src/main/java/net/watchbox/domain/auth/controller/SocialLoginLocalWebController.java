@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
  * </ul>
  * 둘 다 하이브리드 흐름 전용이라 한 컨트롤러에 모았다. (배포 웹은 백엔드가 직접 Set-Cookie 하므로 미사용)
  */
-@Tag(name = "Social Login - Local Web", description = "로컬 웹 ↔ 개발 서버 하이브리드 로그인 (구글 전용, 개발용)")
+@Tag(name = "9-4 [Dev] Social Login Web")
 @Profile("!prod")
 @RestController
 @RequiredArgsConstructor

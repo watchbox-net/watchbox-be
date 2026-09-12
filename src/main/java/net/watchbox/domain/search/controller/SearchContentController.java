@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/search/contents")
-@Tag(name = "SearchContent", description = "콘텐츠 검색 API")
+@Tag(name = "2-2 [Content] Search")
 public class SearchContentController {
     private final SearchFacade searchFacade;
 
