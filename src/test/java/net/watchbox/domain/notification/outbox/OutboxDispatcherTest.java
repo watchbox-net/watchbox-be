@@ -1,5 +1,7 @@
 package net.watchbox.domain.notification.outbox;
 
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import net.watchbox.domain.notification.dto.payload.BoxInvitationPayload;
 import net.watchbox.domain.notification.event.BoxInvitationReceivedEvent;
 import net.watchbox.domain.notification.event.NotificationMessage;
@@ -24,14 +26,16 @@ class OutboxDispatcherTest {
 
     private static final Long OUTBOX_ID = 1L;
     private static final String EVENT_ID = "evt-1";
+    private static final String TRACE_PARENT = "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01";
 
     private final OutboxEventRepository outboxEventRepository = mock(OutboxEventRepository.class);
     private final NotificationEventCodec codec = mock(NotificationEventCodec.class);
     private final OutboxStateWriter stateWriter = mock(OutboxStateWriter.class);
     private final DomainEventPublisher publisher = mock(DomainEventPublisher.class);
+    private final OutboxTracing tracing = mock(OutboxTracing.class);
 
     private final OutboxDispatcher dispatcher =
-            new OutboxDispatcher(outboxEventRepository, codec, stateWriter, publisher);
+            new OutboxDispatcher(outboxEventRepository, codec, stateWriter, publisher, tracing);
 
     private final BoxInvitationReceivedEvent event = new BoxInvitationReceivedEvent(
             7L, new BoxInvitationPayload(1L, 10L, "주말 영화", 2L, "현", null));
@@ -41,8 +45,20 @@ class OutboxDispatcherTest {
         OutboxEvent row = mock(OutboxEvent.class);
         when(row.getEventId()).thenReturn(EVENT_ID);
         when(row.getPublishedAt()).thenReturn(null);
+        when(row.getTraceParent()).thenReturn(TRACE_PARENT);
         when(outboxEventRepository.findById(OUTBOX_ID)).thenReturn(Optional.of(row));
         when(codec.toEvent(row)).thenReturn(event);
+
+        when(tracing.startDispatchSpan(any(), any(), any())).thenReturn(mock(Span.class));
+        when(tracing.withSpan(any())).thenReturn(mock(Tracer.SpanInScope.class));
+    }
+
+    @Test
+    @DisplayName("기록 시점의 trace 를 부모로 스팬을 연다 — 커밋에서 끊기지 않게")
+    void continuesTraceFromRecordTime() {
+        dispatcher.dispatch(OUTBOX_ID);
+
+        verify(tracing).startDispatchSpan(eq(TRACE_PARENT), eq(EVENT_ID), any());
     }
 
     @Test

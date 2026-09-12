@@ -3,7 +3,9 @@ package net.watchbox.global.config;
 import lombok.RequiredArgsConstructor;
 import net.watchbox.domain.notification.event.NotificationMessage;
 import org.apache.kafka.common.TopicPartition;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.MicrometerConsumerListener;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.ExponentialBackOff;
@@ -178,11 +180,15 @@ public class KafkaConfig {
      *
      * <p>{@link ErrorHandlingDeserializer} 로 감싸는 이유는 다른 팩토리와 같다 —
      * 깨진 메시지 하나가 같은 offset 에서 무한 재시도되어 소비가 멈추는 것을 막는다.
+     *
+     * <p>{@link MicrometerConsumerListener} 를 다는 이유는 <b>lag 을 보기 위해서</b>다.
+     * 직접 만든 팩토리에는 클라이언트 메트릭이 자동으로 붙지 않는다.
      */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, NotificationMessage>
             notificationMessageKafkaListenerContainerFactory(KafkaProperties kafkaProperties,
-                                                             KafkaTemplate<String, Object> kafkaTemplate) {
+                                                             KafkaTemplate<String, Object> kafkaTemplate,
+                                                             MeterRegistry meterRegistry) {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
 
         ErrorHandlingDeserializer<NotificationMessage> valueDeserializer =
@@ -190,6 +196,9 @@ public class KafkaConfig {
 
         DefaultKafkaConsumerFactory<String, NotificationMessage> consumerFactory =
                 new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), valueDeserializer);
+        // 직접 만든 팩토리라 Kafka 클라이언트 메트릭이 자동으로 붙지 않는다.
+        // 이걸 달아야 consumer lag(records-lag-max) 이 그룹별로 나온다.
+        consumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
 
         ConcurrentKafkaListenerContainerFactory<String, NotificationMessage> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();

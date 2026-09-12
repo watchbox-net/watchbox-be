@@ -1,5 +1,7 @@
 package net.watchbox.domain.notification.outbox;
 
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.watchbox.domain.notification.event.NotificationMessage;
@@ -31,6 +33,7 @@ public class OutboxDispatcher {
     private final NotificationEventCodec notificationEventCodec;
     private final OutboxStateWriter outboxStateWriter;
     private final DomainEventPublisher domainEventPublisher;
+    private final OutboxTracing outboxTracing;
 
     public void dispatch(Long outboxId) {
         OutboxEvent row = outboxEventRepository.findById(outboxId).orElse(null);
@@ -40,13 +43,21 @@ public class OutboxDispatcher {
 
         NotificationMessage message =
                 new NotificationMessage(row.getEventId(), notificationEventCodec.toEvent(row));
-        try {
+
+        // 기록 시점의 trace 를 부모로 삼아 스팬을 연다. 스코프에 올려야 이어지는 Kafka produce 가
+        // 자식으로 붙고, 소비 쪽까지 traceparent 헤더로 이어진다.
+        Span span = outboxTracing.startDispatchSpan(
+                row.getTraceParent(), row.getEventId(), message.type());
+        try (Tracer.SpanInScope ignored = outboxTracing.withSpan(span)) {
             domainEventPublisher.publish(message);
             outboxStateWriter.markPublished(outboxId);
         } catch (RuntimeException e) {
+            span.error(e);
             log.warn("outbox publish failed, will retry - eventId={}, cause={}",
                     row.getEventId(), e.toString());
             outboxStateWriter.markRetryLater(outboxId, String.valueOf(e));
+        } finally {
+            span.end();
         }
     }
 

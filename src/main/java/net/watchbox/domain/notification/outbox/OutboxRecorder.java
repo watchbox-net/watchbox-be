@@ -21,6 +21,7 @@ public class OutboxRecorder {
 
     private final OutboxEventRepository outboxEventRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final OutboxTracing outboxTracing;
 
     public void record(NotificationEvent event) {
         if (event.receiverIds().isEmpty()) {
@@ -29,7 +30,9 @@ public class OutboxRecorder {
             return;
         }
 
-        OutboxEvent row = outboxEventRepository.save(OutboxEvent.from(event));
+        // 지금 trace 를 행에 함께 적어둔다 — 발행은 다른 스레드·다른 시점이라 이것 없이는 끊긴다.
+        OutboxEvent row = outboxEventRepository.save(
+                OutboxEvent.from(event, outboxTracing.capture()));
 
         // 커밋 후 릴레이를 깨워 폴링 주기만큼의 지연을 없앤다. 유실돼도 폴링이 받쳐준다.
         applicationEventPublisher.publishEvent(OutboxAppended.INSTANCE);
