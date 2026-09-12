@@ -31,13 +31,13 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "notification_outbox",
-        indexes = @Index(name = "idx_outbox_pending", columnList = "published_at, next_attempt_at, id")
+        indexes = @Index(name = "idx_outbox_pending", columnList = "published_at, next_attempt_at, outbox_id")
 )
 public class OutboxEvent extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long outboxId;
 
     /**
      * 이벤트 고유 식별자. 지금은 추적용이고, <b>소비 쪽 중복 제거 키로 쓰일 자리</b>다.

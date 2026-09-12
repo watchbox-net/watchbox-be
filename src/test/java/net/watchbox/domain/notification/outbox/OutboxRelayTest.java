@@ -30,7 +30,7 @@ class OutboxRelayTest {
 
     private static OutboxEvent row(Long id) {
         OutboxEvent row = mock(OutboxEvent.class);
-        when(row.getId()).thenReturn(id);
+        when(row.getOutboxId()).thenReturn(id);
         when(row.getEventId()).thenReturn("evt-" + id);
         return row;
     }
