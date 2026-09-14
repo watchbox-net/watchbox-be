@@ -7,7 +7,6 @@ import net.watchbox.global.tmdb.response.movielists.TmdbMovieListsResponse;
 import net.watchbox.global.tmdb.response.tvserieslists.TmdbTvSeriesListsResponse;
 import net.watchbox.global.tmdb.service.TmdbMovieListsService;
 import net.watchbox.global.tmdb.service.TmdbTvSeriesListsService;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dev/tmdb")
 @Tag(name = "9-2 [Dev] TMDB")
 @Hidden
-@Profile("!prod")
 public class DevTrendListController { // 인기, 평점 높은 x 영화, TV 리스트 조회
     private final TmdbMovieListsService tmdbMovieListsService;
     private final TmdbTvSeriesListsService tmdbTvSeriesListsService;

@@ -232,6 +232,13 @@ management:
       show-details: when-authorized
       probes:
         enabled: true
+  health:
+    # 액추에이터의 SMTP '연결 확인'만 끈다. 발송(MailSendService)과는 무관하다.
+    # 이 지표는 health 를 부를 때마다 SES 에 인증 커넥션을 새로 열고, SES 가 잠깐 흔들리면
+    # /actuator/health 전체가 DOWN 으로 뒤집힌다. 발송 실패 자체는 notification.delivery
+    # 카운터와 notification_delivery 행에 남으므로 놓치지 않는다.
+    mail:
+      enabled: false
 
   opentelemetry:
     resource-attributes:
