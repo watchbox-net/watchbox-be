@@ -15,6 +15,7 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
     @Bean
     public OpenAPI openAPI() {
         SecurityScheme apiKey = new SecurityScheme()
@@ -56,6 +57,8 @@ public class SwaggerConfig {
      * 컨트롤러에는 이름만 남긴다 — 20여 개 파일을 열어봐야 목록을 파악할 수 있으면 관리가 안 된다.
      *
      * <p>번호대: 0 인증 / 1 회원 / 2 콘텐츠 / 3 시청기록 / 4 박스 / 8 운영 / 9 개발·헬스체크
+     *
+     * <p>9 번대는 문서에는 공개하되 호출은 {@code X-Admin-Key} 로 막는다(AdminAuthFilter).
      */
     private List<Tag> tags() {
         return List.of(
@@ -81,13 +84,11 @@ public class SwaggerConfig {
                 tag("8-1 [Admin] Admin", "관리자"),
                 tag("8-2 [Admin] Preview", "샘플 화면"),
 
-                tag("9-1 [Dev] Account", "테스트 계정"),
-                tag("9-2 [Dev] TMDB", "TMDB 원본 응답 확인"),
-                tag("9-3 [Dev] Infra", "전송 경로 전환 · Redis · 알림 실패 주입"),
-                tag("9-4 [Dev] Social Login Web", "로컬 웹 ↔ 개발 서버 하이브리드 로그인 (구글 전용)"),
-
-                tag("9-5 [Health] Spring", "서버 상태 · 정보 · 시간 확인"),
-                tag("9-6 [Health] Infra", "인프라(DB · Redis · Kafka) 연결 확인")
+                tag("9-1 [Dev] Account", "테스트 계정 — X-Admin-Key 필요"),
+                tag("9-2 [Dev] TMDB", "TMDB 원본 응답 확인 — X-Admin-Key 필요"),
+                tag("9-3 [Dev] Infra", "전송 경로 전환 · Redis · 알림 실패 주입 — X-Admin-Key 필요"),
+                tag("9-5 [Health] Spring", "서버 상태 · 정보 · 시간 확인 — X-Admin-Key 필요"),
+                tag("9-6 [Health] Infra", "인프라(DB · Redis · Kafka) 연결 확인 — X-Admin-Key 필요")
         );
     }
 
@@ -125,13 +126,12 @@ public class SwaggerConfig {
                     .flatMap(entry -> entry.getValue().readOperations().stream())
                     .count();
 
+            String summary = String.format(
+                    "%n%n**운영 API: %d개**  /  Dev(hidden 제외): %d개  /  HealthCheck: %d개",
+                    productionApis, devApis, healthApis);
+
             String original = openApi.getInfo().getDescription();
-            openApi.getInfo().setDescription(
-                    (original == null ? "" : original)
-                            + String.format(
-                                    "%n%n**운영 API: %d개**  /  Dev(hidden 제외): %d개  /  HealthCheck: %d개",
-                                    productionApis, devApis, healthApis)
-            );
+            openApi.getInfo().setDescription((original == null ? "" : original) + summary);
         };
     }
 }

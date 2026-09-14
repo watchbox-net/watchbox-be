@@ -1,5 +1,6 @@
 package net.watchbox.domain.auth.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -35,6 +36,9 @@ import java.nio.charset.StandardCharsets;
  * </ul>
  * 둘 다 하이브리드 흐름 전용이라 한 컨트롤러에 모았다. (배포 웹은 백엔드가 직접 Set-Cookie 하므로 미사용)
  */
+// 로컬 웹에서만 쓰는 하이브리드 로그인 진입점이다. 어느 환경에서도 문서에 싣지 않는다 —
+// 표식 쿠키·oneTimeCode 교환 절차가 그대로 드러나는데 쓰는 사람은 개발자 본인뿐이다.
+@Hidden
 @Tag(name = "9-4 [Dev] Social Login Web")
 @Profile("!prod")
 @RestController
