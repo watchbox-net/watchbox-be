@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/dev/tmdb")
 @Tag(name = "9-2 [Dev] TMDB")
-@Hidden
 public class DevTmdbDetailsController {
     private final TmdbMoviesService tmdbMoviesService;
     private final TmdbTvSeriesService tmdbTvSeriesService;

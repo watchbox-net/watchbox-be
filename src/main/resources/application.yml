@@ -40,7 +40,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL:jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/watchbox?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul&openTelemetry=${MYSQL_OTEL:PREFERRED}}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:95206326}
 
@@ -296,6 +296,12 @@ otel:
   instrumentation:
     spring-webmvc:
       enabled: false
+    jdbc-datasource:
+      # 커넥션 획득 스팬 (예: HikariDataSource.getConnection)
+      enabled: ${OTEL_INSTRUMENTATION_JDBC_DATASOURCE_ENABLED:false}
+    jdbc:
+      # SQL 실행(statement) 스팬 (예: SELECT biztrack.issue)
+      enabled: ${OTEL_INSTRUMENTATION_JDBC_ENABLED:false}
 
 # Continuous profiling (Pyroscope)
 pyroscope:
