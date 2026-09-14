@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
 public class SwaggerConfig {
@@ -84,16 +86,44 @@ public class SwaggerConfig {
                 tag("8-1 [Admin] Admin", "관리자"),
                 tag("8-2 [Admin] Preview", "샘플 화면"),
 
-                tag("9-1 [Dev] Account", "테스트 계정 — X-Admin-Key 필요"),
-                tag("9-2 [Dev] TMDB", "TMDB 원본 응답 확인 — X-Admin-Key 필요"),
-                tag("9-3 [Dev] Infra", "전송 경로 전환 · Redis · 알림 실패 주입 — X-Admin-Key 필요"),
-                tag("9-5 [Health] Spring", "서버 상태 · 정보 · 시간 확인 — X-Admin-Key 필요"),
-                tag("9-6 [Health] Infra", "인프라(DB · Redis · Kafka) 연결 확인 — X-Admin-Key 필요")
+                tag("9-1 [Dev] Account", "테스트 계정"),
+                tag("9-2 [Dev] TMDB", "TMDB 원본 응답 확인"),
+                tag("9-3 [Dev] Infra", "전송 경로 전환 · Redis · 알림 실패 주입"),
+                tag("9-5 [Health] Spring", "서버 상태 · 정보 · 시간 확인"),
+                tag("9-6 [Health] Infra", "인프라(DB · Redis · Kafka) 연결 확인")
         );
     }
 
     private Tag tag(String name, String description) {
         return new Tag().name(name).description(description);
+    }
+
+    /**
+     * 오퍼레이션이 하나도 없는 태그 선언을 목차에서 지운다.
+     *
+     * <p>{@link #tags()} 는 전체 목차를 한곳에 모아두는 곳이라 환경을 가리지 않는다. 반면 컨트롤러는
+     * {@code @Profile} 이나 {@code @Hidden} 으로 빠질 수 있어, <b>선언만 남고 내용이 비는</b> 태그가
+     * 생긴다 — 운영 스웨거에 {@code 9-1 [Dev] Account} 헤더만 덩그러니 뜨는 식이다.
+     *
+     * <p>프로파일을 조건으로 걸지 않는 이유는 <b>빠지는 방식이 여러 가지</b>이기 때문이다.
+     * 실제 오퍼레이션을 기준으로 하면 어느 경로로 빠지든 알아서 맞는다.
+     */
+    @Bean
+    public OpenApiCustomizer unusedTagCustomizer() {
+        return openApi -> {
+            if (openApi.getTags() == null) {
+                return;
+            }
+            Set<String> used = openApi.getPaths().values().stream()
+                    .flatMap(path -> path.readOperations().stream())
+                    .filter(op -> op.getTags() != null)
+                    .flatMap(op -> op.getTags().stream())
+                    .collect(Collectors.toSet());
+
+            openApi.setTags(openApi.getTags().stream()
+                    .filter(tag -> used.contains(tag.getName()))
+                    .toList());
+        };
     }
 
     /**

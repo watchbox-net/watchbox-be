@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/dev/tmdb")
 @Tag(name = "9-2 [Dev] TMDB")
-@Hidden
 public class DevTrendListController { // 인기, 평점 높은 x 영화, TV 리스트 조회
     private final TmdbMovieListsService tmdbMovieListsService;
     private final TmdbTvSeriesListsService tmdbTvSeriesListsService;
