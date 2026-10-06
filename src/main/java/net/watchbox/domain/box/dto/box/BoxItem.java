@@ -8,6 +8,7 @@ import net.watchbox.domain.box.entity.box.BoxType;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import net.watchbox.domain.box.entity.member.BoxMemberRole;
 
 @Getter
 @ToString
@@ -19,9 +20,10 @@ public class BoxItem {
     private LocalDateTime lastContentAddedAt;
     private List<String> previewPosterList; // 3개
     private List<BoxMemberResponse> memberList; // 공유박스에만 존재
+    private BoxMemberRole myRole;
 
     // 박스 페이지 박스 응답
-    public static BoxItem of(Box box, List<String> previewPosters){
+    public static BoxItem of(Box box, List<String> previewPosters, BoxMemberRole myRole){
        BoxItem response = new BoxItem();
        response.boxId = box.getBoxId();
        response.name = box.getName();
@@ -29,6 +31,7 @@ public class BoxItem {
        response.boxType = box.getBoxType();
        response.lastContentAddedAt = box.getLastContentAddedAt();
        response.previewPosterList = previewPosters;
+       response.myRole = myRole;
         if (box.getBoxType() == BoxType.SHARED) { // 공유 박스일 경우
             response.memberList = box.getBoxMembers().stream()
                     .map(BoxMemberResponse::from)

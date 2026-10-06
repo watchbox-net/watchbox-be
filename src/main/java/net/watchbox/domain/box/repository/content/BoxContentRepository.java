@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import net.watchbox.domain.box.entity.member.BoxMember;
 
 @Repository
 public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
@@ -25,8 +26,6 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
     boolean existsByPublisherAndBoxAndContent(Member publisher, Box box, Content content);
 
     void deleteAllByBox(Box box);
-
-    Optional<BoxContent> findByBoxAndContent(Box box, Content content);
 
     // 박스 콘텐츠 조회 시, SubContent인 영화/TV/인물 엔티티도 함께 조회
     @Query("SELECT bc FROM BoxContent bc " +
@@ -77,6 +76,51 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
     List<Long> findBoxIdsByContentForMember(
             @Param("content") Content content,
             @Param("member") Member member);
+
+    /**
+     * 주어진 콘텐츠들 중 <b>이 박스에 담겨 있는 것</b>의 contentId 만 추린다.
+     *
+     * <p>포함 판정 기준은 {@link #findBoxIdsByContentForMember} 와 같다 —
+     * MY 박스는 박스에 있으면 포함, SHARED 박스는 <b>내가 추가한 것만</b> 포함으로 본다.
+     * 공유 박스에서 남이 담은 콘텐츠를 체크 상태로 보여주면, 체크를 풀었을 때
+     * 삭제 권한이 없어 되돌아가는 화면이 된다.
+     *
+     * <p>한 페이지분 contentId 를 한 번에 넘겨 N+1 을 피한다.
+     */
+    @Query("SELECT bc.content.contentId FROM BoxContent bc " +
+            "WHERE bc.box = :box " +
+            "AND bc.content.contentId IN :contentIds " +
+            "AND (bc.box.boxType = 'MY' " +
+            "     OR (bc.box.boxType = 'SHARED' AND bc.publisher = :member))")
+    List<Long> findContentIdsInBoxForMember(@Param("box") Box box,
+                                            @Param("contentIds") List<Long> contentIds,
+                                            @Param("member") Member member);
+
+    /**
+     * 삭제 대상 행. 공유 박스는 같은 콘텐츠를 여러 멤버가 각각 담을 수 있어
+     * {@code (box, content)} 만으로는 행이 유일하지 않다. publisher 까지 포함해 특정한다.
+     */
+    Optional<BoxContent> findByBoxAndContentAndPublisher(Box box, Content content, Member publisher);
+
+    /**
+     * 주어진 tmdbId 중 <b>내가 담은 것</b>만 추린다.
+     *
+     * <p>홈·탐색 목록의 "박스에 담음" 표시용이다. 목록의 콘텐츠는 TMDB 응답이라
+     * DB 에 Content 행이 없을 수도 있어 contentId 가 아닌 tmdbId 로 조회한다.
+     *
+     * <p>판정 기준은 <b>담은 사람(publisher)</b>이다. 공유 박스에서 다른 멤버가 담은 것은
+     * 내 것으로 보지 않는다 — 상세 페이지({@code existsByPublisherAndContent})·시트와 같은 기준이라
+     * 화면마다 아이콘이 달라지지 않는다. 마이 박스는 담을 수 있는 사람이 나뿐이라 자동으로 포함된다.
+     */
+    @Query("SELECT DISTINCT bc.content.tmdbId FROM BoxContent bc " +
+            "WHERE bc.publisher = :member " +
+            "AND bc.content.mediaType = :mediaType " +
+            "AND bc.content.tmdbId IN :tmdbIds")
+    List<Long> findTmdbIdsInMyBoxes(@Param("member") Member member,
+                                    @Param("tmdbIds") List<Long> tmdbIds,
+                                    @Param("mediaType") MediaType mediaType);
+
+    void deleteAllByPublisherAndBox(Member publisher, Box box);
 
     void deleteAllByPublisherAndBox_BoxType(Member member, BoxType boxType);
 

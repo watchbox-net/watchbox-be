@@ -8,7 +8,9 @@ import java.util.List;
 
 @Getter
 @ToString
-@Builder
+// toBuilder: 개인화를 여러 단계로 얹는다(시청 기록 → 박스 포함 여부).
+// 매번 전체 필드를 다시 세우면 한 단계가 앞 단계의 값을 지우는 사고가 난다.
+@Builder(toBuilder = true)
 public class ContentItem {
     private ContentSummary contentSummary;
     private MemberRecord memberRecord;

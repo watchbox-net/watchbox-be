@@ -42,6 +42,8 @@ public enum ErrorCode {
     NOT_BOX_MEMBER(HttpStatus.FORBIDDEN, "BOX-MEMBER-403", "해당 박스의 멤버가 아닙니다."),
     ALREADY_BOX_MEMBER(HttpStatus.CONFLICT, "BOX-MEMBER-409", "이미 박스 멤버로 존재합니다."),
     FORBIDDEN_BOX_ACCESS(HttpStatus.FORBIDDEN, "BOX-MEMBER-403", "박스에 대한 권한이 부족합니다."),
+    CANNOT_LEAVE_MY_BOX(HttpStatus.CONFLICT, "BOX-MEMBER-409", "마이 박스는 나갈 수 없습니다. 삭제만 가능합니다."),
+    CANNOT_LEAVE_OWNED_BOX(HttpStatus.CONFLICT, "BOX-MEMBER-409", "박스 소유자는 나갈 수 없습니다. 박스를 삭제해 주세요."),
 
     // SharedBoxContent 오류
     FORBIDDEN_CONTENT_REMOVAL(HttpStatus.FORBIDDEN, "SHARED-BOX-CONTENT-403", "콘텐츠 삭제 권한이 없습니다."),

@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.HashSet;
+import net.watchbox.domain.content.entity.MediaType;
 
 @Service
 @RequiredArgsConstructor
@@ -46,11 +49,6 @@ public class BoxContentQueryService { // find로 전부바꾸기
     public BoxContent getByBoxContentId(Long boxContentId) {
         return boxContentRepository.findById(boxContentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOX_CONTENT_NOT_FOUND, boxContentId));
-    }
-
-    public BoxContent getByBoxAndContentOrElseNull(Box box, Content content) {
-        return boxContentRepository.findByBoxAndContent(box, content)
-                .orElse(null);
     }
 
 
@@ -82,6 +80,28 @@ public class BoxContentQueryService { // find로 전부바꾸기
     // Content가 포함된 Member의 모든 박스 ID 목록 조회
     public List<Long> getBoxIdsContainingContentForMember(Member member, Content content) {
         return boxContentRepository.findBoxIdsByContentForMember(content, member);
+    }
+
+    // 목록의 tmdbId 중 내가 속한 박스 어딘가에 담긴 것만 (홈·탐색의 박스 아이콘)
+    public Set<Long> getTmdbIdsInMyBoxes(Member member, List<Long> tmdbIds, MediaType mediaType) {
+        if (tmdbIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return new HashSet<>(boxContentRepository.findTmdbIdsInMyBoxes(member, tmdbIds, mediaType));
+    }
+
+    // 한 페이지분 콘텐츠 중 이 박스에 담겨 있는 것만 (시청 기록 시트의 체크 상태)
+    public List<Long> getContentIdsInBoxForMember(Box box, List<Long> contentIds, Member member) {
+        if (contentIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return boxContentRepository.findContentIdsInBoxForMember(box, contentIds, member);
+    }
+
+    // 내가 이 박스에 담은 행 (삭제 대상 특정용)
+    public BoxContent getByBoxAndContentAndPublisherOrElseNull(Box box, Content content, Member publisher) {
+        return boxContentRepository.findByBoxAndContentAndPublisher(box, content, publisher)
+                .orElse(null);
     }
 
     // Content가 멤버의 박스에 있는지 유무

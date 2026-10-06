@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.Map;
+import net.watchbox.domain.box.repository.member.BoxMemberRoleProjection;
+import net.watchbox.global.dto.response.exception.ErrorCode;
+import net.watchbox.global.dto.response.exception.CustomException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +32,31 @@ public class BoxMemberService {
 
     public List<BoxMember> findAllByMember(Member member) {
         return boxMemberRepository.findAllByMember(member);
+    }
+
+    public BoxMember getByBoxAndMemberOrElseThrow(Box box, Member member) {
+        return boxMemberRepository.findByBoxAndMember(box, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_BOX_MEMBER, member.getMemberId(), "Member"));
+    }
+
+    @Transactional
+    public void removeBoxMember(BoxMember boxMember) {
+        boxMemberRepository.delete(boxMember);
+    }
+
+    /** boxId → 내 권한. 박스 목록에서 쓴다. */
+    public Map<Long, BoxMemberRole> getMyRoleByBoxId(Member member) {
+        return boxMemberRepository.findBoxIdAndRoleByMember(member).stream()
+                .collect(Collectors.toMap(
+                        BoxMemberRoleProjection::getBoxId,
+                        BoxMemberRoleProjection::getRole));
+    }
+
+    /** 박스 하나에서의 내 권한. 멤버가 아니면 null. */
+    public BoxMemberRole getMyRoleOrElseNull(Box box, Member member) {
+        return boxMemberRepository.findByBoxAndMember(box, member)
+                .map(BoxMember::getRole)
+                .orElse(null);
     }
 
     public long countByMember(Member member) {

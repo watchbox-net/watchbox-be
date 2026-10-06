@@ -21,7 +21,7 @@ public class InvitationReceivedResponse { // 받은초대 정보
         response.setSenderId(boxInvitation.getSender().getMemberId());
         response.setSender(boxInvitation.getSender().getNickname());
         response.setStatus(boxInvitation.getStatus());
-        response.sharedBox = BoxItem.of(boxInvitation.getBox(), previewPosters);
+        response.sharedBox = BoxItem.of(boxInvitation.getBox(), previewPosters, null);
         return response;
     }
 }

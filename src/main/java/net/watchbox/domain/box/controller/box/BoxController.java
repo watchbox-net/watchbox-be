@@ -89,6 +89,21 @@ public class BoxController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
+    @Operation(summary = "공유 박스 나가기",
+            description = "소유자가 아닌 멤버(EDITOR · VIEWER)가 공유 박스에서 나간다. <br>"
+                    + "내가 담았던 콘텐츠도 함께 삭제된다 — 삭제 권한은 담은 본인에게만 있어, "
+                    + "남겨두면 아무도 치울 수 없는 콘텐츠가 되기 때문이다. <br>"
+                    + "소유자는 나갈 수 없다(409). 박스를 삭제하거나 소유권을 넘겨야 한다. <br>"
+                    + "마이 박스도 나갈 수 없다(409).")
+    @DeleteMapping("/{boxId}/members/me")
+    public ResponseEntity<ApiResponse<Void>> leaveBox(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long boxId
+    ) {
+        boxFacade.leaveBox(member, boxId);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
     // ─────────────────────────────────────── 박스 히스토리  ───────────────────────────────────────
     @Operation(summary = "박스 히스토리 페이지 조회", description = "정렬(RECENT/OLDEST) & 커서 기반 무한 스크롤 조회")
     @GetMapping("/{boxId}/history")
