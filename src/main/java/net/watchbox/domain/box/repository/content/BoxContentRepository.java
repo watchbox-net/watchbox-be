@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import net.watchbox.domain.box.entity.member.BoxMember;
 
 @Repository
 public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
@@ -100,6 +101,24 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
      * {@code (box, content)} 만으로는 행이 유일하지 않다. publisher 까지 포함해 특정한다.
      */
     Optional<BoxContent> findByBoxAndContentAndPublisher(Box box, Content content, Member publisher);
+
+    /**
+     * 주어진 tmdbId 중 <b>내가 담은 것</b>만 추린다.
+     *
+     * <p>홈·탐색 목록의 "박스에 담음" 표시용이다. 목록의 콘텐츠는 TMDB 응답이라
+     * DB 에 Content 행이 없을 수도 있어 contentId 가 아닌 tmdbId 로 조회한다.
+     *
+     * <p>판정 기준은 <b>담은 사람(publisher)</b>이다. 공유 박스에서 다른 멤버가 담은 것은
+     * 내 것으로 보지 않는다 — 상세 페이지({@code existsByPublisherAndContent})·시트와 같은 기준이라
+     * 화면마다 아이콘이 달라지지 않는다. 마이 박스는 담을 수 있는 사람이 나뿐이라 자동으로 포함된다.
+     */
+    @Query("SELECT DISTINCT bc.content.tmdbId FROM BoxContent bc " +
+            "WHERE bc.publisher = :member " +
+            "AND bc.content.mediaType = :mediaType " +
+            "AND bc.content.tmdbId IN :tmdbIds")
+    List<Long> findTmdbIdsInMyBoxes(@Param("member") Member member,
+                                    @Param("tmdbIds") List<Long> tmdbIds,
+                                    @Param("mediaType") MediaType mediaType);
 
     void deleteAllByPublisherAndBox(Member publisher, Box box);
 

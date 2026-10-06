@@ -131,8 +131,7 @@ public class ContentRecordQueryService {
     // 조회해둔 record 맵을 각 아이템에 병합 (쿼리 없음)
     private static List<ContentItem> applyRecordMap(List<ContentItem> items, Map<Long, ContentRecord> recordMap) {
         return items.stream()
-                .map(item -> ContentItem.builder()
-                        .contentSummary(item.getContentSummary())
+                .map(item -> item.toBuilder()
                         .memberRecord(MemberRecord.from(
                                 recordMap.get(item.getContentSummary().getTmdbId())))
                         .build())

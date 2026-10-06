@@ -18,6 +18,8 @@ import net.watchbox.global.tmdb.service.TmdbTvSeriesListsService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
+import net.watchbox.domain.box.service.content.BoxContentQueryService;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class DiscoverFacade {
     private final TmdbTrendingService tmdbTrendingService;
     private final ContentRecordQueryService contentRecordQueryService;
     private final HomeTmdbSectionLoader homeTmdbSectionLoader;
+    private final BoxContentQueryService boxContentQueryService;
 
     /**
      * 홈 화면 8개 섹션을 한 번에 조회한다. (BFF)
@@ -50,6 +53,8 @@ public class DiscoverFacade {
         if (withRecord && member != null) {
             movies = contentRecordQueryService.attachMemberRecordBatch(movies, member, MediaType.MOVIE);
             tv = contentRecordQueryService.attachMemberRecordBatch(tv, member, MediaType.TV);
+            movies = attachBoxFlagBatch(movies, member, MediaType.MOVIE);
+            tv = attachBoxFlagBatch(tv, member, MediaType.TV);
         }
 
         return new HomeResponse(
@@ -58,6 +63,34 @@ public class DiscoverFacade {
                 movies.get(2), tv.get(2),  // nowShowing
                 movies.get(3), tv.get(3)   // topRated
         );
+    }
+
+    /**
+     * 각 콘텐츠가 <b>내가 속한 박스 어딘가에 담겨 있는지</b>를 얹는다(홈 카드의 박스 아이콘).
+     *
+     * <p>시청 기록과 마찬가지로 섹션마다 조회하지 않고 <b>mediaType 당 IN 쿼리 1회</b>로 묶는다.
+     * 목록이 TMDB 응답이라 Content 행이 없을 수도 있어 contentId 가 아닌 tmdbId 로 맞춘다.
+     */
+    private List<List<ContentItem>> attachBoxFlagBatch(
+            List<List<ContentItem>> sections, Member member, MediaType mediaType) {
+        List<Long> tmdbIds = sections.stream()
+                .flatMap(List::stream)
+                .map(item -> item.getContentSummary().getTmdbId())
+                .distinct()
+                .toList();
+
+        Set<Long> boxedTmdbIds = boxContentQueryService.getTmdbIdsInMyBoxes(member, tmdbIds, mediaType);
+        if (boxedTmdbIds.isEmpty()) {
+            return sections; // 담은 게 없으면 기본값(false) 그대로
+        }
+
+        return sections.stream()
+                .map(items -> items.stream()
+                        .map(item -> item.toBuilder()
+                                .hasAddedInbox(boxedTmdbIds.contains(item.getContentSummary().getTmdbId()))
+                                .build())
+                        .toList())
+                .toList();
     }
 
     public ContentPageResponse getPopularMovies(Integer page, boolean withRecord, Member member) {
