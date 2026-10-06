@@ -30,6 +30,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import net.watchbox.domain.box.entity.member.BoxMemberRole;
+import net.watchbox.domain.box.service.history.BoxHistoryCommandService;
+import net.watchbox.domain.box.entity.member.BoxMember;
 
 @Slf4j
 @Component
@@ -41,6 +44,7 @@ public class BoxFacade {
     private final BoxContentQueryService boxContentQueryService;
     private final BoxContentCommandService  boxContentCommandService;
     private final BoxHistoryFacade boxHistoryFacade;
+    private final BoxHistoryCommandService boxHistoryCommandService;
 
     @Transactional(readOnly = true)
     public BoxItem getBox(Member member, Long boxId) {
@@ -54,7 +58,7 @@ public class BoxFacade {
         List<String> previewPosters = boxContentQueryService
                 .getRecentPosterPathsByBoxes(List.of(box))
                 .getOrDefault(box.getBoxId(), Collections.emptyList());
-        return BoxItem.of(box, previewPosters);
+        return BoxItem.of(box, previewPosters, boxMemberService.getMyRoleOrElseNull(box, member));
     }
 
     @Transactional(readOnly = true)
@@ -65,10 +69,12 @@ public class BoxFacade {
                 Comparator.nullsFirst(Comparator.reverseOrder())))
         .toList();
         Map<Long, List<String>> posterMap = boxContentQueryService.getRecentPosterPathsByBoxes(boxList);
+        Map<Long, BoxMemberRole> myRoleMap = boxMemberService.getMyRoleByBoxId(member); // 박스마다 권한을 조회하면 N+1 이라 한 번에 받아둔다.
 
         List<BoxItem> boxItemList = boxList.stream()
                 .map(box -> BoxItem.of(box,
-                        posterMap.getOrDefault(box.getBoxId(), Collections.emptyList())))
+                        posterMap.getOrDefault(box.getBoxId(), Collections.emptyList()),
+                        myRoleMap.get(box.getBoxId())))
                 .toList();
 
         return BoxPageResponse.builder()
@@ -119,6 +125,33 @@ public class BoxFacade {
                     ));
             log.info("SharedBox {} deleted by owner: {}, members: {}", boxId, member.getNickname(), boxMembers);
         }
+    }
+
+    /**
+     * 공유 박스에서 나간다. 소유자는 쓸 수 없다 — 박스가 주인 없이 남으므로 삭제가 맞다.
+     *
+     * <p>내가 담았던 콘텐츠도 함께 지운다. 남겨두면 삭제 권한이 담은 본인에게만 있어
+     * <b>아무도 치울 수 없는 콘텐츠</b>로 남는다.
+     */
+    @Transactional
+    public void leaveBox(Member member, Long boxId) {
+        Box box = boxService.getByBoxIdOrElseThrow(boxId);
+
+        if (box.getBoxType() == BoxType.MY) {
+            throw new CustomException(ErrorCode.CANNOT_LEAVE_MY_BOX);
+        }
+
+        BoxMember boxMember = boxMemberService.getByBoxAndMemberOrElseThrow(box, member);
+        if (boxMember.getRole() == BoxMemberRole.OWNER) {
+            throw new CustomException(ErrorCode.CANNOT_LEAVE_OWNED_BOX);
+        }
+
+        boxContentCommandService.deleteAllByPublisherAndBox(member, box);
+        // BoxMember 를 지우기 전에 남긴다. 히스토리는 Member 를 참조하므로 나간 뒤에도 조회된다.
+        boxHistoryCommandService.memberLeft(box, member);
+        boxMemberService.removeBoxMember(boxMember);
+
+        log.info("Member {} left SharedBox {}", member.getNickname(), boxId);
     }
 
     @Transactional(readOnly = true)

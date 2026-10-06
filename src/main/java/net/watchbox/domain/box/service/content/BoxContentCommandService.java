@@ -32,6 +32,17 @@ public class BoxContentCommandService {
         boxContentRepository.delete(boxContent);
     }
 
+    /**
+     * 박스를 나가는 멤버가 담았던 콘텐츠 정리.
+     *
+     * <p>남겨두면 <b>아무도 지울 수 없는 콘텐츠</b>가 된다 — 삭제 권한은 담은 본인에게만 있는데
+     * ({@code validateBoxContentRemover}) 그 사람이 더는 박스 멤버가 아니기 때문이다.
+     * 회원 탈퇴({@code MemberFacade.deleteMember})가 담은 콘텐츠를 모두 지우는 것과 같은 규칙이다.
+     */
+    public void deleteAllByPublisherAndBox(Member publisher, Box box) {
+        boxContentRepository.deleteAllByPublisherAndBox(publisher, box);
+    }
+
     public void deleteAllByBox(Box box) {
         boxContentRepository.deleteAllByBox(box);
     }

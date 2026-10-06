@@ -104,9 +104,12 @@ public class ContentBoxFacade {
         List<Long> removedBoxIds = new ArrayList<>();
         for (Long boxId : request.getRemoveBoxIds()) {
             Box box = boxService.getByBoxIdOrElseThrow(boxId);
-            BoxContent boxContent = boxContentQueryService.getByBoxAndContentOrElseNull(box, content);
-            if (boxContent == null) continue;
-            boxValidator.validateBoxContentRemover(member, boxContent);  // 본인이 추가한 것만 삭제
+            // publisher 까지 넣어 찾는다. 공유 박스는 같은 콘텐츠를 여러 멤버가 각자 담을 수 있어
+            // (box, content) 만으로는 행이 유일하지 않고, 둘 이상이면 단건 조회가 예외로 끝난다.
+            // 그 예외는 아래 권한 검증보다 먼저 터져서, 정당하게 담은 사람도 자기 것을 못 빼게 된다.
+            BoxContent boxContent =
+                    boxContentQueryService.getByBoxAndContentAndPublisherOrElseNull(box, content, member);
+            if (boxContent == null) continue;  // 안 담았거나 남이 담은 것 — 건너뛴다
             boxContentCommandService.deleteContentFromBox(boxContent);
             removedBoxIds.add(boxId);
 

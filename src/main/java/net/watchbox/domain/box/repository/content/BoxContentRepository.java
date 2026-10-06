@@ -26,8 +26,6 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
 
     void deleteAllByBox(Box box);
 
-    Optional<BoxContent> findByBoxAndContent(Box box, Content content);
-
     // 박스 콘텐츠 조회 시, SubContent인 영화/TV/인물 엔티티도 함께 조회
     @Query("SELECT bc FROM BoxContent bc " +
             "JOIN FETCH bc.content c " +
@@ -77,6 +75,33 @@ public interface BoxContentRepository extends JpaRepository<BoxContent, Long> {
     List<Long> findBoxIdsByContentForMember(
             @Param("content") Content content,
             @Param("member") Member member);
+
+    /**
+     * 주어진 콘텐츠들 중 <b>이 박스에 담겨 있는 것</b>의 contentId 만 추린다.
+     *
+     * <p>포함 판정 기준은 {@link #findBoxIdsByContentForMember} 와 같다 —
+     * MY 박스는 박스에 있으면 포함, SHARED 박스는 <b>내가 추가한 것만</b> 포함으로 본다.
+     * 공유 박스에서 남이 담은 콘텐츠를 체크 상태로 보여주면, 체크를 풀었을 때
+     * 삭제 권한이 없어 되돌아가는 화면이 된다.
+     *
+     * <p>한 페이지분 contentId 를 한 번에 넘겨 N+1 을 피한다.
+     */
+    @Query("SELECT bc.content.contentId FROM BoxContent bc " +
+            "WHERE bc.box = :box " +
+            "AND bc.content.contentId IN :contentIds " +
+            "AND (bc.box.boxType = 'MY' " +
+            "     OR (bc.box.boxType = 'SHARED' AND bc.publisher = :member))")
+    List<Long> findContentIdsInBoxForMember(@Param("box") Box box,
+                                            @Param("contentIds") List<Long> contentIds,
+                                            @Param("member") Member member);
+
+    /**
+     * 삭제 대상 행. 공유 박스는 같은 콘텐츠를 여러 멤버가 각각 담을 수 있어
+     * {@code (box, content)} 만으로는 행이 유일하지 않다. publisher 까지 포함해 특정한다.
+     */
+    Optional<BoxContent> findByBoxAndContentAndPublisher(Box box, Content content, Member publisher);
+
+    void deleteAllByPublisherAndBox(Member publisher, Box box);
 
     void deleteAllByPublisherAndBox_BoxType(Member member, BoxType boxType);
 

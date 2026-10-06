@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents/{mediaType}/{tmdbId}/boxes")
-@Tag(name = "4-3 [Box] Content Sheet")
+@Tag(name = "4-4 [Box] Content Sheet")
 public class ContentBoxController {
     private final ContentBoxFacade contentBoxFacade;
 

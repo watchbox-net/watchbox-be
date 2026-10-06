@@ -30,6 +30,15 @@ public interface BoxMemberRepository extends JpaRepository<BoxMember, Long> {
     long countByMember(Member member);
 
     /**
+     * 내가 속한 모든 박스에서의 내 권한. 박스 목록 응답에 {@code myRole} 을 채우는 용도다.
+     * 박스마다 조회하면 N+1 이라 한 번에 받아 Map 으로 쓴다.
+     */
+    @Query("SELECT bm.box.boxId AS boxId, bm.role AS role " +
+            "FROM BoxMember bm " +
+            "WHERE bm.member = :member")
+    List<BoxMemberRoleProjection> findBoxIdAndRoleByMember(@Param("member") Member member);
+
+    /**
      * 박스 멤버 중 특정 멤버를 제외한 member_id 목록.
      * 주로 알림 fan-out 수신자 목록 계산에 사용 (엔티티 hydration 없이 ID 컬럼만 select).
      */

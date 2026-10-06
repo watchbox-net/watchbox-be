@@ -28,6 +28,12 @@ public class BoxHistoryCommandService {
                 BoxHistory.ofContentEvent(box, actor, BoxHistoryEventType.CONTENT_DELETED, content));
     }
 
+    /** 멤버 퇴장 기록 (본인이 나감). 남은 멤버들이 히스토리에서 확인한다. */
+    public void memberLeft(Box box, Member actor) {
+        boxHistoryRepository.save(
+                BoxHistory.ofMemberEvent(box, actor, BoxHistoryEventType.MEMBER_LEFT, actor));
+    }
+
     /** 멤버 합류 기록 (초대 수락). */
     public void memberJoined(Box box, Member actor, Member targetMember) {
         boxHistoryRepository.save(

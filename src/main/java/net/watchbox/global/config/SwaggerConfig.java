@@ -79,9 +79,10 @@ public class SwaggerConfig {
                 tag("3-1 [Record] Watch Record", "시청 상태 · 좋아요 · 기록 이력"),
 
                 tag("4-1 [Box] Box", "박스 통합 - 생성 · 조회 · 수정 · 활동 이력"),
-                tag("4-2 [Box] Content", "박스 콘텐츠 조회 · 추가 · 삭제"),
-                tag("4-3 [Box] Content Sheet", "콘텐츠 기준 박스 포함 여부 조회 및 일괄 추가/삭제"),
-                tag("4-4 [Box] Invitation", "공유 박스 초대 - 발송 · 수락 · 거절 · 취소"),
+                tag("4-2 [Box] Invitation", "공유 박스 초대 - 발송 · 수락 · 거절 · 취소"),
+                tag("4-3 [Box] Content", "박스 콘텐츠 조회 · 추가 · 삭제"),
+                tag("4-4 [Box] Content Sheet", "콘텐츠 기준 박스 포함 여부 조회 및 일괄 추가/삭제"),
+                tag("4-5 [Box] Record Sheet", "시청 기록 기준 박스 포함 여부 조회 및 일괄 추가/삭제"),
 
                 tag("8-1 [Admin] Admin", "관리자"),
                 tag("8-2 [Admin] Preview", "샘플 화면"),
