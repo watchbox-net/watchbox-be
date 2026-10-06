@@ -26,7 +26,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.core.env.Environment;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -40,14 +43,14 @@ public class WebSecurityConfig {
     private final AdminProperties adminProperties;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http, AdminAuthFilter adminAuthFilter) throws Exception{
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable) // 클라이언트 측에서 로그아웃을 처리하는 대신에 인증 서버에 로그아웃 요청을 전달하여 세션을 종료하고 토큰을 무효화한다.
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(adminAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(adminAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         // SSE(SseEmitter) 등 async 응답의 ASYNC 재디스패치는 인증 재검증에서 제외.
@@ -84,8 +87,12 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AdminAuthFilter adminAuthFilter() {
-        return new AdminAuthFilter(adminProperties);
+    public AdminAuthFilter adminAuthFilter(Environment environment) {
+        boolean local = environment.matchesProfiles("local");
+        if (local) {
+            log.info("admin key guard: /api/admin only (local profile — /dev/, /health are open)");
+        }
+        return new AdminAuthFilter(adminProperties, !local);
     }
 
     // Security 체인 외부에서의 자동 등록 비활성화 (이중 실행 방지)
